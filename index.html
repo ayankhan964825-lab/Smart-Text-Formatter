@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Text Formatting</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+    <!-- Header / Top Bar -->
+    <header class="top-bar">
+        <div class="logo">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+            <h1>Smart Text Formatter</h1>
+        </div>
+        <div class="top-controls">
+            <button id="theme-toggle" class="icon-btn" title="Toggle Dark/Light Mode">
+                <svg id="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+                <svg id="sun-icon" style="display:none;" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+            </button>
+            <button id="rules-toggle" class="btn secondary" title="Customize Rules">Formatting Rules</button>
+        </div>
+    </header>
+
+    <!-- Formatting Ribbon (Word-like Home Tab) -->
+    <nav class="formatting-ribbon">
+        <!-- Heading 1 Controls -->
+        <div class="ribbon-group">
+            <span class="ribbon-label">Heading</span>
+            <div class="ribbon-controls">
+                <select id="h1-font" class="toolbar-select">
+                    <option value="inherit">Default Font</option>
+                    <option value="'Times New Roman', serif" selected>Times New (Default)</option>
+                    <option value="Arial, sans-serif">Arial</option>
+                    <option value="'Courier New', monospace">Courier</option>
+                </select>
+                <input type="number" id="h1-size" class="toolbar-input" value="16" min="10" max="72"
+                    title="Font Size (pt)">
+            </div>
+        </div>
+
+        <!-- Heading 2 Controls -->
+        <div class="ribbon-group">
+            <span class="ribbon-label">Sub heading</span>
+            <div class="ribbon-controls">
+                <select id="h2-font" class="toolbar-select">
+                    <option value="inherit">Default Font</option>
+                    <option value="'Times New Roman', serif" selected>Times New (Default)</option>
+                    <option value="Arial, sans-serif">Arial</option>
+                    <option value="'Courier New', monospace">Courier</option>
+                </select>
+                <input type="number" id="h2-size" class="toolbar-input" value="14" min="10" max="72"
+                    title="Font Size (pt)">
+            </div>
+        </div>
+
+        <!-- Sub-subheading Controls -->
+        <div class="ribbon-group">
+            <span class="ribbon-label">Sub-subheading</span>
+            <div class="ribbon-controls">
+                <select id="sub-sub-font" class="toolbar-select">
+                    <option value="inherit">Default Font</option>
+                    <option value="'Times New Roman', serif" selected>Times New (Default)</option>
+                    <option value="Arial, sans-serif">Arial</option>
+                    <option value="'Courier New', monospace">Courier</option>
+                </select>
+                <input type="number" id="sub-sub-size" class="toolbar-input" value="12" min="10" max="72"
+                    title="Font Size (pt)">
+            </div>
+        </div>
+
+        <!-- Body Text Controls -->
+        <div class="ribbon-group">
+            <span class="ribbon-label">Body Text</span>
+            <div class="ribbon-controls">
+                <select id="p-font" class="toolbar-select">
+                    <option value="inherit">Default Font</option>
+                    <option value="'Times New Roman', serif" selected>Times New (Default)</option>
+                    <option value="Arial, sans-serif">Arial</option>
+                    <option value="'Courier New', monospace">Courier</option>
+                </select>
+                <input type="number" id="p-size" class="toolbar-input" value="12" min="10" max="72"
+                    title="Font Size (pt)">
+            </div>
+        </div>
+
+        <!-- Global Alignment Controls -->
+        <div class="ribbon-group" style="border-right: none;">
+            <span class="ribbon-label">Alignment</span>
+            <div class="ribbon-controls">
+                <select id="global-alignment" class="toolbar-select" title="Text Alignment">
+                    <option value="left" selected>Left</option>
+                    <option value="center">Center</option>
+                    <option value="right">Right</option>
+                    <option value="justify">Justify</option>
+                </select>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Workspace -->
+    <main class="workspace">
+
+        <!-- Left Panel: Input Area -->
+        <section class="panel input-panel">
+            <div class="panel-header">
+                <h2>Raw Text Input</h2>
+                <div class="panel-actions">
+                    <button id="format-btn" class="btn primary format-action-btn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;">
+                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                        </svg>
+                        Format Now
+                    </button>
+                    <button class="icon-btn" title="Undo"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <path d="M3 7v6h6" />
+                            <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13" />
+                        </svg></button>
+                    <button class="icon-btn" title="Redo"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2">
+                            <path d="M21 7v6h-6" />
+                            <path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3l3 2.7" />
+                        </svg></button>
+                </div>
+            </div>
+            <textarea id="raw-input"
+                placeholder="Type or paste your unstructured raw text here...&#10;&#10;Use # for H1&#10;Use ## for H2&#10;Use - or * for lists&#10;Paragraphs are separated by blank lines."></textarea>
+        </section>
+
+        <!-- Right Panel: Output Preview -->
+        <section class="panel output-panel">
+            <div class="panel-header">
+                <h2>Formatted Preview</h2>
+                <div class="panel-actions">
+                    <button id="copy-html-btn" class="btn-small secondary">Copy HTML</button>
+                </div>
+            </div>
+            <div id="formatted-preview" class="preview-container">
+                <div class="placeholder-text">Live preview will appear here...</div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Bottom Action Bar (Exporting) -->
+    <footer class="bottom-bar">
+        <div class="status-indicator">
+            <span class="dot"></span> <span id="status-text">Ready</span>
+        </div>
+        <div class="export-actions">
+            <button id="export-pdf" class="btn primary">Export to PDF</button>
+            <button id="export-word" class="btn primary">Export to Word</button>
+        </div>
+    </footer>
+    <!-- Scripts -->
+    <!-- External Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <!-- Core Engine Modules -->
+    <script src="js/textProcessor.js"></script>
+    <script src="js/structureDetector.js"></script>
+    <script src="js/ruleEngine.js"></script>
+    <script src="js/outputGenerator.js"></script>
+    <!-- Core Application Logic -->
+    <script src="js/app.js"></script>
+
+</body>
+
+</html>

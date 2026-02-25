@@ -29,8 +29,7 @@ class TextProcessor {
         const normalizedText = this.normalize();
         if (!normalizedText) return [];
 
-        // Split by one or more blank lines (to separate paragraphs/headings)
-        // \n\s*\n matches a newline, optional whitespace, and another newline
+        // Split by one or more blank lines (to separate paragraphs/headings initially)
         const rawBlocks = normalizedText.split(/\n\s*\n/);
 
         // Trim each block and remove empty ones
@@ -38,7 +37,41 @@ class TextProcessor {
             .map(block => block.trim())
             .filter(block => block.length > 0);
 
-        return cleanBlocks;
+        if (cleanBlocks.length <= 1) return cleanBlocks;
+
+        // --- Intelligent Block Merging ---
+        // OCR text often injects \n\n in the middle of a sentence.
+        // If a block doesn't finish with terminal punctuation, it likely belongs to the next block.
+        const mergedBlocks = [];
+        let currentBlock = cleanBlocks[0];
+
+        for (let i = 1; i < cleanBlocks.length; i++) {
+            const nextBlock = cleanBlocks[i];
+
+            // Look for terminal punctuation at the end of the current block
+            const endsWithPunctuation = /[.?!:;"]$/.test(currentBlock.trim());
+            // Check if the next block looks like a structural starting point (Heading, List, etc.)
+            const nextIsHeadingOrList = /^(#{1,6}\s+|[-*+]\s+|\d+\.\s+|[IVX]+\.\s+|[A-Z]\.\s+|Abstract|Introduction|Conclusion)/i.test(nextBlock);
+
+            if (!endsWithPunctuation && !nextIsHeadingOrList) {
+                // Merge them!
+                // If it ends with a hyphen, merge directly without a space to fix word breaks.
+                if (currentBlock.endsWith('-')) {
+                    currentBlock = currentBlock.slice(0, -1) + nextBlock;
+                } else {
+                    currentBlock = currentBlock + ' ' + nextBlock;
+                }
+            } else {
+                // Sentence is finished or next block is structural, push current block and step forward
+                mergedBlocks.push(currentBlock);
+                currentBlock = nextBlock;
+            }
+        }
+
+        // Push the final block
+        mergedBlocks.push(currentBlock);
+
+        return mergedBlocks;
     }
 }
 

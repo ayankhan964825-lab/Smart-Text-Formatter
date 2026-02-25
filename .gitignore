@@ -1,0 +1,14 @@
+# Environment variables
+.env
+.env.local
+.env.production
+
+# Vercel
+.vercel
+
+# Node
+node_modules/
+
+# OS
+.DS_Store
+Thumbs.db

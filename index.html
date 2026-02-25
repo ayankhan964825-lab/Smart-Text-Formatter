@@ -114,7 +114,7 @@
         </div>
 
         <!-- Global Alignment Controls -->
-        <div class="ribbon-group" style="border-right: none;">
+        <div class="ribbon-group">
             <span class="ribbon-label">Alignment</span>
             <div class="ribbon-controls">
                 <select id="global-alignment" class="toolbar-select" title="Text Alignment">
@@ -123,6 +123,18 @@
                     <option value="right">Right</option>
                     <option value="justify">Justify</option>
                 </select>
+            </div>
+        </div>
+
+        <!-- Document Options -->
+        <div class="ribbon-group" style="border-right: none;">
+            <span class="ribbon-label">Options</span>
+            <div class="ribbon-controls" style="display: flex; align-items: center; height: 100%;">
+                <label
+                    style="font-size: 0.85rem; color: var(--text-main); display: flex; align-items: center; gap: 4px; cursor: pointer;">
+                    <input type="checkbox" id="include-toc">
+                    Include Table of Contents
+                </label>
             </div>
         </div>
     </nav>
@@ -161,12 +173,67 @@
         <!-- Right Panel: Output Preview -->
         <section class="panel output-panel">
             <div class="panel-header">
-                <h2>Formatted Preview</h2>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <h2>Formatted Preview</h2>
+                    <button id="toggle-customization-btn" class="btn-small secondary">✏️ Edit</button>
+                </div>
                 <div class="panel-actions">
-                    <button id="copy-html-btn" class="btn-small secondary">Copy HTML</button>
+                    <!-- Mini Rich Text Toolbar -->
+                    <div class="mini-toolbar" id="mini-rtf-toolbar" style="display: none;">
+                        <!-- Fonts & Blocks -->
+                        <select class="rtf-select" data-command="fontName" title="Font Family">
+                            <option value="Arial">Arial</option>
+                            <option value="Times New Roman" selected>Times New Roman</option>
+                            <option value="Courier New">Courier</option>
+                        </select>
+                        <input type="number" class="rtf-number toolbar-input" data-command="fontSizePt" value="12"
+                            min="8" max="72" title="Font Size (pt)"
+                            style="width: 50px; padding: 4px; border: 1px solid var(--border-color); border-radius: 4px;">
+                        <select class="rtf-select" data-command="formatBlock" title="Heading Style">
+                            <option value="P">Paragraph</option>
+                            <option value="H1">Heading 1</option>
+                            <option value="H2">Heading 2</option>
+                            <option value="H3">Heading 3</option>
+                        </select>
+
+                        <div class="toolbar-divider"></div>
+
+                        <!-- Basic Styles -->
+                        <div class="style-group">
+                            <button class="icon-btn rtf-btn" data-command="bold" title="Bold (Ctrl+B)"><b>B</b></button>
+                            <button class="icon-btn rtf-btn" data-command="italic"
+                                title="Italic (Ctrl+I)"><i>I</i></button>
+                            <button class="icon-btn rtf-btn" data-command="underline"
+                                title="Underline (Ctrl+U)"><u>U</u></button>
+                            <button class="icon-btn rtf-btn" data-command="strikeThrough"
+                                title="Strikethrough"><s>S</s></button>
+                        </div>
+
+                        <div class="toolbar-divider"></div>
+
+                        <!-- Colors -->
+                        <input type="color" class="rtf-color" data-command="foreColor" title="Text Color"
+                            value="#000000">
+                        <input type="color" class="rtf-color" data-command="hiliteColor" title="Highlight Color"
+                            value="#ffff00">
+
+                        <div class="toolbar-divider"></div>
+
+                        <!-- Alignments & Lists -->
+                        <select class="rtf-select rtf-align" title="Text Alignment">
+                            <option value="justifyLeft" selected>Left Align</option>
+                            <option value="justifyCenter">Center</option>
+                            <option value="justifyRight">Right Align</option>
+                            <option value="justifyFull">Justify</option>
+                        </select>
+                        <button class="icon-btn rtf-btn" data-command="insertUnorderedList"
+                            title="Bullet List">•</button>
+                        <button class="icon-btn rtf-btn" data-command="insertOrderedList"
+                            title="Numbered List">1.</button>
+                    </div>
                 </div>
             </div>
-            <div id="formatted-preview" class="preview-container">
+            <div id="formatted-preview" class="preview-container" contenteditable="false">
                 <div class="placeholder-text">Live preview will appear here...</div>
             </div>
         </section>
@@ -183,6 +250,22 @@
             <button id="export-word" class="btn primary">Export to Word</button>
         </div>
     </footer>
+
+    <!-- Overwrite/Append Modal -->
+    <div id="append-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <h3>Update Formatted Text</h3>
+            <p>You have manually edited the output. How would you like to add the new formatted text?</p>
+            <div class="modal-actions">
+                <button id="modal-overwrite-btn" class="btn danger">Overwrite (Clear previous)</button>
+                <button id="modal-append-btn" class="btn primary" title="Inserts at cursor or end">Append (Keep
+                    previous)</button>
+            </div>
+            <button id="modal-cancel-btn" class="btn-small secondary"
+                style="margin-top:20px; width: 100%;">Cancel</button>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <!-- External Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -190,6 +273,7 @@
     <!-- Core Engine Modules -->
     <script src="js/textProcessor.js"></script>
     <script src="js/structureDetector.js"></script>
+    <script src="js/aiFormatter.js"></script>
     <script src="js/ruleEngine.js"></script>
     <script src="js/outputGenerator.js"></script>
     <!-- Core Application Logic -->

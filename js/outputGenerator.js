@@ -27,10 +27,11 @@ class OutputGenerator {
             }
 
             // Normal elements (Headings, Paragraphs)
-            // Replace newlines with <br> for multi-line paragraphs
+            // Replace OCR hyphenated breaks, then replace remaining newlines with natural spaces
+            // so the browser can wrap and justify text normally.
             let content = this._escapeHTML(element.content || '');
             if (tag === 'p') {
-                content = content.replace(/\n/g, '<br>');
+                content = content.replace(/-\n/g, '').replace(/\n/g, ' ');
             }
 
             // Custom tag rendering for sub-subheadings

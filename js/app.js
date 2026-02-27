@@ -253,6 +253,92 @@ document.addEventListener('DOMContentLoaded', () => {
                 return `\n\n%%MERMAID_PLACEHOLDER_${index}%%\n\n`;
             });
 
+            // --- Auto-detect and convert plain text flowcharts to Mermaid ---
+            // Detects patterns like: Text1 \n | \n ▼ \n Text2 \n | \n ▼ \n Text3
+            // Also detects tree structures with ├──, └──, │
+            cleanedText = cleanedText.replace(
+                /((?:^|\n)[ \t]*\S[^\n]*\n(?:[ \t]*[│|]\s*\n[ \t]*[▼▾►→↓]\s*\n[ \t]*\S[^\n]*\n?){2,})/gm,
+                (match) => {
+                    // Extract node names from the linear flow
+                    const lines = match.trim().split('\n');
+                    const nodes = [];
+                    for (const line of lines) {
+                        const trimmed = line.trim();
+                        // Skip connector lines (|, ▼, →, etc.)
+                        if (/^[│|▼▾►→↓\s]+$/.test(trimmed) || trimmed === '') continue;
+                        if (trimmed.length > 0) nodes.push(trimmed);
+                    }
+                    if (nodes.length >= 2) {
+                        // Build Mermaid graph TD
+                        let mermaidCode = 'graph TD\n';
+                        for (let i = 0; i < nodes.length; i++) {
+                            const safeLabel = nodes[i].replace(/"/g, "'");
+                            mermaidCode += `    N${i}["${safeLabel}"]\n`;
+                        }
+                        for (let i = 0; i < nodes.length - 1; i++) {
+                            mermaidCode += `    N${i} --> N${i + 1}\n`;
+                        }
+                        const index = extractedMermaid.length;
+                        extractedMermaid.push(mermaidCode.trim());
+                        return `\n\n%%MERMAID_PLACEHOLDER_${index}%%\n\n`;
+                    }
+                    return match; // Not enough nodes, leave as-is
+                }
+            );
+
+            // Also detect tree structures: ├── / └── / │
+            cleanedText = cleanedText.replace(
+                /((?:^|\n)[ \t]*\S[^\n]*\n(?:[ \t]*[│├└][──\s]*\S[^\n]*\n?){2,})/gm,
+                (match) => {
+                    const lines = match.trim().split('\n');
+                    const nodes = [];
+                    const edges = [];
+                    let rootLabel = '';
+
+                    // First non-empty line is the root
+                    for (const line of lines) {
+                        const trimmed = line.trim();
+                        if (trimmed && !/^[│├└]/.test(trimmed)) {
+                            rootLabel = trimmed;
+                            break;
+                        }
+                    }
+                    if (!rootLabel) return match;
+
+                    nodes.push(rootLabel);
+                    let parentStack = [0]; // Track parent indices by indent level
+
+                    for (const line of lines) {
+                        const branchMatch = line.match(/^(\s*)[├└]──\s*(.+)/);
+                        if (branchMatch) {
+                            const indent = branchMatch[1].length;
+                            const label = branchMatch[2].trim();
+                            const nodeIdx = nodes.length;
+                            nodes.push(label);
+                            // Determine parent based on indentation
+                            const parentIdx = indent <= 0 ? 0 : (parentStack[Math.floor(indent / 4)] || 0);
+                            edges.push([parentIdx, nodeIdx]);
+                            parentStack[Math.floor(indent / 4) + 1] = nodeIdx;
+                        }
+                    }
+
+                    if (nodes.length >= 3 && edges.length >= 2) {
+                        let mermaidCode = 'graph TD\n';
+                        for (let i = 0; i < nodes.length; i++) {
+                            const safeLabel = nodes[i].replace(/"/g, "'");
+                            mermaidCode += `    N${i}["${safeLabel}"]\n`;
+                        }
+                        for (const [from, to] of edges) {
+                            mermaidCode += `    N${from} --> N${to}\n`;
+                        }
+                        const index = extractedMermaid.length;
+                        extractedMermaid.push(mermaidCode.trim());
+                        return `\n\n%%MERMAID_PLACEHOLDER_${index}%%\n\n`;
+                    }
+                    return match;
+                }
+            );
+
             // If the raw text is unchanged from the last AI scan, just re-apply the font rules (cached)
             if (textToProcess === lastParsedText && cachedElements) {
                 elements = cachedElements;

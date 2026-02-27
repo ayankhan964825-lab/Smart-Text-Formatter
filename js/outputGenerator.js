@@ -32,6 +32,11 @@ class OutputGenerator {
                 return `<div class="mermaid-container"><pre class="mermaid">${element.content || ''}</pre></div>`;
             }
 
+            // Handle raw HTML blocks (e.g., converted markdown tables)
+            if (tag === 'html') {
+                return element.content || '';
+            }
+
             // Normal elements (Headings, Paragraphs)
             // Escape HTML first, then clean markdown artifacts, then handle OCR breaks
             let content = this._cleanMarkdown(this._escapeHTML(element.content || ''));

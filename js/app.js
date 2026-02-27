@@ -339,7 +339,85 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             );
 
-            // If the raw text is unchanged from the last AI scan, just re-apply the font rules (cached)
+            // --- Auto-detect and convert plain text bar charts to Mermaid xychart ---
+            // Detects patterns like: 1951    ████    18%
+            cleanedText = cleanedText.replace(
+                /((?:^|\n)[ \t]*\S[^\n]*\n(?:[ \t]*\S+[ \t]+[█▓▒░■]+[ \t]+\d+%?\s*\n?){2,})/gm,
+                (match) => {
+                    const lines = match.trim().split('\n');
+                    let title = '';
+                    const labels = [];
+                    const values = [];
+
+                    for (const line of lines) {
+                        const trimmed = line.trim();
+                        // Match bar pattern: label  ████  value%
+                        const barMatch = trimmed.match(/^(\S+)\s+[█▓▒░■]+\s+(\d+)%?\s*$/);
+                        if (barMatch) {
+                            labels.push(barMatch[1]);
+                            values.push(parseInt(barMatch[2], 10));
+                        } else if (!title && trimmed && labels.length === 0) {
+                            // First non-bar line is the title
+                            title = trimmed;
+                        }
+                    }
+
+                    if (labels.length >= 2 && values.length >= 2) {
+                        const maxVal = Math.max(...values);
+                        const yMax = Math.ceil(maxVal / 10) * 10 + 10; // Round up
+                        let mermaidCode = 'xychart-beta\n';
+                        if (title) mermaidCode += `    title "${title}"\n`;
+                        mermaidCode += `    x-axis [${labels.map(l => `"${l}"`).join(', ')}]\n`;
+                        mermaidCode += `    y-axis "Value" 0 --> ${yMax}\n`;
+                        mermaidCode += `    bar [${values.join(', ')}]\n`;
+
+                        const index = extractedMermaid.length;
+                        extractedMermaid.push(mermaidCode.trim());
+                        return `\n\n%%MERMAID_PLACEHOLDER_${index}%%\n\n`;
+                    }
+                    return match;
+                }
+            );
+
+            // --- Auto-detect and convert markdown tables to HTML ---
+            // Detects patterns like: | Year | Rate | \n | --- | --- | \n | 1951 | 18% |
+            cleanedText = cleanedText.replace(
+                /((?:^|\n)\|[^\n]+\|\s*\n\|[\s\-:|]+\|\s*\n(?:\|[^\n]+\|\s*\n?){1,})/gm,
+                (match) => {
+                    const lines = match.trim().split('\n').filter(l => l.trim());
+                    if (lines.length < 3) return match;
+
+                    const parseRow = (line) => line.split('|').filter(cell => cell.trim() !== '').map(cell => cell.trim());
+
+                    const headerCells = parseRow(lines[0]);
+                    // lines[1] is the separator row (---), skip it
+                    const dataRows = lines.slice(2).map(parseRow);
+
+                    if (headerCells.length < 2) return match;
+
+                    // Build an HTML table and inject directly (not mermaid)
+                    let tableHtml = '<table class="formatted-table" style="border-collapse:collapse; width:100%; margin:12px 0;">';
+                    tableHtml += '<thead><tr>';
+                    for (const cell of headerCells) {
+                        tableHtml += `<th style="border:1px solid #ddd; padding:8px 12px; background:#f5f7fa; font-weight:bold; text-align:left;">${cell}</th>`;
+                    }
+                    tableHtml += '</tr></thead><tbody>';
+                    for (const row of dataRows) {
+                        tableHtml += '<tr>';
+                        for (let i = 0; i < headerCells.length; i++) {
+                            tableHtml += `<td style="border:1px solid #ddd; padding:8px 12px;">${row[i] || ''}</td>`;
+                        }
+                        tableHtml += '</tr>';
+                    }
+                    tableHtml += '</tbody></table>';
+
+                    // Store as a special type - we'll inject the raw HTML
+                    const placeholderIdx = extractedMermaid.length;
+                    extractedMermaid.push(`__HTML_TABLE__${tableHtml}`);
+                    return `\n\n%%MERMAID_PLACEHOLDER_${placeholderIdx}%%\n\n`;
+                }
+            );
+
             if (textToProcess === lastParsedText && cachedElements) {
                 elements = cachedElements;
             } else {
@@ -381,8 +459,13 @@ document.addEventListener('DOMContentLoaded', () => {
                             if (before) {
                                 finalElements.push({ ...el, content: before });
                             }
-                            // Insert the mermaid element with the ORIGINAL untouched code
-                            finalElements.push({ type: 'mermaid', content: extractedMermaid[idx] });
+                            // Insert the element with the correct type
+                            const extractedContent = extractedMermaid[idx];
+                            if (extractedContent.startsWith('__HTML_TABLE__')) {
+                                finalElements.push({ type: 'html', content: extractedContent.replace('__HTML_TABLE__', '') });
+                            } else {
+                                finalElements.push({ type: 'mermaid', content: extractedContent });
+                            }
                             // If there's text after the placeholder, keep it too
                             const after = (el.content || '').split(`%%MERMAID_PLACEHOLDER_${idx}%%`)[1]?.trim();
                             if (after) {

@@ -24,12 +24,11 @@ For each logical block, determine its semantic type.
 Rules:
 1. You MUST return a valid JSON array of objects.
 2. Each object MUST have precisely two keys: "type" and "content".
-3. "type" MUST be exactly one of: "h1", "h2", "sub-subheading", "p", "ul", "ol", "li", "code", "mermaid".
+3. "type" MUST be exactly one of: "h1", "h2", "sub-subheading", "p", "ul", "ol", "li", "code".
    - Use "h1" for the single main title of the document.
    - Use "h2" for main section headings (like "1. Introduction", "Abstract", "Methodology", "2. Literature Review").
    - Use "sub-subheading" for nested numerical/alphabetical subheadings (like "1.1. Approach", "A. Dataset", "2.3. Results").
    - Use "p" for regular body text ONLY. If a sentence has been split into multiple lines, combine it into one single content string.
-   - Use "mermaid" for any Mermaid diagram code blocks. If you see text wrapped in \`\`\`mermaid ... \`\`\` fences, extract the inner code (WITHOUT the fence markers) and return it as type "mermaid". The "content" should be ONLY the raw Mermaid syntax (e.g. "graph TD\\n  A-->B"), not the fence markers.
 4. "content" MUST contain the exact text, EXCEPT for the specific OCR/PDF cleanup rules defined below.
 
 --- CRITICAL SEPARATION RULE ---
@@ -46,10 +45,9 @@ HEADINGS AND BODY TEXT MUST ALWAYS BE SEPARATE OBJECTS.
 - A sub-subheading is SHORT (usually under 10 words) and acts as a section label.
 - If text is long and contains full sentences, it is a "p", never a sub-subheading.
 
---- MERMAID DIAGRAM RULE ---
-- If you encounter a code block fenced with \`\`\`mermaid, extract its contents and return as type "mermaid".
-- The "content" field should contain ONLY the Mermaid diagram syntax (graph TD, flowchart LR, sequenceDiagram, pie, xychart-beta, etc.), without the \`\`\`mermaid and \`\`\` fence markers.
-- Do NOT escape or modify the Mermaid syntax in any way.
+--- PLAIN TEXT DIAGRAM RULE ---
+- If you see text-based diagrams using ASCII art characters (├──, └──, ▼, →, |, etc.), tree structures, or arrow flows, classify them as "p" type. Do NOT try to convert them into any special type.
+- Placeholder texts like "%%MERMAID_PLACEHOLDER_0%%" should be classified as "p" type and passed through unchanged.
 
 --- OCR & PDF CLEANUP RULES ---
 A. CITATIONS: Google Lens often mangles academic citations at the ends of sentences (e.g., "energy 4", "[1] [21.", "[1], 12), [31, (4]").

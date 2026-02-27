@@ -43,35 +43,6 @@
     --transition-speed: 0.3s;
 }
 
-/* Dark Theme Overrides */
-[data-theme="dark"] {
-    --bg-body: #0f172a;
-    /* Slate 900 */
-    --bg-panel: rgba(30, 41, 59, 0.7);
-    /* Slate 800 with transparency */
-    --bg-header: rgba(15, 23, 42, 0.85);
-    /* Header blending into body */
-    --bg-footer: rgba(15, 23, 42, 0.85);
-
-    --text-main: #f8fafc;
-    /* Slate 50 */
-    --text-muted: #94a3b8;
-    /* Slate 400 */
-
-    --border-color: rgba(51, 65, 85, 0.6);
-    --border-focus: #38bdf8;
-
-    --primary-color: #38bdf8;
-    /* Sky 400 */
-    --primary-hover: #0ea5e9;
-    /* Sky 500 */
-    --secondary-bg: rgba(51, 65, 85, 0.6);
-    --secondary-hover: rgba(71, 85, 105, 0.8);
-
-    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 4px 15px rgba(0, 0, 0, 0.4);
-    --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.5);
-}
 
 /* --- Global Reset & Basics --- */
 * {
@@ -120,11 +91,7 @@ body {
     /* Soft glow in light mode, adjusts automatically if dark mode vars are used */
 }
 
-[data-theme="dark"] .btn.primary {
-    box-shadow: 0 2px 8px rgba(56, 189, 248, 0.2);
-    color: #0f172a;
-    /* Dark text on bright button for contrast */
-}
+
 
 .btn.primary:hover {
     background-color: var(--primary-hover);
@@ -132,9 +99,7 @@ body {
     transform: translateY(-1px);
 }
 
-[data-theme="dark"] .btn.primary:hover {
-    box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);
-}
+
 
 .btn.secondary {
     background-color: var(--secondary-bg);
@@ -380,10 +345,7 @@ body {
     }
 }
 
-[data-theme="dark"] .format-action-btn {
-    background: linear-gradient(135deg, #38bdf8, #0ea5e9);
-    box-shadow: 0 4px 15px rgba(56, 189, 248, 0.3);
-}
+
 
 /* --- specific panel styling --- */
 .input-panel textarea {
@@ -432,8 +394,10 @@ body {
     text-align: center;
     margin-top: 60px;
     font-size: 0.95rem;
-    opacity: 0.7;
+    opacity: 0.8;
+    /* Slightly more opaque for better readability */
 }
+
 
 /* Output Typography formatting defaults (will be overridden by JS rules) */
 .preview-container {
@@ -444,13 +408,11 @@ body {
 
 .preview-container h1 {
     margin-bottom: 16px;
-    font-family: var(--font-sans);
 }
 
 .preview-container h2 {
     margin-top: 24px;
     margin-bottom: 12px;
-    font-family: var(--font-sans);
 }
 
 .preview-container p {
@@ -744,4 +706,27 @@ body {
 .toc-link:hover {
     text-decoration: underline;
     color: var(--primary-color);
+}
+
+/* ==========================================================================
+   Mermaid Diagrams
+   ========================================================================== */
+.mermaid-container {
+    display: flex;
+    justify-content: center;
+    margin: 24px 0;
+    padding: 20px;
+    background-color: #fafbfc;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow-x: auto;
+}
+
+.mermaid-container .mermaid {
+    max-width: 100%;
+}
+
+.mermaid-container svg {
+    max-width: 100%;
+    height: auto;
 }

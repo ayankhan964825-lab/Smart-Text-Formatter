@@ -9,50 +9,53 @@ class RuleEngine {
         // Default rules mapped directly to CSS inline styles
         this.defaultRules = {
             h1: {
+                'font-family': "'Times New Roman', serif",
                 'font-size': '16pt',
                 'font-weight': '700',
-                'color': '#212529',
                 'margin-bottom': '1rem',
                 'border-bottom': '2px solid #DEE2E6',
                 'padding-bottom': '0.5rem'
             },
             h2: {
+                'font-family': "'Times New Roman', serif",
                 'font-size': '14pt',
                 'font-weight': '600',
-                'color': '#212529',
                 'margin-bottom': '0.75rem',
                 'margin-top': '1.5rem'
             },
             h3: {
+                'font-family': "'Times New Roman', serif",
                 'font-size': '12pt',
                 'font-weight': '600',
-                'color': '#495057',
                 'margin-bottom': '0.5rem',
                 'margin-top': '1rem'
             },
             p: {
+                'font-family': "'Times New Roman', serif",
                 'font-size': '12pt',
                 'line-height': '1.6',
-                'color': '#333333',
                 'margin-bottom': '1rem'
             },
             ul: {
+                'font-family': "'Times New Roman', serif",
                 'margin-bottom': '1rem',
                 'padding-left': '2rem'
             },
             ol: {
+                'font-family': "'Times New Roman', serif",
                 'margin-bottom': '1rem',
                 'padding-left': '2rem'
             },
             li: {
+                'font-family': "'Times New Roman', serif",
                 'font-size': '12pt',
                 'line-height': '1.6',
                 'margin-bottom': '0.5rem'
             },
             'sub-subheading': {
-                'font-size': '12pt',      // Body size
-                'font-weight': '700',     // Bold to stand out as a heading
-                'color': '#212529',
+                'font-family': "'Times New Roman', serif",
+                'font-size': '12pt',
+                'font-weight': '700',
                 'margin-bottom': '0.75rem',
                 'margin-top': '1.25rem'
             }

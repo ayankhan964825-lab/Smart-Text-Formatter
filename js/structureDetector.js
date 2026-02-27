@@ -9,9 +9,10 @@ class StructureDetector {
     /**
      * Classifies an array of raw text blocks into structured ElementObjects
      * @param {Array<string>} textBlocks 
+     * @param {Array<string>} [mermaidBlocks] - Optional extracted mermaid code blocks
      * @returns {Array<Object>} Array of objects like { type: 'h1', content: '...' }
      */
-    classifyBlocks(textBlocks) {
+    classifyBlocks(textBlocks, mermaidBlocks = []) {
         if (!textBlocks || textBlocks.length === 0) return [];
 
         const classifiedElements = [];
@@ -19,6 +20,20 @@ class StructureDetector {
 
         for (let i = 0; i < textBlocks.length; i++) {
             const block = textBlocks[i];
+
+            // Check if this block is a Mermaid placeholder
+            const mermaidMatch = block.trim().match(/^%%MERMAID_BLOCK_(\d+)%%$/);
+            if (mermaidMatch) {
+                const mermaidIndex = parseInt(mermaidMatch[1], 10);
+                if (mermaidBlocks[mermaidIndex]) {
+                    classifiedElements.push({
+                        type: 'mermaid',
+                        content: mermaidBlocks[mermaidIndex]
+                    });
+                    globalIndex++;
+                    continue;
+                }
+            }
 
             // If the block is a single line, no need to split
             if (!block.includes('\n')) {

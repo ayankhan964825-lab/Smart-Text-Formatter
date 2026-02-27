@@ -29,8 +29,17 @@ class TextProcessor {
         const normalizedText = this.normalize();
         if (!normalizedText) return [];
 
+        // --- Extract Mermaid code blocks before tokenizing ---
+        // Replace ```mermaid ... ``` with a special placeholder token
+        const mermaidBlocks = [];
+        const textWithoutMermaid = normalizedText.replace(/```mermaid\s*\n([\s\S]*?)```/g, (match, code) => {
+            const index = mermaidBlocks.length;
+            mermaidBlocks.push(code.trim());
+            return `%%MERMAID_BLOCK_${index}%%`;
+        });
+
         // Split by one or more blank lines (to separate paragraphs/headings initially)
-        const rawBlocks = normalizedText.split(/\n\s*\n/);
+        const rawBlocks = textWithoutMermaid.split(/\n\s*\n/);
 
         // Trim each block and remove empty ones
         const cleanBlocks = rawBlocks
@@ -47,6 +56,16 @@ class TextProcessor {
 
         for (let i = 1; i < cleanBlocks.length; i++) {
             const nextBlock = cleanBlocks[i];
+
+            // Never merge mermaid placeholders
+            const currentIsMermaid = /^%%MERMAID_BLOCK_\d+%%$/.test(currentBlock.trim());
+            const nextIsMermaid = /^%%MERMAID_BLOCK_\d+%%$/.test(nextBlock.trim());
+
+            if (currentIsMermaid || nextIsMermaid) {
+                mergedBlocks.push(currentBlock);
+                currentBlock = nextBlock;
+                continue;
+            }
 
             // Look for terminal punctuation at the end of the current block
             const endsWithPunctuation = /[.?!:;"]$/.test(currentBlock.trim());
@@ -70,6 +89,9 @@ class TextProcessor {
 
         // Push the final block
         mergedBlocks.push(currentBlock);
+
+        // Store extracted mermaid blocks for StructureDetector to use
+        this._mermaidBlocks = mermaidBlocks;
 
         return mergedBlocks;
     }

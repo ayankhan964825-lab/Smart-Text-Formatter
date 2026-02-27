@@ -2,6 +2,7 @@
 .env
 .env.local
 .env.production
+js/config.local.js
 
 # Vercel
 .vercel
@@ -12,3 +13,4 @@ node_modules/
 # OS
 .DS_Store
 Thumbs.db
+.env*.local

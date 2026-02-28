@@ -646,22 +646,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
         for (const svg of svgs) {
             // Get original dimensions to maintain aspect ratio
-            const bbox = svg.getBoundingClientRect();
-            let width = Math.max(parseFloat(svg.getAttribute('width') || 0), bbox.width);
-            let height = Math.max(parseFloat(svg.getAttribute('height') || 0), bbox.height);
+            // Since this is often run on a cloned (detached) DOM, getBoundingClientRect() returns 0.
+            // We MUST rely on the SVG's viewBox or explicit width/height attributes.
+            let logicalWidth = parseFloat(svg.getAttribute('width'));
+            let logicalHeight = parseFloat(svg.getAttribute('height'));
 
-            // Fallback sizes if CSS drives it
-            if (!width || width === 0) width = 800;
-            if (!height || height === 0) height = 600;
+            if (!logicalWidth || isNaN(logicalWidth) || !logicalHeight || isNaN(logicalHeight)) {
+                if (svg.viewBox && svg.viewBox.baseVal && svg.viewBox.baseVal.width) {
+                    logicalWidth = svg.viewBox.baseVal.width;
+                    logicalHeight = svg.viewBox.baseVal.height;
+                } else {
+                    const bbox = svg.getBoundingClientRect(); // Fallback if attached
+                    logicalWidth = bbox.width || 800; // Final fallback
+                    logicalHeight = bbox.height || 600;
+                }
+            }
 
-            // Apply a 2x scale for high-res crispness in Word/PDF
-            const scale = 2;
-            const canvasWidth = width * scale;
-            const canvasHeight = height * scale;
+            // High DPI Canvas Scaling (2x resolution for crisp exports)
+            const exportScale = 2;
+            const canvasWidth = logicalWidth * exportScale;
+            const canvasHeight = logicalHeight * exportScale;
 
-            // Ensure the SVG has explicit dimensions for the canvas to draw onto
-            svg.setAttribute('width', width);
-            svg.setAttribute('height', height);
+            // Ensure the SVG has explicit dimensions for the canvas to draw onto at high res
+            svg.setAttribute('width', canvasWidth);
+            svg.setAttribute('height', canvasHeight);
 
             // Serialize SVG to string
             const serializer = new XMLSerializer();
@@ -692,8 +700,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         ctx.fillStyle = '#ffffff';
                         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-                        // Draw the SVG upscaled
-                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        // Draw the SVG
+                        ctx.drawImage(img, 0, 0);
 
                         resolve(canvas.toDataURL('image/png', 1.0));
                     } catch (e) {
@@ -713,19 +721,38 @@ document.addEventListener('DOMContentLoaded', () => {
             const imgElement = document.createElement('img');
             imgElement.src = pngDataUrl;
 
-            // Explicitly define display sizes for MS Word compatibility 
-            // (MS Word ignores max-width CSS but respects width attribute)
-            const displayWidth = width > 600 ? 600 : width; // Cap display size to 600px width so it fits on Page
-            imgElement.setAttribute('width', Math.max(displayWidth, 400)); // Minimum width 400px for visibility
+            // MS Word STRICTLY relies on HTML width/height attributes for physical print size mappings.
+            // A standard A4 page at 96 DPI has about 600px of printable width and 800px printable height.
+            // To prevent large blank gaps on preceding pages, we restrict diagrams to a max of half a page (450px)
+            const MAX_PRINT_WIDTH = 600;
+            const MAX_PRINT_HEIGHT = 450;
 
-            // Keep CSS for HTML preview responsive rendering
+            // Calculate scale to fit within BOTH width and height constraints
+            const scaleX = MAX_PRINT_WIDTH / logicalWidth;
+            const scaleY = MAX_PRINT_HEIGHT / logicalHeight;
+            const printScale = Math.min(1, scaleX, scaleY);
+
+            const printWidth = Math.round(logicalWidth * printScale);
+            const printHeight = Math.round(logicalHeight * printScale);
+
+            imgElement.setAttribute('width', printWidth);
+            imgElement.setAttribute('height', printHeight);
+
+            // CSS styles for PDF rendering / web preview
             imgElement.style.width = '100%';
-            imgElement.style.maxWidth = `${displayWidth}px`;
-            imgElement.style.display = 'block';
-            imgElement.style.margin = '20px auto'; // Better spacing
+            imgElement.style.maxWidth = `${printWidth}px`;
+            imgElement.style.height = 'auto'; // Ensure aspect ratio is maintained
+            imgElement.style.display = 'inline-block'; // Better for text-align centering in Word
             imgElement.alt = 'Rendered Diagram';
 
-            svg.parentNode.replaceChild(imgElement, svg);
+            // Wrap the image in a centered div to guarantee alignment in MS Word, 
+            // since Word often ignores margin: auto on images.
+            const wrapperDiv = document.createElement('div');
+            wrapperDiv.style.textAlign = 'center';
+            wrapperDiv.style.margin = '0'; // Inner margin is 0 since the outer lightbox handles padding/margins
+            wrapperDiv.appendChild(imgElement);
+
+            svg.parentNode.replaceChild(wrapperDiv, svg);
         }
     }
 

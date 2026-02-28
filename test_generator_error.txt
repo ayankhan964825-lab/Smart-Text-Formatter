@@ -1,0 +1,63 @@
+﻿node : C:\Users\ayyub\
+.gemini\antigravity\sc
+ratch\NewProject\test_
+generator.js:2
+At line:1 char:1
++ node 
+test_generator.js 
+2>&1 | Out-File 
+-Encoding utf8 
+test_generator_ ...
++ ~~~~~~~~~~~~~~~~~~~~
+~~~~~~~
+    + CategoryInfo    
+          : NotSpeci  
+  fied: (C:\Users\a   
+ yyub\..._generato    
+r.js:2:String) []    
+, RemoteException
+    + FullyQualifiedE 
+   rrorId : NativeCo  
+  mmandError
+ 
+const dom = new 
+JSDOM(\`<!DOCTYPE 
+html><p>Hello 
+world</p>\`);
+                      
+^
+
+SyntaxError: Invalid 
+or unexpected token
+    at wrapSafe (node:
+internal/modules/cjs/l
+oader:1638:18)
+    at 
+Module._compile (node:
+internal/modules/cjs/l
+oader:1680:20)
+    at Object..js (nod
+e:internal/modules/cjs
+/loader:1839:10)
+    at Module.load (no
+de:internal/modules/cj
+s/loader:1441:32)
+    at Function._load 
+(node:internal/modules
+/cjs/loader:1263:12)
+    at TracingChannel.
+traceSync (node:diagno
+stics_channel:322:14)
+    at wrapModuleLoad 
+(node:internal/modules
+/cjs/loader:237:24)
+    at Function.execut
+eUserEntryPoint [as 
+runMain] (node:interna
+l/modules/run_main:171
+:5)
+    at node:internal/m
+ain/run_main_module:36
+:49
+
+Node.js v22.20.0

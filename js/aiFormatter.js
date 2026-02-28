@@ -24,12 +24,14 @@ For each logical block, determine its semantic type.
 Rules:
 1. You MUST return a valid JSON array of objects.
 2. Each object MUST have precisely two keys: "type" and "content".
-3. "type" MUST be exactly one of: "h1", "h2", "sub-subheading", "p", "ul", "ol", "li", "code".
+3. "type" MUST be exactly one of: "h1", "h2", "sub-subheading", "p", "ul", "ol", "code".
    - Use "h1" for the single main title of the document.
    - Use "h2" for main section headings (like "1. Introduction", "Abstract", "Methodology", "2. Literature Review").
    - Use "sub-subheading" for nested numerical/alphabetical subheadings (like "1.1. Approach", "A. Dataset", "2.3. Results").
    - Use "p" for regular body text ONLY. If a sentence has been split into multiple lines, combine it into one single content string.
-4. "content" MUST contain the exact text, EXCEPT for the specific OCR/PDF cleanup rules defined below.
+4. For heading and paragraph types ("h1", "h2", "sub-subheading", "p", "code"), your object MUST have a "content" string.
+   For list types ("ul", "ol"), your object MUST NOT have "content". Instead, it MUST have an "items" array of strings, where each string is a single bullet point or numbered item.
+5. "content" (or "items" strings) MUST contain the exact text, EXCEPT for the specific OCR/PDF cleanup rules defined below.
 
 --- CRITICAL SEPARATION RULE ---
 HEADINGS AND BODY TEXT MUST ALWAYS BE SEPARATE OBJECTS.
@@ -57,10 +59,10 @@ A. CITATIONS: Google Lens often mangles academic citations at the ends of senten
    - NEVER format floating numbers like 12, 13, 14, 21, 31, or 41 as citations. If you see them trailing a sentence, they are OCR noise. IGNORE them completely and remove them from the output text.
    - Crucially, these fixed citations MUST remain attached to the very end of the sentence inside their parent "p" block. Do NOT split them into a new block, and do NOT classify them as an "h2".
 B. FLOATING NOISE: If you detect stray PDF page numbers (e.g., a single line that just says "12" or "Page 4") or trailing large numerals above 5, completely IGNORE and REMOVE that block from your JSON array.
-C. AI BOILERPLATE: If you see conversational filler from an AI tool like "Sure, here is the code:" at the start, or UI artifacts like "Copy code", "Show drafts", "Was this response better or worse?", "Regenerate response", COMPLETELY IGNORE AND REMOVE them from your JSON output. Do NOT classify them as "p" or any other type.
+C. AI BOILERPLATE & CONVERSATIONAL FILLER: ChatGPT and Gemini often include conversational text like "Here is the diagram you requested:", "Sure, here is the formatted text:", "Below is a flowchart:", or "Certainly!". COMPLETELY IGNORE AND REMOVE this conversational filler from your JSON output. Do NOT classify it as a "p" block. Only return the actual factual content of the document.
 D. TYPOS: Do not fix general spelling mistakes or grammar. Only fix the citations as requested above.
 
-5. Do NOT return markdown formatting like \\\`\\\`\\\`json. Return only raw JSON data.`;
+6. Do NOT return markdown formatting like \\\`\\\`\\\`json. Return only raw JSON data.`;
 
         // --- Try the secure server-side proxy first (Vercel deployment) ---
         try {

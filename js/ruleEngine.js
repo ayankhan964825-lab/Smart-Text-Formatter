@@ -56,8 +56,9 @@ class RuleEngine {
                 'font-family': "'Times New Roman', serif",
                 'font-size': '12pt',
                 'font-weight': '700',
-                'margin-bottom': '0.75rem',
-                'margin-top': '1.25rem'
+                'margin-bottom': '1rem',
+                'margin-top': '1.25rem',
+                'page-break-after': 'avoid'
             }
         };
 

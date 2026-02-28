@@ -639,19 +639,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Helper: Convert all SVGs in a container to Base64 Image tags
     // By disabling `htmlLabels` in Mermaid, we've removed CSS-crashing `foreignObject` nodes.
-    // This allows native MS Word rendering of the generic SVG strings without html2canvas.
+    // This allows native Canvas drawing of the SVG without "tainted canvas" security errors.
+    // Exporting as Base64 PNGs is required because MS Word often fails to render Base64 SVGs.
     async function convertSvgsToImages(container) {
         const svgs = Array.from(container.querySelectorAll('svg'));
 
         for (const svg of svgs) {
             // Get original dimensions to maintain aspect ratio
             const bbox = svg.getBoundingClientRect();
-            let width = svg.getAttribute('width') || bbox.width;
-            let height = svg.getAttribute('height') || bbox.height;
+            let width = Math.max(parseFloat(svg.getAttribute('width') || 0), bbox.width);
+            let height = Math.max(parseFloat(svg.getAttribute('height') || 0), bbox.height);
 
             // Fallback sizes if CSS drives it
-            if (!width || width === '100%') width = 800;
-            if (!height || height === '100%') height = 600;
+            if (!width || width === 0) width = 800;
+            if (!height || height === 0) height = 600;
 
             // Ensure the SVG has explicit dimensions for the canvas to draw onto
             svg.setAttribute('width', width);
@@ -666,15 +667,46 @@ document.addEventListener('DOMContentLoaded', () => {
                 svgString = svgString.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
             }
 
-            // Clean up unescaped XML characters which corrupt MS Word
+            // Clean up unescaped XML characters
             svgString = svgString.replace(/\n/g, '').replace(/\r/g, '').replace(/\t/g, '');
 
-            // Fallback to pure base64 SVG 
-            const pureSvgBase64 = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgString)));
+            // Create a safe data URI for the Image source
+            const svgUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgString);
+
+            const pngDataUrl = await new Promise((resolve) => {
+                const img = new Image();
+                img.crossOrigin = 'Anonymous'; // Crucial for Canvas
+                img.onload = () => {
+                    try {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = Math.ceil(width);
+                        canvas.height = Math.ceil(height);
+                        const ctx = canvas.getContext('2d');
+
+                        // Draw white background so transparent parts don't look weird in Word
+                        ctx.fillStyle = '#ffffff';
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                        // Draw the SVG
+                        ctx.drawImage(img, 0, 0);
+
+                        resolve(canvas.toDataURL('image/png', 1.0));
+                    } catch (e) {
+                        console.warn('Canvas SVG drawing failed, falling back to SVG URI.', e);
+                        // Fallback to pure base64 SVG if canvas drawing fails
+                        resolve('data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgString))));
+                    }
+                };
+                img.onerror = () => {
+                    console.warn('Failed to load SVG into image for conversion.');
+                    resolve('data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgString))));
+                };
+                img.src = svgUrl;
+            });
 
             // Replace SVG node with standard Image tag
             const imgElement = document.createElement('img');
-            imgElement.src = pureSvgBase64;
+            imgElement.src = pngDataUrl;
             imgElement.style.width = '100%'; // Let it be responsive in the Word doc / PDF
             imgElement.style.maxWidth = `${width}px`;
             imgElement.style.display = 'block';

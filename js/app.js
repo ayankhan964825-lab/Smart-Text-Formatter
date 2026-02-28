@@ -654,6 +654,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!width || width === 0) width = 800;
             if (!height || height === 0) height = 600;
 
+            // Apply a 2x scale for high-res crispness in Word/PDF
+            const scale = 2;
+            const canvasWidth = width * scale;
+            const canvasHeight = height * scale;
+
             // Ensure the SVG has explicit dimensions for the canvas to draw onto
             svg.setAttribute('width', width);
             svg.setAttribute('height', height);
@@ -679,16 +684,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 img.onload = () => {
                     try {
                         const canvas = document.createElement('canvas');
-                        canvas.width = Math.ceil(width);
-                        canvas.height = Math.ceil(height);
+                        canvas.width = Math.ceil(canvasWidth);
+                        canvas.height = Math.ceil(canvasHeight);
                         const ctx = canvas.getContext('2d');
 
                         // Draw white background so transparent parts don't look weird in Word
                         ctx.fillStyle = '#ffffff';
                         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-                        // Draw the SVG
-                        ctx.drawImage(img, 0, 0);
+                        // Draw the SVG upscaled
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
                         resolve(canvas.toDataURL('image/png', 1.0));
                     } catch (e) {
@@ -707,10 +712,17 @@ document.addEventListener('DOMContentLoaded', () => {
             // Replace SVG node with standard Image tag
             const imgElement = document.createElement('img');
             imgElement.src = pngDataUrl;
-            imgElement.style.width = '100%'; // Let it be responsive in the Word doc / PDF
-            imgElement.style.maxWidth = `${width}px`;
+
+            // Explicitly define display sizes for MS Word compatibility 
+            // (MS Word ignores max-width CSS but respects width attribute)
+            const displayWidth = width > 600 ? 600 : width; // Cap display size to 600px width so it fits on Page
+            imgElement.setAttribute('width', Math.max(displayWidth, 400)); // Minimum width 400px for visibility
+
+            // Keep CSS for HTML preview responsive rendering
+            imgElement.style.width = '100%';
+            imgElement.style.maxWidth = `${displayWidth}px`;
             imgElement.style.display = 'block';
-            imgElement.style.margin = '10px auto';
+            imgElement.style.margin = '20px auto'; // Better spacing
             imgElement.alt = 'Rendered Diagram';
 
             svg.parentNode.replaceChild(imgElement, svg);

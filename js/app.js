@@ -612,7 +612,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
         } catch (error) {
-            console.error("Formatting Error:", error);
+            console.error("Formatting Error Details:", error);
             const errorMsg = error.message || String(error);
             if (errorMsg.includes('429') || errorMsg.includes('RESOURCE_EXHAUSTED') || errorMsg.includes('quota')) {
                 statusText.textContent = "⚠️ API quota exceeded. Please wait a few minutes and try again.";
@@ -637,231 +637,239 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     }
 
-    // Helper: Convert all SVGs in a container to Base64 Image tags
-    // This solves the issue where html2canvas and MS Word cannot render raw SVGs properly
-    async function convertSvgsToImages(container) {
-        const svgs = Array.from(container.querySelectorAll('svg'));
+    // Helper: Convert all Mermaid Containers to Base64 Image tags
+    // This solves the issue where html2canvas and MS Word cannot render raw SVGs properly,
+    // especially those containing <foreignObject> tags (like flowcharts).
+    async function convertMermaidToImages(container) {
+        const mermaidContainers = Array.from(container.querySelectorAll('.mermaid-container'));
 
-        for (const svg of svgs) {
-            // Get original dimensions to maintain aspect ratio
-            const bbox = svg.getBoundingClientRect();
-            let width = svg.getAttribute('width') || bbox.width;
-            let height = svg.getAttribute('height') || bbox.height;
+        for (const mermaidDiv of mermaidContainers) {
+            try {
+                // html2canvas is already loaded for PDF generation. We use it here to
+                // directly capture the DOM node (bypassing native SVG drawing limitations)
+                const canvas = await html2canvas(mermaidDiv, {
+                    scale: 2, // high res
+                    backgroundColor: '#ffffff',
+                    logging: false
+                });
 
-            // Fallback sizes if CSS drives it
-            if (!width || width === '100%') width = 800;
-            if (!height || height === '100%') height = 600;
+                const pngDataUrl = canvas.toDataURL('image/png', 1.0);
 
-            // Ensure the SVG has explicit dimensions for the canvas to draw onto
-            svg.setAttribute('width', width);
-            svg.setAttribute('height', height);
+                // Replace the entire Mermaid div with the captured Image tag
+                const imgElement = document.createElement('img');
+                imgElement.src = pngDataUrl;
+                imgElement.style.width = '100%'; // Let it be responsive in the Word doc / PDF
+                imgElement.style.maxWidth = `${canvas.width / 2}px`;
+                imgElement.style.display = 'block';
+                imgElement.style.margin = '10px auto';
+                imgElement.alt = 'Rendered Mermaid Diagram';
 
-            // Serialize SVG to string
-            const serializer = new XMLSerializer();
-            let svgString = serializer.serializeToString(svg);
-
-            // Fix self-closing tags and namespaces (required for old browsers/canvas)
-            if (!svgString.match(/^<svg[^>]+xmlns="http\:\/\/www\.w3\.org\/2000\/svg"/)) {
-                svgString = svgString.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
+                mermaidDiv.parentNode.replaceChild(imgElement, mermaidDiv);
+            } catch (error) {
+                console.error("Failed to convert Mermaid container to image:", error);
             }
-
-            // Create a Blob from the SVG string
-            const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
-            const url = URL.createObjectURL(svgBlob);
-
-            // Draw SVG to Canvas to get a PNG data URL
-            const pngDataUrl = await new Promise((resolve) => {
-                const img = new Image();
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    canvas.width = parseFloat(width);
-                    canvas.height = parseFloat(height);
-                    const ctx = canvas.getContext('2d');
-                    // Draw white background so transparent parts don't look weird
-                    ctx.fillStyle = '#ffffff';
-                    ctx.fillRect(0, 0, canvas.width, canvas.height);
-                    ctx.drawImage(img, 0, 0);
-                    URL.revokeObjectURL(url);
-                    resolve(canvas.toDataURL('image/png', 1.0));
-                };
-                img.onerror = () => {
-                    console.warn('Failed to load SVG into image for conversion.');
-                    URL.revokeObjectURL(url);
-                    // Fallback to pure base64 SVG if canvas drawing fails
-                    resolve('data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgString))));
-                };
-                img.src = url;
-            });
-
-            // Replace SVG node with standard Image tag
-            const imgElement = document.createElement('img');
-            imgElement.src = pngDataUrl;
-            imgElement.style.width = '100%'; // Let it be responsive in the Word doc / PDF
-            imgElement.style.maxWidth = `${width}px`;
-            imgElement.style.display = 'block';
-            imgElement.style.margin = '10px auto';
-            imgElement.alt = 'Rendered Diagram';
-
-            svg.parentNode.replaceChild(imgElement, svg);
         }
     }
 
     // 2. Export PDF (using html2pdf.js)
     exportPdfBtn.addEventListener('click', async () => {
-        const previewContainer = document.getElementById('formatted-preview');
-        if (previewContainer.querySelector('.placeholder-text')) {
-            alert("No content to export. Please format some text first.");
-            return;
-        }
-
-        statusText.textContent = "Generating PDF...";
-
-        // Check if TOC is included to determine page numbering offset
-        const hasToc = previewContainer.querySelector('.toc-container') !== null;
-
-        // Create a wrapper with page-numbering CSS
-        const wrapper = document.createElement('div');
-
-        // Deep clone the preview container so we don't modify the live DOM with our image swaps
-        const clonedPreview = previewContainer.cloneNode(true);
-
-        // Convert any Mermaid SVGs in the cloned node to PNG images so html2canvas renders them
-        await convertSvgsToImages(clonedPreview);
-
-        wrapper.innerHTML = buildExportHtml(clonedPreview.innerHTML);
-        wrapper.style.backgroundColor = '#ffffff';
-        wrapper.style.padding = '40px';
-
-        const opt = {
-            margin: [15, 10, 20, 10], // top, right, bottom, left (mm) — extra bottom for page number
-            filename: 'formatted_document.pdf',
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2 },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-            pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-        };
-
-        html2pdf().set(opt).from(wrapper).toPdf().get('pdf').then(function (pdf) {
-            const totalPages = pdf.internal.getNumberOfPages();
-            const pageWidth = pdf.internal.pageSize.getWidth();
-            const pageHeight = pdf.internal.pageSize.getHeight();
-
-            // If TOC exists, first page(s) are TOC — skip them for numbering
-            // Assume TOC takes 1 page (it has page-break-after: always)
-            const tocPages = hasToc ? 1 : 0;
-
-            for (let i = 1; i <= totalPages; i++) {
-                pdf.setPage(i);
-                // Only add page numbers to content pages (after TOC)
-                if (i > tocPages) {
-                    pdf.setFontSize(10);
-                    pdf.setTextColor(100);
-                    // Page number starts from 1 after TOC
-                    const displayPageNum = i - tocPages;
-                    pdf.text(String(displayPageNum), pageWidth / 2, pageHeight - 8, { align: 'center' });
-                }
+        try {
+            const previewContainer = document.getElementById('formatted-preview');
+            if (previewContainer.querySelector('.placeholder-text')) {
+                alert("No content to export. Please format some text first.");
+                return;
             }
-        }).save().then(() => {
-            statusText.textContent = "PDF Exported ✨";
-        }).catch(err => {
-            console.error("PDF Export Error:", err);
-            statusText.textContent = "Export Failed";
-        });
+
+            statusText.textContent = "Generating PDF...";
+
+            // Check if TOC is included to determine page numbering offset
+            const hasToc = previewContainer.querySelector('.toc-container') !== null;
+
+            // Create a wrapper with page-numbering CSS
+            const wrapper = document.createElement('div');
+
+            // Deep clone the preview container so we don't modify the live DOM with our image swaps
+            const clonedPreview = previewContainer.cloneNode(true);
+
+            // Note: Since html2pdf uses html2canvas under the hood, we don't necessarily 
+            // NEED to pre-convert Mermaid SVGs for PDF export, but we do it anyway 
+            // to ensure consistency between Word and PDF outputs. 
+            // We MUST use the live node for html2canvas to work properly instead of clonedPreview
+            // because cloned nodes aren't attached to the DOM and html2canvas needs attached nodes to compute styles.
+            // So we'll run it on the live container, then clone the result, then undo the live container!
+
+            await convertMermaidToImages(previewContainer);
+            const exportReadyClone = previewContainer.cloneNode(true);
+
+            // Immediately restore the original Mermaid containers in the UI (Undo)
+            const generatedImages = previewContainer.querySelectorAll('img[alt="Rendered Mermaid Diagram"]');
+            const originalMermaids = clonedPreview.querySelectorAll('.mermaid-container');
+            generatedImages.forEach((img, index) => {
+                if (originalMermaids[index]) {
+                    img.parentNode.replaceChild(originalMermaids[index].cloneNode(true), img);
+                }
+            });
+
+            wrapper.innerHTML = buildExportHtml(exportReadyClone.innerHTML);
+            wrapper.style.backgroundColor = '#ffffff';
+            wrapper.style.padding = '40px';
+
+            const opt = {
+                margin: [15, 10, 20, 10], // top, right, bottom, left (mm) — extra bottom for page number
+                filename: 'formatted_document.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+            };
+
+            html2pdf().set(opt).from(wrapper).toPdf().get('pdf').then(function (pdf) {
+                const totalPages = pdf.internal.getNumberOfPages();
+                const pageWidth = pdf.internal.pageSize.getWidth();
+                const pageHeight = pdf.internal.pageSize.getHeight();
+
+                const tocPages = hasToc ? 1 : 0;
+
+                for (let i = 1; i <= totalPages; i++) {
+                    pdf.setPage(i);
+                    // Only add page numbers to content pages (after TOC)
+                    if (i > tocPages) {
+                        pdf.setFontSize(10);
+                        pdf.setTextColor(100);
+                        // Page number starts from 1 after TOC
+                        const displayPageNum = i - tocPages;
+                        pdf.text(String(displayPageNum), pageWidth / 2, pageHeight - 8, { align: 'center' });
+                    }
+                }
+            }).save().then(() => {
+                statusText.textContent = "PDF Exported ✨";
+            }).catch(err => {
+                console.error("PDF Export Error:", err);
+                statusText.textContent = "Export Failed: " + (err.message || String(err));
+            });
+        } catch (globalErr) {
+            console.error("Critical PDF Error:", globalErr);
+            statusText.textContent = "Export Failed: " + (globalErr.message || String(globalErr));
+        }
     });
 
     // 3. Export Word (.doc)
     exportWordBtn.addEventListener('click', async () => {
-        const previewContainer = document.getElementById('formatted-preview');
-        if (previewContainer.querySelector('.placeholder-text')) {
-            alert("No content to export. Please format some text first.");
-            return;
+        try {
+            const previewContainer = document.getElementById('formatted-preview');
+            if (previewContainer.querySelector('.placeholder-text')) {
+                alert("No content to export. Please format some text first.");
+                return;
+            }
+
+            statusText.textContent = "Generating Word Document...";
+
+            // Deep clone the preview container
+            const originalClone = previewContainer.cloneNode(true);
+
+            // Convert Mermaid containers on the live DOM (html2canvas requires attached nodes)
+            await convertMermaidToImages(previewContainer);
+
+            // Take the snapshot for exporting
+            const exportReadyClone = previewContainer.cloneNode(true);
+
+            // Restore live DOM back to original state
+            const generatedImages = previewContainer.querySelectorAll('img[alt="Rendered Mermaid Diagram"]');
+            const originalMermaids = originalClone.querySelectorAll('.mermaid-container');
+            generatedImages.forEach((img, index) => {
+                if (originalMermaids[index]) {
+                    img.parentNode.replaceChild(originalMermaids[index].cloneNode(true), img);
+                }
+            });
+
+            // Separate TOC and content for Word export
+            const tocEl = exportReadyClone.querySelector('.toc-container');
+            let tocHtml = '';
+            let contentHtml = '';
+
+            if (tocEl) {
+                tocHtml = tocEl.outerHTML;
+                // Get content after TOC
+                const contentAfterToc = exportReadyClone.querySelector('.content-after-toc');
+                contentHtml = contentAfterToc ? contentAfterToc.innerHTML : exportReadyClone.innerHTML.replace(tocEl.outerHTML, '');
+            } else {
+                contentHtml = exportReadyClone.innerHTML;
+            }
+
+            // Word-compatible HTML with separate sections for TOC and content
+            const wordHtml = `
+                <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+                <head>
+                    <meta charset='utf-8'>
+                    <title>Exported Document</title>
+                    <style>
+                        @page {
+                            mso-page-orientation: portrait;
+                            size: A4;
+                            margin: 2.54cm 2.54cm 2.54cm 2.54cm;
+                            mso-header-margin: 1.27cm;
+                            mso-footer-margin: 1.27cm;
+                        }
+                        /* TOC Section — no page numbers */
+                        @page TocSection {
+                            mso-footer: none;
+                        }
+                        div.TocSection { page: TocSection; }
+                        /* Content Section — page numbers starting from 1 */
+                        @page ContentSection {
+                            mso-footer: f1;
+                            mso-page-numbers-start: 1;
+                        }
+                        div.ContentSection { page: ContentSection; }
+                        table.MsoFooter { margin: 0 auto; }
+                        body {
+                            font-family: 'Times New Roman', serif;
+                            font-size: 12pt;
+                            line-height: 1.6;
+                        }
+                        .toc-table {
+                            width: 100%;
+                            border-collapse: collapse;
+                        }
+                        .toc-table th, .toc-table td {
+                            border: 1px solid #000;
+                            padding: 6px 10px;
+                        }
+                    </style>
+                </head>
+                <body>
+                    ${tocHtml ? `<div class="TocSection">${tocHtml}<br clear=all style='mso-special-character:line-break;page-break-before:always'></div>` : ''}
+                    <div class="ContentSection">
+                        ${contentHtml}
+                    </div>
+                    <div style="mso-element: footer;" id="f1">
+                        <p style="text-align: center; font-size: 10pt; color: #666;">
+                            <span style="mso-field-code: 'PAGE'"></span>
+                            <!--[if supportFields]><span style="mso-element:field-begin"></span>PAGE<span style="mso-element:field-end"></span><![endif]-->
+                        </p>
+                    </div>
+                </body>
+                </html>
+            `;
+
+            // Use Blob instead of encodeURIComponent to support massive documents without throwing URI malformed or hitting string size limits
+            const blob = new Blob(['\ufeff', wordHtml], {
+                type: 'application/msword;charset=utf-8'
+            });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'formatted_document.doc';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            statusText.textContent = "Word Exported ✨";
+        } catch (globalErr) {
+            console.error("Critical Word Export Error:", globalErr);
+            statusText.textContent = "Export Failed: " + (globalErr.message || String(globalErr));
         }
-
-        statusText.textContent = "Generating Word Document...";
-
-        // Clone so we don't modify the live DOM
-        const clonedPreview = previewContainer.cloneNode(true);
-        // Convert any Mermaid SVGs to PNG images so Word can render them
-        await convertSvgsToImages(clonedPreview);
-
-        // Separate TOC and content for Word export
-        const tocEl = clonedPreview.querySelector('.toc-container');
-        let tocHtml = '';
-        let contentHtml = '';
-
-        if (tocEl) {
-            tocHtml = tocEl.outerHTML;
-            // Get content after TOC
-            const contentAfterToc = clonedPreview.querySelector('.content-after-toc');
-            contentHtml = contentAfterToc ? contentAfterToc.innerHTML : clonedPreview.innerHTML.replace(tocEl.outerHTML, '');
-        } else {
-            contentHtml = clonedPreview.innerHTML;
-        }
-
-        // Word-compatible HTML with separate sections for TOC and content
-        const wordHtml = `
-            <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-            <head>
-                <meta charset='utf-8'>
-                <title>Exported Document</title>
-                <style>
-                    @page {
-                        mso-page-orientation: portrait;
-                        size: A4;
-                        margin: 2.54cm 2.54cm 2.54cm 2.54cm;
-                        mso-header-margin: 1.27cm;
-                        mso-footer-margin: 1.27cm;
-                    }
-                    /* TOC Section — no page numbers */
-                    @page TocSection {
-                        mso-footer: none;
-                    }
-                    div.TocSection { page: TocSection; }
-                    /* Content Section — page numbers starting from 1 */
-                    @page ContentSection {
-                        mso-footer: f1;
-                        mso-page-numbers-start: 1;
-                    }
-                    div.ContentSection { page: ContentSection; }
-                    table.MsoFooter { margin: 0 auto; }
-                    body {
-                        font-family: 'Times New Roman', serif;
-                        font-size: 12pt;
-                        line-height: 1.6;
-                    }
-                    .toc-table {
-                        width: 100%;
-                        border-collapse: collapse;
-                    }
-                    .toc-table th, .toc-table td {
-                        border: 1px solid #000;
-                        padding: 6px 10px;
-                    }
-                </style>
-            </head>
-            <body>
-                ${tocHtml ? `<div class="TocSection">${tocHtml}<br clear=all style='mso-special-character:line-break;page-break-before:always'></div>` : ''}
-                <div class="ContentSection">
-                    ${contentHtml}
-                </div>
-                <div style="mso-element: footer;" id="f1">
-                    <p style="text-align: center; font-size: 10pt; color: #666;">
-                        <span style="mso-field-code: 'PAGE'"></span>
-                        <!--[if supportFields]><span style="mso-element:field-begin"></span>PAGE<span style="mso-element:field-end"></span><![endif]-->
-                    </p>
-                </div>
-            </body>
-            </html>
-        `;
-
-        const url = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(wordHtml);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'formatted_document.doc';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        statusText.textContent = "Word Exported ✨";
     });
 
 });

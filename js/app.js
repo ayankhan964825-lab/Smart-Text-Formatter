@@ -216,13 +216,32 @@ document.addEventListener('DOMContentLoaded', () => {
         return rules;
     }
 
+    // Helper function to remove AI boilerplate and UI elements from copied text
+    function removeAIBoilerplate(text) {
+        let cleaned = text;
+
+        // 1. Remove introductory conversational fillers (e.g. "Sure, here is the code:\n")
+        cleaned = cleaned.replace(/^(?:Sure[, ]*|Certainly[, ]*|Here is the[, ]*|Here are the[, ]*|As requested[, ]*)(?:[\w\s]+)?:\s*/i, '');
+
+        // 2. Remove common AI UI artifacts (standalone lines)
+        cleaned = cleaned.replace(/^[ \t]*(?:Copy code|Show drafts|Hide drafts|volume_up)[ \t]*$/gim, '');
+
+        // 3. Remove outro conversational/feedback UI elements
+        cleaned = cleaned.replace(/(?:Was this response better or worse\?|Regenerate response|Is this conversation helpful so far\?)[\s\S]*$/i, '');
+
+        // 4. Clean up any excessive newlines created by removals
+        cleaned = cleaned.replace(/\n{3,}/g, '\n\n');
+
+        return cleaned.trim();
+    }
+
     // --- State for AI Caching ---
     let lastParsedText = null;
     let cachedElements = null;
 
     // --- Core Processing Placeholder ---
     async function processTextUpdate(forceOverwrite = false) {
-        const textToProcess = rawInput.value;
+        let textToProcess = rawInput.value;
         const previewContainer = document.getElementById('formatted-preview');
 
         if (textToProcess.trim() === '') {
@@ -240,6 +259,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             return;
         }
+
+        // Clean up conversational filler before attempting to format
+        textToProcess = removeAIBoilerplate(textToProcess);
 
         try {
             let elements;
@@ -342,7 +364,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // --- Auto-detect and convert plain text bar charts to Mermaid xychart ---
             // Detects patterns like: 1951    ████    18%
             cleanedText = cleanedText.replace(
-                /((?:^|\n)[ \t]*\S[^\n]*\n(?:[ \t]*\S+[ \t]+[█▓▒░■]+[ \t]+\d+%?\s*\n?){2,})/gm,
+                /((?:^|\n)[ \t]*\S[^\n]*\n(?:[ \t]*[^\n█▓▒░■▆▇▃▄▅▐▌]+?[ \t]+[█▓▒░■▆▇▃▄▅▐▌]+[ \t]+[\d.]+%?\s*\n?){2,})/gm,
                 (match) => {
                     const lines = match.trim().split('\n');
                     let title = '';
@@ -352,10 +374,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     for (const line of lines) {
                         const trimmed = line.trim();
                         // Match bar pattern: label  ████  value%
-                        const barMatch = trimmed.match(/^(\S+)\s+[█▓▒░■]+\s+(\d+)%?\s*$/);
+                        const barMatch = trimmed.match(/^([^\n█▓▒░■▆▇▃▄▅▐▌]+?)\s+[█▓▒░■▆▇▃▄▅▐▌]+\s+([\d.]+)%?\s*$/);
                         if (barMatch) {
-                            labels.push(barMatch[1]);
-                            values.push(parseInt(barMatch[2], 10));
+                            labels.push(barMatch[1].trim());
+                            values.push(parseFloat(barMatch[2]));
                         } else if (!title && trimmed && labels.length === 0) {
                             // First non-bar line is the title
                             title = trimmed;
@@ -615,8 +637,77 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     }
 
+    // Helper: Convert all SVGs in a container to Base64 Image tags
+    // This solves the issue where html2canvas and MS Word cannot render raw SVGs properly
+    async function convertSvgsToImages(container) {
+        const svgs = Array.from(container.querySelectorAll('svg'));
+
+        for (const svg of svgs) {
+            // Get original dimensions to maintain aspect ratio
+            const bbox = svg.getBoundingClientRect();
+            let width = svg.getAttribute('width') || bbox.width;
+            let height = svg.getAttribute('height') || bbox.height;
+
+            // Fallback sizes if CSS drives it
+            if (!width || width === '100%') width = 800;
+            if (!height || height === '100%') height = 600;
+
+            // Ensure the SVG has explicit dimensions for the canvas to draw onto
+            svg.setAttribute('width', width);
+            svg.setAttribute('height', height);
+
+            // Serialize SVG to string
+            const serializer = new XMLSerializer();
+            let svgString = serializer.serializeToString(svg);
+
+            // Fix self-closing tags and namespaces (required for old browsers/canvas)
+            if (!svgString.match(/^<svg[^>]+xmlns="http\:\/\/www\.w3\.org\/2000\/svg"/)) {
+                svgString = svgString.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
+            }
+
+            // Create a Blob from the SVG string
+            const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+            const url = URL.createObjectURL(svgBlob);
+
+            // Draw SVG to Canvas to get a PNG data URL
+            const pngDataUrl = await new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = parseFloat(width);
+                    canvas.height = parseFloat(height);
+                    const ctx = canvas.getContext('2d');
+                    // Draw white background so transparent parts don't look weird
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(img, 0, 0);
+                    URL.revokeObjectURL(url);
+                    resolve(canvas.toDataURL('image/png', 1.0));
+                };
+                img.onerror = () => {
+                    console.warn('Failed to load SVG into image for conversion.');
+                    URL.revokeObjectURL(url);
+                    // Fallback to pure base64 SVG if canvas drawing fails
+                    resolve('data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgString))));
+                };
+                img.src = url;
+            });
+
+            // Replace SVG node with standard Image tag
+            const imgElement = document.createElement('img');
+            imgElement.src = pngDataUrl;
+            imgElement.style.width = '100%'; // Let it be responsive in the Word doc / PDF
+            imgElement.style.maxWidth = `${width}px`;
+            imgElement.style.display = 'block';
+            imgElement.style.margin = '10px auto';
+            imgElement.alt = 'Rendered Diagram';
+
+            svg.parentNode.replaceChild(imgElement, svg);
+        }
+    }
+
     // 2. Export PDF (using html2pdf.js)
-    exportPdfBtn.addEventListener('click', () => {
+    exportPdfBtn.addEventListener('click', async () => {
         const previewContainer = document.getElementById('formatted-preview');
         if (previewContainer.querySelector('.placeholder-text')) {
             alert("No content to export. Please format some text first.");
@@ -630,7 +721,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Create a wrapper with page-numbering CSS
         const wrapper = document.createElement('div');
-        wrapper.innerHTML = buildExportHtml(previewContainer.innerHTML);
+
+        // Deep clone the preview container so we don't modify the live DOM with our image swaps
+        const clonedPreview = previewContainer.cloneNode(true);
+
+        // Convert any Mermaid SVGs in the cloned node to PNG images so html2canvas renders them
+        await convertSvgsToImages(clonedPreview);
+
+        wrapper.innerHTML = buildExportHtml(clonedPreview.innerHTML);
         wrapper.style.backgroundColor = '#ffffff';
         wrapper.style.padding = '40px';
 
@@ -672,25 +770,32 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // 3. Export Word (.doc)
-    exportWordBtn.addEventListener('click', () => {
+    exportWordBtn.addEventListener('click', async () => {
         const previewContainer = document.getElementById('formatted-preview');
         if (previewContainer.querySelector('.placeholder-text')) {
             alert("No content to export. Please format some text first.");
             return;
         }
 
+        statusText.textContent = "Generating Word Document...";
+
+        // Clone so we don't modify the live DOM
+        const clonedPreview = previewContainer.cloneNode(true);
+        // Convert any Mermaid SVGs to PNG images so Word can render them
+        await convertSvgsToImages(clonedPreview);
+
         // Separate TOC and content for Word export
-        const tocEl = previewContainer.querySelector('.toc-container');
+        const tocEl = clonedPreview.querySelector('.toc-container');
         let tocHtml = '';
         let contentHtml = '';
 
         if (tocEl) {
             tocHtml = tocEl.outerHTML;
             // Get content after TOC
-            const contentAfterToc = previewContainer.querySelector('.content-after-toc');
-            contentHtml = contentAfterToc ? contentAfterToc.innerHTML : previewContainer.innerHTML.replace(tocEl.outerHTML, '');
+            const contentAfterToc = clonedPreview.querySelector('.content-after-toc');
+            contentHtml = contentAfterToc ? contentAfterToc.innerHTML : clonedPreview.innerHTML.replace(tocEl.outerHTML, '');
         } else {
-            contentHtml = previewContainer.innerHTML;
+            contentHtml = clonedPreview.innerHTML;
         }
 
         // Word-compatible HTML with separate sections for TOC and content

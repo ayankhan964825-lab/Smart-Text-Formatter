@@ -49,7 +49,7 @@ HEADINGS AND BODY TEXT MUST ALWAYS BE SEPARATE OBJECTS.
 - If you see text-based diagrams using ASCII art characters (├──, └──, ▼, →, |, etc.), tree structures, or arrow flows, classify them as "p" type. Do NOT try to convert them into any special type.
 - Placeholder texts like "%%MERMAID_PLACEHOLDER_0%%" should be classified as "p" type and passed through unchanged.
 
---- OCR & PDF CLEANUP RULES ---
+--- OCR, PDF & AI BOILERPLATE CLEANUP RULES ---
 A. CITATIONS: Google Lens often mangles academic citations at the ends of sentences (e.g., "energy 4", "[1] [21.", "[1], 12), [31, (4]").
    - You MUST detect these broken citations and format them cleanly as SEPARATE standard brackets: "[1]" or "[1] [2] [4]".
    - NEVER use comma-separated groups like "[1, 2, 4]". Every citation number gets its own bracket.
@@ -57,7 +57,8 @@ A. CITATIONS: Google Lens often mangles academic citations at the ends of senten
    - NEVER format floating numbers like 12, 13, 14, 21, 31, or 41 as citations. If you see them trailing a sentence, they are OCR noise. IGNORE them completely and remove them from the output text.
    - Crucially, these fixed citations MUST remain attached to the very end of the sentence inside their parent "p" block. Do NOT split them into a new block, and do NOT classify them as an "h2".
 B. FLOATING NOISE: If you detect stray PDF page numbers (e.g., a single line that just says "12" or "Page 4") or trailing large numerals above 5, completely IGNORE and REMOVE that block from your JSON array.
-C. TYPOS: Do not fix general spelling mistakes or grammar. Only fix the citations as requested above.
+C. AI BOILERPLATE: If you see conversational filler from an AI tool like "Sure, here is the code:" at the start, or UI artifacts like "Copy code", "Show drafts", "Was this response better or worse?", "Regenerate response", COMPLETELY IGNORE AND REMOVE them from your JSON output. Do NOT classify them as "p" or any other type.
+D. TYPOS: Do not fix general spelling mistakes or grammar. Only fix the citations as requested above.
 
 5. Do NOT return markdown formatting like \\\`\\\`\\\`json. Return only raw JSON data.`;
 

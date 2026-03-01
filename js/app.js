@@ -472,26 +472,42 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (extractedMermaid.length > 0) {
                     const finalElements = [];
                     for (const el of elements) {
-                        // Check if this element's content contains a mermaid placeholder
-                        const placeholderMatch = (el.content || '').match(/%%MERMAID_PLACEHOLDER_(\d+)%%/);
-                        if (placeholderMatch) {
-                            const idx = parseInt(placeholderMatch[1], 10);
-                            // If there's text before the placeholder, keep it as a separate element
-                            const before = (el.content || '').split(`%%MERMAID_PLACEHOLDER_${idx}%%`)[0].trim();
-                            if (before) {
-                                finalElements.push({ ...el, content: before });
+                        let contentToProcess = el.content || '';
+                        let hasPlaceholder = false;
+
+                        // Find ALL placeholders in this block (AI might group them together or drop percent signs)
+                        let match;
+                        while ((match = contentToProcess.match(/%*MERMAID_PLACEHOLDER_(\d+)%*/))) {
+                            hasPlaceholder = true;
+                            const idx = parseInt(match[1], 10);
+                            const textBefore = contentToProcess.substring(0, match.index);
+
+                            // 1. Push text before placeholder as its own block if it exists
+                            // Strip any stray markdown pipe characters that the AI appended around placeholders
+                            const cleanBefore = textBefore.trim().replace(/^\|\s*/, '').replace(/\s*\|$/, '');
+                            if (cleanBefore) {
+                                finalElements.push({ ...el, content: cleanBefore });
                             }
-                            // Insert the element with the correct type
+
+                            // 2. Push the restored Mermaid or HTML table
                             const extractedContent = extractedMermaid[idx];
-                            if (extractedContent.startsWith('__HTML_TABLE__')) {
-                                finalElements.push({ type: 'html', content: extractedContent.replace('__HTML_TABLE__', '') });
-                            } else {
-                                finalElements.push({ type: 'mermaid', content: extractedContent });
+                            if (extractedContent) {
+                                if (extractedContent.startsWith('__HTML_TABLE__')) {
+                                    finalElements.push({ type: 'html', content: extractedContent.replace('__HTML_TABLE__', '') });
+                                } else {
+                                    finalElements.push({ type: 'mermaid', content: extractedContent });
+                                }
                             }
-                            // If there's text after the placeholder, keep it too
-                            const after = (el.content || '').split(`%%MERMAID_PLACEHOLDER_${idx}%%`)[1]?.trim();
-                            if (after) {
-                                finalElements.push({ ...el, content: after });
+
+                            // 3. Keep the remaining text for the next loop iteration
+                            contentToProcess = contentToProcess.substring(match.index + match[0].length);
+                        }
+
+                        // If there is trailing text AFTER all placeholders (or no placeholders at all)
+                        if (hasPlaceholder) {
+                            const cleanAfter = contentToProcess.trim().replace(/^\|\s*/, '').replace(/\s*\|$/, '');
+                            if (cleanAfter) {
+                                finalElements.push({ ...el, content: cleanAfter });
                             }
                         } else {
                             finalElements.push(el);

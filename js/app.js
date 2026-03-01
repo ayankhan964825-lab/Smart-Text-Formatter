@@ -782,6 +782,11 @@ document.addEventListener('DOMContentLoaded', () => {
             wrapper.innerHTML = buildExportHtml(clonedPreview.innerHTML);
             wrapper.style.backgroundColor = '#ffffff';
             wrapper.style.padding = '40px';
+            wrapper.style.boxSizing = 'border-box'; // Ensure padding doesn't push width beyond 100%
+            wrapper.style.width = '100%';
+            wrapper.style.maxWidth = '100%';
+            wrapper.style.overflowWrap = 'break-word'; // Prevent long words from clipping
+            wrapper.style.wordWrap = 'break-word';
 
             const opt = {
                 margin: [15, 10, 20, 10], // top, right, bottom, left (mm) — extra bottom for page number
@@ -909,15 +914,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 </html>
             `;
 
-            // Use Blob instead of encodeURIComponent to support massive documents without throwing URI malformed or hitting string size limits
-            const blob = new Blob(['\ufeff', wordHtml], {
-                type: 'application/msword;charset=utf-8'
-            });
-            const url = URL.createObjectURL(blob);
+            // Use htmlDocx to convert the HTML payload into a true zipped .docx container
+            // This natively supports Base64 images and guarantees cross-platform compatibility 
+            // natively required by strict systems like iOS / Apple Pages and Google Docs.
+            const docxBlob = htmlDocx.asBlob(wordHtml);
+            const url = URL.createObjectURL(docxBlob);
 
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'formatted_document.doc';
+            a.download = 'formatted_document.docx';
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);

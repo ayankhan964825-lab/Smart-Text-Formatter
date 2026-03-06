@@ -730,3 +730,150 @@ body {
     max-width: 100%;
     height: auto;
 }
+
+/* ==========================================================================
+   Attractive Loading Overlay
+   ========================================================================== */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.2);
+    /* Very high transparency */
+    backdrop-filter: blur(4px);
+    /* Soft blur so background is clearly visible */
+    -webkit-backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    opacity: 1;
+    transition: opacity 0.4s ease;
+}
+
+.loading-overlay[style*="display: none"] {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.loading-content {
+    background: rgba(255, 255, 255, 0.95);
+    /* Mostly solid but slightly translucent white */
+    border: 1px solid rgba(49, 130, 206, 0.15);
+    /* Subtle primary color border */
+    padding: 35px 55px;
+    border-radius: 16px;
+    /* Slightly softer corners matching the website */
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06), 0 2px 10px rgba(49, 130, 206, 0.05);
+    /* Very soft shadow */
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 420px;
+    animation: slideUpFade 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+@keyframes slideUpFade {
+    0% {
+        transform: translateY(20px) scale(0.95);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+.spinner-container {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.spinner-ring {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    border-top-color: var(--primary-color);
+    border-right-color: rgba(49, 130, 206, 0.4);
+    animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+}
+
+.spinner-ring.inner {
+    width: 70%;
+    height: 70%;
+    border-top-color: transparent;
+    border-right-color: transparent;
+    border-bottom-color: #f6ad55;
+    /* Orange accent */
+    border-left-color: rgba(246, 173, 85, 0.4);
+    animation: spin-reverse 1.5s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+}
+
+.ai-sparkle {
+    color: var(--primary-color);
+    position: absolute;
+    animation: pulse-sparkle 2s ease-in-out infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes spin-reverse {
+    0% {
+        transform: rotate(360deg);
+    }
+
+    100% {
+        transform: rotate(0deg);
+    }
+}
+
+@keyframes pulse-sparkle {
+
+    0%,
+    100% {
+        transform: scale(0.8);
+        opacity: 0.6;
+    }
+
+    50% {
+        transform: scale(1.1);
+        opacity: 1;
+    }
+}
+
+.loading-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, var(--primary-color), #805ad5);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.loading-subtitle {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin: 0;
+}

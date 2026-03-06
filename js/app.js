@@ -263,6 +263,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // Clean up conversational filler before attempting to format
         textToProcess = removeAIBoilerplate(textToProcess);
 
+        const loadingOverlay = document.getElementById('loading-overlay');
+        if (loadingOverlay) loadingOverlay.style.display = 'flex';
+
         try {
             let elements;
 
@@ -276,6 +279,129 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             // --- Auto-detect and convert plain text flowcharts to Mermaid ---
+            // Strip out random standalone markdown backticks (```) that ChatGPT wraps text in
+            cleanedText = cleanedText.replace(/^\s*```[a-zA-Z]*\s*$/gm, '');
+
+            // 1. Auto-detect robust node-arrow flowchart sequences
+            // Instead of a single complex regex, we'll find blocks of text that look like flowcharts and replace them.
+            cleanedText = cleanedText.replace(
+                // Capture everything between headings/lists or start/end of string
+                /([\s\S]+?)(?=(?:\n#{1,6}\s|\n\d+\.\s|\n[A-Z]\.\s|$))/g,
+                (passage) => {
+                    const hasArrow = /(↓|→|->|=>|v|\^|<|>)/i.test(passage);
+                    if (!hasArrow) return passage;
+
+                    // Split the passage by newlines to examine it line by line
+                    let lines = passage.split('\n');
+                    let newPassage = [];
+
+                    let isBuildingFlowchart = false;
+                    let currentFlowchartParts = [];
+
+                    const arrowLineRegex = /^[ \t]*(↓|→|->|=>|v|V|\^|<|>)[ \t]*$/i;
+                    const inlineArrowRegex = /\s+(↓|→|->|=>)\s+/;
+
+                    // Helper for finalizing accumulated multi-line flowcharts
+                    const finalizeFlowchart = (parts) => {
+                        let nodes = [];
+                        let arrows = [];
+                        const arrowValidator = /^(↓|→|->|=>|v|V|\^|<|>)$/i;
+
+                        for (let part of parts) {
+                            if (arrowValidator.test(part)) arrows.push(part);
+                            else nodes.push(part);
+                        }
+
+                        // Minimum requirement for a flowchart
+                        if (nodes.length >= 2 && arrows.length >= 1 && arrows.length >= nodes.length - 2) {
+                            const hasDown = arrows.some(a => ['↓', 'v', 'V'].includes(a.toLowerCase()));
+                            const direction = hasDown ? 'TD' : 'LR';
+                            let mermaidCode = `graph ${direction}\n`;
+
+                            for (let i = 0; i < nodes.length; i++) {
+                                mermaidCode += `    N${i}["${nodes[i].replace(/"/g, "'")}"]\n`;
+                            }
+                            for (let i = 0; i < nodes.length - 1; i++) {
+                                mermaidCode += `    N${i} --> N${i + 1}\n`;
+                            }
+                            const index = extractedMermaid.length;
+                            extractedMermaid.push(mermaidCode.trim());
+                            newPassage.push(`\n\n%%MERMAID_PLACEHOLDER_${index}%%\n\n`);
+                        } else {
+                            // Not a valid sequence, just put the text back
+                            newPassage.push(...parts);
+                        }
+                    };
+
+                    for (let i = 0; i < lines.length; i++) {
+                        const originalLine = lines[i];
+                        const line = originalLine.trim();
+
+                        if (!line) {
+                            if (isBuildingFlowchart) continue; // Ignore blank lines inside a flowchart
+                            else { newPassage.push(originalLine); continue; }
+                        }
+
+                        // Check if line itself is a full inline flowchart (e.g., A ↓ B)
+                        if (!isBuildingFlowchart && inlineArrowRegex.test(line)) {
+                            const parts = line.split(inlineArrowRegex);
+                            if (parts.length >= 5) {
+                                const nodes = [], arrows = [];
+                                for (let p = 0; p < parts.length; p++) {
+                                    if (p % 2 === 0) nodes.push(parts[p].trim());
+                                    else arrows.push(parts[p].trim());
+                                }
+                                if (nodes.length >= 3) {
+                                    const dir = (arrows[0] === '→' || arrows[0] === '->' || arrows[0] === '=>') ? 'LR' : 'TD';
+                                    let mermaidCode = `graph ${dir}\n`;
+                                    for (let n = 0; n < nodes.length; n++) mermaidCode += `    N${n}["${nodes[n].replace(/"/g, "'")}"]\n`;
+                                    for (let n = 0; n < nodes.length - 1; n++) mermaidCode += `    N${n} --> N${n + 1}\n`;
+                                    const index = extractedMermaid.length;
+                                    extractedMermaid.push(mermaidCode.trim());
+                                    newPassage.push(`\n\n%%MERMAID_PLACEHOLDER_${index}%%\n\n`);
+                                    continue;
+                                }
+                            }
+                        }
+
+                        // Start / Continue Multiline Flowchart
+                        const isArrowOnlyLine = arrowLineRegex.test(line);
+
+                        if (isBuildingFlowchart) {
+                            // If it's a very long sentence, it's probably not a flowchart node anymore, break out.
+                            if (line.length > 100) {
+                                finalizeFlowchart(currentFlowchartParts);
+                                isBuildingFlowchart = false;
+                                currentFlowchartParts = [];
+                                newPassage.push(originalLine); // Push the text that broke it
+                            } else {
+                                currentFlowchartParts.push(line);
+                            }
+                        } else {
+                            // Lookahead to see if this is the start of a flowchart (Node \n Arrow)
+                            if (line.length < 100 && i + 1 < lines.length) {
+                                // Find next non-empty line
+                                let nextLine = '';
+                                for (let j = i + 1; j < lines.length; j++) {
+                                    if (lines[j].trim()) { nextLine = lines[j].trim(); break; }
+                                }
+                                if (arrowLineRegex.test(nextLine)) {
+                                    isBuildingFlowchart = true;
+                                    currentFlowchartParts.push(line);
+                                    continue;
+                                }
+                            }
+                            newPassage.push(originalLine);
+                        }
+                    }
+
+                    if (isBuildingFlowchart) finalizeFlowchart(currentFlowchartParts);
+
+                    return newPassage.join('\n');
+                }
+            );
+
+            // 2. Auto-detect vertical multiline flowcharts
             // Detects patterns like: Text1 \n | \n ▼ \n Text2 \n | \n ▼ \n Text3
             // Also detects tree structures with ├──, └──, │
             cleanedText = cleanedText.replace(
@@ -361,6 +487,108 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             );
 
+            // Also detect ASCII org-chart trees using | and __ connectors
+            // Format:     Poverty
+            //                |
+            //          __|__|__
+            //          |   |   |
+            //    Unemployment  Lack of Education  Population Growth
+            //          |            |                   |
+            //    Low Income    Skill Gap       Resource Pressure
+            cleanedText = cleanedText.replace(
+                /((?:^|\n)[ \t]*\S[^\n]*\n(?:[ \t]*(?:[|│]|[_─\-]+[|│]?[_─\-]*|[^\S\n]*[|│][^\S\n]*)+[ \t]*\n)*(?:[ \t]*\S[^\n]*\n)*(?:[ \t]*(?:[|│]|[_─\-]+[|│]?[_─\-]*)+[ \t]*\n)*(?:[ \t]*\S[^\n]*\n?)*){1,}/gm,
+                (match) => {
+                    const lines = match.trim().split('\n');
+
+                    // Identify connector lines vs text lines
+                    const isConnectorLine = (line) => {
+                        const trimmed = line.trim();
+                        if (!trimmed) return true;
+                        // Lines that are ONLY made of |, _, -, ─, │, spaces
+                        return /^[|│_─\-\s]+$/.test(trimmed);
+                    };
+
+                    // Extract text groups at each level  
+                    const levels = [];
+                    let currentLevel = [];
+                    let hasConnectors = false;
+
+                    for (const line of lines) {
+                        if (isConnectorLine(line)) {
+                            hasConnectors = true;
+                            if (currentLevel.length > 0) {
+                                levels.push(currentLevel);
+                                currentLevel = [];
+                            }
+                        } else {
+                            // Extract text segments from this line
+                            // Multiple nodes might be on the same line separated by spaces
+                            const trimmed = line.trim();
+                            if (trimmed) currentLevel.push(trimmed);
+                        }
+                    }
+                    if (currentLevel.length > 0) levels.push(currentLevel);
+
+                    // Need at least 2 levels and some connectors to be a tree
+                    if (levels.length < 2 || !hasConnectors) return match;
+
+                    // Flatten: first level is the root, subsequent levels are children
+                    // We need to split multi-word lines into separate nodes when they represent siblings
+                    const allNodes = [];
+                    const edges = [];
+
+                    // Process first level as root
+                    const rootTexts = levels[0];
+                    const rootLabel = rootTexts.join(' ').trim();
+                    if (!rootLabel || rootLabel.length > 100) return match;
+                    allNodes.push(rootLabel);
+
+                    // Process subsequent levels
+                    for (let lvl = 1; lvl < levels.length; lvl++) {
+                        const parentStartIdx = allNodes.length - (lvl > 1 ? levels[lvl - 1].join(' ').split(/\s{2,}/).length : 1);
+
+                        // Join all text lines at this level and split by double+ spaces (sibling separator)
+                        const levelText = levels[lvl].join(' ');
+                        const siblings = levelText.split(/\s{2,}/).map(s => s.trim()).filter(s => s.length > 0);
+
+                        if (siblings.length === 0) continue;
+
+                        // Determine parent: if this is level 1, parent is root
+                        // If deeper, distribute among previous level's nodes
+                        const prevLevelNodes = lvl === 1
+                            ? [0]
+                            : Array.from({ length: levels[lvl - 1].join(' ').split(/\s{2,}/).length }, (_, i) => parentStartIdx + i);
+
+                        for (let s = 0; s < siblings.length; s++) {
+                            const nodeIdx = allNodes.length;
+                            allNodes.push(siblings[s]);
+                            // Connect to parent: distribute siblings evenly among parents
+                            const parentIdx = prevLevelNodes.length === 1
+                                ? prevLevelNodes[0]
+                                : prevLevelNodes[Math.min(s, prevLevelNodes.length - 1)];
+                            if (parentIdx >= 0 && parentIdx < allNodes.length) {
+                                edges.push([parentIdx, nodeIdx]);
+                            }
+                        }
+                    }
+
+                    if (allNodes.length >= 3 && edges.length >= 2) {
+                        let mermaidCode = 'graph TD\n';
+                        for (let i = 0; i < allNodes.length; i++) {
+                            const safeLabel = allNodes[i].replace(/"/g, "'");
+                            mermaidCode += `    N${i}["${safeLabel}"]\n`;
+                        }
+                        for (const [from, to] of edges) {
+                            mermaidCode += `    N${from} --> N${to}\n`;
+                        }
+                        const index = extractedMermaid.length;
+                        extractedMermaid.push(mermaidCode.trim());
+                        return `\n\n%%MERMAID_PLACEHOLDER_${index}%%\n\n`;
+                    }
+                    return match;
+                }
+            );
+
             // --- Auto-detect and convert plain text bar charts to Mermaid xychart ---
             // Detects patterns like: 1951    ████    18%
             cleanedText = cleanedText.replace(
@@ -392,6 +620,167 @@ document.addEventListener('DOMContentLoaded', () => {
                         mermaidCode += `    x-axis [${labels.map(l => `"${l}"`).join(', ')}]\n`;
                         mermaidCode += `    y-axis "Value" 0 --> ${yMax}\n`;
                         mermaidCode += `    bar [${values.join(', ')}]\n`;
+
+                        const index = extractedMermaid.length;
+                        extractedMermaid.push(mermaidCode.trim());
+                        return `\n\n%%MERMAID_PLACEHOLDER_${index}%%\n\n`;
+                    }
+                    return match;
+                }
+            );
+
+            // --- Auto-detect VERTICAL bar charts (ChatGPT format): value | ████ with axis labels at bottom ---
+            // Detects: 50 | ████████████████████████
+            //          40 | ████████████████████
+            //          ...
+            //          1993    2005    2011    2022
+            cleanedText = cleanedText.replace(
+                /((?:^|\n)[ \t]*(?:\S[^\n]*\n)?(?:[ \t]*\d+[\s]*\|[ \t]*[█▓▒░■▆▇▃▄▅▐▌]+[ \t]*\n?){2,}(?:[ \t]*\d+[\s]*\|[ \t]*[█▓▒░■▆▇▃▄▅▐▌]*[ \t]*\n)?(?:[ \t]*(?:\d{4}|\w+)(?:\s+(?:\d{4}|\w+))*[ \t]*\n?)?)/gm,
+                (match) => {
+                    const lines = match.trim().split('\n');
+                    let title = '';
+                    const yValues = [];
+                    const barLengths = [];
+                    let xLabels = [];
+
+                    for (const line of lines) {
+                        const trimmed = line.trim();
+                        // Match: value | ████ (Y-axis value on left, bars on right)
+                        const vertBarMatch = trimmed.match(/^(\d+)\s*\|\s*([█▓▒░■▆▇▃▄▅▐▌]+)\s*$/);
+                        // Match: value | (empty bar, value = 0)
+                        const emptyBarMatch = trimmed.match(/^(\d+)\s*\|\s*$/);
+                        // Match X-axis labels (multiple years/words separated by spaces)
+                        const xLabelMatch = trimmed.match(/^(\d{4}(?:\s+\d{4}){1,})\s*$/);
+                        const xLabelWordsMatch = trimmed.match(/^(\w+(?:\s+\w+){1,})\s*$/);
+
+                        if (vertBarMatch) {
+                            yValues.push(parseInt(vertBarMatch[1], 10));
+                            barLengths.push(vertBarMatch[2].length);
+                        } else if (emptyBarMatch) {
+                            yValues.push(parseInt(emptyBarMatch[1], 10));
+                            barLengths.push(0);
+                        } else if (xLabelMatch) {
+                            xLabels = xLabelMatch[1].split(/\s+/);
+                        } else if (!title && trimmed && yValues.length === 0 && !xLabelMatch) {
+                            title = trimmed;
+                        } else if (xLabels.length === 0 && yValues.length > 0 && xLabelWordsMatch) {
+                            // Fallback: try word-based X labels
+                            const words = xLabelWordsMatch[1].split(/\s+/);
+                            if (words.length >= 2) xLabels = words;
+                        }
+                    }
+
+                    if (yValues.length >= 2 && barLengths.length >= 2) {
+                        // Map bar lengths proportionally to Y-values
+                        // The longest bar corresponds to the highest Y-axis value shown
+                        const maxYValue = Math.max(...yValues);
+                        const maxBarLen = Math.max(...barLengths);
+
+                        // Use Y-axis values/bar lengths to estimate data values
+                        // Each bar's value = (barLength / maxBarLength) * maxYValue
+                        const dataValues = barLengths.map(len =>
+                            maxBarLen > 0 ? Math.round((len / maxBarLen) * maxYValue) : 0
+                        );
+
+                        // If no X-axis labels were found, generate generic ones
+                        if (xLabels.length === 0) {
+                            xLabels = dataValues.map((_, i) => `Item ${i + 1}`);
+                        }
+
+                        // Ensure we have enough labels for the data
+                        while (xLabels.length < dataValues.length) {
+                            xLabels.push(`Item ${xLabels.length + 1}`);
+                        }
+
+                        // Reverse if needed (chart goes top-down: highest value first)
+                        // The bars are listed from top (highest Y) to bottom (lowest Y)
+                        const reversedValues = [...dataValues].reverse();
+                        const finalLabels = xLabels.slice(0, reversedValues.length);
+
+                        const yMax = Math.ceil(maxYValue / 10) * 10 + 10;
+                        let mermaidCode = 'xychart-beta\n';
+                        if (title) mermaidCode += `    title "${title}"\n`;
+                        mermaidCode += `    x-axis [${finalLabels.map(l => `"${l}"`).join(', ')}]\n`;
+                        mermaidCode += `    y-axis "Value" 0 --> ${yMax}\n`;
+                        mermaidCode += `    bar [${reversedValues.join(', ')}]\n`;
+
+                        const index = extractedMermaid.length;
+                        extractedMermaid.push(mermaidCode.trim());
+                        return `\n\n%%MERMAID_PLACEHOLDER_${index}%%\n\n`;
+                    }
+                    return match;
+                }
+            );
+
+            // --- Auto-detect ASCII line/scatter graphs with * markers ---
+            // Detects: 45% |  *
+            //          40% |    *
+            //          ...
+            //          10% |              *
+            //              1993  2005  2011  2022
+            cleanedText = cleanedText.replace(
+                /((?:^|\n)[ \t]*(?:\S[^\n]*\n)?(?:[ \t]*\d+%?\s*\|[^\n*·•]*[*·•][^\n]*\n?){2,}(?:[ \t]*(?:\d{4}|\w+)(?:\s+(?:\d{4}|\w+))*[ \t]*\n?)?)/gm,
+                (match) => {
+                    const lines = match.trim().split('\n');
+                    let title = '';
+                    const dataPoints = []; // {y, col} where col = position of * relative to |
+                    let xLabels = [];
+
+                    for (const line of lines) {
+                        const trimmed = line.trim();
+                        // Match: value% | spaces * (star at some position)
+                        const graphLineMatch = trimmed.match(/^(\d+)%?\s*\|(.*)([*·•])/);
+                        if (graphLineMatch) {
+                            const yValue = parseInt(graphLineMatch[1], 10);
+                            const beforeStar = graphLineMatch[2]; // text between | and *
+                            const starCol = beforeStar.length; // horizontal position of *
+                            dataPoints.push({ y: yValue, col: starCol });
+                            continue;
+                        }
+
+                        // Match X-axis labels (years separated by spaces)
+                        const xLabelMatch = trimmed.match(/^(\d{4}(?:\s+\d{4}){1,})\s*$/);
+                        if (xLabelMatch) {
+                            xLabels = xLabelMatch[1].split(/\s+/);
+                            continue;
+                        }
+
+                        // Non-data, non-label line = title candidate
+                        if (!title && trimmed && dataPoints.length === 0 && !xLabelMatch) {
+                            title = trimmed;
+                        }
+                    }
+
+                    if (dataPoints.length >= 3 && xLabels.length >= 2) {
+                        // Map star horizontal positions to X-axis labels
+                        const minCol = Math.min(...dataPoints.map(d => d.col));
+                        const maxCol = Math.max(...dataPoints.map(d => d.col));
+                        const colRange = maxCol - minCol || 1;
+
+                        // For each X-label, find the closest data point
+                        const chartData = [];
+                        for (let i = 0; i < xLabels.length; i++) {
+                            const targetCol = minCol + (i / (xLabels.length - 1)) * colRange;
+                            // Find the closest data point to this column
+                            let closest = dataPoints[0];
+                            let closestDist = Math.abs(dataPoints[0].col - targetCol);
+                            for (const dp of dataPoints) {
+                                const dist = Math.abs(dp.col - targetCol);
+                                if (dist < closestDist) {
+                                    closest = dp;
+                                    closestDist = dist;
+                                }
+                            }
+                            chartData.push(closest.y);
+                        }
+
+                        const maxVal = Math.max(...chartData);
+                        const yMax = Math.ceil(maxVal / 10) * 10 + 10;
+                        let mermaidCode = 'xychart-beta\n';
+                        if (title) mermaidCode += `    title "${title}"\n`;
+                        mermaidCode += `    x-axis [${xLabels.map(l => `"${l}"`).join(', ')}]\n`;
+                        mermaidCode += `    y-axis "Percentage" 0 --> ${yMax}\n`;
+                        mermaidCode += `    line [${chartData.join(', ')}]\n`;
 
                         const index = extractedMermaid.length;
                         extractedMermaid.push(mermaidCode.trim());
@@ -499,6 +888,157 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                     elements = finalElements;
                 }
+
+                // --- Post-processing: Detect inline arrow flowcharts in paragraph elements ---
+                // The AI often collapses multi-line flowchart text into a single paragraph like:
+                // "Low Income ↓ Lack of Education ↓ Unemployment ↓ ..."
+                // This pass catches those and converts them to Mermaid diagrams.
+                const postProcessedElements = [];
+                for (const el of elements) {
+                    if ((el.type === 'p' || el.type === 'li') && el.content) {
+                        // Check for inline arrow patterns: at least 2 arrows separating 3+ nodes
+                        const inlineArrowSplitRegex = /\s*[↓→]\s*|\s+(?:->|=>)\s+/;
+                        const parts = el.content.split(inlineArrowSplitRegex);
+
+                        if (parts.length >= 3 && parts.every(p => p.trim().length > 0 && p.trim().length < 80)) {
+                            // Count actual arrows in the original text
+                            const arrowCount = (el.content.match(/[↓→]|(?:->)|(?:=>)/g) || []).length;
+
+                            if (arrowCount >= 2) {
+                                const nodes = parts.map(p => p.trim());
+                                // Determine direction based on arrow type
+                                const hasDown = /↓/.test(el.content);
+                                const direction = hasDown ? 'TD' : 'LR';
+                                let mermaidCode = `graph ${direction}\n`;
+
+                                for (let i = 0; i < nodes.length; i++) {
+                                    const safeLabel = nodes[i].replace(/"/g, "'");
+                                    mermaidCode += `    N${i}["${safeLabel}"]\n`;
+                                }
+                                for (let i = 0; i < nodes.length - 1; i++) {
+                                    mermaidCode += `    N${i} --> N${i + 1}\n`;
+                                }
+
+                                postProcessedElements.push({
+                                    type: 'mermaid',
+                                    content: mermaidCode.trim()
+                                });
+                                continue; // Skip pushing the original paragraph
+                            }
+                        }
+                        // --- Post-processing: Detect bar chart text in paragraphs ---
+                        // The AI might collapse bar chart lines into: "50 | ████████████████████████ 40 | ████████████████████ 30 | ██████████████ ..."
+                        // Or just preserve █ characters with numbers
+                        if (el.content && /[█▓▒░■▆▇▃▄▅▐▌]/.test(el.content)) {
+                            // Try to extract "number | bars" patterns
+                            const barMatches = [...el.content.matchAll(/(\d+)\s*\|\s*([█▓▒░■▆▇▃▄▅▐▌]+)/g)];
+                            if (barMatches.length >= 2) {
+                                const yValues = barMatches.map(m => parseInt(m[1], 10));
+                                const barLengths = barMatches.map(m => m[2].length);
+
+                                // Try to find X-axis labels (years like 1993 2005 2011)
+                                const yearMatches = el.content.match(/\b(\d{4})\b/g);
+                                let xLabels = [];
+                                if (yearMatches && yearMatches.length >= 2) {
+                                    // Filter out years that are Y-axis values
+                                    xLabels = yearMatches.filter(y => !yValues.includes(parseInt(y, 10)));
+                                }
+                                if (xLabels.length === 0) {
+                                    xLabels = barMatches.map((_, i) => `Item ${i + 1}`);
+                                }
+
+                                const maxYValue = Math.max(...yValues);
+                                const maxBarLen = Math.max(...barLengths);
+                                const dataValues = barLengths.map(len =>
+                                    maxBarLen > 0 ? Math.round((len / maxBarLen) * maxYValue) : 0
+                                );
+
+                                // Reverse (top-down: highest value first in text)
+                                const reversedValues = [...dataValues].reverse();
+                                const finalLabels = xLabels.slice(0, reversedValues.length);
+                                while (finalLabels.length < reversedValues.length) {
+                                    finalLabels.push(`Item ${finalLabels.length + 1}`);
+                                }
+
+                                const yMax = Math.ceil(maxYValue / 10) * 10 + 10;
+                                let mermaidCode = 'xychart-beta\n';
+                                mermaidCode += `    x-axis [${finalLabels.map(l => `"${l}"`).join(', ')}]\n`;
+                                mermaidCode += `    y-axis "Value" 0 --> ${yMax}\n`;
+                                mermaidCode += `    bar [${reversedValues.join(', ')}]\n`;
+
+                                postProcessedElements.push({
+                                    type: 'mermaid',
+                                    content: mermaidCode.trim()
+                                });
+                                continue;
+                            }
+                        }
+                        // --- Post-processing: Detect collapsed line/scatter graph in paragraphs ---
+                        // AI might collapse it to: "45% | 40% | 35% | 30% | 25% | 20% | 15% | 10% | 1993 2005 2011 2022"
+                        if (el.content && /\d+%\s*\|/.test(el.content)) {
+                            // Extract percentage values
+                            const pctMatches = [...el.content.matchAll(/(\d+)%/g)];
+                            // Extract year labels (4-digit numbers not followed by %)
+                            const yearMatches = [...el.content.matchAll(/\b(\d{4})\b(?!%)/g)];
+
+                            if (pctMatches.length >= 3 && yearMatches.length >= 2) {
+                                const yValues = pctMatches.map(m => parseInt(m[1], 10));
+                                const xLabels = yearMatches.map(m => m[1]);
+
+                                // Map: subsample the y-values evenly to match x-labels
+                                const chartData = [];
+                                for (let i = 0; i < xLabels.length; i++) {
+                                    const idx = Math.round(i * (yValues.length - 1) / (xLabels.length - 1));
+                                    chartData.push(yValues[idx]);
+                                }
+
+                                const maxVal = Math.max(...chartData);
+                                const yMax = Math.ceil(maxVal / 10) * 10 + 10;
+                                let mermaidCode = 'xychart-beta\n';
+                                mermaidCode += `    x-axis [${xLabels.map(l => `"${l}"`).join(', ')}]\n`;
+                                mermaidCode += `    y-axis "Percentage" 0 --> ${yMax}\n`;
+                                mermaidCode += `    line [${chartData.join(', ')}]\n`;
+
+                                postProcessedElements.push({
+                                    type: 'mermaid',
+                                    content: mermaidCode.trim()
+                                });
+                                continue;
+                            }
+                        }
+                        // --- Post-processing: Detect tree/hierarchy diagrams in paragraphs ---
+                        // AI might collapse a tree diagram into something like:
+                        // "Poverty | __|__|__ | | | Unemployment Lack of Education Population Growth | | | Low Income Skill Gap Resource Pressure"
+                        if (el.content && /[|│]/.test(el.content) && /[_─\-]{2,}/.test(el.content)) {
+                            // This looks like a collapsed tree diagram
+                            // Split by | and extract text segments
+                            const segments = el.content.split(/\s*[|│]\s*/).map(s => s.trim()).filter(s => s.length > 0);
+                            // Filter out connector-only segments (just _, -, ─)
+                            const textSegments = segments.filter(s => !/^[_─\-\s]+$/.test(s));
+
+                            if (textSegments.length >= 3) {
+                                // First segment is the root, rest are children
+                                let mermaidCode = 'graph TD\n';
+                                for (let i = 0; i < textSegments.length; i++) {
+                                    const safeLabel = textSegments[i].replace(/"/g, "'");
+                                    mermaidCode += `    N${i}["${safeLabel}"]\n`;
+                                }
+                                // Connect: root to all others
+                                for (let i = 1; i < textSegments.length; i++) {
+                                    mermaidCode += `    N0 --> N${i}\n`;
+                                }
+
+                                postProcessedElements.push({
+                                    type: 'mermaid',
+                                    content: mermaidCode.trim()
+                                });
+                                continue;
+                            }
+                        }
+                    }
+                    postProcessedElements.push(el);
+                }
+                elements = postProcessedElements;
 
                 lastParsedText = textToProcess;
                 cachedElements = elements;
@@ -621,6 +1161,17 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 statusText.textContent = "Error Formatting — check console for details";
             }
+        } finally {
+            const loadingOverlay = document.getElementById('loading-overlay');
+            if (loadingOverlay) loadingOverlay.style.display = 'none';
+
+            // Re-enable ribbon controls
+            const ribbonControls = document.querySelectorAll('.formatting-ribbon select, .formatting-ribbon input');
+            ribbonControls.forEach(control => {
+                control.disabled = false;
+                control.style.opacity = '1';
+                control.style.cursor = 'default';
+            });
         }
     }
 

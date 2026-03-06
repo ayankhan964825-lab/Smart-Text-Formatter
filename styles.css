@@ -467,15 +467,6 @@ body {
 
 /* --- Responsive Adjustments --- */
 
-/* Desktop & Large Laptops (1025px and up) */
-@media (min-width: 1025px) {
-    .workspace {
-        max-width: 1600px;
-        margin: 0 auto;
-        /* Center on ultra-wide screens */
-    }
-}
-
 /* Tablets (769px to 1024px) */
 @media (max-width: 1024px) {
     .workspace {

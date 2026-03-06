@@ -1151,6 +1151,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.warn("Mermaid rendering error:", mermaidErr);
             }
 
+            // Enable export buttons since formatting was successful
+            const exportPdfBtn = document.getElementById('export-pdf');
+            const exportWordBtn = document.getElementById('export-word');
+            if (exportPdfBtn) {
+                exportPdfBtn.disabled = false;
+                exportPdfBtn.style.opacity = '1';
+                exportPdfBtn.style.cursor = 'pointer';
+            }
+            if (exportWordBtn) {
+                exportWordBtn.disabled = false;
+                exportWordBtn.style.opacity = '1';
+                exportWordBtn.style.cursor = 'pointer';
+            }
+
         } catch (error) {
             console.error("Formatting Error Details:", error);
             const errorMsg = error.message || String(error);

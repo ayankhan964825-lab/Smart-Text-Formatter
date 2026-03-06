@@ -28,8 +28,11 @@
             </svg>
             <h1>Smart Text Formatter</h1>
         </div>
-        <div class="top-controls">
-            <!-- Theme toggle has been removed -->
+        <div class="top-controls" style="display: flex; gap: 8px;">
+            <button id="export-pdf" class="btn primary btn-small" disabled
+                style="opacity: 0.5; cursor: not-allowed;">Export to PDF</button>
+            <button id="export-word" class="btn primary btn-small" disabled
+                style="opacity: 0.5; cursor: not-allowed;">Export to Word</button>
         </div>
     </header>
 
@@ -221,19 +224,6 @@
         </section>
 
     </main>
-
-    <!-- Bottom Action Bar (Exporting) -->
-    <footer class="bottom-bar">
-        <div class="status-indicator">
-            <span class="dot"></span> <span id="status-text">Ready</span>
-        </div>
-        <div class="export-actions">
-            <button id="export-pdf" class="btn primary" disabled style="opacity: 0.5; cursor: not-allowed;">Export to
-                PDF</button>
-            <button id="export-word" class="btn primary" disabled style="opacity: 0.5; cursor: not-allowed;">Export to
-                Word</button>
-        </div>
-    </footer>
 
     <!-- Overwrite/Append Modal -->
     <div id="append-modal" class="modal-overlay" style="display: none;">

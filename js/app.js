@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- UI Elements ---
     const rawInput = document.getElementById('raw-input');
     const htmlElement = document.documentElement;
-    const statusText = document.getElementById('status-text');
+    const statusText = document.getElementById('status-text') || { textContent: '' };
 
     // --- State Management ---
     let hasFormattedOnce = false; // Only allow ribbon auto-updates after first manual format

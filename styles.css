@@ -10,7 +10,6 @@
     --bg-panel: rgba(255, 255, 255, 0.85);
     /* Slight transparency for glass effect */
     --bg-header: rgba(255, 255, 255, 0.9);
-    --bg-footer: rgba(255, 255, 255, 0.9);
 
     --text-main: #2d3748;
     /* Slate gray */
@@ -38,7 +37,6 @@
 
     /* Spacing & Layout */
     --header-height: 64px;
-    --footer-height: 64px;
     --panel-border-radius: 12px;
     --transition-speed: 0.3s;
 }
@@ -268,8 +266,9 @@ body {
 .workspace {
     display: flex;
     flex: 1;
-    padding: 12px 20px;
-    gap: 16px;
+    padding: 16px 24px 32px 24px;
+    /* Added more space below to act as a visual border */
+    gap: 20px;
     overflow: hidden;
     /* optional subtle gradient background */
     background: radial-gradient(circle at 50% 0%, var(--primary-color) 0%, transparent 15%);
@@ -431,64 +430,7 @@ body {
 }
 
 
-/* --- Bottom Action Bar --- */
-.bottom-bar {
-    height: var(--footer-height);
-    background-color: var(--bg-footer);
-    backdrop-filter: var(--blur-effect);
-    -webkit-backdrop-filter: var(--blur-effect);
-    border-top: 1px solid var(--border-color);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 32px;
-    flex-shrink: 0;
-    z-index: 10;
-}
 
-.status-indicator {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 0.8125rem;
-    font-weight: 500;
-    color: var(--text-muted);
-    letter-spacing: 0.3px;
-}
-
-.status-indicator .dot {
-    width: 10px;
-    height: 10px;
-    background-color: #10b981;
-    /* Emerald 500 success pip */
-    border-radius: 50%;
-    display: inline-block;
-    box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
-    /* Glowing dot */
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0% {
-        transform: scale(0.95);
-        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
-    }
-
-    70% {
-        transform: scale(1);
-        box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
-    }
-
-    100% {
-        transform: scale(0.95);
-        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
-    }
-}
-
-.export-actions {
-    display: flex;
-    gap: 12px;
-}
 
 /* --- Responsive Adjustments --- */
 @media (max-width: 768px) {

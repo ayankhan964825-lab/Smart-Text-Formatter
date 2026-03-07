@@ -563,11 +563,6 @@ body {
         justify-content: center;
     }
 
-    .logo h1 {
-        display: none;
-        /* Hide long title to save space, rely on icon */
-    }
-
     .panel-header {
         flex-direction: column;
         align-items: flex-start;

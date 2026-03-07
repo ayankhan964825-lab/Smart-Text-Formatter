@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     customizeBtn.addEventListener('click', () => {
         window.isCustomizationActive = !window.isCustomizationActive;
+        const ribbonControls = document.querySelectorAll('.formatting-ribbon select, .formatting-ribbon input');
 
         if (window.isCustomizationActive) {
             customizeBtn.innerHTML = '✅ Editing';
@@ -36,12 +37,30 @@ document.addEventListener('DOMContentLoaded', () => {
             miniToolbar.style.display = 'flex';
             previewContainerEl.setAttribute('contenteditable', 'true');
             previewContainerEl.focus();
+
+            // Re-enable ribbon controls while editing
+            ribbonControls.forEach(control => {
+                control.disabled = false;
+                control.style.opacity = '1';
+                control.style.cursor = 'default';
+            });
+
         } else {
             customizeBtn.innerHTML = '✏️ Edit';
             customizeBtn.classList.add('secondary');
             customizeBtn.classList.remove('primary');
             miniToolbar.style.display = 'none';
             previewContainerEl.setAttribute('contenteditable', 'false');
+
+            // Disable ribbon controls again if we are done editing
+            // (Only if we actually formatted something previously)
+            if (typeof hasFormattedOnce !== 'undefined' && hasFormattedOnce) {
+                ribbonControls.forEach(control => {
+                    control.disabled = true;
+                    control.style.opacity = '0.6';
+                    control.style.cursor = 'not-allowed';
+                });
+            }
         }
     });
 

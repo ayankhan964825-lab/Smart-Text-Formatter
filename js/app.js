@@ -1152,18 +1152,20 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // Enable export buttons since formatting was successful
-            const exportPdfBtn = document.getElementById('export-pdf');
-            const exportWordBtn = document.getElementById('export-word');
-            if (exportPdfBtn) {
-                exportPdfBtn.disabled = false;
-                exportPdfBtn.style.opacity = '1';
-                exportPdfBtn.style.cursor = 'pointer';
-            }
-            if (exportWordBtn) {
-                exportWordBtn.disabled = false;
-                exportWordBtn.style.opacity = '1';
-                exportWordBtn.style.cursor = 'pointer';
-            }
+            const exportBtns = [
+                document.getElementById('export-pdf'),
+                document.getElementById('export-word'),
+                document.getElementById('mobile-export-pdf'),
+                document.getElementById('mobile-export-word')
+            ];
+
+            exportBtns.forEach(btn => {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.style.opacity = '1';
+                    btn.style.cursor = 'pointer';
+                }
+            });
 
         } catch (error) {
             console.error("Formatting Error Details:", error);
@@ -1322,7 +1324,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // 2. Export PDF (using html2pdf.js)
-    exportPdfBtn.addEventListener('click', async () => {
+    const handleExportPdf = async () => {
         try {
             const previewContainer = document.getElementById('formatted-preview');
             if (previewContainer.querySelector('.placeholder-text')) {
@@ -1390,10 +1392,13 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error("Critical PDF Error:", globalErr);
             statusText.textContent = "Export Failed: " + (globalErr.message || String(globalErr));
         }
-    });
+    };
+
+    if (exportPdfBtn) exportPdfBtn.addEventListener('click', handleExportPdf);
+    if (mobileExportPdfBtn) mobileExportPdfBtn.addEventListener('click', handleExportPdf);
 
     // 3. Export Word (.doc)
-    exportWordBtn.addEventListener('click', async () => {
+    const handleExportWord = async () => {
         try {
             const previewContainer = document.getElementById('formatted-preview');
             if (previewContainer.querySelector('.placeholder-text')) {
@@ -1497,6 +1502,9 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error("Critical Word Export Error:", globalErr);
             statusText.textContent = "Export Failed: " + (globalErr.message || String(globalErr));
         }
-    });
+    };
+
+    if (exportWordBtn) exportWordBtn.addEventListener('click', handleExportWord);
+    if (mobileExportWordBtn) mobileExportWordBtn.addEventListener('click', handleExportWord);
 
 });

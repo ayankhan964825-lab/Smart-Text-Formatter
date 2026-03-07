@@ -28,7 +28,7 @@
             </svg>
             <h1>Smart Text Formatter</h1>
         </div>
-        <div class="top-controls" style="display: flex; gap: 8px;">
+        <div class="top-controls desktop-export-container" style="display: flex; gap: 8px;">
             <button id="export-pdf" class="btn primary btn-small" disabled
                 style="opacity: 0.5; cursor: not-allowed;">Export to PDF</button>
             <button id="export-word" class="btn primary btn-small" disabled
@@ -220,6 +220,12 @@
             </div>
             <div id="formatted-preview" class="preview-container" contenteditable="false">
                 <div class="placeholder-text">Live preview will appear here...</div>
+            </div>
+
+            <!-- Mobile Export Actions (Hidden on Desktop) -->
+            <div class="mobile-export-container">
+                <button id="mobile-export-pdf" class="btn primary mobile-export-btn" disabled>Export to PDF</button>
+                <button id="mobile-export-word" class="btn primary mobile-export-btn" disabled>Export to Word</button>
             </div>
         </section>
 

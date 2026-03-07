@@ -1518,15 +1518,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 </html>
             `;
 
-            // Use htmlDocx to convert the HTML payload into a true zipped .docx container
-            // This natively supports Base64 images and guarantees cross-platform compatibility 
-            // natively required by strict systems like iOS / Apple Pages and Google Docs.
-            const docxBlob = htmlDocx.asBlob(wordHtml);
-            const url = URL.createObjectURL(docxBlob);
+            // Very smart fix: Detect if the user is on an iOS or Mac device
+            const isAppleDevice = /Mac|iPod|iPhone|iPad/.test(navigator.userAgent);
 
+            let finalBlob, fileName;
+
+            if (isAppleDevice) {
+                // Apple devices natively support zipped .docx containers better than old HTML .doc
+                finalBlob = htmlDocx.asBlob(wordHtml);
+                fileName = 'formatted_document.docx';
+            } else {
+                // Windows and Android MS Word apps struggle with HTML-Docs disguised as .docx (blank pages)
+                // So we serve them the native MS Word HTML blob as a .doc file
+                finalBlob = new Blob(['\ufeff', wordHtml], { type: 'application/msword' });
+                fileName = 'formatted_document.doc';
+            }
+
+            const url = URL.createObjectURL(finalBlob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'formatted_document.docx';
+            a.download = fileName;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);

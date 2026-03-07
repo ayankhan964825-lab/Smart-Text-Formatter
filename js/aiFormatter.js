@@ -66,6 +66,8 @@ D. TYPOS: Do not fix general spelling mistakes or grammar. Only fix the citation
 
         // --- Try the secure server-side proxy first (Vercel deployment) ---
         try {
+            // Only try proxy if we are likely on a server (not file:// or explicitly local/127.0.0.1 without port)
+            // But we will just try and catch the 404/NetworkError if it fails.
             const proxyResponse = await fetch('/api/format', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -75,11 +77,11 @@ D. TYPOS: Do not fix general spelling mistakes or grammar. Only fix the citation
             if (proxyResponse.ok) {
                 const data = await proxyResponse.json();
                 return this._parseResponse(data);
+            } else {
+                throw new Error(`Proxy not available (Status: ${proxyResponse.status}). Falling back to local.`);
             }
-            // If proxy returned an error, fall through to local fallback
-            console.warn('Server proxy returned error, trying local fallback...');
         } catch (proxyErr) {
-            console.warn('Server proxy unavailable, trying local fallback...', proxyErr);
+            console.log('Server proxy unavailable or failed, switching to local API key fallback...');
         }
 
         // --- Fallback: Direct API call using localStorage key (local dev only) ---

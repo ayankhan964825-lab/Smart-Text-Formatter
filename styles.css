@@ -66,6 +66,9 @@ body {
     display: flex;
     flex-direction: column;
     height: 100vh;
+    /* Fallback */
+    height: 100dvh;
+    /* Modern mobile dynamic height */
     overflow: hidden;
     /* Prevent body scroll, panels will scroll */
     transition: background-color var(--transition-speed), color var(--transition-speed);
@@ -474,6 +477,7 @@ body {
     border-top: 1px solid var(--border-color);
     flex-wrap: wrap;
     gap: 12px;
+    padding-bottom: max(24px, env(safe-area-inset-bottom));
 }
 
 .mobile-export-btn {
@@ -524,6 +528,7 @@ body {
     .workspace {
         flex-direction: column;
         padding: 12px;
+        padding-bottom: max(24px, env(safe-area-inset-bottom));
         gap: 16px;
         overflow-y: auto;
     }
@@ -545,6 +550,15 @@ body {
         padding-right: 16px;
         flex-shrink: 0;
         /* Prevent squishing while scrolling */
+    }
+
+    /* Shorten TOC label on mobile */
+    .toc-text-desktop {
+        display: none !important;
+    }
+
+    .toc-text-mobile {
+        display: inline !important;
     }
 
     /* Swap Export Buttons */

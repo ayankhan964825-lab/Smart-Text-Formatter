@@ -66,8 +66,7 @@ D. TYPOS: Do not fix general spelling mistakes or grammar. Only fix the citation
 
         // --- Try the secure server-side proxy first (Vercel deployment) ---
         try {
-            // Only try proxy if we are likely on a server (not file:// or explicitly local/127.0.0.1 without port)
-            // But we will just try and catch the 404/NetworkError if it fails.
+            console.log('[AIFormatter] Trying server proxy /api/format ...');
             const proxyResponse = await fetch('/api/format', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -75,13 +74,14 @@ D. TYPOS: Do not fix general spelling mistakes or grammar. Only fix the citation
             });
 
             if (proxyResponse.ok) {
+                console.log('[AIFormatter] ✅ Server proxy succeeded!');
                 const data = await proxyResponse.json();
                 return this._parseResponse(data);
             } else {
-                throw new Error(`Proxy not available (Status: ${proxyResponse.status}). Falling back to local.`);
+                console.warn(`[AIFormatter] Server proxy returned error: ${proxyResponse.status} - trying direct Gemini API...`);
             }
         } catch (proxyErr) {
-            console.log('Server proxy unavailable or failed, switching to local API key fallback...');
+            console.warn('[AIFormatter] Server proxy unavailable (expected for local dev):', proxyErr.message);
         }
 
         // --- Fallback: Direct API call using localStorage key (local dev only) ---
@@ -89,6 +89,7 @@ D. TYPOS: Do not fix general spelling mistakes or grammar. Only fix the citation
             throw new Error("No API key available. Set your Gemini API key in Settings for local use, or deploy to Vercel with GEMINI_API_KEY environment variable.");
         }
 
+        console.log('[AIFormatter] Trying direct Gemini API with local key...');
         const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${this.localApiKey}`;
 
         const requestBody = {
@@ -112,9 +113,11 @@ D. TYPOS: Do not fix general spelling mistakes or grammar. Only fix the citation
 
         if (!response.ok) {
             const errText = await response.text();
+            console.error('[AIFormatter] ❌ Gemini API Failed:', response.status, errText);
             throw new Error(`Gemini API Failed: ${response.status} - ${errText}`);
         }
 
+        console.log('[AIFormatter] ✅ Direct Gemini API succeeded!');
         const data = await response.json();
         return this._parseResponse(data);
     }

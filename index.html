@@ -11,6 +11,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
+
+    <!-- Dependencies for Exporting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://unpkg.com/html-docx-js/dist/html-docx.js"></script>
 </head>
 
 <body>
@@ -157,64 +161,56 @@
 
         <!-- Right Panel: Output Preview -->
         <section class="panel output-panel">
-            <div class="panel-header">
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <h2>Formatted Preview</h2>
-                    <button id="toggle-customization-btn" class="btn-small secondary">✏️ Edit</button>
+            <div class="panel-header" style="flex-wrap: nowrap; gap: 12px; padding: 4px 12px;">
+                <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
+                    <h2>Output</h2>
+                    <button id="toggle-customization-btn" class="btn-small secondary"
+                        style="white-space: nowrap; margin-left: 4px; opacity: 0.5; cursor: not-allowed;" disabled>✏️
+                        Edit</button>
                 </div>
-                <div class="panel-actions">
-                    <!-- Mini Rich Text Toolbar -->
-                    <div class="mini-toolbar" id="mini-rtf-toolbar" style="display: none;">
-                        <!-- Fonts & Blocks -->
-                        <select class="rtf-select" data-command="fontName" title="Font Family">
-                            <option value="Arial">Arial</option>
-                            <option value="Times New Roman" selected>Times New Roman</option>
-                            <option value="Courier New">Courier</option>
-                        </select>
-                        <input type="number" class="rtf-number toolbar-input" data-command="fontSizePt" value="12"
-                            min="8" max="72" title="Font Size (pt)"
-                            style="width: 50px; padding: 4px; border: 1px solid var(--border-color); border-radius: 4px;">
-                        <select class="rtf-select" data-command="formatBlock" title="Heading Style">
-                            <option value="P">Paragraph</option>
-                            <option value="H1">Heading 1</option>
-                            <option value="H2">Heading 2</option>
-                            <option value="H3">Heading 3</option>
-                        </select>
+                <!-- Mini Rich Text Toolbar -->
+                <div class="mini-toolbar" id="mini-rtf-toolbar"
+                    style="display: none; flex: 1; margin-top: 0; padding: 0; border: none; background: transparent; justify-content: flex-end; flex-wrap: nowrap; overflow-x: auto;">
+                    <!-- Fonts & Blocks -->
+                    <select class="rtf-select" data-command="fontName" title="Font">
+                        <option value="Arial">Arial</option>
+                        <option value="Times New Roman" selected>Times New</option>
+                        <option value="Courier New">Courier</option>
+                    </select>
+                    <input type="number" class="rtf-number toolbar-input" data-command="fontSizePt" value="12" min="8"
+                        max="72" title="Size (pt)" style="width: 45px;">
+                    <select class="rtf-select" data-command="formatBlock" title="Heading">
+                        <option value="P">Para</option>
+                        <option value="H1">H1</option>
+                        <option value="H2">H2</option>
+                        <option value="H3">H3</option>
+                    </select>
 
-                        <div class="toolbar-divider"></div>
+                    <!-- Basic Styles -->
+                    <div class="style-group">
+                        <button class="icon-btn rtf-btn" data-command="bold" title="Bold"><b>B</b></button>
+                        <button class="icon-btn rtf-btn" data-command="italic" title="Italic"><i>I</i></button>
+                        <button class="icon-btn rtf-btn" data-command="underline" title="Underline"><u>U</u></button>
+                    </div>
 
-                        <!-- Basic Styles -->
-                        <div class="style-group">
-                            <button class="icon-btn rtf-btn" data-command="bold" title="Bold (Ctrl+B)"><b>B</b></button>
-                            <button class="icon-btn rtf-btn" data-command="italic"
-                                title="Italic (Ctrl+I)"><i>I</i></button>
-                            <button class="icon-btn rtf-btn" data-command="underline"
-                                title="Underline (Ctrl+U)"><u>U</u></button>
-                            <button class="icon-btn rtf-btn" data-command="strikeThrough"
-                                title="Strikethrough"><s>S</s></button>
-                        </div>
-
-                        <div class="toolbar-divider"></div>
-
-                        <!-- Colors -->
+                    <!-- Colors -->
+                    <div class="style-group">
                         <input type="color" class="rtf-color" data-command="foreColor" title="Text Color"
                             value="#000000">
-                        <input type="color" class="rtf-color" data-command="hiliteColor" title="Highlight Color"
+                        <input type="color" class="rtf-color" data-command="hiliteColor" title="Highlight"
                             value="#ffff00">
+                    </div>
 
-                        <div class="toolbar-divider"></div>
-
-                        <!-- Alignments & Lists -->
-                        <select class="rtf-select rtf-align" title="Text Alignment">
-                            <option value="justifyLeft" selected>Left Align</option>
-                            <option value="justifyCenter">Center</option>
-                            <option value="justifyRight">Right Align</option>
-                            <option value="justifyFull">Justify</option>
-                        </select>
-                        <button class="icon-btn rtf-btn" data-command="insertUnorderedList"
-                            title="Bullet List">•</button>
-                        <button class="icon-btn rtf-btn" data-command="insertOrderedList"
-                            title="Numbered List">1.</button>
+                    <!-- Alignments & Lists -->
+                    <select class="rtf-select rtf-align" title="Align">
+                        <option value="justifyLeft" selected>Left</option>
+                        <option value="justifyCenter">Center</option>
+                        <option value="justifyRight">Right</option>
+                        <option value="justifyFull">Justify</option>
+                    </select>
+                    <div class="style-group">
+                        <button class="icon-btn rtf-btn" data-command="insertUnorderedList" title="Bullet">•</button>
+                        <button class="icon-btn rtf-btn" data-command="insertOrderedList" title="Number">1.</button>
                     </div>
                 </div>
             </div>

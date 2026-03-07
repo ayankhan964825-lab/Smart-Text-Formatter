@@ -172,6 +172,12 @@ document.addEventListener('DOMContentLoaded', () => {
             // Add a visual cue that it is disabled
             control.style.opacity = '0.6';
             control.style.cursor = 'not-allowed';
+
+            // Also fade the label if it's a checkbox
+            if (control.type === 'checkbox' && control.parentElement) {
+                control.parentElement.style.opacity = '0.6';
+                control.parentElement.style.cursor = 'not-allowed';
+            }
         });
 
         await processTextUpdate(false); // Allow append modal for manual formats
@@ -1167,6 +1173,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
+            // Enable Edit Customization Button
+            const editBtn = document.getElementById('toggle-customization-btn');
+            if (editBtn) {
+                editBtn.disabled = false;
+                editBtn.style.opacity = '1';
+                editBtn.style.cursor = 'pointer';
+            }
+
+            // Disable Format Now button & Text Input so they can't reformat without refresh
+            if (formatBtn) {
+                formatBtn.disabled = true;
+                formatBtn.style.opacity = '0.5';
+                formatBtn.style.cursor = 'not-allowed';
+                formatBtn.innerHTML = '✅ Formatted';
+            }
+            if (rawInput) {
+                rawInput.disabled = true;
+            }
+
         } catch (error) {
             console.error("Formatting Error Details:", error);
             const errorMsg = error.message || String(error);
@@ -1177,17 +1202,22 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 statusText.textContent = "Error Formatting — check console for details";
             }
-        } finally {
-            const loadingOverlay = document.getElementById('loading-overlay');
-            if (loadingOverlay) loadingOverlay.style.display = 'none';
 
-            // Re-enable ribbon controls
+            // Re-enable ribbon controls on error so user can try again
             const ribbonControls = document.querySelectorAll('.formatting-ribbon select, .formatting-ribbon input');
             ribbonControls.forEach(control => {
                 control.disabled = false;
                 control.style.opacity = '1';
                 control.style.cursor = 'default';
+
+                if (control.type === 'checkbox' && control.parentElement) {
+                    control.parentElement.style.opacity = '1';
+                    control.parentElement.style.cursor = 'default';
+                }
             });
+        } finally {
+            const loadingOverlay = document.getElementById('loading-overlay');
+            if (loadingOverlay) loadingOverlay.style.display = 'none';
         }
     }
 
@@ -1393,6 +1423,10 @@ document.addEventListener('DOMContentLoaded', () => {
             statusText.textContent = "Export Failed: " + (globalErr.message || String(globalErr));
         }
     };
+
+    // Fetch mobile buttons since they were missing declarations in the global scope
+    const mobileExportPdfBtn = document.getElementById('mobile-export-pdf');
+    const mobileExportWordBtn = document.getElementById('mobile-export-word');
 
     if (exportPdfBtn) exportPdfBtn.addEventListener('click', handleExportPdf);
     if (mobileExportPdfBtn) mobileExportPdfBtn.addEventListener('click', handleExportPdf);

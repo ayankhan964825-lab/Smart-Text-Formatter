@@ -38,9 +38,12 @@
                 <p class="setting-desc">Use your own free API key to avoid rate limits and queue times.</p>
                 <div class="api-input-wrapper">
                     <input type="password" id="custom-api-key" class="setting-input" placeholder="AIzaSy...">
-                    <button id="save-api-key-btn" class="btn primary btn-small">Save</button>
+                    <div style="display: flex; gap: 8px; margin-top: 8px; width: 100%;">
+                        <button id="test-api-key-btn" class="btn secondary btn-small" style="flex: 1;">Test Key</button>
+                        <button id="save-api-key-btn" class="btn primary btn-small" style="flex: 1;">Save</button>
+                    </div>
                 </div>
-                <p id="api-key-status" class="setting-status" style="display: none;"></p>
+                <p id="api-key-status" class="setting-status" style="display: none; margin-top: 8px;"></p>
                 <a href="https://aistudio.google.com/app/apikey" target="_blank" class="setting-link">Get a free key
                     →</a>
             </div>

@@ -81,6 +81,54 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    const testApiKeyBtn = document.getElementById('test-api-key-btn');
+    if (testApiKeyBtn) {
+        testApiKeyBtn.addEventListener('click', async () => {
+            const val = customApiKeyInput.value.trim();
+            if (!val) {
+                apiKeyStatus.textContent = '⚠️ Please enter an API key to test.';
+                apiKeyStatus.style.color = '#dd6b20'; // Orange
+                apiKeyStatus.style.display = 'block';
+                return;
+            }
+
+            testApiKeyBtn.textContent = 'Testing...';
+            testApiKeyBtn.disabled = true;
+            apiKeyStatus.textContent = 'Testing connection to Gemini...';
+            apiKeyStatus.style.color = '#3182ce'; // Blue
+            apiKeyStatus.style.display = 'block';
+
+            try {
+                // Lightweight ping payload
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${val}`;
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: "ping" }] }],
+                        generationConfig: { maxOutputTokens: 5 }
+                    })
+                });
+
+                if (response.ok) {
+                    apiKeyStatus.textContent = '🎉 API Key is Valid and Working!';
+                    apiKeyStatus.style.color = '#38a169'; // Green
+                } else {
+                    const err = await response.text();
+                    console.error("Test API Error:", response.status, err);
+                    apiKeyStatus.textContent = `❌ API Key failed: HTTP ${response.status}. Key may be invalid or rate-limited.`;
+                    apiKeyStatus.style.color = '#e53e3e'; // Red
+                }
+            } catch (networkError) {
+                apiKeyStatus.textContent = `❌ Network Error: Could not connect to Google API.`;
+                apiKeyStatus.style.color = '#e53e3e'; // Red
+            } finally {
+                testApiKeyBtn.textContent = 'Test Key';
+                testApiKeyBtn.disabled = false;
+            }
+        });
+    }
+
     // Expose openMenu globally so the quota error button can launch it
     window.openSettingsMenu = openMenu;
 

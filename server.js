@@ -58,19 +58,23 @@ async function handleApiFormat(req, res) {
         try {
             const { rawText, systemInstruction } = JSON.parse(body);
 
+            // Allow the frontend to provide a custom API key to bypass limits
+            const customKey = req.headers['x-custom-api-key'];
+            const activeApiKey = customKey || GEMINI_API_KEY;
+
             if (!rawText) {
                 res.writeHead(400, { 'Content-Type': 'application/json' });
                 res.end(JSON.stringify({ error: 'rawText is required.' }));
                 return;
             }
 
-            if (!GEMINI_API_KEY) {
+            if (!activeApiKey) {
                 res.writeHead(500, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ error: 'GEMINI_API_KEY not found in .env file.' }));
+                res.end(JSON.stringify({ error: 'No API key provided locally or in .env' }));
                 return;
             }
 
-            const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+            const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${activeApiKey}`;
 
             const requestBody = JSON.stringify({
                 system_instruction: { parts: [{ text: systemInstruction }] },
@@ -172,7 +176,7 @@ const server = http.createServer((req, res) => {
         res.writeHead(200, {
             'Access-Control-Allow-Origin': '*',
             'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-            'Access-Control-Allow-Headers': 'Content-Type',
+            'Access-Control-Allow-Headers': 'Content-Type, x-custom-api-key',
         });
         res.end();
         return;

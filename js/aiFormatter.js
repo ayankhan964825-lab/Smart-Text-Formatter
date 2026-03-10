@@ -5,9 +5,7 @@
 
 class AIFormatter {
     constructor() {
-        // Priority: 1. config.local.js key (always freshest), 2. localStorage key (legacy)
-        // In production (Vercel), the key lives server-side in env vars via /api/format proxy
-        this.localApiKey = window.GEMINI_API_KEY_LOCAL || localStorage.getItem('gemini_api_key') || '';
+        // No static caching needed. We fetch fresh on every format run.
     }
 
     /**
@@ -16,6 +14,9 @@ class AIFormatter {
      * @returns {Promise<Array<Object>>} JSON array of classified text blocks
      */
     async formatText(rawText) {
+
+        // Fetch the freshest key from localStorage right before API call
+        const activeLocalApiKey = window.GEMINI_API_KEY_LOCAL || localStorage.getItem('gemini_api_key') || '';
 
         const systemInstruction = `You are a strict document structure classifier API.
 Your job is to read unstructured text (from OCR, Google Lens, etc.) and break it down into logical blocks.
@@ -64,9 +65,42 @@ D. TYPOS: Do not fix general spelling mistakes or grammar. Only fix the citation
 
 6. Do NOT return markdown formatting like \\\`\\\`\\\`json. Return only raw JSON data.`;
 
-        // --- Try the secure server-side proxy first (Vercel deployment) ---
+        // ============================================================
+        // PATH 1: User has a CUSTOM API key → call Gemini DIRECTLY
+        //          (bypasses the Node proxy entirely, uses user's quota)
+        // ============================================================
+        if (activeLocalApiKey) {
+            console.log('[AIFormatter] Custom API key found — calling Gemini DIRECTLY (bypassing proxy)...');
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${activeLocalApiKey}`;
+
+            const requestBody = {
+                system_instruction: { parts: [{ text: systemInstruction }] },
+                contents: [{ parts: [{ text: rawText }] }],
+                generationConfig: { temperature: 0.1, responseMimeType: "application/json" }
+            };
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(requestBody)
+            });
+
+            if (!response.ok) {
+                const errText = await response.text();
+                console.error('[AIFormatter] ❌ Direct Gemini API Failed:', response.status, errText);
+                throw new Error(`Gemini API Failed: ${response.status} - ${errText}`);
+            }
+
+            console.log('[AIFormatter] ✅ Direct Gemini API succeeded!');
+            const data = await response.json();
+            return this._parseResponse(data);
+        }
+
+        // ============================================================
+        // PATH 2: No custom key → use the server-side proxy (Vercel/.env)
+        // ============================================================
         try {
-            console.log('[AIFormatter] Trying server proxy /api/format ...');
+            console.log('[AIFormatter] No custom key. Trying server proxy /api/format ...');
             const proxyResponse = await fetch('/api/format', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -78,48 +112,14 @@ D. TYPOS: Do not fix general spelling mistakes or grammar. Only fix the citation
                 const data = await proxyResponse.json();
                 return this._parseResponse(data);
             } else {
-                console.warn(`[AIFormatter] Server proxy returned error: ${proxyResponse.status} - trying direct Gemini API...`);
+                const errText = await proxyResponse.text();
+                console.error('[AIFormatter] ❌ Server proxy error:', proxyResponse.status, errText);
+                throw new Error(`Gemini API Failed: ${proxyResponse.status} - ${errText}`);
             }
         } catch (proxyErr) {
-            console.warn('[AIFormatter] Server proxy unavailable (expected for local dev):', proxyErr.message);
+            console.error('[AIFormatter] Server proxy unavailable:', proxyErr.message);
+            throw new Error("No API key available. Open the ☰ Settings menu and enter your free Gemini API key to format text.");
         }
-
-        // --- Fallback: Direct API call using localStorage key (local dev only) ---
-        if (!this.localApiKey) {
-            throw new Error("No API key available. Set your Gemini API key in Settings for local use, or deploy to Vercel with GEMINI_API_KEY environment variable.");
-        }
-
-        console.log('[AIFormatter] Trying direct Gemini API with local key...');
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${this.localApiKey}`;
-
-        const requestBody = {
-            system_instruction: {
-                parts: [{ text: systemInstruction }]
-            },
-            contents: [{
-                parts: [{ text: rawText }]
-            }],
-            generationConfig: {
-                temperature: 0.1,
-                responseMimeType: "application/json"
-            }
-        };
-
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(requestBody)
-        });
-
-        if (!response.ok) {
-            const errText = await response.text();
-            console.error('[AIFormatter] ❌ Gemini API Failed:', response.status, errText);
-            throw new Error(`Gemini API Failed: ${response.status} - ${errText}`);
-        }
-
-        console.log('[AIFormatter] ✅ Direct Gemini API succeeded!');
-        const data = await response.json();
-        return this._parseResponse(data);
     }
 
     /**

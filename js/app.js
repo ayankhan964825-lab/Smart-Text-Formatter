@@ -29,13 +29,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const saveApiKeyBtn = document.getElementById('save-api-key-btn');
     const apiKeyStatus = document.getElementById('api-key-status');
 
+    // Clear saved API key on every page refresh (user requested)
+    localStorage.removeItem('gemini_api_key');
+    if (customApiKeyInput) {
+        customApiKeyInput.value = '';
+    }
+
     function openMenu() {
         settingsMenu.classList.add('open');
         menuOverlay.classList.add('active');
-        // Load key on open
-        const existingKey = localStorage.getItem('gemini_api_key');
-        if (existingKey) {
-            customApiKeyInput.value = existingKey;
+        // Double check on open in case another tab changed it
+        const currentKey = localStorage.getItem('gemini_api_key');
+        if (currentKey) {
+            customApiKeyInput.value = currentKey;
         }
     }
 

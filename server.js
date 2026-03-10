@@ -97,14 +97,30 @@ async function handleApiFormat(req, res) {
                 geminiRes.on('end', () => {
                     if (geminiRes.statusCode === 200) {
                         console.log('[Server] ✅ Gemini API responded successfully!');
+                        res.writeHead(200, {
+                            'Content-Type': 'application/json',
+                            'Access-Control-Allow-Origin': '*',
+                        });
+
+                        // We must send the JSON data exactly as the frontend expects it.
+                        // Since aiFormatter.js expects `data.candidates[0].content.parts[0].text`
+                        // we can just forward the parsed Gemini response directly.
+                        try {
+                            const parsedData = JSON.parse(responseData);
+                            res.end(JSON.stringify(parsedData));
+                        } catch (e) {
+                            console.error('[Server] Failed to parse Gemini response JSON:', e);
+                            res.end(responseData); // Fallback to raw string
+                        }
+
                     } else {
                         console.error(`[Server] ❌ Gemini API error: ${geminiRes.statusCode}`);
+                        res.writeHead(geminiRes.statusCode, {
+                            'Content-Type': 'application/json',
+                            'Access-Control-Allow-Origin': '*',
+                        });
+                        res.end(responseData);
                     }
-                    res.writeHead(geminiRes.statusCode, {
-                        'Content-Type': 'application/json',
-                        'Access-Control-Allow-Origin': '*',
-                    });
-                    res.end(responseData);
                 });
             });
 

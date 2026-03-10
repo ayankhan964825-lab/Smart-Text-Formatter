@@ -919,7 +919,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
 
                 } catch (aiError) {
-                    console.warn("AI formatting failed, falling back to local heuristic", aiError);
+                    console.warn("AI formatting failed, falling back (if applicable)", aiError);
+
+                    const aiErrorMsg = aiError.message || String(aiError);
+                    // If the error is a rate limit or API key issue, abort immediately
+                    // so the user sees the real error instead of bad heuristic output.
+                    if (aiErrorMsg.includes('429') || aiErrorMsg.includes('RESOURCE_EXHAUSTED') || aiErrorMsg.includes('quota') || aiErrorMsg.includes('API key')) {
+                        throw aiError; // Let the outer catch block show the error UI to the user
+                    }
+
                     // Fallback to local heuristic engine
                     try {
                         const processor = new window.TextProcessor(cleanedText);

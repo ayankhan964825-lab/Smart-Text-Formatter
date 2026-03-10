@@ -270,10 +270,17 @@ document.addEventListener('DOMContentLoaded', () => {
         textToProcess = removeAIBoilerplate(textToProcess);
 
         const loadingOverlay = document.getElementById('loading-overlay');
-        if (loadingOverlay) loadingOverlay.style.display = 'flex';
+        const loadingTitle = document.getElementById('loading-title-text');
+        const loadingProgress = document.getElementById('loading-progress-text');
+
+        if (loadingOverlay) {
+            if (loadingTitle) loadingTitle.textContent = "Analyzing & Formatting...";
+            if (loadingProgress) loadingProgress.textContent = "Applying AI rules, detecting diagrams, and structuring your content.";
+            loadingOverlay.style.display = 'flex';
+        }
 
         try {
-            let elements;
+            let elements = [];
 
             // --- Extract Mermaid blocks before AI/heuristic processing ---
             // This prevents the AI from modifying or corrupting mermaid syntax
@@ -509,9 +516,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Identify connector lines vs text lines
                     const isConnectorLine = (line) => {
                         const trimmed = line.trim();
-                        if (!trimmed) return true;
-                        // Lines that are ONLY made of |, _, -, ─, │, spaces
-                        return /^[|│_─\-\s]+$/.test(trimmed);
+                        if (!trimmed) return false;
+                        // Lines that are ONLY made of |, _, -, ?, ?, spaces
+                        if (!/^[|│_─\-\s]+$/.test(trimmed)) return false;
+                        // Must contain at least one vertical bar to distinguish from standard horizontal rules (---)
+                        return /[|│]/.test(trimmed);
                     };
 
                     // Extract text groups at each level  
@@ -520,6 +529,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     let hasConnectors = false;
 
                     for (const line of lines) {
+                        const trimmed = line.trim();
+                        if (!trimmed) continue; // Skip empty lines completely
+
                         if (isConnectorLine(line)) {
                             hasConnectors = true;
                             if (currentLevel.length > 0) {
@@ -528,9 +540,11 @@ document.addEventListener('DOMContentLoaded', () => {
                             }
                         } else {
                             // Extract text segments from this line
+                            // If a single line is extremely long, it's a paragraph, not a tree diagram node
+                            if (trimmed.length > 250) return match;
+
                             // Multiple nodes might be on the same line separated by spaces
-                            const trimmed = line.trim();
-                            if (trimmed) currentLevel.push(trimmed);
+                            currentLevel.push(trimmed);
                         }
                     }
                     if (currentLevel.length > 0) levels.push(currentLevel);
@@ -841,7 +855,69 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Otherwise, call the AI Formatter (with mermaid-free text)
                 try {
                     const aiFormatter = new window.AIFormatter();
-                    elements = await aiFormatter.formatText(cleanedText);
+
+                    // --- Text Chunking Logic ---
+                    // Only chunk for truly large documents. Gemini 2.5 Flash can handle large inputs,
+                    // so we use a generous limit to minimize chunks and preserve document context.
+                    const CHUNK_SIZE_LIMIT = 15000; // ~15K chars per chunk (approx 3000-4000 words)
+                    const chunks = [];
+
+                    if (cleanedText.length <= CHUNK_SIZE_LIMIT) {
+                        // Small enough to process in one go — no chunking needed
+                        chunks.push(cleanedText);
+                    } else {
+                        // Split by double newlines (paragraphs) to avoid breaking sentences
+                        const paragraphs = cleanedText.split(/\n\n+/);
+                        let currentChunk = "";
+
+                        for (const para of paragraphs) {
+                            // If adding this paragraph would exceed the limit, finalize the current chunk
+                            if (currentChunk.length + para.length > CHUNK_SIZE_LIMIT && currentChunk.length > 0) {
+                                chunks.push(currentChunk.trim());
+                                currentChunk = "";
+                            }
+                            // Add double newline back if we are assembling chunks
+                            currentChunk += (currentChunk.length > 0 ? "\n\n" : "") + para;
+                        }
+                        if (currentChunk.trim().length > 0) {
+                            chunks.push(currentChunk.trim());
+                        }
+                    }
+
+                    if (chunks.length === 0) {
+                        chunks.push(cleanedText);
+                    }
+
+                    console.log(`[Chunking] Document split into ${chunks.length} chunk(s). Total chars: ${cleanedText.length}`);
+
+                    // Process each chunk sequentially
+                    for (let i = 0; i < chunks.length; i++) {
+                        if (loadingTitle && loadingProgress && chunks.length > 1) {
+                            loadingTitle.textContent = `Formatting Part ${i + 1} of ${chunks.length}`;
+                            loadingProgress.textContent = `Analyzing chunk ${i + 1}... Please wait.`;
+                        }
+
+                        // Add context prefix for multi-chunk documents so Gemini preserves structure
+                        let chunkText = chunks[i];
+                        if (chunks.length > 1) {
+                            const contextNote = `[CONTEXT: This is part ${i + 1} of ${chunks.length} of a larger document. Classify each text block's structure (h1, h2, sub-subheading, p, ul, ol, code) accurately based on its content. Maintain consistent heading hierarchy throughout.]\n\n`;
+                            chunkText = contextNote + chunkText;
+                        }
+
+                        // Allow browser to repaint progress UI
+                        if (chunks.length > 1) {
+                            await new Promise(r => setTimeout(r, 50));
+                        }
+
+                        // Wait for formatting of this chunk
+                        const chunkElements = await aiFormatter.formatText(chunkText);
+
+                        // Concatenate the structured JSON objects
+                        if (Array.isArray(chunkElements)) {
+                            elements = elements.concat(chunkElements);
+                        }
+                    }
+
                 } catch (aiError) {
                     console.warn("AI formatting failed, falling back to local heuristic", aiError);
                     // Fallback to local heuristic engine
@@ -1202,8 +1278,8 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 statusText.textContent = "Error Formatting — check console for details";
             }
-
-            // Re-enable ribbon controls on error so user can try again
+        } finally {
+            // Re-enable ribbon controls so user can make live adjustments (e.g. alignment)
             const ribbonControls = document.querySelectorAll('.formatting-ribbon select, .formatting-ribbon input');
             ribbonControls.forEach(control => {
                 control.disabled = false;
@@ -1215,7 +1291,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     control.parentElement.style.cursor = 'default';
                 }
             });
-        } finally {
+
             const loadingOverlay = document.getElementById('loading-overlay');
             if (loadingOverlay) loadingOverlay.style.display = 'none';
         }
@@ -1551,5 +1627,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (exportWordBtn) exportWordBtn.addEventListener('click', handleExportWord);
     if (mobileExportWordBtn) mobileExportWordBtn.addEventListener('click', handleExportWord);
+
+    // --- Live Alignment Update from Ribbon ---
+    const globalAlignmentSelect = document.getElementById('global-alignment');
+    if (globalAlignmentSelect) {
+        globalAlignmentSelect.addEventListener('change', (e) => {
+            const previewContainer = document.getElementById('formatted-preview');
+            // Only update if there is content (not the placeholder)
+            if (previewContainer && !previewContainer.querySelector('.placeholder-text')) {
+                // Determine what to align based on RuleEngine defaults to avoid messing up Mermaid diagrams
+                const targetElements = previewContainer.querySelectorAll('h1, h2, h3, p, ul, ol, div:not(.mermaid), pre');
+                targetElements.forEach(el => {
+                    el.style.textAlign = e.target.value;
+                });
+            }
+        });
+    }
 
 });

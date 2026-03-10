@@ -20,6 +20,64 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Event Listeners ---
     const formatBtn = document.getElementById('format-btn');
 
+    // --- Hamburger Menu Logic ---
+    const hamburgerBtn = document.getElementById('hamburger-btn');
+    const closeMenuBtn = document.getElementById('close-menu-btn');
+    const settingsMenu = document.getElementById('settings-menu');
+    const menuOverlay = document.getElementById('menu-overlay');
+    const customApiKeyInput = document.getElementById('custom-api-key');
+    const saveApiKeyBtn = document.getElementById('save-api-key-btn');
+    const apiKeyStatus = document.getElementById('api-key-status');
+
+    function openMenu() {
+        settingsMenu.classList.add('open');
+        menuOverlay.classList.add('active');
+        // Load key on open
+        const existingKey = localStorage.getItem('gemini_api_key');
+        if (existingKey) {
+            customApiKeyInput.value = existingKey;
+        }
+    }
+
+    function closeMenu() {
+        settingsMenu.classList.remove('open');
+        menuOverlay.classList.remove('active');
+        apiKeyStatus.style.display = 'none'; // reset status
+    }
+
+    if (hamburgerBtn) hamburgerBtn.addEventListener('click', openMenu);
+    if (closeMenuBtn) closeMenuBtn.addEventListener('click', closeMenu);
+    if (menuOverlay) menuOverlay.addEventListener('click', closeMenu);
+
+    if (saveApiKeyBtn) {
+        saveApiKeyBtn.addEventListener('click', () => {
+            const val = customApiKeyInput.value.trim();
+            if (val) {
+                localStorage.setItem('gemini_api_key', val);
+                // Also update the active formatter instance
+                if (window.aiFormatter) {
+                    window.aiFormatter.localApiKey = val;
+                }
+                apiKeyStatus.textContent = '✅ API Key saved! Ready to format.';
+                apiKeyStatus.style.color = '#38a169'; // Green
+            } else {
+                localStorage.removeItem('gemini_api_key');
+                if (window.aiFormatter) {
+                    window.aiFormatter.localApiKey = '';
+                }
+                apiKeyStatus.textContent = '🗑️ Custom API Key removed. Using default server key.';
+                apiKeyStatus.style.color = '#718096'; // Gray
+            }
+            apiKeyStatus.style.display = 'block';
+
+            // Auto close after briefly showing success message
+            setTimeout(closeMenu, 1500);
+        });
+    }
+
+    // Expose openMenu globally so the quota error button can launch it
+    window.openSettingsMenu = openMenu;
+
     // --- Rich Text Editing Toolbar & Customization Toggle ---
     window.isCustomizationActive = false;
     const customizeBtn = document.getElementById('toggle-customization-btn');
@@ -1288,7 +1346,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div style="padding: 24px; text-align: center; color: #d32f2f; background-color: #ffebee; border: 1px solid #ffcdd2; border-radius: 8px; margin: 20px;">
                             <h3 style="margin-top: 0;">⚠️ API Limit Reached</h3>
                             <p>You have exceeded the free limit for the AI Formatter.</p>
-                            <p><strong>Please wait 1-2 minutes</strong> for your quota to reset and try clicking 'Format Now' again.</p>
+                            <p><strong>Option 1:</strong> Wait 1-2 minutes for your quota to reset and try clicking 'Format Now' again.</p>
+                            <hr style="border:0; border-top:1px solid #ffcdd2; margin:16px 0;">
+                            <p><strong>Option 2:</strong> Use your own free Gemini API key to skip the wait.</p>
+                            <button onclick="window.openSettingsMenu()" class="btn secondary btn-small" style="margin-top: 8px; background-color: white;">⚙️ Enter Custom API Key</button>
                         </div>
                     `;
                 }

@@ -1279,12 +1279,40 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             console.error("Formatting Error Details:", error);
             const errorMsg = error.message || String(error);
+            const previewContainer = document.getElementById('formatted-preview');
+
             if (errorMsg.includes('429') || errorMsg.includes('RESOURCE_EXHAUSTED') || errorMsg.includes('quota')) {
-                statusText.textContent = "⚠️ API quota exceeded. Please wait a few minutes and try again.";
+                statusText.textContent = "⚠️ API quota exceeded. Please wait a few minutes.";
+                if (previewContainer) {
+                    previewContainer.innerHTML = `
+                        <div style="padding: 24px; text-align: center; color: #d32f2f; background-color: #ffebee; border: 1px solid #ffcdd2; border-radius: 8px; margin: 20px;">
+                            <h3 style="margin-top: 0;">⚠️ API Limit Reached</h3>
+                            <p>You have exceeded the free limit for the AI Formatter.</p>
+                            <p><strong>Please wait 1-2 minutes</strong> for your quota to reset and try clicking 'Format Now' again.</p>
+                        </div>
+                    `;
+                }
             } else if (errorMsg.includes('API key') || errorMsg.includes('No API key')) {
                 statusText.textContent = "⚠️ No API key configured. Set your Gemini API key.";
+                if (previewContainer) {
+                    previewContainer.innerHTML = '<div style="padding: 20px; color: #d32f2f;">Error: Gemini API key is missing.</div>';
+                }
             } else {
                 statusText.textContent = "Error Formatting — check console for details";
+                if (previewContainer) {
+                    previewContainer.innerHTML = `<div style="padding: 20px; color: #d32f2f;">An unexpected formatting error occurred.<br><small>${errorMsg}</small></div>`;
+                }
+            }
+
+            // Re-enable Format Button so user can try again
+            if (formatBtn) {
+                formatBtn.disabled = false;
+                formatBtn.style.opacity = '1';
+                formatBtn.style.cursor = 'pointer';
+                formatBtn.innerHTML = '✨ Format Now';
+            }
+            if (rawInput) {
+                rawInput.disabled = false;
             }
         } finally {
             // Re-enable ribbon controls so user can make live adjustments (e.g. alignment)

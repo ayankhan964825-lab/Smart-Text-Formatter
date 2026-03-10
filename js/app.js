@@ -111,8 +111,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
                 if (response.ok) {
-                    apiKeyStatus.textContent = '🎉 API Key is Valid and Working!';
+                    // Auto-save the key since it works!
+                    localStorage.setItem('gemini_api_key', val);
+                    if (window.aiFormatter) {
+                        window.aiFormatter.localApiKey = val;
+                    }
+                    apiKeyStatus.innerHTML = '🎉 API Key is Valid and <b>Saved</b>! Ready to format.';
                     apiKeyStatus.style.color = '#38a169'; // Green
+
+                    setTimeout(closeMenu, 2000); // Auto close after success
                 } else {
                     const err = await response.text();
                     console.error("Test API Error:", response.status, err);

@@ -1734,8 +1734,17 @@ document.addEventListener('DOMContentLoaded', () => {
                         table.MsoFooter { margin: 0 auto; }
                         body {
                             font-family: 'Times New Roman', serif;
-                            font-size: 12pt;
-                            line-height: 1.6;
+                            font-size: 11pt; /* Sync with PDF 11pt */
+                            line-height: 1.5; /* Sync with PDF 1.5 */
+                        }
+                        h1, h2, h3, h4, h5, h6 {
+                            page-break-after: avoid;
+                            margin-top: 18pt; /* Mimic standard spacing */
+                            margin-bottom: 8pt;
+                        }
+                        p, ul, ol, table {
+                            margin-top: 0;
+                            margin-bottom: 12pt;
                         }
                         .toc-table {
                             width: 100%;

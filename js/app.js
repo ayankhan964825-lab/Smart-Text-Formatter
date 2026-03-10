@@ -1443,18 +1443,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 rawInput.disabled = false;
             }
         } finally {
-            // Re-enable ribbon controls so user can make live adjustments (e.g. alignment)
-            const ribbonControls = document.querySelectorAll('.formatting-ribbon select, .formatting-ribbon input');
-            ribbonControls.forEach(control => {
-                control.disabled = false;
-                control.style.opacity = '1';
-                control.style.cursor = 'default';
-
-                if (control.type === 'checkbox' && control.parentElement) {
-                    control.parentElement.style.opacity = '1';
-                    control.parentElement.style.cursor = 'default';
-                }
-            });
+            // As per user request: only re-enable the alignment control for live previews.
+            // Other controls remain disabled to encourage page refresh for a new session.
+            const alignmentSelect = document.getElementById('global-alignment');
+            if (alignmentSelect) {
+                alignmentSelect.disabled = false;
+                alignmentSelect.style.opacity = '1';
+                alignmentSelect.style.cursor = 'default';
+            }
 
             const loadingOverlay = document.getElementById('loading-overlay');
             if (loadingOverlay) loadingOverlay.style.display = 'none';

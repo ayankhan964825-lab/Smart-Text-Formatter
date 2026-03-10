@@ -340,6 +340,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (loadingOverlay) {
             if (loadingTitle) loadingTitle.textContent = "Analyzing & Formatting...";
             if (loadingProgress) loadingProgress.textContent = "Applying AI rules, detecting diagrams, and structuring your content.";
+
+            // Apply Dynamic Theme Based on API Key (RCB vs CSK)
+            const activeCustomKey = window.GEMINI_API_KEY_LOCAL || localStorage.getItem('gemini_api_key');
+            loadingOverlay.classList.remove('theme-rcb', 'theme-csk');
+            loadingOverlay.classList.add(activeCustomKey ? 'theme-rcb' : 'theme-csk');
+
             loadingOverlay.style.display = 'flex';
         }
 

@@ -1468,7 +1468,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Helper: Build export-ready HTML with page number footer styles
     function buildExportHtml(contentHtml) {
         return `
-            <div style="font-family: 'Times New Roman', serif; color: #000;">
+            <div class="pdf-export-wrapper" style="font-family: 'Times New Roman', serif; color: #000;">
                 ${contentHtml}
             </div>
         `;
@@ -1618,20 +1618,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
             wrapper.innerHTML = buildExportHtml(clonedPreview.innerHTML);
             wrapper.style.backgroundColor = '#ffffff';
-            wrapper.style.padding = '40px';
+            // Adjusted padding to perfectly simulate Word A4 1-inch margins
+            wrapper.style.padding = '25.4mm'; 
             wrapper.style.boxSizing = 'border-box'; // Ensure padding doesn't push width beyond 100%
-            wrapper.style.width = '100%';
+            wrapper.style.width = '210mm'; // Enforced A4 physical width
             wrapper.style.maxWidth = '100%';
             wrapper.style.overflowWrap = 'break-word'; // Prevent long words from clipping
             wrapper.style.wordWrap = 'break-word';
 
             const opt = {
-                margin: [15, 10, 20, 10], // top, right, bottom, left (mm) — extra bottom for page number
+                // Reduced top/bottom margin array since physical 25.4mm padding handles text layout.
+                // Small margins here just give room for page numbers.
+                margin: [5, 0, 15, 0], 
                 filename: 'formatted_document.pdf',
                 image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2 },
+                html2canvas: { scale: 2, useCORS: true },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+                // Only rely on smart CSS page-breaks now
+                pagebreak: { mode: ['css', 'legacy'] }
             };
 
             html2pdf().set(opt).from(wrapper).toPdf().get('pdf').then(function (pdf) {

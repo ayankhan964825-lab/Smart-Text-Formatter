@@ -1218,3 +1218,67 @@ body {
     background-clip: text;
     -webkit-text-fill-color: transparent;
 }
+
+/* ==========================================================================
+   Print / PDF Export Specific Styling (Mimics Word Documents)
+   ========================================================================== */
+@media print {
+    /* Base settings for A4 print */
+    body {
+        margin: 0;
+        padding: 0;
+        background-color: #ffffff;
+    }
+}
+
+/* 
+  These classes apply when html2pdf renders the cloned wrapper.
+  They enforce strict pagination rules to prevent "line cutting" across page boundaries.
+*/
+.pdf-export-wrapper {
+    font-size: 11pt !important; /* Standard Word Size */
+    line-height: 1.5 !important;
+}
+
+/* Prevent paragraphs and list items from splitting wildly across pages */
+.pdf-export-wrapper p, 
+.pdf-export-wrapper li,
+.pdf-export-wrapper td,
+.pdf-export-wrapper th {
+    page-break-inside: auto; /* Allow normal breaks if paragraph is very long */
+    /* Orphans and widows control how many lines can be left stranded on a page break (requires modern browser support) */
+    orphans: 3;
+    widows: 3;
+}
+
+/* Never break INSIDE a small block (like a diagram wrapper or code block) */
+.pdf-export-wrapper .mermaid-container,
+.pdf-export-wrapper pre,
+.pdf-export-wrapper code,
+.pdf-export-wrapper tr {
+    page-break-inside: avoid !important;
+}
+
+/* Keep headings attached to their following paragraph (avoid stranded headings) */
+.pdf-export-wrapper h1, 
+.pdf-export-wrapper h2, 
+.pdf-export-wrapper h3, 
+.pdf-export-wrapper h4, 
+.pdf-export-wrapper h5, 
+.pdf-export-wrapper h6 {
+    page-break-after: avoid !important;
+    page-break-inside: avoid !important;
+    margin-bottom: 8px !important; 
+}
+
+/* Usually start major sections (H1) on a new page, UNLESS it's the very first element */
+.pdf-export-wrapper > h1:not(:first-child) {
+    page-break-before: always !important;
+    margin-top: 0 !important;
+}
+
+/* Give SVGs converted to PNGs enough breathing room */
+.pdf-export-wrapper img {
+    page-break-inside: avoid !important;
+    margin: 10px auto;
+}

@@ -53,93 +53,85 @@ const MIME_TYPES = {
  */
 async function handleApiFormat(req, res) {
     let body = '';
-    req.on('data', chunk => { body += chunk; });
-    req.on('end', () => {
-        try {
-            const { rawText, systemInstruction } = JSON.parse(body);
+    req.on('data', chunk => {
+        body += chunk;
+    });
 
-            // Allow the frontend to provide a custom API key to bypass limits
-            const customKey = req.headers['x-custom-api-key'];
-            const activeApiKey = customKey || GEMINI_API_KEY;
+    req.on('end', async () => {
+        try {
+            const parsedBody = JSON.parse(body);
+            const { rawText, systemInstruction } = parsedBody;
 
             if (!rawText) {
                 res.writeHead(400, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ error: 'rawText is required.' }));
-                return;
+                return res.end(JSON.stringify({ error: 'rawText is required.' }));
             }
 
-            if (!activeApiKey) {
+            // Check for custom API key from the frontend
+            const customKey = req.headers['x-custom-api-key'];
+
+            // Determine our pool of keys to try
+            let keysToTry = customKey ? [customKey] : RAW_API_KEYS;
+
+            if (keysToTry.length === 0) {
                 res.writeHead(500, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ error: 'No API key provided locally or in .env' }));
-                return;
+                return res.end(JSON.stringify({ error: 'No GEMINI_API_KEY found on server.' }));
             }
 
-            const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${activeApiKey}`;
-
-            const requestBody = JSON.stringify({
+            const requestBody = {
                 system_instruction: { parts: [{ text: systemInstruction }] },
                 contents: [{ parts: [{ text: rawText }] }],
                 generationConfig: { temperature: 0.1, responseMimeType: "application/json" }
-            });
-
-            const urlObj = new URL(geminiUrl);
-            const options = {
-                hostname: urlObj.hostname,
-                path: urlObj.pathname + urlObj.search,
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Content-Length': Buffer.byteLength(requestBody),
-                },
             };
 
-            console.log('[Server] Proxying to Gemini API (server-side)...');
+            let lastResponse = null;
+            let lastErrorHtml = null;
 
-            const geminiReq = https.request(options, (geminiRes) => {
-                let responseData = '';
-                geminiRes.on('data', chunk => { responseData += chunk; });
-                geminiRes.on('end', () => {
-                    if (geminiRes.statusCode === 200) {
-                        console.log('[Server] ✅ Gemini API responded successfully!');
-                        res.writeHead(200, {
-                            'Content-Type': 'application/json',
-                            'Access-Control-Allow-Origin': '*',
-                        });
+            // --- Key Rotation Logic ---
+            for (let i = 0; i < keysToTry.length; i++) {
+                const currentKey = keysToTry[i];
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${currentKey}`;
 
-                        // We must send the JSON data exactly as the frontend expects it.
-                        // Since aiFormatter.js expects `data.candidates[0].content.parts[0].text`
-                        // we can just forward the parsed Gemini response directly.
-                        try {
-                            const parsedData = JSON.parse(responseData);
-                            res.end(JSON.stringify(parsedData));
-                        } catch (e) {
-                            console.error('[Server] Failed to parse Gemini response JSON:', e);
-                            res.end(responseData); // Fallback to raw string
-                        }
+                console.log(`[Proxy] Trying API Key ${i + 1} of ${keysToTry.length}...`);
 
-                    } else {
-                        console.error(`[Server] ❌ Gemini API error: ${geminiRes.statusCode}`);
-                        res.writeHead(geminiRes.statusCode, {
-                            'Content-Type': 'application/json',
-                            'Access-Control-Allow-Origin': '*',
-                        });
-                        res.end(responseData);
-                    }
+                const geminiResponse = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(requestBody)
                 });
-            });
 
-            geminiReq.on('error', (err) => {
-                console.error('[Server] ❌ Network error:', err.message);
-                res.writeHead(500, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ error: err.message }));
-            });
+                if (geminiResponse.ok) {
+                    const data = await geminiResponse.json();
+                    res.writeHead(200, { 'Content-Type': 'application/json' });
+                    return res.end(JSON.stringify(data));
+                }
 
-            geminiReq.write(requestBody);
-            geminiReq.end();
+                // If it failed, record the error
+                const errText = await geminiResponse.text();
+                lastResponse = geminiResponse;
+                lastErrorHtml = errText;
 
-        } catch (parseErr) {
-            res.writeHead(400, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify({ error: 'Invalid JSON body.' }));
+                // Check if it's a rate limit. If it is, and we have more keys, continue loop.
+                const isRateLimit = geminiResponse.status === 429 || errText.includes('quota') || errText.includes('RESOURCE_EXHAUSTED');
+
+                if (isRateLimit && i < keysToTry.length - 1) {
+                    console.warn(`[Proxy] Key ${i + 1} rate limited. Rotating to next key...`);
+                    continue;
+                } else {
+                    // Either not a rate limit (bad request) or we are out of keys -> break and fail
+                    break;
+                }
+            }
+
+            // If we get here, all attempted keys failed
+            console.error('[Proxy Error] All keys exhausted or final API failure:', lastResponse.status, lastErrorHtml);
+            res.writeHead(lastResponse.status, { 'Content-Type': 'application/json' });
+            return res.end(JSON.stringify({ error: lastErrorHtml }));
+
+        } catch (error) {
+            console.error('[Proxy Error] Internal catch:', error);
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            return res.end(JSON.stringify({ error: 'Internal server error processing format request.' }));
         }
     });
 }

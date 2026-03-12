@@ -123,7 +123,78 @@ D. TYPOS: Do not fix general spelling mistakes or grammar. Only fix the citation
     }
 
     /**
-     * Parses the raw Gemini response into a clean JSON array
+     * Specialized method to auto-heal broken Mermaid syntax using Gemini
+     * @param {string} invalidCode The syntax that crashed html2pdf/mermaid
+     * @param {string} errorMessage The specific error thrown by the mermaid renderer
+     * @returns {Promise<string>} The corrected raw mermaid code
+     */
+    async fixMermaid(invalidCode, errorMessage) {
+        const activeLocalApiKey = window.GEMINI_API_KEY_LOCAL || localStorage.getItem('gemini_api_key') || '';
+        
+        const systemInstruction = `You are an expert Mermaid JS syntax validator and healer.
+The following Mermaid diagram code threw a syntax error in the browser renderer.
+Error thrown: "${errorMessage}"
+
+Your job is to find the syntax error in the code and fix it.
+CRITICAL RULES:
+1. Return ONLY the raw, fixed Mermaid code.
+2. DO NOT return markdown blocks like \`\`\`mermaid or \`\`\`. 
+3. DO NOT output any conversational text like "Here is the fixed code:".
+4. Make the minimal necessary changes to make it compile successfully.`;
+
+        // PATH 1: Direct to Google
+        if (activeLocalApiKey) {
+            console.log('[AIFormatter] Auto-Healing Mermaid directly via Gemini API...');
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${activeLocalApiKey}`;
+
+            const requestBody = {
+                system_instruction: { parts: [{ text: systemInstruction }] },
+                contents: [{ parts: [{ text: invalidCode }] }],
+                generationConfig: { temperature: 0.1, responseMimeType: "text/plain" }
+            };
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(requestBody)
+            });
+
+            if (!response.ok) throw new Error("Auto-Heal direct API failed.");
+            
+            const data = await response.json();
+            const fixedCode = data.candidates[0].content.parts[0].text.trim();
+            // Clean markdown wrappers if hallucinated
+            return fixedCode.replace(/^```[a-z]*\s*/i, '').replace(/\s*```$/, '').trim();
+        }
+
+        // PATH 2: Server Proxy
+        console.log('[AIFormatter] Auto-Healing Mermaid via server proxy...');
+        const proxyResponse = await fetch('/api/format', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                rawText: invalidCode, 
+                systemInstruction,
+                isMermaidFix: true // Flag to tell server NOT to expect JSON schema parsing
+            })
+        });
+
+        if (proxyResponse.ok) {
+            const data = await proxyResponse.json();
+            
+            // Expected backend format might vary based on how we write the new format.js flag, 
+            // but assuming if isMermaidFix is true, it returns `{ fixedCode: "..." }` or the raw text Candidate.
+            // Support both potential backend designs:
+            let fixedCode = data.fixedCode || data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+            fixedCode = fixedCode.trim();
+            return fixedCode.replace(/^```[a-z]*\s*/i, '').replace(/\s*构*```$/, '').replace(/\s*```$/, '').trim();
+        } else {
+            throw new Error("Auto-Heal proxy API failed.");
+        }
+    }
+
+    /**
+     * Parses the raw Gemini HTML/JSON classification response into a clean UI JSON array
      */
     _parseResponse(data) {
         const outputText = data.candidates[0].content.parts[0].text;

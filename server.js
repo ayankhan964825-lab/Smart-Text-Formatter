@@ -60,7 +60,7 @@ async function handleApiFormat(req, res) {
     req.on('end', async () => {
         try {
             const parsedBody = JSON.parse(body);
-            const { rawText, systemInstruction } = parsedBody;
+            const { rawText, systemInstruction, isMermaidFix } = parsedBody;
 
             if (!rawText) {
                 res.writeHead(400, { 'Content-Type': 'application/json' });
@@ -71,6 +71,7 @@ async function handleApiFormat(req, res) {
             const customKey = req.headers['x-custom-api-key'];
 
             // Determine our pool of keys to try
+            // RAW_API_KEYS is defined globally (assuming it exists higher up)
             let keysToTry = customKey ? [customKey] : RAW_API_KEYS;
 
             if (keysToTry.length === 0) {
@@ -81,7 +82,7 @@ async function handleApiFormat(req, res) {
             const requestBody = {
                 system_instruction: { parts: [{ text: systemInstruction }] },
                 contents: [{ parts: [{ text: rawText }] }],
-                generationConfig: { temperature: 0.1, responseMimeType: "application/json" }
+                generationConfig: { temperature: 0.1, responseMimeType: isMermaidFix ? "text/plain" : "application/json" }
             };
 
             let lastResponse = null;

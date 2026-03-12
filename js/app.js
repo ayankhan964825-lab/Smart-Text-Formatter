@@ -1018,8 +1018,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Process each chunk sequentially
                     for (let i = 0; i < chunks.length; i++) {
                         if (loadingTitle && loadingProgress && chunks.length > 1) {
-                            loadingTitle.textContent = `Formatting Part ${i + 1} of ${chunks.length}`;
-                            loadingProgress.textContent = `Analyzing chunk ${i + 1}... Please wait.`;
+                            const percent = Math.round((i / chunks.length) * 100);
+                            loadingTitle.textContent = `Processing Large Document... ${percent}%`;
+                            loadingProgress.textContent = `Formatting Part ${i + 1} of ${chunks.length} — Analyzing context...`;
                         }
 
                         // Add context prefix for multi-chunk documents so Gemini preserves structure
@@ -1342,23 +1343,68 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             });
 
-            // Render Mermaid diagrams if any exist in the output
+            // Render Mermaid diagrams if any exist in the output - Now with Auto-Healing!
             try {
                 const mermaidEls = previewContainer.querySelectorAll('.mermaid');
                 if (mermaidEls.length > 0) {
+                    // Keep references to loading overlay so we can show "Healing" status
+                    const loadingOverlay = document.getElementById('loading-overlay');
+                    const loadingTitle = document.getElementById('loading-title');
+                    const loadingProgress = document.getElementById('loading-progress');
+
                     // Render each diagram individually to isolate errors
                     for (const el of mermaidEls) {
-                        try {
-                            const rawCode = el.textContent;
-                            // Generate a unique id for each diagram
-                            const id = 'mermaid-' + Math.random().toString(36).substr(2, 9);
-                            const { svg } = await mermaid.render(id, rawCode);
-                            el.innerHTML = svg;
-                        } catch (singleErr) {
-                            console.warn("Mermaid render failed for one diagram:", singleErr);
-                            // Show raw code as fallback
-                            const rawCode = el.textContent;
-                            el.innerHTML = `<pre style="background:#fff3cd; padding:12px; border:1px solid #ffc107; border-radius:6px; white-space:pre-wrap; font-family:monospace; font-size:0.85rem; color:#856404;">⚠️ Diagram could not be rendered.\n\n${rawCode}</pre>`;
+                        let finalSvg = null;
+                        let lastError = null;
+                        let currentCode = el.textContent;
+                        
+                        // Retry loop for Mermaid Auto-Healing (max 1 retry)
+                        for (let attempt = 1; attempt <= 2; attempt++) {
+                            try {
+                                const id = 'mermaid-' + Math.random().toString(36).substr(2, 9);
+                                const { svg } = await mermaid.render(id, currentCode);
+                                finalSvg = svg;
+                                break; // Success! No need to heal.
+                            } catch (singleErr) {
+                                lastError = singleErr;
+                                console.warn(`Mermaid render failed (Attempt ${attempt}/2):`, singleErr);
+                                
+                                // Auto-Healing Phase: Try to fix it on the first failure via Gemini AI
+                                if (attempt === 1) {
+                                    if (loadingOverlay) loadingOverlay.style.display = 'flex';
+                                    let originalTitle = "";
+                                    let originalProgress = "";
+
+                                    if (loadingTitle && loadingProgress) {
+                                        originalTitle = loadingTitle.textContent;
+                                        originalProgress = loadingProgress.textContent;
+                                        loadingTitle.textContent = "Auto-Healing Diagram...";
+                                        loadingProgress.textContent = "Mermaid threw a syntax error. Instructing Gemini to fix it...";
+                                    }
+                                        
+                                    try {
+                                        const healer = new window.AIFormatter();
+                                        currentCode = await healer.fixMermaid(currentCode, lastError.message || String(lastError));
+                                        console.log("Received healed Mermaid code:", currentCode);
+                                    } catch (healErr) {
+                                        console.error("Mermaid Auto-Heal strictly failed.", healErr);
+                                        break; // Stop retrying if the healer itself fails
+                                    } finally {
+                                        if (loadingTitle && loadingProgress) {
+                                            loadingTitle.textContent = originalTitle;
+                                            loadingProgress.textContent = originalProgress;
+                                        }
+                                        if (loadingOverlay) loadingOverlay.style.display = 'none'; // Re-hide as format phase finished
+                                    }
+                                }
+                            }
+                        }
+
+                        if (finalSvg) {
+                            el.innerHTML = finalSvg;
+                        } else {
+                            // Ultimate fallback after healing fails or crashes
+                            el.innerHTML = `<pre style="background:#fff3cd; padding:12px; border:1px solid #ffc107; border-radius:6px; white-space:pre-wrap; font-family:monospace; font-size:0.85rem; color:#856404;">⚠️ Diagram could not be rendered, even after auto-healing.\n\nError: ${lastError?.message || "Syntax Error"}\n\n${currentCode}</pre>`;
                         }
                     }
                 }

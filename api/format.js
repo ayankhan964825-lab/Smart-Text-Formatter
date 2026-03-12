@@ -22,7 +22,7 @@ export default async function handler(req, res) {
     }
 
     try {
-        const { rawText, systemInstruction } = req.body;
+        const { rawText, systemInstruction, isMermaidFix } = req.body;
 
         if (!rawText) {
             return res.status(400).json({ error: 'rawText is required.' });
@@ -37,7 +37,7 @@ export default async function handler(req, res) {
             }],
             generationConfig: {
                 temperature: 0.1,
-                responseMimeType: "application/json"
+                responseMimeType: isMermaidFix ? "text/plain" : "application/json"
             }
         };
 

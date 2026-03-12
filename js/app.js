@@ -408,12 +408,28 @@ document.addEventListener('DOMContentLoaded', () => {
             let elements = [];
 
             // --- Extract Mermaid blocks before AI/heuristic processing ---
-            // This prevents the AI from modifying or corrupting mermaid syntax
+            // This prevents the AI from modifying or corrupting mermaid syntax.
+            // Catch BOTH markdown-fenced ```mermaid AND bare flowchart/graph/etc declarations.
             const extractedMermaid = [];
-            let cleanedText = textToProcess.replace(/```mermaid\s*\n([\s\S]*?)```/g, (match, code) => {
+            
+            // First pass: Markdown fenced blocks
+            let cleanedText = textToProcess.replace(/```mermaid\s*\n([\s\S]*?)```/gi, (match, code) => {
                 const index = extractedMermaid.length;
                 extractedMermaid.push(code.trim());
                 return `\n\n%%MERMAID_PLACEHOLDER_${index}%%\n\n`;
+            });
+
+            // Second pass: Bare/Raw Mermaid blocks (un-fenced text that starts with a mermaid keyword)
+            const bareMermaidRegex = /^(graph|flowchart|sequenceDiagram|gantt|classDiagram|stateDiagram|pie|journey)[\s\S]+?(?=\n\n|\n$|$)/gim;
+            cleanedText = cleanedText.replace(bareMermaidRegex, (match) => {
+                // To avoid false positives on normal text that happens to start with "Graph",
+                // we only extract it if it contains an arrow "-->" or brackets "[]" typical of mermaid
+                if (match.includes('-->') || match.includes('--') || match.includes('[') || match.includes(':')) {
+                    const index = extractedMermaid.length;
+                    extractedMermaid.push(match.trim());
+                    return `\n\n%%MERMAID_PLACEHOLDER_${index}%%\n\n`;
+                }
+                return match; // False positive, leave it alone
             });
 
             // --- Auto-detect and convert plain text flowcharts to Mermaid ---

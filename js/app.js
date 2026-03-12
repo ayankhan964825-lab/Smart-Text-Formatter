@@ -262,15 +262,23 @@ document.addEventListener('DOMContentLoaded', () => {
         previewContainer.insertAdjacentHTML('beforeend', htmlToInsert);
     }
 
-    modalOverwriteBtn.addEventListener('click', () => {
-        document.getElementById('formatted-preview').innerHTML = pendingFormattedHtml;
+    modalOverwriteBtn.addEventListener('click', async () => {
+        const previewContainer = document.getElementById('formatted-preview');
+        previewContainer.innerHTML = pendingFormattedHtml;
         appendModal.style.display = 'none';
+        
+        statusText.textContent = "Finalizing Rendering...";
+        await finalizeRendering(previewContainer);
         statusText.textContent = "Formatted Successfully ✨";
     });
 
-    modalAppendBtn.addEventListener('click', () => {
+    modalAppendBtn.addEventListener('click', async () => {
         insertHtmlAtCursor(pendingFormattedHtml);
         appendModal.style.display = 'none';
+        
+        statusText.textContent = "Finalizing Rendering...";
+        const previewContainer = document.getElementById('formatted-preview');
+        await finalizeRendering(previewContainer);
         statusText.textContent = "Appended Successfully ✨";
     });
 
@@ -1305,7 +1313,6 @@ document.addEventListener('DOMContentLoaded', () => {
                             </thead>
                             <tbody>`;
 
-                    let pageEstimate = 1; // Start page numbering from 1 (after TOC)
                     headings.forEach((heading, index) => {
                         const id = 'heading-' + index;
                         heading.setAttribute('id', id);
@@ -1315,11 +1322,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                         tocHtml += `<tr>
                             <td style="${fontStyle}"><a href="#${id}" class="toc-link">${heading.textContent}</a></td>
-                            <td style="text-align: right; font-weight: 700;">${pageEstimate}</td>
+                            <td style="text-align: right; font-weight: 700;" class="toc-page-num" data-target-id="${id}">-</td>
                         </tr>`;
-
-                        // Rough page estimate: increment page every 2-3 headings
-                        if ((index + 1) % 2 === 0) pageEstimate++;
                     });
 
                     tocHtml += `</tbody></table></div>`;
@@ -1336,96 +1340,14 @@ document.addEventListener('DOMContentLoaded', () => {
             if (forceOverwrite || !window.isCustomizationActive || !currentPreviewHtml || isPlaceholder) {
                 previewContainer.innerHTML = finalHtml;
                 statusText.textContent = "Formatted Successfully ✨";
+                // Now run post-rendering strictly on the injected DOM
+                await finalizeRendering(previewContainer);
             } else {
                 // Text exists! The user might have manual edits they don't want to lose. Show the modal.
                 pendingFormattedHtml = finalHtml;
                 const appendModal = document.getElementById('append-modal');
                 appendModal.style.display = 'flex';
                 statusText.textContent = "Waiting for Append/Overwrite decision...";
-            }
-
-            // Set up TOC link smooth-scroll behavior
-            previewContainer.querySelectorAll('.toc-link').forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    const targetId = link.getAttribute('href')?.substring(1);
-                    if (targetId) {
-                        const targetEl = previewContainer.querySelector('#' + targetId);
-                        if (targetEl) {
-                            targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                        }
-                    }
-                });
-            });
-
-            // Render Mermaid diagrams if any exist in the output - Now with Auto-Healing!
-            try {
-                const mermaidEls = previewContainer.querySelectorAll('.mermaid');
-                if (mermaidEls.length > 0) {
-                    // Keep references to loading overlay so we can show "Healing" status
-                    const loadingOverlay = document.getElementById('loading-overlay');
-                    const loadingTitle = document.getElementById('loading-title');
-                    const loadingProgress = document.getElementById('loading-progress');
-
-                    // Render each diagram individually to isolate errors
-                    for (const el of mermaidEls) {
-                        let finalSvg = null;
-                        let lastError = null;
-                        let currentCode = el.textContent;
-                        
-                        // Retry loop for Mermaid Auto-Healing (max 1 retry)
-                        for (let attempt = 1; attempt <= 2; attempt++) {
-                            try {
-                                const id = 'mermaid-' + Math.random().toString(36).substr(2, 9);
-                                const { svg } = await mermaid.render(id, currentCode);
-                                finalSvg = svg;
-                                break; // Success! No need to heal.
-                            } catch (singleErr) {
-                                lastError = singleErr;
-                                console.warn(`Mermaid render failed (Attempt ${attempt}/2):`, singleErr);
-                                
-                                // Auto-Healing Phase: Try to fix it on the first failure via Gemini AI
-                                if (attempt === 1) {
-                                    if (loadingOverlay) loadingOverlay.style.display = 'flex';
-                                    let originalTitle = "";
-                                    let originalProgress = "";
-
-                                    if (loadingTitle && loadingProgress) {
-                                        originalTitle = loadingTitle.textContent;
-                                        originalProgress = loadingProgress.textContent;
-                                        loadingTitle.textContent = "Auto-Healing Diagram...";
-                                        loadingProgress.textContent = "Mermaid threw a syntax error. Instructing Gemini to fix it...";
-                                    }
-                                        
-                                    try {
-                                        const healer = new window.AIFormatter();
-                                        currentCode = await healer.fixMermaid(currentCode, lastError.message || String(lastError));
-                                        console.log("Received healed Mermaid code:", currentCode);
-                                    } catch (healErr) {
-                                        console.error("Mermaid Auto-Heal strictly failed.", healErr);
-                                        break; // Stop retrying if the healer itself fails
-                                    } finally {
-                                        if (loadingTitle && loadingProgress) {
-                                            loadingTitle.textContent = originalTitle;
-                                            loadingProgress.textContent = originalProgress;
-                                        }
-                                        if (loadingOverlay) loadingOverlay.style.display = 'none'; // Re-hide as format phase finished
-                                    }
-                                }
-                            }
-                        }
-
-                        if (finalSvg) {
-                            el.innerHTML = finalSvg;
-                        } else {
-                            // Ultimate fallback after healing fails or crashes
-                            el.innerHTML = `<pre style="background:#fff3cd; padding:12px; border:1px solid #ffc107; border-radius:6px; white-space:pre-wrap; font-family:monospace; font-size:0.85rem; color:#856404;">⚠️ Diagram could not be rendered, even after auto-healing.\n\nError: ${lastError?.message || "Syntax Error"}\n\n${currentCode}</pre>`;
-                        }
-                    }
-                }
-            } catch (mermaidErr) {
-                console.warn("Mermaid rendering error:", mermaidErr);
             }
 
             // Enable export buttons since formatting was successful
@@ -1877,6 +1799,159 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             }
         });
+    }
+
+    // --- Post-Render Lifecycle Methods ---
+    async function finalizeRendering(container) {
+        // Set up TOC link smooth-scroll behavior
+        container.querySelectorAll('.toc-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const targetId = link.getAttribute('href')?.substring(1);
+                if (targetId) {
+                    const targetEl = container.querySelector('#' + targetId);
+                    if (targetEl) {
+                        targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }
+            });
+        });
+
+        // Render Mermaid diagrams if any exist in the output - Now with Auto-Healing!
+        try {
+            const mermaidEls = container.querySelectorAll('.mermaid');
+            if (mermaidEls.length > 0) {
+                // Keep references to loading overlay so we can show "Healing" status
+                const loadingOverlay = document.getElementById('loading-overlay');
+                const loadingTitle = document.getElementById('loading-title');
+                const loadingProgress = document.getElementById('loading-progress');
+
+                // Render each diagram individually to isolate errors
+                for (const el of mermaidEls) {
+                    let finalSvg = null;
+                    let lastError = null;
+                    let currentCode = el.textContent;
+                    
+                    // Retry loop for Mermaid Auto-Healing (max 1 retry)
+                    for (let attempt = 1; attempt <= 2; attempt++) {
+                        try {
+                            const id = 'mermaid-' + Math.random().toString(36).substr(2, 9);
+                            const { svg } = await mermaid.render(id, currentCode);
+                            finalSvg = svg;
+                            break; // Success! No need to heal.
+                        } catch (singleErr) {
+                            lastError = singleErr;
+                            console.warn(`Mermaid render failed (Attempt ${attempt}/2):`, singleErr);
+                            
+                            // Auto-Healing Phase: Try to fix it on the first failure via Gemini AI
+                            if (attempt === 1) {
+                                if (loadingOverlay) loadingOverlay.style.display = 'flex';
+                                let originalTitle = "";
+                                let originalProgress = "";
+
+                                if (loadingTitle && loadingProgress) {
+                                    originalTitle = loadingTitle.textContent;
+                                    originalProgress = loadingProgress.textContent;
+                                    loadingTitle.textContent = "Auto-Healing Diagram...";
+                                    loadingProgress.textContent = "Mermaid threw a syntax error. Instructing Gemini to fix it...";
+                                }
+                                    
+                                try {
+                                    const healer = new window.AIFormatter();
+                                    currentCode = await healer.fixMermaid(currentCode, lastError.message || String(lastError));
+                                    console.log("Received healed Mermaid code:", currentCode);
+                                } catch (healErr) {
+                                    console.error("Mermaid Auto-Heal strictly failed.", healErr);
+                                    break; // Stop retrying if the healer itself fails
+                                } finally {
+                                    if (loadingTitle && loadingProgress) {
+                                        loadingTitle.textContent = originalTitle;
+                                        loadingProgress.textContent = originalProgress;
+                                    }
+                                    if (loadingOverlay) loadingOverlay.style.display = 'none'; // Re-hide as format phase finished
+                                }
+                            }
+                        }
+                    }
+
+                    if (finalSvg) {
+                        el.innerHTML = finalSvg;
+                    } else {
+                        // Ultimate fallback after healing fails or crashes
+                        el.innerHTML = `<pre style="background:#fff3cd; padding:12px; border:1px solid #ffc107; border-radius:6px; white-space:pre-wrap; font-family:monospace; font-size:0.85rem; color:#856404;">⚠️ Diagram could not be rendered, even after auto-healing.\n\nError: ${lastError?.message || "Syntax Error"}\n\n${currentCode}</pre>`;
+                    }
+                }
+            }
+        } catch (mermaidErr) {
+            console.warn("Mermaid rendering error:", mermaidErr);
+        }
+
+        // Calculate accurate TOC page numbers now that all content/diagram heights are settled
+        await calculateAccurateTOC(container);
+    }
+
+    async function calculateAccurateTOC(container) {
+        const tocCells = container.querySelectorAll('.toc-page-num');
+        if (tocCells.length === 0) return;
+
+        console.log("Dynamically calculating TOC offsets for exported document...");
+
+        // Create an invisible measurement wrapper matching PDF bounds
+        const measureWrapper = document.createElement('div');
+        measureWrapper.style.position = 'absolute';
+        measureWrapper.style.top = '-9999px';
+        measureWrapper.style.left = '-9999px';
+        measureWrapper.style.visibility = 'hidden';
+        measureWrapper.style.width = '210mm'; // A4 width
+        measureWrapper.style.padding = '25.4mm'; // 1-inch export margins
+        measureWrapper.style.boxSizing = 'border-box';
+        measureWrapper.style.fontFamily = "'Times New Roman', serif";
+        measureWrapper.style.fontSize = "11pt";
+        measureWrapper.style.lineHeight = "1.5";
+        
+        // Clone into standard wrapper
+        measureWrapper.innerHTML = container.innerHTML;
+        document.body.appendChild(measureWrapper);
+
+        // Calculate logical A4 pixel height in the current browser 
+        // 277mm mimics exactly the available height html2pdf.js uses given [5, 0, 15, 0] jsPDF margins
+        const pageMeasurement = document.createElement('div');
+        pageMeasurement.style.height = '277mm'; 
+        measureWrapper.appendChild(pageMeasurement);
+
+        // Let the browser paint to settle layout metrics
+        await new Promise(resolve => setTimeout(resolve, 50));
+        
+        const pixelsPerPage = pageMeasurement.offsetHeight || 1046; // Use 1046px approx as fallback
+        const wrapperRect = measureWrapper.getBoundingClientRect();
+        const contentContainer = measureWrapper.querySelector('.content-after-toc');
+
+        if (contentContainer) {
+            // Measure offset from start of actual content (ignoring the TOC height itself)
+            const contentStartTop = contentContainer.getBoundingClientRect().top;
+
+            measureWrapper.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach(heading => {
+                const targetId = heading.getAttribute('id');
+                if (targetId && heading.closest('.content-after-toc')) {
+                    const headingRect = heading.getBoundingClientRect();
+                    // Offset relative to where the content actually starts
+                    const offset = headingRect.top - contentStartTop;
+                    
+                    if (offset >= 0) {
+                        const pageNum = Math.floor(offset / pixelsPerPage) + 1;
+                        
+                        // Update the real visible DOM cell
+                        const realCell = container.querySelector(`.toc-page-num[data-target-id="${targetId}"]`);
+                        if (realCell) {
+                            realCell.textContent = pageNum;
+                        }
+                    }
+                }
+            });
+        }
+
+        document.body.removeChild(measureWrapper);
     }
 
 });

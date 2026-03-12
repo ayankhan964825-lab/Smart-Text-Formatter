@@ -60,7 +60,10 @@ A. CITATIONS: Google Lens often mangles academic citations at the ends of senten
    - NEVER format floating numbers like 12, 13, 14, 21, 31, or 41 as citations. If you see them trailing a sentence, they are OCR noise. IGNORE them completely and remove them from the output text.
    - Crucially, these fixed citations MUST remain attached to the very end of the sentence inside their parent "p" block. Do NOT split them into a new block, and do NOT classify them as an "h2".
 B. FLOATING NOISE: If you detect stray PDF page numbers (e.g., a single line that just says "12" or "Page 4") or trailing large numerals above 5, completely IGNORE and REMOVE that block from your JSON array.
-C. AI BOILERPLATE & CONVERSATIONAL FILLER: ChatGPT and Gemini often include conversational text like "Here is the diagram you requested:", "Sure, here is the formatted text:", "Below is a flowchart:", or "Certainly!". COMPLETELY IGNORE AND REMOVE this conversational filler from your JSON output. Do NOT classify it as a "p" block. Only return the actual factual content of the document.
+C. AI BOILERPLATE & CONVERSATIONAL FILLER: Users often paste text containing instructions, prompt templates, expected behaviors, or AI conversational fillers like "Here is the diagram you requested:", "Sure, here is the formatted text:", "Below is a flowchart:", "Expected Behavior Summary", or "When you paste TEST 1...". 
+   - COMPLETELY IGNORE AND REMOVE all conversational filler, prompt instructions, and meta-descriptions from your JSON output. 
+   - Do NOT classify AI conversational text or testing instructions as "p" or "h1" blocks. 
+   - Only return the actual factual content of the document being formatted. If a paragraph is just the AI talking to the user or explaining a test case, drop it entirely!
 D. TYPOS: Do not fix general spelling mistakes or grammar. Only fix the citations as requested above.
 
 6. Do NOT return markdown formatting like \\\`\\\`\\\`json. Return only raw JSON data.`;

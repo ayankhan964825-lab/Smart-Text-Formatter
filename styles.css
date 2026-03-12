@@ -1219,6 +1219,27 @@ body {
     -webkit-text-fill-color: transparent;
 }
 
+/* --- Mermaid Diagram Overrides --- */
+.mermaid-container {
+    width: 100%;
+    overflow-x: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.mermaid {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.mermaid svg {
+    max-width: 100%;
+    width: 100% !important;
+    height: auto !important;
+}
+
 /* ==========================================================================
    Print / PDF Export Specific Styling (Mimics Word Documents)
    ========================================================================== */

@@ -1822,18 +1822,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 </html>
             `;
 
-            // Very smart fix: Detect if the user is on an iOS or Mac device
-            const isAppleDevice = /Mac|iPod|iPhone|iPad/.test(navigator.userAgent);
+            // Very smart fix: Detect if the user is on a mobile device (Android, iOS) vs Desktop Windows
+            const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            const isMacDevice = /Mac/.test(navigator.userAgent);
 
             let finalBlob, fileName;
 
-            if (isAppleDevice) {
-                // Apple devices natively support zipped .docx containers better than old HTML .doc
+            if (isMobileDevice || isMacDevice) {
+                // Mobile devices (Android/iOS) and Macs natively require properly zipped .docx containers.
+                // The old HTML-renamed-to-.doc hack triggers "Corrupt File" errors on modern Android Office apps.
                 finalBlob = htmlDocx.asBlob(wordHtml);
                 fileName = 'formatted_document.docx';
             } else {
-                // Windows and Android MS Word apps struggle with HTML-Docs disguised as .docx (blank pages)
-                // So we serve them the native MS Word HTML blob as a .doc file
+                // Desktop Windows MS Word handles HTML-Docs disguised as .doc perfectly, 
+                // and it preserves our ultra-specific page layouts better than htmlDocx does.
                 finalBlob = new Blob(['\ufeff', wordHtml], { type: 'application/msword' });
                 fileName = 'formatted_document.doc';
             }

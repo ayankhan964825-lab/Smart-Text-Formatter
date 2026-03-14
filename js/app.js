@@ -1633,18 +1633,13 @@ document.addEventListener('DOMContentLoaded', () => {
             await convertSvgsToImages(clonedPreview);
 
             // --- Build the PDF wrapper ---
-            // Word explicitly uses 2.54cm margins all around. We simulate this ENTIRELY 
-            // via precise padding on an element forced to 210mm width.
+            // Let html2pdf.js natively handle the bounding box. We just inject the content
+            // and apply the precise typography CSS so text spacing matches Word exactly.
             const wrapper = document.createElement('div');
             wrapper.innerHTML = buildExportHtml(clonedPreview.innerHTML);
             wrapper.style.backgroundColor = '#ffffff';
-            // 25.4mm Top/Bottom + 25.4mm Left/Right inside the box
-            wrapper.style.padding = '25.4mm 25.4mm'; 
-            wrapper.style.boxSizing = 'border-box';
-            wrapper.style.width = '210mm'; // A4 physical width
-            wrapper.style.maxWidth = '100%';
-            wrapper.style.overflowWrap = 'break-word';
-            wrapper.style.wordWrap = 'break-word';
+            // Do NOT apply explicit widths or paddings here. html2pdf temporally resizes the DOM 
+            // to match the exact PDF width minus margins during rendering. Forcing widths causes clipping.
             // Explicit font scaling removed from here since buildExportHtml CSS handles strict px now
 
             // --- Mark elements for page-break avoidance ---
@@ -1662,18 +1657,17 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             // --- html2pdf configuration ---
-            // Top/Bottom margins are now handled entirely by the HTML wrapper padding above.
-            // But we need a small bottom jsPDF margin (e.g. 15mm) purely so jsPDF has a 
-            // non-content slot to inject the footer page numbers without overlapping text.
+            // We set the 1-inch (25.4mm) margins directly in jsPDF. 
+            // html2pdf will automatically squeeze the HTML to fit within the a4 width minus 50.8mm,
+            // matching Word's text wrapping perfectly.
             const opt = {
-                margin: [0, 0, 15, 0], // Only reserve space for footer rendering
+                margin: [25.4, 25.4, 25.4, 25.4],
                 filename: 'formatted_document.pdf',
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: { 
-                    scale: 1, // Standard scale to prevent huge canvas blooming that stretches text layout
+                    scale: 2, // High resolution canvas for crisp text
                     useCORS: true,
-                    logging: false,
-                    windowWidth: 794 // 210mm in pixels at 96dpi
+                    logging: false
                 },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
                 pagebreak: { 

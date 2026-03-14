@@ -1450,20 +1450,28 @@ document.addEventListener('DOMContentLoaded', () => {
         return `
             <style>
                 /* Force PDF export to strictly match Word's native typography and spacing */
+                /* Conversion: 1pt = 1.3333px (at 96 DPI) */
+                .pdf-export-wrapper {
+                    font-family: 'Times New Roman', serif;
+                    color: #000;
+                    font-size: 14.66px !important;    /* 11pt */
+                    line-height: 22px !important;     /* 11 * 1.5 = 16.5pt -> 22px */
+                }
                 .pdf-export-wrapper h1, .pdf-export-wrapper h2, .pdf-export-wrapper h3, 
                 .pdf-export-wrapper h4, .pdf-export-wrapper h5, .pdf-export-wrapper h6 {
-                    margin-top: 18pt !important;
-                    margin-bottom: 8pt !important;
+                    margin-top: 24px !important;      /* 18pt */
+                    margin-bottom: 10.6px !important; /* 8pt */
+                    line-height: 1.2 !important;
                 }
                 .pdf-export-wrapper p, .pdf-export-wrapper ul, .pdf-export-wrapper ol, .pdf-export-wrapper table {
                     margin-top: 0 !important;
-                    margin-bottom: 12pt !important;
+                    margin-bottom: 16px !important;   /* 12pt */
                 }
                 .pdf-export-wrapper li {
-                    margin-bottom: 4pt !important;
+                    margin-bottom: 5.3px !important;  /* 4pt */
                 }
             </style>
-            <div class="pdf-export-wrapper" style="font-family: 'Times New Roman', serif; color: #000;">
+            <div class="pdf-export-wrapper">
                 ${contentHtml}
             </div>
         `;
@@ -1625,21 +1633,19 @@ document.addEventListener('DOMContentLoaded', () => {
             await convertSvgsToImages(clonedPreview);
 
             // --- Build the PDF wrapper ---
-            // The wrapper padding simulates Word's 1-inch margins AND constrains content width
-            // for html2canvas. jsPDF margins are kept minimal (only footer space at bottom).
+            // Word explicitly uses 2.54cm margins all around. We simulate this ENTIRELY 
+            // via precise padding on an element forced to 210mm width.
             const wrapper = document.createElement('div');
             wrapper.innerHTML = buildExportHtml(clonedPreview.innerHTML);
             wrapper.style.backgroundColor = '#ffffff';
-            wrapper.style.padding = '0 25.4mm'; // Left/Right padding = Word 1-inch margins
+            // 25.4mm Top/Bottom + 25.4mm Left/Right inside the box
+            wrapper.style.padding = '25.4mm 25.4mm'; 
             wrapper.style.boxSizing = 'border-box';
             wrapper.style.width = '210mm'; // A4 physical width
             wrapper.style.maxWidth = '100%';
             wrapper.style.overflowWrap = 'break-word';
             wrapper.style.wordWrap = 'break-word';
-            // Match Word's exact typography to ensure same line breaks
-            wrapper.style.fontFamily = "'Times New Roman', serif";
-            wrapper.style.fontSize = '11pt';
-            wrapper.style.lineHeight = '1.5';
+            // Explicit font scaling removed from here since buildExportHtml CSS handles strict px now
 
             // --- Mark elements for page-break avoidance ---
             // html2pdf.js respects CSS page-break-* properties in 'css' mode.
@@ -1656,17 +1662,18 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             // --- html2pdf configuration ---
-            // Top/Bottom margins in jsPDF = space for header/footer.
-            // Left/Right = 0 because wrapper padding handles it.
-            // Top = 25.4mm (Word top margin), Bottom = 25.4mm (Word bottom margin, footer inside this)
+            // Top/Bottom margins are now handled entirely by the HTML wrapper padding above.
+            // But we need a small bottom jsPDF margin (e.g. 15mm) purely so jsPDF has a 
+            // non-content slot to inject the footer page numbers without overlapping text.
             const opt = {
-                margin: [25.4, 0, 25.4, 0],
+                margin: [0, 0, 15, 0], // Only reserve space for footer rendering
                 filename: 'formatted_document.pdf',
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: { 
-                    scale: 2, 
+                    scale: 1, // Standard scale to prevent huge canvas blooming that stretches text layout
                     useCORS: true,
-                    logging: false
+                    logging: false,
+                    windowWidth: 794 // 210mm in pixels at 96dpi
                 },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
                 pagebreak: { 

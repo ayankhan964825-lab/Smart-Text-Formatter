@@ -1733,103 +1733,65 @@ document.addEventListener('DOMContentLoaded', () => {
             // Convert Mermaid containers on the cloned DOM
             await convertSvgsToImages(clonedPreview);
 
-            // Separate TOC and content for Word export
-            const tocEl = clonedPreview.querySelector('.toc-container');
-            let tocHtml = '';
-            let contentHtml = '';
+            // Detect platform: Mobile/Mac get true .docx, Desktop Windows gets HTML .doc
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            const isMac = /Mac/.test(navigator.userAgent) && !/Windows/.test(navigator.userAgent);
 
-            if (tocEl) {
-                tocHtml = tocEl.outerHTML;
-                // Get content after TOC
-                const contentAfterToc = clonedPreview.querySelector('.content-after-toc');
-                contentHtml = contentAfterToc ? contentAfterToc.innerHTML : clonedPreview.innerHTML.replace(tocEl.outerHTML, '');
+            let finalBlob, fileName;
+
+            if (isMobile || isMac) {
+                // ★ TRUE DOCX PATH — Uses DocxExporter + JSZip to generate a real OpenXML .docx
+                // This creates a valid ZIP-based DOCX that Google Docs, WPS Office, and MS Word Mobile all accept.
+                statusText.textContent = "Building DOCX file...";
+                finalBlob = await DocxExporter.generate(clonedPreview);
+                fileName = 'formatted_document.docx';
             } else {
-                contentHtml = clonedPreview.innerHTML;
+                // ★ WINDOWS DESKTOP PATH — Uses MS Word HTML format as .doc
+                // Desktop MS Word natively understands this format with full @page, mso-* CSS support.
+                const tocEl = clonedPreview.querySelector('.toc-container');
+                let tocHtml = '', contentHtml = '';
+                if (tocEl) {
+                    tocHtml = tocEl.outerHTML;
+                    const contentAfterToc = clonedPreview.querySelector('.content-after-toc');
+                    contentHtml = contentAfterToc ? contentAfterToc.innerHTML : clonedPreview.innerHTML.replace(tocEl.outerHTML, '');
+                } else {
+                    contentHtml = clonedPreview.innerHTML;
+                }
+
+                const msWordDocHtml = `
+                    <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+                    <head>
+                        <meta charset='utf-8'>
+                        <title>Exported Document</title>
+                        <!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom><w:DoNotOptimizeForBrowser/></w:WordDocument></xml><![endif]-->
+                        <style>
+                            @page { mso-page-orientation: portrait; size: A4; margin: 2.54cm; mso-header-margin: 1.27cm; mso-footer-margin: 1.27cm; }
+                            @page TocSection { mso-footer: none; }
+                            div.TocSection { page: TocSection; }
+                            @page ContentSection { mso-footer: f1; mso-page-numbers-start: 1; }
+                            div.ContentSection { page: ContentSection; }
+                            body { font-family: 'Times New Roman', serif; font-size: 11pt; line-height: 1.5; }
+                            h1,h2,h3,h4,h5,h6 { page-break-after: avoid; margin-top: 18pt; margin-bottom: 8pt; }
+                            p,ul,ol,table { margin-top: 0; margin-bottom: 12pt; }
+                            .keep-together, .mermaid-container, img { page-break-inside: avoid; }
+                            .toc-table { width: 100%; border-collapse: collapse; }
+                            .toc-table th, .toc-table td { border: 1px solid #000; padding: 6px 10px; }
+                        </style>
+                    </head>
+                    <body>
+                        ${tocHtml ? `<div class="TocSection">${tocHtml}<br clear=all style='mso-special-character:line-break;page-break-before:always'></div>` : ''}
+                        <div class="ContentSection">${contentHtml}</div>
+                        <div style="mso-element: footer;" id="f1">
+                            <p style="text-align: center; font-size: 10pt; color: #666;">
+                                <!--[if supportFields]><span style="mso-element:field-begin"></span>PAGE<span style="mso-element:field-end"></span><![endif]-->
+                            </p>
+                        </div>
+                    </body>
+                    </html>
+                `;
+                finalBlob = new Blob(['\ufeff', msWordDocHtml], { type: 'application/msword' });
+                fileName = 'formatted_document.doc';
             }
-
-            // 1. Universal MS Word HTML (Full of MS-specific namespaces and @page CSS)
-            // This preserves our CSS styling perfectly natively in MS Word and Google Docs.
-            const msWordDocHtml = `
-                <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-                <head>
-                    <meta charset='utf-8'>
-                    <title>Exported Document</title>
-                    <!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom><w:DoNotOptimizeForBrowser/></w:WordDocument></xml><![endif]-->
-                    <style>
-                        @page {
-                            mso-page-orientation: portrait;
-                            size: A4;
-                            margin: 2.54cm 2.54cm 2.54cm 2.54cm;
-                            mso-header-margin: 1.27cm;
-                            mso-footer-margin: 1.27cm;
-                        }
-                        /* TOC Section — no page numbers */
-                        @page TocSection {
-                            mso-footer: none;
-                        }
-                        div.TocSection { page: TocSection; }
-                        /* Content Section — page numbers starting from 1 */
-                        @page ContentSection {
-                            mso-footer: f1;
-                            mso-page-numbers-start: 1;
-                        }
-                        div.ContentSection { page: ContentSection; }
-                        table.MsoFooter { margin: 0 auto; }
-                        body {
-                            font-family: 'Times New Roman', serif;
-                            font-size: 11pt; /* Sync with PDF 11pt */
-                            line-height: 1.5; /* Sync with PDF 1.5 */
-                        }
-                        h1, h2, h3, h4, h5, h6 {
-                            page-break-after: avoid;
-                            margin-top: 18pt;
-                            margin-bottom: 8pt;
-                        }
-                        p, ul, ol, table {
-                            margin-top: 0;
-                            margin-bottom: 12pt;
-                        }
-                        /* Keep-With-Next: heading + diagram groups must not split across pages */
-                        .keep-together {
-                            page-break-inside: avoid;
-                        }
-                        .mermaid-container {
-                            page-break-inside: avoid;
-                        }
-                        img {
-                            page-break-inside: avoid;
-                        }
-                        .toc-table {
-                            width: 100%;
-                            border-collapse: collapse;
-                        }
-                        .toc-table th, .toc-table td {
-                            border: 1px solid #000;
-                            padding: 6px 10px;
-                        }
-                    </style>
-                </head>
-                <body>
-                    ${tocHtml ? `<div class="TocSection">${tocHtml}<br clear=all style='mso-special-character:line-break;page-break-before:always'></div>` : ''}
-                    <div class="ContentSection">
-                        ${contentHtml}
-                    </div>
-                    <div style="mso-element: footer;" id="f1">
-                        <p style="text-align: center; font-size: 10pt; color: #666;">
-                            <span style="mso-field-code: 'PAGE'"></span>
-                            <!--[if supportFields]><span style="mso-element:field-begin"></span>PAGE<span style="mso-element:field-end"></span><![endif]-->
-                        </p>
-                    </div>
-                </body>
-                </html>
-            `;
-
-            // We use standard HTML renamed to .doc instead of true zipped .docx
-            // Windows native MS Word parses this perfectly, keeping all Margins and @page rules intact.
-            // By wrapping it in proper `application/vnd.ms-word` MIME type, Android Docs opens it properly
-            // as a structured text file rather than throwing a "Corrupt" error.
-            const finalBlob = new Blob(['\ufeff', msWordDocHtml], { type: 'application/vnd.ms-word;charset=utf-8' });
-            const fileName = 'formatted_document.doc';
 
             const url = URL.createObjectURL(finalBlob);
             const a = document.createElement('a');

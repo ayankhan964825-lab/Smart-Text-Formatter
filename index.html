@@ -285,7 +285,7 @@
     <!-- Scripts -->
     <!-- External Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="https://unpkg.com/html-docx-js/dist/html-docx.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
     <script>mermaid.initialize({ startOnLoad: false, theme: 'default', securityLevel: 'loose', suppressErrorRendering: true, flowchart: { htmlLabels: false } });</script>
 
@@ -296,9 +296,10 @@
     <script src="js/config.local.js?v=600" onerror="console.log('No local config found, using server proxy.')"></script>
     <script src="js/aiFormatter.js?v=600"></script>
     <script src="js/ruleEngine.js?v=600"></script>
-    <script src="js/outputGenerator.js?v=600"></script>
+    <script src="js/outputGenerator.js?v=700"></script>
+    <script src="js/docxExporter.js?v=700"></script>
     <!-- Core Application Logic -->
-    <script src="js/app.js?v=600"></script>
+    <script src="js/app.js?v=700"></script>
 
     <!-- Attractive Loading Overlay -->
     <div id="loading-overlay" class="loading-overlay" style="display: none;">

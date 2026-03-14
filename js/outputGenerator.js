@@ -62,14 +62,6 @@ class OutputGenerator {
 
             if (tag === 'p') {
                 content = content.replace(/-\n/g, '').replace(/\n/g, ' ');
-
-                // --- Widow/Orphan Filter for Diagram Labels ---
-                if (i < styledElements.length - 1 && styledElements[i + 1].type === 'mermaid') {
-                    if (content.length < 50 && (/^(diagram|chart|flowchart|table|figure)/i.test(content) || content.split(' ').length <= 8)) {
-                        i++;
-                        continue; // Skip rendering this block
-                    }
-                }
             }
 
             // Clean markdown from headings too
@@ -85,14 +77,18 @@ class OutputGenerator {
                 thisHtml = `<${tag}${styleAttr}>${content}</${tag}>`;
             }
 
-            // --- KEEP-WITH-NEXT: Group heading with its following diagram ---
-            // If this is a heading (h1/h2/h3) and the NEXT element is a mermaid diagram or table,
+            // --- KEEP-WITH-NEXT: Group heading/label with its following diagram ---
+            // If this is a heading (h1-h6) or a short paragraph (label), and the NEXT element is a mermaid diagram or table,
             // wrap both inside a container with `page-break-inside: avoid` so they stay on the same page.
-            const isHeading = (tag === 'h1' || tag === 'h2' || tag === 'h3' || tag === 'sub-subheading');
+            const isHeadingOrLabel = 
+                (tag.match(/^h[1-6]$/) !== null) || 
+                (tag === 'sub-subheading') || 
+                (tag === 'p' && content.length < 150);
+            
             const nextEl = i + 1 < styledElements.length ? styledElements[i + 1] : null;
             const nextIsDiagram = nextEl && (nextEl.type === 'mermaid' || nextEl.type === 'html');
 
-            if (isHeading && nextIsDiagram) {
+            if (isHeadingOrLabel && nextIsDiagram) {
                 // Build the next element's HTML
                 let nextHtml = '';
                 if (nextEl.type === 'mermaid') {

@@ -1448,6 +1448,21 @@ document.addEventListener('DOMContentLoaded', () => {
     // Helper: Build export-ready HTML with page number footer styles
     function buildExportHtml(contentHtml) {
         return `
+            <style>
+                /* Force PDF export to strictly match Word's native typography and spacing */
+                .pdf-export-wrapper h1, .pdf-export-wrapper h2, .pdf-export-wrapper h3, 
+                .pdf-export-wrapper h4, .pdf-export-wrapper h5, .pdf-export-wrapper h6 {
+                    margin-top: 18pt !important;
+                    margin-bottom: 8pt !important;
+                }
+                .pdf-export-wrapper p, .pdf-export-wrapper ul, .pdf-export-wrapper ol, .pdf-export-wrapper table {
+                    margin-top: 0 !important;
+                    margin-bottom: 12pt !important;
+                }
+                .pdf-export-wrapper li {
+                    margin-bottom: 4pt !important;
+                }
+            </style>
             <div class="pdf-export-wrapper" style="font-family: 'Times New Roman', serif; color: #000;">
                 ${contentHtml}
             </div>

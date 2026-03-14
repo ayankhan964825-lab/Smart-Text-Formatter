@@ -1538,17 +1538,33 @@ document.addEventListener('DOMContentLoaded', () => {
             const imgElement = document.createElement('img');
             imgElement.src = pngDataUrl;
 
-            // MS Word STRICTLY relies on HTML width/height attributes for physical print size mappings.
-            // A standard A4 page at 96 DPI has about 600px of printable width and 800px printable height.
-            // To prevent large blank gaps on preceding pages, we restrict diagrams to a max of half a page (450px)
+            // --- Smart Image Rescaling (Solution C) ---
+            // A4 at 96 DPI: ~600px printable width, ~800px printable height.
+            // Instead of a hard cap, we use an adaptive approach:
+            // If the diagram only overflows by ≤15%, shrink it to fit rather than pushing to a new page.
             const MAX_PRINT_WIDTH = 600;
-            const MAX_PRINT_HEIGHT = 450;
+            const IDEAL_PRINT_HEIGHT = 500;  // Ideal max height (fits comfortably on a page)
+            const ABSOLUTE_MAX_HEIGHT = 700; // Hard ceiling (allow stretch up to ~87% of page)
 
-            // Calculate scale to fit within BOTH width and height constraints
+            // Calculate base scale to fit width
             const scaleX = MAX_PRINT_WIDTH / logicalWidth;
-            const scaleY = MAX_PRINT_HEIGHT / logicalHeight;
-            const printScale = Math.min(1, scaleX, scaleY);
+            let scaleY = 1;
 
+            if (logicalHeight * Math.min(1, scaleX) > IDEAL_PRINT_HEIGHT) {
+                // Diagram is taller than ideal. Check if it's within the 15% stretch zone.
+                const scaledHeight = logicalHeight * Math.min(1, scaleX);
+                if (scaledHeight <= ABSOLUTE_MAX_HEIGHT) {
+                    // Within 15% overflow — gently shrink to fit on the current page
+                    scaleY = IDEAL_PRINT_HEIGHT / logicalHeight;
+                    console.log(`[Smart Rescale] Diagram (${Math.round(scaledHeight)}px) within stretch zone. Shrinking to ${IDEAL_PRINT_HEIGHT}px.`);
+                } else {
+                    // Too tall even with stretch — cap at absolute max
+                    scaleY = ABSOLUTE_MAX_HEIGHT / logicalHeight;
+                    console.log(`[Smart Rescale] Diagram (${Math.round(scaledHeight)}px) exceeds stretch zone. Capping at ${ABSOLUTE_MAX_HEIGHT}px.`);
+                }
+            }
+
+            const printScale = Math.min(1, scaleX, scaleY);
             const printWidth = Math.round(logicalWidth * printScale);
             const printHeight = Math.round(logicalHeight * printScale);
 
@@ -1558,15 +1574,15 @@ document.addEventListener('DOMContentLoaded', () => {
             // CSS styles for PDF rendering / web preview
             imgElement.style.width = '100%';
             imgElement.style.maxWidth = `${printWidth}px`;
-            imgElement.style.height = 'auto'; // Ensure aspect ratio is maintained
-            imgElement.style.display = 'inline-block'; // Better for text-align centering in Word
+            imgElement.style.height = 'auto'; // Maintain aspect ratio
+            imgElement.style.display = 'inline-block';
             imgElement.alt = 'Rendered Diagram';
 
-            // Wrap the image in a centered div to guarantee alignment in MS Word, 
-            // since Word often ignores margin: auto on images.
+            // Wrap in a centered, page-break-safe container
             const wrapperDiv = document.createElement('div');
             wrapperDiv.style.textAlign = 'center';
-            wrapperDiv.style.margin = '0'; // Inner margin is 0 since the outer lightbox handles padding/margins
+            wrapperDiv.style.margin = '0';
+            wrapperDiv.style.pageBreakInside = 'avoid'; // Prevent diagram from splitting across pages
             wrapperDiv.appendChild(imgElement);
 
             svg.parentNode.replaceChild(wrapperDiv, svg);
@@ -1607,16 +1623,20 @@ document.addEventListener('DOMContentLoaded', () => {
             wrapper.style.wordWrap = 'break-word';
 
             const opt = {
-                // Reduced top/bottom margin array since physical 25.4mm padding handles text layout.
-                // Small margins here just give room for page numbers.
-                margin: [5, 0, 15, 0], 
+                // --- Solution B: Unified margins matching Word's 2.54cm (25.4mm) ---
+                // Top margin includes space for content start, bottom includes space for footer.
+                // Word uses 2.54cm all around + 1.27cm footer margin.
+                // We set [top, right, bottom, left] in mm to match Word precisely.
+                margin: [25.4, 25.4, 25.4, 25.4], 
                 filename: 'formatted_document.pdf',
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: { scale: 2, useCORS: true },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                // Only rely on smart CSS page-breaks now
                 pagebreak: { mode: ['css', 'legacy'] }
             };
+
+            // Remove the inline padding since jsPDF margins now handle it
+            wrapper.style.padding = '0';
 
             html2pdf().set(opt).from(wrapper).toPdf().get('pdf').then(function (pdf) {
                 const totalPages = pdf.internal.getNumberOfPages();
@@ -1624,16 +1644,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 const pageHeight = pdf.internal.pageSize.getHeight();
 
                 const tocPages = hasToc ? 1 : 0;
+                const contentTotalPages = totalPages - tocPages;
 
                 for (let i = 1; i <= totalPages; i++) {
                     pdf.setPage(i);
                     // Only add page numbers to content pages (after TOC)
                     if (i > tocPages) {
-                        pdf.setFontSize(10);
-                        pdf.setTextColor(100);
-                        // Page number starts from 1 after TOC
+                        pdf.setFontSize(9);
+                        pdf.setTextColor(120);
+                        // Display "Page X of Y" matching Word footer style
                         const displayPageNum = i - tocPages;
-                        pdf.text(String(displayPageNum), pageWidth / 2, pageHeight - 8, { align: 'center' });
+                        const footerText = `Page ${displayPageNum} of ${contentTotalPages}`;
+                        pdf.text(footerText, pageWidth / 2, pageHeight - 10, { align: 'center' });
                     }
                 }
             }).save().then(() => {
@@ -1719,12 +1741,22 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                         h1, h2, h3, h4, h5, h6 {
                             page-break-after: avoid;
-                            margin-top: 18pt; /* Mimic standard spacing */
+                            margin-top: 18pt;
                             margin-bottom: 8pt;
                         }
                         p, ul, ol, table {
                             margin-top: 0;
                             margin-bottom: 12pt;
+                        }
+                        /* Keep-With-Next: heading + diagram groups must not split across pages */
+                        .keep-together {
+                            page-break-inside: avoid;
+                        }
+                        .mermaid-container {
+                            page-break-inside: avoid;
+                        }
+                        img {
+                            page-break-inside: avoid;
                         }
                         .toc-table {
                             width: 100%;
@@ -1914,16 +1946,15 @@ document.addEventListener('DOMContentLoaded', () => {
         measureWrapper.innerHTML = container.innerHTML;
         document.body.appendChild(measureWrapper);
 
-        // Calculate logical A4 pixel height in the current browser 
-        // 277mm mimics exactly the available height html2pdf.js uses given [5, 0, 15, 0] jsPDF margins
+        // Available content height per page: A4 = 297mm - 25.4mm top - 25.4mm bottom = 246.2mm
         const pageMeasurement = document.createElement('div');
-        pageMeasurement.style.height = '277mm'; 
+        pageMeasurement.style.height = '246.2mm'; 
         measureWrapper.appendChild(pageMeasurement);
 
         // Let the browser paint to settle layout metrics
         await new Promise(resolve => setTimeout(resolve, 50));
         
-        const pixelsPerPage = pageMeasurement.offsetHeight || 1046; // Use 1046px approx as fallback
+        const pixelsPerPage = pageMeasurement.offsetHeight || 930; // Use 930px approx as fallback for 246.2mm
         const wrapperRect = measureWrapper.getBoundingClientRect();
         const contentContainer = measureWrapper.querySelector('.content-after-toc');
 

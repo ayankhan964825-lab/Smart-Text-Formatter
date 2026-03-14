@@ -13,7 +13,11 @@ class OutputGenerator {
     generateHTML(styledElements) {
         if (!styledElements || styledElements.length === 0) return '';
 
-        return styledElements.map((element, index, arr) => {
+        const htmlParts = [];
+        let i = 0;
+
+        while (i < styledElements.length) {
+            const element = styledElements[i];
             const tag = element.type;
             const styleAttr = element.styleString ? ` style="${element.styleString}"` : '';
 
@@ -23,63 +27,92 @@ class OutputGenerator {
                 if (Array.isArray(element.items)) {
                     listItems = element.items;
                 } else if (typeof element.content === 'string') {
-                    // Fallback: If AI disobeys and returns a string, split it by newlines
                     listItems = element.content.split('\n');
                 }
 
                 const listItemsHTML = listItems
                     .map(item => {
-                        // Strip leading list tokens (- * • 1. etc.) just in case they were left in
                         let cleanItem = item.trim().replace(/^[-*•]\s+/, '').replace(/^\d+\.\s+/, '');
                         return `<li${styleAttr}>${this._cleanMarkdown(this._escapeHTML(cleanItem))}</li>`;
                     })
                     .join('\n');
 
-                return `<${tag}${styleAttr}>\n${listItemsHTML}\n</${tag}>`;
+                htmlParts.push(`<${tag}${styleAttr}>\n${listItemsHTML}\n</${tag}>`);
+                i++;
+                continue;
             }
 
             // Handle Mermaid diagram blocks
             if (tag === 'mermaid') {
-                // Return raw mermaid code inside a pre>code for Mermaid.js to render later
-                // Added page-break-inside avoid, plus "light box" aesthetic styling (background, border, padding)
-                // 'margin: 18pt 0 12pt 0' ensures exactly 18pt gap from top subheading and 12pt gap before caption text.
                 const lightboxStyle = `page-break-inside: avoid; background-color: #fcfcfc; border: 1px solid #e0e0e0; border-radius: 8px; padding: 25px; margin: 18pt 0 12pt 0; box-shadow: 0 2px 5px rgba(0,0,0,0.03); text-align: center;`;
-                return `<div class="mermaid-container" style="${lightboxStyle}"><pre class="mermaid">${element.content || ''}</pre></div>`;
+                htmlParts.push(`<div class="mermaid-container" style="${lightboxStyle}"><pre class="mermaid">${element.content || ''}</pre></div>`);
+                i++;
+                continue;
             }
 
             // Handle raw HTML blocks (e.g., converted markdown tables)
             if (tag === 'html') {
-                return element.content || '';
+                htmlParts.push(element.content || '');
+                i++;
+                continue;
             }
 
             // Normal elements (Headings, Paragraphs)
-            // Escape HTML first, then clean markdown artifacts, then handle OCR breaks
             let content = this._cleanMarkdown(this._escapeHTML(element.content || ''));
+
             if (tag === 'p') {
                 content = content.replace(/-\n/g, '').replace(/\n/g, ' ');
 
                 // --- Widow/Orphan Filter for Diagram Labels ---
-                // If this is a very short "p" block (like "Bar Chart: Density") and the NEXT block is a diagram,
-                // drop it! The diagram already has the text/title, and these cause awkward page breaks in Word.
-                if (index < arr.length - 1 && arr[index + 1].type === 'mermaid') {
+                if (i < styledElements.length - 1 && styledElements[i + 1].type === 'mermaid') {
                     if (content.length < 50 && (/^(diagram|chart|flowchart|table|figure)/i.test(content) || content.split(' ').length <= 8)) {
-                        return ''; // Skip rendering this block
+                        i++;
+                        continue; // Skip rendering this block
                     }
                 }
             }
 
-            // Clean markdown from headings too (remove bold/italic tags since headings are already styled)
+            // Clean markdown from headings too
             if (tag === 'h1' || tag === 'h2' || tag === 'h3' || tag === 'sub-subheading') {
                 content = content.replace(/<\/?b>/g, '').replace(/<\/?i>/g, '');
             }
 
             // Custom tag rendering for sub-subheadings
+            let thisHtml;
             if (tag === 'sub-subheading') {
-                return `<div${styleAttr}>${content}</div>`;
+                thisHtml = `<div${styleAttr}>${content}</div>`;
+            } else {
+                thisHtml = `<${tag}${styleAttr}>${content}</${tag}>`;
             }
 
-            return `<${tag}${styleAttr}>${content}</${tag}>`;
-        }).filter(html => html !== '').join('\n\n');
+            // --- KEEP-WITH-NEXT: Group heading with its following diagram ---
+            // If this is a heading (h1/h2/h3) and the NEXT element is a mermaid diagram or table,
+            // wrap both inside a container with `page-break-inside: avoid` so they stay on the same page.
+            const isHeading = (tag === 'h1' || tag === 'h2' || tag === 'h3' || tag === 'sub-subheading');
+            const nextEl = i + 1 < styledElements.length ? styledElements[i + 1] : null;
+            const nextIsDiagram = nextEl && (nextEl.type === 'mermaid' || nextEl.type === 'html');
+
+            if (isHeading && nextIsDiagram) {
+                // Build the next element's HTML
+                let nextHtml = '';
+                if (nextEl.type === 'mermaid') {
+                    const lightboxStyle = `page-break-inside: avoid; background-color: #fcfcfc; border: 1px solid #e0e0e0; border-radius: 8px; padding: 25px; margin: 18pt 0 12pt 0; box-shadow: 0 2px 5px rgba(0,0,0,0.03); text-align: center;`;
+                    nextHtml = `<div class="mermaid-container" style="${lightboxStyle}"><pre class="mermaid">${nextEl.content || ''}</pre></div>`;
+                } else {
+                    nextHtml = nextEl.content || '';
+                }
+
+                // Wrap heading + diagram in a keep-together group
+                htmlParts.push(`<div class="keep-together" style="page-break-inside: avoid;">\n${thisHtml}\n${nextHtml}\n</div>`);
+                i += 2; // Skip the next element since we already consumed it
+                continue;
+            }
+
+            htmlParts.push(thisHtml);
+            i++;
+        }
+
+        return htmlParts.filter(html => html !== '').join('\n\n');
     }
 
     /**

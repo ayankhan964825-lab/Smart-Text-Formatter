@@ -1747,8 +1747,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 contentHtml = clonedPreview.innerHTML;
             }
 
-            // Word-compatible HTML with separate sections for TOC and content
-            const wordHtml = `
+            // 1. Windows-compatible MS Word HTML (Full of MS-specific namespaces and @page CSS)
+            // This is perfect for renaming to .doc, but crashes modern zip-based docx converters.
+            const msWordDocHtml = `
                 <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
                 <head>
                     <meta charset='utf-8'>
@@ -1822,6 +1823,51 @@ document.addEventListener('DOMContentLoaded', () => {
                 </html>
             `;
 
+            // 2. Clean HTML for Mobile/Mac html-docx-js parsing
+            // htmlDocx fails to parse mso-elements and xmlns, resulting in an empty/blank document.
+            // This string is pure, standard HTML which htmlDocx can safely convert into a true .docx Zip.
+            const cleanDocxHtml = `<!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset='utf-8'>
+                    <title>Exported Document</title>
+                    <style>
+                        body {
+                            font-family: 'Times New Roman', serif;
+                            font-size: 11pt;
+                            line-height: 1.5;
+                        }
+                        h1, h2, h3, h4, h5, h6 {
+                            page-break-after: avoid;
+                            margin-top: 18pt;
+                            margin-bottom: 8pt;
+                        }
+                        p, ul, ol, table {
+                            margin-top: 0;
+                            margin-bottom: 12pt;
+                        }
+                        .keep-together, .mermaid-container, img {
+                            page-break-inside: avoid;
+                        }
+                        .toc-table {
+                            width: 100%;
+                            border-collapse: collapse;
+                        }
+                        .toc-table th, .toc-table td {
+                            border: 1px solid #000;
+                            padding: 6px 10px;
+                        }
+                    </style>
+                </head>
+                <body>
+                    ${tocHtml ? `<div>${tocHtml}</div><br style="page-break-before: always;">` : ''}
+                    <div>
+                        ${contentHtml}
+                    </div>
+                </body>
+                </html>
+            `;
+
             // Very smart fix: Detect if the user is on a mobile device (Android, iOS) vs Desktop Windows
             const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             const isMacDevice = /Mac/.test(navigator.userAgent);
@@ -1830,13 +1876,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (isMobileDevice || isMacDevice) {
                 // Mobile devices (Android/iOS) and Macs natively require properly zipped .docx containers.
-                // The old HTML-renamed-to-.doc hack triggers "Corrupt File" errors on modern Android Office apps.
-                finalBlob = htmlDocx.asBlob(wordHtml);
+                // We use cleanDocxHtml because htmlDocx fails to parse MS-specific XML namespaces.
+                finalBlob = htmlDocx.asBlob(cleanDocxHtml);
                 fileName = 'formatted_document.docx';
             } else {
                 // Desktop Windows MS Word handles HTML-Docs disguised as .doc perfectly, 
                 // and it preserves our ultra-specific page layouts better than htmlDocx does.
-                finalBlob = new Blob(['\ufeff', wordHtml], { type: 'application/msword' });
+                finalBlob = new Blob(['\ufeff', msWordDocHtml], { type: 'application/msword' });
                 fileName = 'formatted_document.doc';
             }
 

@@ -1603,40 +1603,62 @@ document.addEventListener('DOMContentLoaded', () => {
             // Check if TOC is included to determine page numbering offset
             const hasToc = previewContainer.querySelector('.toc-container') !== null;
 
-            // Create a wrapper with page-numbering CSS
-            const wrapper = document.createElement('div');
-
             // Deep clone the preview container so we don't modify the live DOM with our image swaps
             const clonedPreview = previewContainer.cloneNode(true);
 
             // Convert any Mermaid SVGs in the cloned node to PNG/SVG images so html2canvas renders them
             await convertSvgsToImages(clonedPreview);
 
+            // --- Build the PDF wrapper ---
+            // The wrapper padding simulates Word's 1-inch margins AND constrains content width
+            // for html2canvas. jsPDF margins are kept minimal (only footer space at bottom).
+            const wrapper = document.createElement('div');
             wrapper.innerHTML = buildExportHtml(clonedPreview.innerHTML);
             wrapper.style.backgroundColor = '#ffffff';
-            // Adjusted padding to perfectly simulate Word A4 1-inch margins
-            wrapper.style.padding = '25.4mm'; 
-            wrapper.style.boxSizing = 'border-box'; // Ensure padding doesn't push width beyond 100%
-            wrapper.style.width = '210mm'; // Enforced A4 physical width
+            wrapper.style.padding = '0 25.4mm'; // Left/Right padding = Word 1-inch margins
+            wrapper.style.boxSizing = 'border-box';
+            wrapper.style.width = '210mm'; // A4 physical width
             wrapper.style.maxWidth = '100%';
-            wrapper.style.overflowWrap = 'break-word'; // Prevent long words from clipping
+            wrapper.style.overflowWrap = 'break-word';
             wrapper.style.wordWrap = 'break-word';
+            // Match Word's exact typography to ensure same line breaks
+            wrapper.style.fontFamily = "'Times New Roman', serif";
+            wrapper.style.fontSize = '11pt';
+            wrapper.style.lineHeight = '1.5';
 
+            // --- Mark elements for page-break avoidance ---
+            // html2pdf.js respects CSS page-break-* properties in 'css' mode.
+            // We ensure all critical elements have page-break-inside: avoid.
+            wrapper.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach(el => {
+                el.style.pageBreakAfter = 'avoid';
+                el.style.pageBreakInside = 'avoid';
+            });
+            wrapper.querySelectorAll('.keep-together, .mermaid-container, table, img').forEach(el => {
+                el.style.pageBreakInside = 'avoid';
+            });
+            wrapper.querySelectorAll('p, li').forEach(el => {
+                el.style.pageBreakInside = 'avoid';
+            });
+
+            // --- html2pdf configuration ---
+            // Top/Bottom margins in jsPDF = space for header/footer.
+            // Left/Right = 0 because wrapper padding handles it.
+            // Top = 25.4mm (Word top margin), Bottom = 25.4mm (Word bottom margin, footer inside this)
             const opt = {
-                // --- Solution B: Unified margins matching Word's 2.54cm (25.4mm) ---
-                // Top margin includes space for content start, bottom includes space for footer.
-                // Word uses 2.54cm all around + 1.27cm footer margin.
-                // We set [top, right, bottom, left] in mm to match Word precisely.
-                margin: [25.4, 25.4, 25.4, 25.4], 
+                margin: [25.4, 0, 25.4, 0],
                 filename: 'formatted_document.pdf',
                 image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true },
+                html2canvas: { 
+                    scale: 2, 
+                    useCORS: true,
+                    logging: false
+                },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                pagebreak: { mode: ['css', 'legacy'] }
+                pagebreak: { 
+                    mode: ['avoid-all', 'css', 'legacy'],
+                    avoid: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'tr', 'img', '.keep-together', '.mermaid-container', 'p', 'li']
+                }
             };
-
-            // Remove the inline padding since jsPDF margins now handle it
-            wrapper.style.padding = '0';
 
             html2pdf().set(opt).from(wrapper).toPdf().get('pdf').then(function (pdf) {
                 const totalPages = pdf.internal.getNumberOfPages();
@@ -1655,6 +1677,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         // Display "Page X of Y" matching Word footer style
                         const displayPageNum = i - tocPages;
                         const footerText = `Page ${displayPageNum} of ${contentTotalPages}`;
+                        // Position footer within the bottom margin area
                         pdf.text(footerText, pageWidth / 2, pageHeight - 10, { align: 'center' });
                     }
                 }

@@ -257,15 +257,15 @@
             <div id="formatted-preview" class="preview-container" contenteditable="false">
                 <div class="placeholder-text">Live preview will appear here...</div>
             </div>
-
-            <!-- Mobile Export Actions (Hidden on Desktop) -->
-            <div class="mobile-export-container">
-                <button id="mobile-export-pdf" class="btn primary mobile-export-btn" disabled>Export to PDF</button>
-                <button id="mobile-export-word" class="btn primary mobile-export-btn" disabled>Export to Word</button>
-            </div>
         </section>
 
     </main>
+
+    <!-- Floating Mobile Export Actions (Fixed at bottom on mobile) -->
+    <div class="mobile-export-container" id="mobile-export-bar">
+        <button id="mobile-export-pdf" class="btn primary mobile-export-btn" disabled>📄 Export PDF</button>
+        <button id="mobile-export-word" class="btn primary mobile-export-btn" disabled>📝 Export Word</button>
+    </div>
 
     <!-- Overwrite/Append Modal -->
     <div id="append-modal" class="modal-overlay" style="display: none;">

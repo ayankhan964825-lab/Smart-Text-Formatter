@@ -685,7 +685,7 @@ body {
         font-size: 1rem;
     }
 
-    /* Mini toolbar sticky on mobile */
+    /* Mini toolbar sticky at top of output panel on mobile - single line */
     .mini-toolbar {
         position: sticky;
         top: 0;
@@ -696,12 +696,17 @@ body {
         border: none !important;
         border-bottom: 1px solid var(--border-color) !important;
         border-radius: 0 !important;
-        padding: 8px 12px !important;
+        padding: 6px 10px !important;
         margin: 0 !important;
-        flex-wrap: nowrap;
+        flex-wrap: nowrap !important;
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        gap: 6px;
+    }
+
+    .mini-toolbar > * {
+        flex-shrink: 0;
     }
 
     [data-theme="dark"] .mini-toolbar {
@@ -723,10 +728,9 @@ body {
         /* Remove strict 50vh constraint */
     }
 
-    /* Make output-panel itself scroll so sticky toolbar works */
+    /* Allow sticky toolbar to track workspace scroll */
     .output-panel {
-        overflow-y: auto !important;
-        overflow-x: hidden;
+        overflow: visible !important;
     }
 
     .output-panel .preview-container {
@@ -868,17 +872,17 @@ body {
    ========================================================================== */
 .mini-toolbar {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     align-items: center;
-    justify-content: flex-end;
-    /* Align right to keep space neat */
+    justify-content: flex-start;
     gap: 4px;
     margin-top: 4px;
-    /* Move slightly down if wrapping */
     background: var(--bg-body);
     padding: 4px 8px;
     border-radius: 6px;
     border: 1px solid var(--border-color);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .toolbar-divider {

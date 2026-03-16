@@ -55,51 +55,56 @@ document.addEventListener('DOMContentLoaded', () => {
     if (closeMenuBtn) closeMenuBtn.addEventListener('click', closeMenu);
     if (menuOverlay) menuOverlay.addEventListener('click', closeMenu);
 
-    if (saveApiKeyBtn) {
-        saveApiKeyBtn.addEventListener('click', () => {
+    // --- Toast Notification Logic ---
+    function showToast(message, isError = false) {
+        const toast = document.getElementById('toast-message');
+        if (!toast) return;
+
+        // Reset classes
+        toast.className = 'toast-message';
+        toast.innerHTML = message;
+        
+        if (isError) {
+            toast.style.background = 'rgba(229, 62, 62, 0.95)'; // Red
+        } else {
+            toast.style.background = 'rgba(56, 161, 105, 0.95)'; // Green
+        }
+
+        toast.classList.add('show');
+
+        // Hide after 3 seconds
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 3000);
+    }
+
+    // --- API Key Connection Flow ---
+    const connectApiKeyBtn = document.getElementById('connect-api-key-btn');
+    if (connectApiKeyBtn) {
+        connectApiKeyBtn.addEventListener('click', async () => {
             const val = customApiKeyInput.value.trim();
-            if (val) {
-                localStorage.setItem('gemini_api_key', val);
-                // Also update the active formatter instance
-                if (window.aiFormatter) {
-                    window.aiFormatter.localApiKey = val;
-                }
-                apiKeyStatus.textContent = '✅ API Key saved! Ready to format.';
-                apiKeyStatus.style.color = '#38a169'; // Green
-            } else {
+            
+            // Allow clearing key by passing empty input
+            if (!val) {
                 localStorage.removeItem('gemini_api_key');
                 if (window.aiFormatter) {
                     window.aiFormatter.localApiKey = '';
                 }
-                apiKeyStatus.textContent = '🗑️ Custom API Key removed. Using default server key.';
+                apiKeyStatus.textContent = '🗑️ Custom API Key removed. Using default secure server.';
                 apiKeyStatus.style.color = '#718096'; // Gray
-            }
-            apiKeyStatus.style.display = 'block';
-
-            // Auto close after briefly showing success message
-            setTimeout(closeMenu, 1500);
-        });
-    }
-
-    const testApiKeyBtn = document.getElementById('test-api-key-btn');
-    if (testApiKeyBtn) {
-        testApiKeyBtn.addEventListener('click', async () => {
-            const val = customApiKeyInput.value.trim();
-            if (!val) {
-                apiKeyStatus.textContent = '⚠️ Please enter an API key to test.';
-                apiKeyStatus.style.color = '#dd6b20'; // Orange
                 apiKeyStatus.style.display = 'block';
+                setTimeout(closeMenu, 1500);
                 return;
             }
 
-            testApiKeyBtn.textContent = 'Testing...';
-            testApiKeyBtn.disabled = true;
-            apiKeyStatus.textContent = 'Testing connection to Gemini...';
+            connectApiKeyBtn.textContent = 'Connecting...';
+            connectApiKeyBtn.disabled = true;
+            apiKeyStatus.textContent = 'Verifying API Key...';
             apiKeyStatus.style.color = '#3182ce'; // Blue
             apiKeyStatus.style.display = 'block';
 
             try {
-                // Lightweight ping payload
+                // Lightweight ping payload to verify key
                 const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${val}`;
                 const response = await fetch(url, {
                     method: 'POST',
@@ -111,27 +116,51 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
 
                 if (response.ok) {
-                    // Auto-save the key since it works!
+                    // Valid Key: Save it
                     localStorage.setItem('gemini_api_key', val);
                     if (window.aiFormatter) {
                         window.aiFormatter.localApiKey = val;
                     }
-                    apiKeyStatus.innerHTML = '🎉 API Key is Valid and <b>Saved</b>! Ready to format.';
+                    apiKeyStatus.innerHTML = '🎉 API Key Valid & Saved!';
                     apiKeyStatus.style.color = '#38a169'; // Green
 
-                    setTimeout(closeMenu, 2000); // Auto close after success
+                    // Wait 2 seconds, then close menu and show toast
+                    setTimeout(() => {
+                        closeMenu();
+                        showToast('✅ API Connected! Using your secure key.');
+                    }, 2000);
+
                 } else {
                     const err = await response.text();
-                    console.error("Test API Error:", response.status, err);
-                    apiKeyStatus.textContent = `❌ API Key failed: HTTP ${response.status}. Key may be invalid or rate-limited.`;
+                    console.error("API Connect Error:", response.status, err);
+                    apiKeyStatus.innerHTML = `❌ <b>Invalid API Key</b> (HTTP ${response.status}). Please check your key.`;
                     apiKeyStatus.style.color = '#e53e3e'; // Red
                 }
             } catch (networkError) {
-                apiKeyStatus.textContent = `❌ Network Error: Could not connect to Google API.`;
+                apiKeyStatus.innerHTML = `❌ <b>Network Error</b>: Could not reach Google.`;
                 apiKeyStatus.style.color = '#e53e3e'; // Red
             } finally {
-                testApiKeyBtn.textContent = 'Test Key';
-                testApiKeyBtn.disabled = false;
+                connectApiKeyBtn.textContent = 'Connect';
+                connectApiKeyBtn.disabled = false;
+            }
+        });
+    }
+
+    // --- API Key Visibility Toggle ---
+    const toggleApiVisibilityBtn = document.getElementById('toggle-api-visibility');
+    if (toggleApiVisibilityBtn && customApiKeyInput) {
+        toggleApiVisibilityBtn.addEventListener('click', () => {
+            const isPassword = customApiKeyInput.type === 'password';
+            customApiKeyInput.type = isPassword ? 'text' : 'password';
+            
+            // Update icon visually
+            const svgPath = toggleApiVisibilityBtn.querySelector('path');
+            if (isPassword) {
+                // Change to eye-off icon
+                svgPath.setAttribute('d', 'M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24M1 1l22 22');
+            } else {
+                // Change back to eye icon
+                svgPath.setAttribute('d', 'M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z');
             }
         });
     }

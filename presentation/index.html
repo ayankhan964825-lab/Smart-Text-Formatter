@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Text Formatter — OOPD Project Showcase</title>
+    <meta name="description" content="Apple-event inspired presentation showcasing the Smart Text Formatter project through Object-Oriented Programming & Design principles.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Slide Progress Bar -->
+    <div class="progress-bar" id="progress-bar"></div>
+
+    <!-- Navigation Arrows -->
+    <button class="nav-arrow nav-prev" id="nav-prev" aria-label="Previous slide">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+    </button>
+    <button class="nav-arrow nav-next" id="nav-next" aria-label="Next slide">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"></polyline></svg>
+    </button>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter" id="slide-counter">1 / 12</div>
+
+    <!-- ======================== SLIDE 1: TITLE ======================== -->
+    <section class="slide active" id="slide-1">
+        <div class="slide-content title-slide">
+            <div class="animate-in" style="--delay: 0">
+                <div class="apple-logo-glow"></div>
+            </div>
+            <h1 class="animate-in hero-title" style="--delay: 1">
+                Smart Text<br><span class="gradient-text">Formatter</span>
+            </h1>
+            <p class="animate-in subtitle" style="--delay: 2">Intelligent Document Formatting, Reimagined.</p>
+            <div class="animate-in meta-info" style="--delay: 3">
+                <span class="tag">OOPD Project Showcase</span>
+                <span class="divider">·</span>
+                <span>Object-Oriented Programming & Design</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 2: THE PROBLEM ======================== -->
+    <section class="slide" id="slide-2">
+        <div class="slide-content">
+            <p class="animate-in section-label" style="--delay: 0">The Challenge</p>
+            <h2 class="animate-in slide-heading" style="--delay: 1">Manual formatting is <span class="gradient-text">broken.</span></h2>
+            <div class="cards-grid">
+                <div class="glass-card animate-in" style="--delay: 2">
+                    <div class="card-icon">⏱️</div>
+                    <h3>Time-Consuming</h3>
+                    <p>Hours spent manually adjusting headings, spacing, and fonts across long documents.</p>
+                </div>
+                <div class="glass-card animate-in" style="--delay: 3">
+                    <div class="card-icon">🔀</div>
+                    <h3>Inconsistent</h3>
+                    <p>Different heading levels, font sizes, and spacing create unprofessional results.</p>
+                </div>
+                <div class="glass-card animate-in" style="--delay: 4">
+                    <div class="card-icon">🚫</div>
+                    <h3>No Browser Solution</h3>
+                    <p>No lightweight, browser-based tool auto-detects document structure and applies formatting.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 3: THE SOLUTION ======================== -->
+    <section class="slide" id="slide-3">
+        <div class="slide-content">
+            <p class="animate-in section-label" style="--delay: 0">The Solution</p>
+            <h2 class="animate-in slide-heading" style="--delay: 1">Smart Text <span class="gradient-text">Formatter</span></h2>
+            <p class="animate-in slide-description" style="--delay: 2">
+                A web-based application that <strong>intelligently reads, understands, and formats</strong> unstructured text documents — powered by AI and pure Object-Oriented Design.
+            </p>
+            <div class="feature-pills">
+                <span class="pill animate-in" style="--delay: 3">🔍 Auto Structure Detection</span>
+                <span class="pill animate-in" style="--delay: 3.5">⚡ Real-Time Preview</span>
+                <span class="pill animate-in" style="--delay: 4">🎨 Custom Rules Engine</span>
+                <span class="pill animate-in" style="--delay: 4.5">🤖 Gemini AI Integration</span>
+                <span class="pill animate-in" style="--delay: 5">📄 PDF & Word Export</span>
+                <span class="pill animate-in" style="--delay: 5.5">🌐 100% Browser-Based</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 4: WHY OOP ======================== -->
+    <section class="slide" id="slide-4">
+        <div class="slide-content">
+            <p class="animate-in section-label" style="--delay: 0">Design Philosophy</p>
+            <h2 class="animate-in slide-heading" style="--delay: 1">Why <span class="gradient-text">Object-Oriented</span> Design?</h2>
+            <div class="oop-reasons">
+                <div class="reason-item animate-in" style="--delay: 2">
+                    <div class="reason-number">01</div>
+                    <div>
+                        <h3>Modularity</h3>
+                        <p>Each processing stage is a self-contained class with clear boundaries and single responsibility.</p>
+                    </div>
+                </div>
+                <div class="reason-item animate-in" style="--delay: 3">
+                    <div class="reason-number">02</div>
+                    <div>
+                        <h3>Reusability</h3>
+                        <p>Classes can be instantiated with different configurations — custom rules, different AI models, various export formats.</p>
+                    </div>
+                </div>
+                <div class="reason-item animate-in" style="--delay: 4">
+                    <div class="reason-number">03</div>
+                    <div>
+                        <h3>Maintainability</h3>
+                        <p>Change one module without breaking others. Fix the RuleEngine without touching the StructureDetector.</p>
+                    </div>
+                </div>
+                <div class="reason-item animate-in" style="--delay: 5">
+                    <div class="reason-number">04</div>
+                    <div>
+                        <h3>Testability</h3>
+                        <p>Each class can be unit-tested in isolation — mock inputs, verify outputs, measure performance.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 5: ARCHITECTURE ======================== -->
+    <section class="slide" id="slide-5">
+        <div class="slide-content">
+            <p class="animate-in section-label" style="--delay: 0">System Architecture</p>
+            <h2 class="animate-in slide-heading" style="--delay: 1">The <span class="gradient-text">4-Stage Pipeline</span></h2>
+            <div class="pipeline animate-in" style="--delay: 2">
+                <div class="pipeline-node node-1">
+                    <div class="node-icon">📝</div>
+                    <div class="node-label">TextProcessor</div>
+                    <div class="node-desc">Tokenize & Normalize</div>
+                </div>
+                <div class="pipeline-arrow animate-in" style="--delay: 3">→</div>
+                <div class="pipeline-node node-2">
+                    <div class="node-icon">🔎</div>
+                    <div class="node-label">StructureDetector</div>
+                    <div class="node-desc">Classify Blocks</div>
+                </div>
+                <div class="pipeline-arrow animate-in" style="--delay: 4">→</div>
+                <div class="pipeline-node node-3">
+                    <div class="node-icon">⚙️</div>
+                    <div class="node-label">RuleEngine</div>
+                    <div class="node-desc">Apply Styles</div>
+                </div>
+                <div class="pipeline-arrow animate-in" style="--delay: 5">→</div>
+                <div class="pipeline-node node-4">
+                    <div class="node-icon">✨</div>
+                    <div class="node-label">OutputGenerator</div>
+                    <div class="node-desc">Render HTML</div>
+                </div>
+            </div>
+            <div class="pipeline-extras animate-in" style="--delay: 6">
+                <div class="extra-node">
+                    <span class="extra-icon">🤖</span>
+                    <span>AIFormatter <small>(Gemini API)</small></span>
+                </div>
+                <div class="extra-node">
+                    <span class="extra-icon">📦</span>
+                    <span>DocxExporter <small>(OpenXML)</small></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 6: INPUT PIPELINE ======================== -->
+    <section class="slide" id="slide-6">
+        <div class="slide-content split-slide">
+            <p class="animate-in section-label" style="--delay: 0">OOPD Deep Dive</p>
+            <h2 class="animate-in slide-heading" style="--delay: 1"><span class="gradient-text">Input Pipeline</span> Classes</h2>
+            <div class="split-panels">
+                <div class="code-panel glass-card animate-in" style="--delay: 2">
+                    <div class="code-header">
+                        <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+                        <span class="filename">textProcessor.js</span>
+                    </div>
+                    <pre class="code-block"><code><span class="kw">class</span> <span class="cls">TextProcessor</span> {
+  <span class="fn">constructor</span>(<span class="param">rawText</span>) {
+    <span class="kw">this</span>.rawText = rawText;
+  }
+
+  <span class="fn">normalize</span>() {
+    <span class="cm">// Unify line endings, trim</span>
+    <span class="kw">return this</span>.rawText
+      .replace(<span class="str">/\r\n/g</span>, <span class="str">'\n'</span>)
+      .trim();
+  }
+
+  <span class="fn">tokenize</span>() {
+    <span class="cm">// Split into logical blocks</span>
+    <span class="cm">// Intelligent merge of OCR breaks</span>
+    <span class="kw">return</span> mergedBlocks;
+  }
+}</code></pre>
+                </div>
+                <div class="code-panel glass-card animate-in" style="--delay: 3">
+                    <div class="code-header">
+                        <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+                        <span class="filename">structureDetector.js</span>
+                    </div>
+                    <pre class="code-block"><code><span class="kw">class</span> <span class="cls">StructureDetector</span> {
+  <span class="fn">classifyBlocks</span>(<span class="param">textBlocks</span>) {
+    <span class="cm">// Identify: h1, h2, p, ul, ol</span>
+    <span class="cm">// Handle glued headings</span>
+    <span class="kw">return</span> classifiedElements;
+  }
+
+  <span class="fn">_detectType</span>(<span class="param">block, index</span>) {
+    <span class="cm">// Markdown headings: # ## ###</span>
+    <span class="cm">// Numbered: 1.1, 2.3.1</span>
+    <span class="cm">// Roman: I. II. III.</span>
+    <span class="cm">// Lists: - * 1. 2.</span>
+    <span class="kw">return</span> { type, content };
+  }
+}</code></pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 7: PROCESSING PIPELINE ======================== -->
+    <section class="slide" id="slide-7">
+        <div class="slide-content split-slide">
+            <p class="animate-in section-label" style="--delay: 0">OOPD Deep Dive</p>
+            <h2 class="animate-in slide-heading" style="--delay: 1"><span class="gradient-text">Processing Pipeline</span> Classes</h2>
+            <div class="split-panels">
+                <div class="code-panel glass-card animate-in" style="--delay: 2">
+                    <div class="code-header">
+                        <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+                        <span class="filename">ruleEngine.js</span>
+                    </div>
+                    <pre class="code-block"><code><span class="kw">class</span> <span class="cls">RuleEngine</span> {
+  <span class="fn">constructor</span>(<span class="param">customRules</span>) {
+    <span class="kw">this</span>.defaultRules = {
+      h1: { fontSize: <span class="str">'16pt'</span>, ... },
+      p:  { fontSize: <span class="str">'12pt'</span>, ... }
+    };
+    <span class="cm">// Merge defaults + custom</span>
+    <span class="kw">this</span>.currentRules = {
+      ...<span class="kw">this</span>.defaultRules,
+      ...customRules
+    };
+  }
+
+  <span class="fn">applyRules</span>(<span class="param">elements</span>) {
+    <span class="kw">return</span> elements.map(<span class="param">el</span> => ({
+      ...el, styleString: <span class="cm">/*css*/</span>
+    }));
+  }
+}</code></pre>
+                </div>
+                <div class="code-panel glass-card animate-in" style="--delay: 3">
+                    <div class="code-header">
+                        <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+                        <span class="filename">outputGenerator.js</span>
+                    </div>
+                    <pre class="code-block"><code><span class="kw">class</span> <span class="cls">OutputGenerator</span> {
+  <span class="fn">generateHTML</span>(<span class="param">styledElements</span>) {
+    <span class="cm">// Build semantic HTML tags</span>
+    <span class="cm">// Handle lists, mermaid, tables</span>
+    <span class="cm">// Keep-with-next grouping</span>
+    <span class="kw">return</span> htmlParts.join(<span class="str">'\n'</span>);
+  }
+
+  <span class="fn">_cleanMarkdown</span>(<span class="param">str</span>) {
+    <span class="cm">// **bold** → &lt;b&gt;</span>
+    <span class="cm">// *italic* → &lt;i&gt;</span>
+  }
+
+  <span class="fn">_escapeHTML</span>(<span class="param">str</span>) {
+    <span class="cm">// XSS prevention</span>
+  }
+}</code></pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 8: AI & EXPORT ======================== -->
+    <section class="slide" id="slide-8">
+        <div class="slide-content split-slide">
+            <p class="animate-in section-label" style="--delay: 0">OOPD Deep Dive</p>
+            <h2 class="animate-in slide-heading" style="--delay: 1"><span class="gradient-text">AI & Export</span> Classes</h2>
+            <div class="split-panels">
+                <div class="code-panel glass-card animate-in" style="--delay: 2">
+                    <div class="code-header">
+                        <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+                        <span class="filename">aiFormatter.js</span>
+                    </div>
+                    <pre class="code-block"><code><span class="kw">class</span> <span class="cls">AIFormatter</span> {
+  <span class="kw">async</span> <span class="fn">formatText</span>(<span class="param">rawText</span>) {
+    <span class="cm">// PATH 1: Custom API key</span>
+    <span class="cm">// → Direct Gemini call</span>
+    <span class="cm">// PATH 2: No key</span>
+    <span class="cm">// → Server proxy fallback</span>
+  }
+
+  <span class="kw">async</span> <span class="fn">fixMermaid</span>(<span class="param">code, err</span>) {
+    <span class="cm">// Auto-heal broken diagrams</span>
+    <span class="cm">// using Gemini as validator</span>
+  }
+
+  <span class="fn">_parseResponse</span>(<span class="param">data</span>) {
+    <span class="kw">return</span> JSON.parse(cleanJson);
+  }
+}</code></pre>
+                </div>
+                <div class="code-panel glass-card animate-in" style="--delay: 3">
+                    <div class="code-header">
+                        <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+                        <span class="filename">docxExporter.js</span>
+                    </div>
+                    <pre class="code-block"><code><span class="cm">// IIFE Module Pattern</span>
+<span class="kw">const</span> <span class="cls">DocxExporter</span> = (() => {
+  <span class="kw">function</span> <span class="fn">toWordML</span>(<span class="param">container</span>) {
+    <span class="cm">// DOM → OpenXML WordML</span>
+    <span class="cm">// Handles: h1-h6, p, lists,</span>
+    <span class="cm">// tables, images</span>
+  }
+
+  <span class="kw">async function</span> <span class="fn">generate</span>(<span class="param">el</span>) {
+    <span class="cm">// Build full DOCX ZIP</span>
+    <span class="cm">// via JSZip library</span>
+    <span class="kw">return</span> zip.generateAsync({
+      type: <span class="str">'blob'</span>
+    });
+  }
+
+  <span class="kw">return</span> { generate };
+})();</code></pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 9: OOP PRINCIPLES ======================== -->
+    <section class="slide" id="slide-9">
+        <div class="slide-content">
+            <p class="animate-in section-label" style="--delay: 0">Core Concepts</p>
+            <h2 class="animate-in slide-heading" style="--delay: 1">OOP Principles <span class="gradient-text">in Action</span></h2>
+            <div class="principles-grid">
+                <div class="principle-card glass-card animate-in" style="--delay: 2">
+                    <div class="principle-icon">🔒</div>
+                    <h3>Encapsulation</h3>
+                    <p>Each class hides its internal data. <code>TextProcessor</code> privately manages <code>rawText</code>; <code>RuleEngine</code> encapsulates <code>defaultRules</code> and <code>currentRules</code>.</p>
+                </div>
+                <div class="principle-card glass-card animate-in" style="--delay: 3">
+                    <div class="principle-icon">🎭</div>
+                    <h3>Abstraction</h3>
+                    <p><code>app.js</code> calls <code>formatText()</code> without knowing if it uses AI or heuristic engine. The complexity is hidden behind simple interfaces.</p>
+                </div>
+                <div class="principle-card glass-card animate-in" style="--delay: 4">
+                    <div class="principle-icon">🧬</div>
+                    <h3>Inheritance Ready</h3>
+                    <p>Architecture supports extension — a <code>MarkdownDetector</code> could extend <code>StructureDetector</code>, a <code>PdfExporter</code> could follow <code>DocxExporter</code> pattern.</p>
+                </div>
+                <div class="principle-card glass-card animate-in" style="--delay: 5">
+                    <div class="principle-icon">🔄</div>
+                    <h3>Polymorphism</h3>
+                    <p>Both <code>AIFormatter</code> and the heuristic fallback pipeline process the same input format — the controller doesn't care which runs.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 10: TECH STACK ======================== -->
+    <section class="slide" id="slide-10">
+        <div class="slide-content">
+            <p class="animate-in section-label" style="--delay: 0">Under the Hood</p>
+            <h2 class="animate-in slide-heading" style="--delay: 1"><span class="gradient-text">Tech Stack</span> & Deployment</h2>
+            <div class="tech-grid">
+                <div class="tech-item animate-in" style="--delay: 2">
+                    <div class="tech-icon-large">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M1.5 0h21l-1.91 21.563L11.977 24l-8.564-2.438L1.5 0zm7.031 9.75l-.232-2.718 10.059.003.076-.757.076-.771.076-.756H6.246l.698 7.759h7.633l-.326 3.527-2.746.753-2.741-.754-.178-2.033H6.61l.352 3.959 4.516 1.26 4.509-1.26.672-7.233H8.531z"/></svg>
+                    </div>
+                    <span>HTML5</span>
+                </div>
+                <div class="tech-item animate-in" style="--delay: 2.5">
+                    <div class="tech-icon-large">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M1.5 0h21l-1.91 21.563L11.977 24l-8.565-2.438L1.5 0zm17.09 4.413L5.41 4.41l.213 2.622 10.125.002-.255 2.716H6.115l.208 2.48h8.935l-.312 3.526-2.97.803-2.913-.804-.192-2.248H6.38l.375 4.398 5.222 1.494 5.228-1.496z"/></svg>
+                    </div>
+                    <span>CSS3</span>
+                </div>
+                <div class="tech-item animate-in" style="--delay: 3">
+                    <div class="tech-icon-large">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M0 0h24v24H0V0zm22.034 18.276c-.175-1.095-.888-2.015-3.003-2.873-.736-.345-1.554-.585-1.797-1.14-.091-.33-.105-.51-.046-.705.15-.646.915-.84 1.515-.66.39.12.75.42.976.9 1.034-.676 1.034-.676 1.755-1.125-.27-.42-.405-.585-.585-.765-.63-.63-1.48-.903-2.805-.855l-.704.089c-.676.165-1.32.52-1.71 1.005-1.14 1.29-.81 3.54.6 4.475 1.38.93 3.39 1.14 3.675 2.025.33 1.14-.855 1.5-1.935 1.365-1.08-.165-1.65-.72-2.295-1.65l-1.815 1.05c.21.48.45.705.78 1.125 1.56 1.58 5.46 1.5 6.165-.51.03-.075.24-.72.06-1.77zm-8.292-7.276h-2.25c0 1.665-.015 3.315-.015 4.98 0 1.065.06 2.04-.225 2.34-.42.42-1.47.33-1.95.18l-.555 1.83c.705.36 1.65.465 2.625.255 1.305-.33 2.01-1.08 2.01-2.85-.015-1.62 0-3.24 0-4.86 0-.006.015-1.875.015-1.875z"/></svg>
+                    </div>
+                    <span>JavaScript ES6+</span>
+                </div>
+                <div class="tech-item animate-in" style="--delay: 3.5">
+                    <div class="tech-icon-large">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                    </div>
+                    <span>Gemini AI</span>
+                </div>
+                <div class="tech-item animate-in" style="--delay: 4">
+                    <div class="tech-icon-large">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 22.525H0l12-21.05 12 21.05z"/></svg>
+                    </div>
+                    <span>Vercel</span>
+                </div>
+                <div class="tech-item animate-in" style="--delay: 4.5">
+                    <div class="tech-icon-large">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+                    </div>
+                    <span>GitHub</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 11: LIVE DEMO ======================== -->
+    <section class="slide" id="slide-11">
+        <div class="slide-content">
+            <p class="animate-in section-label" style="--delay: 0">In Action</p>
+            <h2 class="animate-in slide-heading" style="--delay: 1"><span class="gradient-text">Live Demo</span></h2>
+            <div class="demo-flow animate-in" style="--delay: 2">
+                <div class="demo-step">
+                    <div class="demo-screen glass-card">
+                        <div class="demo-header">
+                            <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+                        </div>
+                        <div class="demo-content-area">
+                            <div class="demo-text-lines">
+                                <div class="line short"></div>
+                                <div class="line long"></div>
+                                <div class="line long"></div>
+                                <div class="line medium"></div>
+                                <div class="line long"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <span class="demo-label">Raw Text Input</span>
+                </div>
+                <div class="demo-arrow animate-in" style="--delay: 3">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </div>
+                <div class="demo-step">
+                    <div class="demo-screen glass-card formatted">
+                        <div class="demo-header">
+                            <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+                        </div>
+                        <div class="demo-content-area">
+                            <div class="demo-formatted-lines">
+                                <div class="line heading"></div>
+                                <div class="line body"></div>
+                                <div class="line body"></div>
+                                <div class="line subhead"></div>
+                                <div class="line body"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <span class="demo-label">Formatted Output</span>
+                </div>
+                <div class="demo-arrow animate-in" style="--delay: 4">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </div>
+                <div class="demo-step">
+                    <div class="demo-screen glass-card export">
+                        <div class="demo-header">
+                            <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+                        </div>
+                        <div class="demo-content-area">
+                            <div class="export-icons">
+                                <span>📄 PDF</span>
+                                <span>📝 DOCX</span>
+                                <span>🌐 HTML</span>
+                            </div>
+                        </div>
+                    </div>
+                    <span class="demo-label">Export</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 12: THANK YOU ======================== -->
+    <section class="slide" id="slide-12">
+        <div class="slide-content title-slide">
+            <h2 class="animate-in hero-title" style="--delay: 0">
+                Thank <span class="gradient-text">You.</span>
+            </h2>
+            <p class="animate-in subtitle" style="--delay: 1">Smart Text Formatter — OOPD Project Showcase</p>
+            <div class="animate-in thankyou-links" style="--delay: 2">
+                <a href="https://github.com/ayankhan964825/Smart-Text-Formatter" target="_blank" class="link-btn">
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+                    View on GitHub
+                </a>
+            </div>
+            <p class="animate-in qa-text" style="--delay: 3">Questions & Answers</p>
+        </div>
+    </section>
+
+    <script src="script.js"></script>
+</body>
+</html>

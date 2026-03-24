@@ -1,0 +1,1004 @@
+/* ============================================================
+   SMART TEXT FORMATTER — OOPD PRESENTATION
+   Apple Event Inspired Dark Theme
+   ============================================================ */
+
+/* ---- CSS Reset & Base ---- */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --bg: #000000;
+    --surface: rgba(255, 255, 255, 0.06);
+    --surface-border: rgba(255, 255, 255, 0.1);
+    --text-primary: #FFFFFF;
+    --text-secondary: rgba(255, 255, 255, 0.6);
+    --text-tertiary: rgba(255, 255, 255, 0.35);
+    --accent-blue: #0A84FF;
+    --accent-purple: #BF5AF2;
+    --accent-pink: #FF375F;
+    --gradient-main: linear-gradient(135deg, #0A84FF, #BF5AF2, #FF375F);
+    --gradient-subtle: linear-gradient(135deg, rgba(10, 132, 255, 0.2), rgba(191, 90, 242, 0.2));
+    --font-display: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+    --transition-smooth: cubic-bezier(0.25, 0.1, 0.25, 1);
+    --transition-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: var(--bg);
+    color: var(--text-primary);
+    font-family: var(--font-display);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* ---- Progress Bar ---- */
+.progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: var(--gradient-main);
+    z-index: 1000;
+    transition: width 0.5s var(--transition-smooth);
+    width: 8.33%;
+}
+
+/* ---- Navigation Arrows ---- */
+.nav-arrow {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 100;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    width: clamp(36px, 4vmin, 52px);
+    height: clamp(36px, 4vmin, 52px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.6);
+    transition: all 0.3s var(--transition-smooth);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.nav-arrow:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    transform: translateY(-50%) scale(1.1);
+}
+
+.nav-arrow svg {
+    width: 50%;
+    height: 50%;
+}
+
+.nav-prev {
+    left: clamp(8px, 1.5vw, 24px);
+}
+
+.nav-next {
+    right: clamp(8px, 1.5vw, 24px);
+}
+
+.nav-arrow.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* ---- Slide Counter ---- */
+.slide-counter {
+    position: fixed;
+    bottom: clamp(12px, 2vmin, 24px);
+    right: clamp(12px, 2vmin, 24px);
+    font-size: clamp(10px, 1.4vmin, 16px);
+    color: var(--text-tertiary);
+    font-family: var(--font-mono);
+    font-weight: 500;
+    z-index: 100;
+    letter-spacing: 0.05em;
+}
+
+/* ============================================================
+   SLIDE CORE — 16:9 Responsive Lock
+   ============================================================ */
+.slide {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.8s var(--transition-smooth);
+    will-change: opacity;
+}
+
+.slide.active {
+    opacity: 1;
+    pointer-events: auto;
+    z-index: 10;
+}
+
+.slide-content {
+    width: 85%;
+    max-width: 1200px;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+}
+
+/* ---- Radial Glow Backgrounds ---- */
+.slide::before {
+    content: '';
+    position: absolute;
+    width: 60vmax;
+    height: 60vmax;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(10, 132, 255, 0.08) 0%, transparent 70%);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+
+#slide-1::before {
+    background: radial-gradient(circle, rgba(191, 90, 242, 0.1) 0%, transparent 65%);
+}
+
+#slide-12::before {
+    background: radial-gradient(circle, rgba(255, 55, 95, 0.08) 0%, transparent 65%);
+}
+
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
+.animate-in {
+    opacity: 0;
+    transform: translateY(clamp(15px, 3vmin, 40px));
+    transition: opacity 0.7s var(--transition-smooth),
+        transform 0.7s var(--transition-spring);
+    transition-delay: calc(var(--delay, 0) * 0.12s);
+}
+
+.slide.active .animate-in {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Reset class — applied by JS when leaving a slide, removed on re-entry */
+.animate-in.reset {
+    opacity: 0 !important;
+    transform: translateY(30px) !important;
+    transition: none !important;
+}
+
+/* ============================================================
+   TYPOGRAPHY
+   ============================================================ */
+.hero-title {
+    font-size: clamp(2.5rem, 8vmin, 6rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin-bottom: clamp(0.5rem, 1.5vmin, 1.5rem);
+}
+
+.gradient-text {
+    background: var(--gradient-main);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    background-size: 200% 200%;
+    animation: gradient-shift 4s ease infinite;
+}
+
+@keyframes gradient-shift {
+
+    0%,
+    100% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+.section-label {
+    font-size: clamp(0.8rem, 1.8vmin, 1.1rem);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--accent-blue);
+    font-weight: 600;
+    margin-bottom: clamp(0.3rem, 1vmin, 0.75rem);
+}
+
+.slide-heading {
+    font-size: clamp(1.8rem, 5.5vmin, 4rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin-bottom: clamp(0.8rem, 2.5vmin, 2rem);
+}
+
+.subtitle {
+    font-size: clamp(1.1rem, 2.8vmin, 1.8rem);
+    color: var(--text-secondary);
+    font-weight: 300;
+    margin-bottom: clamp(0.8rem, 2vmin, 1.5rem);
+}
+
+.slide-description {
+    font-size: clamp(0.95rem, 2.2vmin, 1.35rem);
+    color: var(--text-secondary);
+    line-height: 1.7;
+    max-width: 50em;
+    margin-bottom: clamp(0.8rem, 2vmin, 1.5rem);
+}
+
+/* ---- Meta Info (Title Slide) ---- */
+.meta-info {
+    display: flex;
+    align-items: center;
+    gap: clamp(0.3rem, 1vmin, 0.75rem);
+    font-size: clamp(0.75rem, 1.6vmin, 1rem);
+    color: var(--text-tertiary);
+}
+
+.tag {
+    background: var(--gradient-subtle);
+    border: 1px solid rgba(10, 132, 255, 0.3);
+    padding: clamp(0.15rem, 0.4vmin, 0.3rem) clamp(0.4rem, 1vmin, 0.75rem);
+    border-radius: 100px;
+    font-weight: 500;
+    color: var(--accent-blue);
+}
+
+.divider {
+    opacity: 0.4;
+}
+
+/* Apple Logo Glow */
+.apple-logo-glow {
+    width: clamp(40px, 6vmin, 80px);
+    height: clamp(40px, 6vmin, 80px);
+    border-radius: 50%;
+    background: var(--gradient-main);
+    filter: blur(clamp(15px, 3vmin, 30px));
+    opacity: 0.5;
+    animation: pulse-glow 3s ease-in-out infinite;
+    margin-bottom: clamp(0.5rem, 1.5vmin, 1.5rem);
+}
+
+@keyframes pulse-glow {
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 0.5;
+    }
+
+    50% {
+        transform: scale(1.2);
+        opacity: 0.7;
+    }
+}
+
+/* ============================================================
+   GLASS CARDS
+   ============================================================ */
+.glass-card {
+    background: var(--surface);
+    border: 1px solid var(--surface-border);
+    border-radius: clamp(8px, 1.5vmin, 16px);
+    padding: clamp(0.6rem, 1.8vmin, 1.5rem);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    transition: transform 0.3s var(--transition-smooth), border-color 0.3s;
+}
+
+.glass-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.18);
+}
+
+/* ============================================================
+   SLIDE 2 — PROBLEM CARDS
+   ============================================================ */
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(0.5rem, 1.5vmin, 1.25rem);
+    width: 100%;
+    margin-top: clamp(0.3rem, 1vmin, 0.75rem);
+}
+
+.cards-grid .glass-card {
+    text-align: left;
+}
+
+.card-icon {
+    font-size: clamp(1.5rem, 3.5vmin, 2.5rem);
+    margin-bottom: clamp(0.3rem, 0.8vmin, 0.6rem);
+}
+
+.cards-grid h3 {
+    font-size: clamp(0.85rem, 1.8vmin, 1.2rem);
+    font-weight: 600;
+    margin-bottom: clamp(0.15rem, 0.5vmin, 0.4rem);
+}
+
+.cards-grid p {
+    font-size: clamp(0.75rem, 1.5vmin, 1rem);
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+/* ============================================================
+   SLIDE 3 — FEATURE PILLS
+   ============================================================ */
+.feature-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp(0.3rem, 0.8vmin, 0.6rem);
+    justify-content: center;
+}
+
+.pill {
+    background: var(--surface);
+    border: 1px solid var(--surface-border);
+    padding: clamp(0.3rem, 0.8vmin, 0.6rem) clamp(0.6rem, 1.4vmin, 1.1rem);
+    border-radius: 100px;
+    font-size: clamp(0.75rem, 1.5vmin, 1rem);
+    font-weight: 500;
+    white-space: nowrap;
+    transition: all 0.3s;
+}
+
+.pill:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--accent-blue);
+}
+
+/* ============================================================
+   SLIDE 4 — WHY OOP REASONS
+   ============================================================ */
+.oop-reasons {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(0.4rem, 1.2vmin, 1rem);
+    width: 100%;
+    max-width: 48em;
+}
+
+.reason-item {
+    display: flex;
+    align-items: flex-start;
+    gap: clamp(0.5rem, 1.5vmin, 1.25rem);
+    text-align: left;
+    padding: clamp(0.5rem, 1.2vmin, 1rem);
+    border-radius: clamp(8px, 1.2vmin, 12px);
+    background: var(--surface);
+    border: 1px solid var(--surface-border);
+    transition: border-color 0.3s;
+}
+
+.reason-item:hover {
+    border-color: rgba(10, 132, 255, 0.4);
+}
+
+.reason-number {
+    font-size: clamp(1rem, 2.5vmin, 2rem);
+    font-weight: 800;
+    background: var(--gradient-main);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    min-width: clamp(1.5rem, 3.5vmin, 3rem);
+}
+
+.reason-item h3 {
+    font-size: clamp(0.85rem, 1.8vmin, 1.15rem);
+    font-weight: 600;
+    margin-bottom: clamp(0.1rem, 0.3vmin, 0.2rem);
+}
+
+.reason-item p {
+    font-size: clamp(0.75rem, 1.5vmin, 0.95rem);
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+/* ============================================================
+   SLIDE 5 — PIPELINE
+   ============================================================ */
+.pipeline {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(0.3rem, 1vmin, 0.75rem);
+    flex-wrap: nowrap;
+    margin-bottom: clamp(0.5rem, 1.5vmin, 1.5rem);
+}
+
+.pipeline-node {
+    background: var(--surface);
+    border: 1px solid var(--surface-border);
+    border-radius: clamp(8px, 1.2vmin, 14px);
+    padding: clamp(0.5rem, 1.4vmin, 1.2rem) clamp(0.6rem, 1.5vmin, 1.5rem);
+    text-align: center;
+    transition: all 0.4s var(--transition-smooth);
+    position: relative;
+    overflow: hidden;
+}
+
+.pipeline-node::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    opacity: 0;
+    transition: opacity 0.4s;
+}
+
+.pipeline-node:hover::after {
+    opacity: 1;
+}
+
+.node-1:hover {
+    border-color: #0A84FF;
+    box-shadow: 0 0 30px rgba(10, 132, 255, 0.15);
+}
+
+.node-2:hover {
+    border-color: #30D158;
+    box-shadow: 0 0 30px rgba(48, 209, 88, 0.15);
+}
+
+.node-3:hover {
+    border-color: #BF5AF2;
+    box-shadow: 0 0 30px rgba(191, 90, 242, 0.15);
+}
+
+.node-4:hover {
+    border-color: #FF9F0A;
+    box-shadow: 0 0 30px rgba(255, 159, 10, 0.15);
+}
+
+.node-icon {
+    font-size: clamp(1rem, 2.5vmin, 2rem);
+    margin-bottom: clamp(0.2rem, 0.5vmin, 0.4rem);
+}
+
+.node-label {
+    font-size: clamp(0.75rem, 1.5vmin, 1rem);
+    font-weight: 600;
+    margin-bottom: clamp(0.1rem, 0.2vmin, 0.15rem);
+}
+
+.node-desc {
+    font-size: clamp(0.6rem, 1.2vmin, 0.8rem);
+    color: var(--text-tertiary);
+}
+
+.pipeline-arrow {
+    font-size: clamp(0.8rem, 2vmin, 1.5rem);
+    color: var(--text-tertiary);
+    font-weight: 300;
+    animation: arrow-pulse 2s ease-in-out infinite;
+}
+
+@keyframes arrow-pulse {
+
+    0%,
+    100% {
+        opacity: 0.4;
+    }
+
+    50% {
+        opacity: 1;
+        color: var(--accent-blue);
+    }
+}
+
+.pipeline-extras {
+    display: flex;
+    gap: clamp(0.5rem, 2vmin, 1.5rem);
+    justify-content: center;
+}
+
+.extra-node {
+    display: flex;
+    align-items: center;
+    gap: clamp(0.3rem, 0.6vmin, 0.5rem);
+    background: var(--surface);
+    border: 1px solid var(--surface-border);
+    border-radius: 100px;
+    padding: clamp(0.3rem, 0.6vmin, 0.5rem) clamp(0.6rem, 1.2vmin, 1rem);
+    font-size: clamp(0.5rem, 1.1vmin, 0.75rem);
+}
+
+.extra-icon {
+    font-size: clamp(0.7rem, 1.5vmin, 1.1rem);
+}
+
+.extra-node small {
+    color: var(--text-tertiary);
+}
+
+/* ============================================================
+   SLIDES 6, 7, 8 — CODE PANELS
+   ============================================================ */
+.split-slide {
+    width: 90%;
+    max-width: 1300px;
+}
+
+.split-panels {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(0.5rem, 1.5vmin, 1.25rem);
+    width: 100%;
+}
+
+.code-panel {
+    text-align: left;
+    padding: 0;
+    overflow: hidden;
+}
+
+.code-header {
+    display: flex;
+    align-items: center;
+    gap: clamp(3px, 0.5vmin, 6px);
+    padding: clamp(0.3rem, 0.8vmin, 0.6rem) clamp(0.5rem, 1vmin, 0.8rem);
+    background: rgba(255, 255, 255, 0.03);
+    border-bottom: 1px solid var(--surface-border);
+}
+
+.dot {
+    width: clamp(6px, 1vmin, 10px);
+    height: clamp(6px, 1vmin, 10px);
+    border-radius: 50%;
+}
+
+.dot.red {
+    background: #FF5F57;
+}
+
+.dot.yellow {
+    background: #FFBD2E;
+}
+
+.dot.green {
+    background: #28C840;
+}
+
+.filename {
+    margin-left: clamp(0.3rem, 0.8vmin, 0.6rem);
+    font-family: var(--font-mono);
+    font-size: clamp(0.5rem, 1vmin, 0.7rem);
+    color: var(--text-tertiary);
+}
+
+.code-block {
+    padding: clamp(0.5rem, 1.2vmin, 1rem);
+    overflow: hidden;
+    font-family: var(--font-mono);
+    font-size: clamp(0.6rem, 1.15vmin, 0.78rem);
+    line-height: 1.65;
+    color: #e0e0e0;
+    white-space: pre;
+    margin: 0;
+}
+
+/* Syntax Highlighting (Xcode Dark inspired) */
+.code-block .kw {
+    color: #FF7AB2;
+}
+
+/* Keywords */
+.code-block .cls {
+    color: #ACF2E4;
+}
+
+/* Class names */
+.code-block .fn {
+    color: #78C2B3;
+}
+
+/* Function names */
+.code-block .param {
+    color: #B281EB;
+}
+
+/* Parameters */
+.code-block .str {
+    color: #FF8170;
+}
+
+/* Strings */
+.code-block .cm {
+    color: #6C7986;
+}
+
+/* Comments */
+
+/* ============================================================
+   SLIDE 9 — OOP PRINCIPLES
+   ============================================================ */
+.principles-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: clamp(0.5rem, 1.2vmin, 1rem);
+    width: 100%;
+    max-width: 55em;
+}
+
+.principle-card {
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+}
+
+.principle-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 100%;
+    border-radius: 3px 0 0 3px;
+}
+
+.principle-card:nth-child(1)::before {
+    background: #0A84FF;
+}
+
+.principle-card:nth-child(2)::before {
+    background: #BF5AF2;
+}
+
+.principle-card:nth-child(3)::before {
+    background: #30D158;
+}
+
+.principle-card:nth-child(4)::before {
+    background: #FF9F0A;
+}
+
+.principle-icon {
+    font-size: clamp(1rem, 2.2vmin, 1.8rem);
+    margin-bottom: clamp(0.2rem, 0.5vmin, 0.4rem);
+}
+
+.principle-card h3 {
+    font-size: clamp(0.8rem, 1.7vmin, 1.1rem);
+    font-weight: 600;
+    margin-bottom: clamp(0.15rem, 0.4vmin, 0.3rem);
+}
+
+.principle-card p {
+    font-size: clamp(0.65rem, 1.3vmin, 0.88rem);
+    color: var(--text-secondary);
+    line-height: 1.55;
+}
+
+.principle-card code {
+    font-family: var(--font-mono);
+    background: rgba(255, 255, 255, 0.08);
+    padding: 0.1em 0.35em;
+    border-radius: 4px;
+    font-size: 0.9em;
+    color: #ACF2E4;
+}
+
+/* ============================================================
+   SLIDE 10 — TECH STACK
+   ============================================================ */
+.tech-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: clamp(0.5rem, 1.5vmin, 1.25rem);
+    width: 100%;
+    max-width: 50em;
+}
+
+.tech-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(0.3rem, 0.8vmin, 0.6rem);
+    padding: clamp(0.6rem, 1.5vmin, 1.25rem);
+    border-radius: clamp(8px, 1.2vmin, 14px);
+    background: var(--surface);
+    border: 1px solid var(--surface-border);
+    transition: all 0.3s var(--transition-smooth);
+}
+
+.tech-item:hover {
+    border-color: var(--accent-blue);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(10, 132, 255, 0.1);
+}
+
+.tech-icon-large {
+    width: clamp(24px, 4vmin, 44px);
+    height: clamp(24px, 4vmin, 44px);
+    color: var(--text-secondary);
+    transition: color 0.3s;
+}
+
+.tech-item:hover .tech-icon-large {
+    color: var(--accent-blue);
+}
+
+.tech-icon-large svg {
+    width: 100%;
+    height: 100%;
+}
+
+.tech-item span {
+    font-size: clamp(0.5rem, 1vmin, 0.75rem);
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+/* ============================================================
+   SLIDE 11 — DEMO FLOW
+   ============================================================ */
+.demo-flow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(0.5rem, 1.5vmin, 1.5rem);
+    width: 100%;
+}
+
+.demo-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(0.3rem, 0.8vmin, 0.6rem);
+    flex: 1;
+    max-width: 22em;
+}
+
+.demo-screen {
+    width: 100%;
+    aspect-ratio: 16/10;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.demo-header {
+    display: flex;
+    gap: clamp(3px, 0.4vmin, 5px);
+    padding: clamp(0.25rem, 0.6vmin, 0.5rem) clamp(0.4rem, 0.8vmin, 0.6rem);
+    background: rgba(255, 255, 255, 0.03);
+    border-bottom: 1px solid var(--surface-border);
+}
+
+.demo-content-area {
+    flex: 1;
+    padding: clamp(0.5rem, 1.2vmin, 1rem);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.demo-text-lines,
+.demo-formatted-lines {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(3px, 0.5vmin, 6px);
+}
+
+.demo-text-lines .line {
+    height: clamp(4px, 0.7vmin, 8px);
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.line.short {
+    width: 40%;
+}
+
+.line.medium {
+    width: 65%;
+}
+
+.line.long {
+    width: 90%;
+}
+
+.demo-formatted-lines .line {
+    height: clamp(4px, 0.7vmin, 8px);
+    border-radius: 3px;
+}
+
+.line.heading {
+    width: 45%;
+    height: clamp(6px, 1vmin, 12px);
+    background: var(--gradient-main);
+    opacity: 0.8;
+}
+
+.line.subhead {
+    width: 35%;
+    height: clamp(5px, 0.8vmin, 10px);
+    background: rgba(10, 132, 255, 0.5);
+}
+
+.line.body {
+    width: 85%;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.export-icons {
+    display: flex;
+    gap: clamp(0.4rem, 1vmin, 0.8rem);
+    font-size: clamp(0.6rem, 1.3vmin, 0.9rem);
+}
+
+.demo-arrow {
+    flex-shrink: 0;
+}
+
+.demo-arrow svg {
+    width: clamp(16px, 3vmin, 32px);
+    height: clamp(16px, 3vmin, 32px);
+    color: var(--text-tertiary);
+}
+
+.demo-label {
+    font-size: clamp(0.5rem, 1.1vmin, 0.8rem);
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+/* ============================================================
+   SLIDE 12 — THANK YOU
+   ============================================================ */
+.thankyou-links {
+    display: flex;
+    gap: clamp(0.5rem, 1vmin, 1rem);
+    margin-bottom: clamp(0.5rem, 1.5vmin, 1.5rem);
+}
+
+.link-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: clamp(0.3rem, 0.6vmin, 0.5rem);
+    padding: clamp(0.4rem, 1vmin, 0.8rem) clamp(0.8rem, 1.6vmin, 1.4rem);
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 100px;
+    color: var(--text-primary);
+    text-decoration: none;
+    font-size: clamp(0.6rem, 1.2vmin, 0.85rem);
+    font-weight: 500;
+    transition: all 0.3s var(--transition-smooth);
+}
+
+.link-btn:hover {
+    background: rgba(255, 255, 255, 0.18);
+    transform: translateY(-2px);
+}
+
+.link-btn svg {
+    width: clamp(14px, 2vmin, 20px);
+    height: clamp(14px, 2vmin, 20px);
+}
+
+.qa-text {
+    font-size: clamp(0.8rem, 2vmin, 1.3rem);
+    color: var(--text-tertiary);
+    font-weight: 300;
+    letter-spacing: 0.1em;
+}
+
+/* ============================================================
+   RESPONSIVE OVERRIDES
+   ============================================================ */
+
+/* Portrait / Mobile */
+@media (max-aspect-ratio: 1/1) {
+    .cards-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .split-panels {
+        grid-template-columns: 1fr;
+    }
+
+    .principles-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .tech-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .pipeline {
+        flex-wrap: wrap;
+        gap: clamp(0.2rem, 0.8vmin, 0.5rem);
+    }
+
+    .pipeline-arrow {
+        display: none;
+    }
+
+    .demo-flow {
+        flex-direction: column;
+    }
+
+    .demo-arrow {
+        transform: rotate(90deg);
+    }
+
+    .demo-step {
+        max-width: 100%;
+    }
+
+    .oop-reasons {
+        gap: clamp(0.3rem, 0.8vmin, 0.6rem);
+    }
+}
+
+/* Very small screens */
+@media (max-height: 400px) {
+    .slide-content {
+        max-height: 90vh;
+    }
+
+    .hero-title {
+        font-size: clamp(1.2rem, 5vmin, 2.5rem);
+    }
+}
+
+/* ---- Print styles (disable animations) ---- */
+@media print {
+    .slide {
+        position: relative;
+        opacity: 1;
+        pointer-events: auto;
+        page-break-after: always;
+    }
+
+    .animate-in {
+        opacity: 1;
+        transform: none;
+    }
+
+    .nav-arrow,
+    .slide-counter,
+    .progress-bar {
+        display: none;
+    }
+}

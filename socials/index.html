@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PERMA Happiness Model — Social Engineering Presentation</title>
+    <meta name="description" content="Apple-event inspired presentation on the PERMA Happiness Model for corporate welfare through Positive Psychology.">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Progress Bar -->
+    <div class="progress-bar" id="progress-bar"></div>
+
+    <!-- Navigation Arrows -->
+    <button class="nav-arrow nav-prev" id="nav-prev" aria-label="Previous slide">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+    </button>
+    <button class="nav-arrow nav-next" id="nav-next" aria-label="Next slide">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"></polyline></svg>
+    </button>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter" id="slide-counter">1 / 10</div>
+
+    <!-- Navigation Dots -->
+    <div class="slide-dots" id="slide-dots"></div>
+
+    <!-- Fullscreen Toggle -->
+    <button class="fullscreen-btn" id="fullscreen-btn" aria-label="Toggle fullscreen">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/></svg>
+    </button>
+
+    <!-- ======================== SLIDE 1: TITLE ======================== -->
+    <section class="slide active" id="slide-1" role="region" aria-label="Title Slide">
+        <div class="slide-bg title-bg">
+            <canvas id="particles-canvas"></canvas>
+        </div>
+        <div class="slide-content title-slide">
+            <div class="animate-in" style="--delay: 0">
+                <div class="perma-badge">POSITIVE PSYCHOLOGY</div>
+            </div>
+            <h1 class="animate-in hero-title" style="--delay: 1">
+                PERMA<br><span class="gradient-text-hero">Happiness Model</span>
+            </h1>
+            <p class="animate-in subtitle" style="--delay: 2">Transforming Corporate Welfare Through Positive Psychology</p>
+            <div class="animate-in meta-row" style="--delay: 3">
+                <span class="tag">Social Engineering</span>
+                <span class="divider">·</span>
+                <span>21PDH209T</span>
+            </div>
+            <div class="animate-in credits-block" style="--delay: 4">
+                <div class="credits-row">
+                    <div class="credit-item">
+                        <span class="credit-label">Made by</span>
+                        <span class="credit-name">Ayush Vihan</span>
+                        <span class="credit-id">RA2411003030443</span>
+                    </div>
+                    <div class="credit-item">
+                        <span class="credit-name">Arjun Singh Yadav</span>
+                        <span class="credit-id">RA2411003030467</span>
+                    </div>
+                    <div class="credit-item">
+                        <span class="credit-name">Shashwat Rai</span>
+                        <span class="credit-id">RA2411003030472</span>
+                    </div>
+                </div>
+                <div class="guide-row">Under the guidance of <strong>Mr. Mudit Kumar</strong></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 2: WHAT IS PERMA ======================== -->
+    <section class="slide" id="slide-2" role="region" aria-label="What is PERMA">
+        <div class="slide-bg bg-subtle-geo"></div>
+        <div class="slide-content split-layout">
+            <div class="split-left animate-in" style="--delay: 0">
+                <div class="perma-diagram">
+                    <div class="perma-circle center-circle">PERMA</div>
+                    <div class="perma-circle orbit-circle orbit-p" data-letter="P">P</div>
+                    <div class="perma-circle orbit-circle orbit-e" data-letter="E">E</div>
+                    <div class="perma-circle orbit-circle orbit-r" data-letter="R">R</div>
+                    <div class="perma-circle orbit-circle orbit-m" data-letter="M">M</div>
+                    <div class="perma-circle orbit-circle orbit-a" data-letter="A">A</div>
+                    <svg class="orbit-lines" viewBox="0 0 300 300">
+                        <line x1="150" y1="150" x2="150" y2="30" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+                        <line x1="150" y1="150" x2="264" y2="87" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+                        <line x1="150" y1="150" x2="220" y2="255" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+                        <line x1="150" y1="150" x2="80" y2="255" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+                        <line x1="150" y1="150" x2="36" y2="87" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+                    </svg>
+                </div>
+            </div>
+            <div class="split-right">
+                <p class="animate-in section-label" style="--delay: 0">The Science of Well-being</p>
+                <h2 class="animate-in slide-heading" style="--delay: 1">Understanding <span class="gradient-text">PERMA</span></h2>
+                <p class="animate-in slide-body" style="--delay: 2">
+                    PERMA is a scientifically-backed model developed by <strong>Dr. Martin Seligman</strong>, 
+                    the father of Positive Psychology, introduced in <strong>2011</strong>.
+                </p>
+                <p class="animate-in slide-body" style="--delay: 3">
+                    It provides a comprehensive framework for <em>flourishing</em> and <em>authentic happiness</em> — 
+                    going beyond mere pleasure to encompass meaning, engagement, and achievement.
+                </p>
+                <blockquote class="animate-in quote-block" style="--delay: 4">
+                    "Well-being is a combination of feeling good and functioning effectively."
+                    <cite>— Martin Seligman</cite>
+                </blockquote>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 3: P - POSITIVE EMOTIONS ======================== -->
+    <section class="slide" id="slide-3" role="region" aria-label="Positive Emotions">
+        <div class="slide-bg bg-warm"></div>
+        <div class="slide-content perma-slide">
+            <div class="perma-letter-block animate-in" style="--delay: 0">
+                <span class="big-letter letter-p">P</span>
+            </div>
+            <div class="perma-content">
+                <h2 class="animate-in slide-heading" style="--delay: 1">Positive <span class="gradient-text-warm">Emotions</span></h2>
+                <p class="animate-in slide-body" style="--delay: 2">
+                    Experiencing joy, gratitude, serenity, interest, hope, pride, amusement, inspiration, awe, and love.
+                </p>
+                <div class="emotions-grid animate-in" style="--delay: 3">
+                    <span class="emotion-chip">😊 Joy</span>
+                    <span class="emotion-chip">🙏 Gratitude</span>
+                    <span class="emotion-chip">☮️ Serenity</span>
+                    <span class="emotion-chip">💡 Interest</span>
+                    <span class="emotion-chip">🌟 Hope</span>
+                    <span class="emotion-chip">✨ Inspiration</span>
+                    <span class="emotion-chip">💖 Love</span>
+                    <span class="emotion-chip">😄 Amusement</span>
+                </div>
+                <div class="stat-callout animate-in" style="--delay: 4">
+                    <span class="stat-number" data-count="31">0</span><span class="stat-suffix">%</span>
+                    <span class="stat-label">Productivity boost from positive emotions</span>
+                </div>
+                <div class="corporate-apps animate-in" style="--delay: 5">
+                    <h3>Corporate Application</h3>
+                    <div class="app-items">
+                        <div class="app-item">🏆 Recognition & appreciation programs</div>
+                        <div class="app-item">🎉 Celebrating small wins</div>
+                        <div class="app-item">☀️ Creating moments of joy</div>
+                        <div class="app-item">📝 Gratitude practices in meetings</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 4: E - ENGAGEMENT ======================== -->
+    <section class="slide" id="slide-4" role="region" aria-label="Engagement">
+        <div class="slide-bg bg-electric"></div>
+        <div class="slide-content perma-slide">
+            <div class="perma-letter-block animate-in" style="--delay: 0">
+                <span class="big-letter letter-e">E</span>
+            </div>
+            <div class="perma-content">
+                <h2 class="animate-in slide-heading" style="--delay: 1">Engage<span class="gradient-text-electric">ment</span></h2>
+                <p class="animate-in slide-body" style="--delay: 2">
+                    Being completely absorbed in activities that challenge and showcase our skills — achieving the <strong>'flow state'</strong>.
+                </p>
+                <div class="flow-visual animate-in" style="--delay: 3">
+                    <div class="flow-chart">
+                        <div class="flow-axis-y">Challenge ↑</div>
+                        <div class="flow-axis-x">Skill →</div>
+                        <div class="flow-zone anxiety">Anxiety</div>
+                        <div class="flow-zone flow-state">Flow</div>
+                        <div class="flow-zone boredom">Boredom</div>
+                        <div class="flow-channel"></div>
+                    </div>
+                </div>
+                <div class="flow-chars animate-in" style="--delay: 4">
+                    <div class="flow-char-item">🎯 Clear goals</div>
+                    <div class="flow-char-item">⚡ Immediate feedback</div>
+                    <div class="flow-char-item">⚖️ Challenge-skill balance</div>
+                </div>
+                <div class="corporate-apps animate-in" style="--delay: 5">
+                    <h3>Corporate Application</h3>
+                    <div class="app-items">
+                        <div class="app-item">💪 Match tasks to strengths</div>
+                        <div class="app-item">🎯 Set challenging yet achievable goals</div>
+                        <div class="app-item">🔇 Minimize unnecessary interruptions</div>
+                        <div class="app-item">⏰ Create focused work time blocks</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 5: R - RELATIONSHIPS ======================== -->
+    <section class="slide" id="slide-5" role="region" aria-label="Relationships">
+        <div class="slide-bg bg-warm-connect"></div>
+        <div class="slide-content perma-slide">
+            <div class="perma-letter-block animate-in" style="--delay: 0">
+                <span class="big-letter letter-r">R</span>
+            </div>
+            <div class="perma-content">
+                <h2 class="animate-in slide-heading" style="--delay: 1">Relation<span class="gradient-text-rose">ships</span></h2>
+                <p class="animate-in slide-body" style="--delay: 2">
+                    Nurturing authentic connections and meaningful social bonds within and outside the workplace.
+                </p>
+                <div class="network-visual animate-in" style="--delay: 3">
+                    <div class="network-node node-center">👥</div>
+                    <div class="network-node node-1">🤝</div>
+                    <div class="network-node node-2">💬</div>
+                    <div class="network-node node-3">❤️</div>
+                    <div class="network-node node-4">🌐</div>
+                    <div class="network-node node-5">🫂</div>
+                    <div class="network-node node-6">🤲</div>
+                </div>
+                <div class="stats-row animate-in" style="--delay: 4">
+                    <div class="stat-card">
+                        <span class="stat-number" data-count="50">0</span><span class="stat-suffix">%</span>
+                        <span class="stat-label">Engagement increase from strong relationships</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" data-count="21">0</span><span class="stat-suffix">%</span>
+                        <span class="stat-label">More profitable for bonded teams</span>
+                    </div>
+                </div>
+                <div class="corporate-apps animate-in" style="--delay: 5">
+                    <h3>Corporate Application</h3>
+                    <div class="app-items">
+                        <div class="app-item">🤝 Team building activities</div>
+                        <div class="app-item">🧑‍🏫 Mentorship programs</div>
+                        <div class="app-item">💬 Open communication channels</div>
+                        <div class="app-item">📅 Regular one-on-one check-ins</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 6: M - MEANING ======================== -->
+    <section class="slide" id="slide-6" role="region" aria-label="Meaning">
+        <div class="slide-bg bg-deep"></div>
+        <div class="slide-content perma-slide">
+            <div class="perma-letter-block animate-in" style="--delay: 0">
+                <span class="big-letter letter-m">M</span>
+            </div>
+            <div class="perma-content">
+                <h2 class="animate-in slide-heading" style="--delay: 1">Mean<span class="gradient-text-gold">ing</span></h2>
+                <p class="animate-in slide-body" style="--delay: 2">
+                    Being part of something greater than ourselves — having a sense of purpose that drives our actions.
+                </p>
+                <div class="meaning-journey animate-in" style="--delay: 3">
+                    <div class="journey-path">
+                        <div class="journey-step">
+                            <div class="journey-icon">🧭</div>
+                            <span>Why does this work matter?</span>
+                        </div>
+                        <div class="journey-connector"></div>
+                        <div class="journey-step">
+                            <div class="journey-icon">🏠</div>
+                            <span>Who does it serve?</span>
+                        </div>
+                        <div class="journey-connector"></div>
+                        <div class="journey-step">
+                            <div class="journey-icon">⭐</div>
+                            <span>What impact am I making?</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="corporate-apps animate-in" style="--delay: 4">
+                    <h3>Corporate Application</h3>
+                    <div class="app-items">
+                        <div class="app-item">📋 Clear company mission & values</div>
+                        <div class="app-item">🔗 Connect individual roles to larger purpose</div>
+                        <div class="app-item">🌍 CSR initiatives & community impact</div>
+                        <div class="app-item">🎯 Purpose-driven projects</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 7: A - ACCOMPLISHMENT ======================== -->
+    <section class="slide" id="slide-7" role="region" aria-label="Accomplishment">
+        <div class="slide-bg bg-achieve"></div>
+        <div class="slide-content perma-slide">
+            <div class="perma-letter-block animate-in" style="--delay: 0">
+                <span class="big-letter letter-a">A</span>
+            </div>
+            <div class="perma-content">
+                <h2 class="animate-in slide-heading" style="--delay: 1">Accomplish<span class="gradient-text-gold">ment</span></h2>
+                <p class="animate-in slide-body" style="--delay: 2">
+                    Pursuing achievement, mastery, and success for its own sake — celebrating effort and continuous growth.
+                </p>
+                <div class="staircase-visual animate-in" style="--delay: 3">
+                    <div class="stair stair-1"><span>Learn</span></div>
+                    <div class="stair stair-2"><span>Grow</span></div>
+                    <div class="stair stair-3"><span>Achieve</span></div>
+                    <div class="stair stair-4"><span>Master</span></div>
+                    <div class="stair stair-5"><span>🏆</span></div>
+                </div>
+                <div class="growth-mindset animate-in" style="--delay: 4">
+                    <div class="gm-item">🌱 Celebrate effort, not just results</div>
+                    <div class="gm-item">📚 Learn from failures</div>
+                    <div class="gm-item">🔄 Continuous improvement culture</div>
+                </div>
+                <div class="corporate-apps animate-in" style="--delay: 5">
+                    <h3>Corporate Application</h3>
+                    <div class="app-items">
+                        <div class="app-item">📊 Clear KPIs & milestones</div>
+                        <div class="app-item">🎓 Skill development opportunities</div>
+                        <div class="app-item">🏅 Recognition systems</div>
+                        <div class="app-item">📈 Career progression pathways</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 8: PERMA IN CORPORATE LIFE ======================== -->
+    <section class="slide" id="slide-8" role="region" aria-label="PERMA in Corporate Life">
+        <div class="slide-bg bg-corporate"></div>
+        <div class="slide-content">
+            <p class="animate-in section-label" style="--delay: 0">Why It Matters</p>
+            <h2 class="animate-in slide-heading" style="--delay: 1">PERMA in <span class="gradient-text">Corporate Life</span></h2>
+            <div class="three-columns animate-in" style="--delay: 2">
+                <div class="level-card glass-card">
+                    <div class="level-icon">👤</div>
+                    <h3>Individual</h3>
+                    <ul>
+                        <li>Reduced stress & anxiety</li>
+                        <li>Increased resilience</li>
+                        <li>Better work-life balance</li>
+                        <li>Enhanced creativity</li>
+                    </ul>
+                </div>
+                <div class="level-card glass-card">
+                    <div class="level-icon">👥</div>
+                    <h3>Team</h3>
+                    <ul>
+                        <li>Improved collaboration</li>
+                        <li>Higher trust levels</li>
+                        <li>Better communication</li>
+                        <li>Increased innovation</li>
+                    </ul>
+                </div>
+                <div class="level-card glass-card">
+                    <div class="level-icon">🏢</div>
+                    <h3>Organization</h3>
+                    <ul>
+                        <li>Higher productivity</li>
+                        <li>Lower turnover</li>
+                        <li>Better customer satisfaction</li>
+                        <li>Stronger employer brand</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="corporate-stats animate-in" style="--delay: 3">
+                <div class="corp-stat">
+                    <span class="stat-number" data-count="31">0</span><span class="stat-suffix">%</span>
+                    <span class="stat-label">Productivity Increase</span>
+                </div>
+                <div class="corp-stat">
+                    <span class="stat-number" data-count="25">0</span><span class="stat-suffix">%</span>
+                    <span class="stat-label">Turnover Reduction</span>
+                </div>
+                <div class="corp-stat">
+                    <span class="stat-number" data-count="3">0</span><span class="stat-suffix">x</span>
+                    <span class="stat-label">Revenue Growth</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 9: TEAM LEADER'S GUIDE ======================== -->
+    <section class="slide" id="slide-9" role="region" aria-label="Team Leader's Guide">
+        <div class="slide-bg bg-leader"></div>
+        <div class="slide-content">
+            <p class="animate-in section-label" style="--delay: 0">Implementation Strategy</p>
+            <h2 class="animate-in slide-heading" style="--delay: 1">Team Leader's <span class="gradient-text-green">Guide</span></h2>
+            <div class="guide-grid animate-in" style="--delay: 2">
+                <div class="guide-card glass-card" data-perma="P">
+                    <div class="guide-letter">P</div>
+                    <h3>Positive Emotions</h3>
+                    <ul>
+                        <li>Start meetings with gratitude</li>
+                        <li>Celebrate wins publicly</li>
+                        <li>Create 'kudos' channels</li>
+                    </ul>
+                </div>
+                <div class="guide-card glass-card" data-perma="E">
+                    <div class="guide-letter">E</div>
+                    <h3>Engagement</h3>
+                    <ul>
+                        <li>Assign tasks matching strengths</li>
+                        <li>Provide autonomy</li>
+                        <li>Create 'deep work' time</li>
+                    </ul>
+                </div>
+                <div class="guide-card glass-card" data-perma="R">
+                    <div class="guide-letter">R</div>
+                    <h3>Relationships</h3>
+                    <ul>
+                        <li>Schedule team socials</li>
+                        <li>Implement buddy systems</li>
+                        <li>Practice active listening</li>
+                    </ul>
+                </div>
+                <div class="guide-card glass-card" data-perma="M">
+                    <div class="guide-letter">M</div>
+                    <h3>Meaning</h3>
+                    <ul>
+                        <li>Communicate company vision</li>
+                        <li>Show impact of work</li>
+                        <li>Share customer stories</li>
+                    </ul>
+                </div>
+                <div class="guide-card glass-card" data-perma="A">
+                    <div class="guide-letter">A</div>
+                    <h3>Accomplishment</h3>
+                    <ul>
+                        <li>Set SMART goals</li>
+                        <li>Offer growth opportunities</li>
+                        <li>Track & celebrate progress</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="leader-behaviors animate-in" style="--delay: 3">
+                <span class="behavior-pill">🪞 Model vulnerability</span>
+                <span class="behavior-pill">💛 Practice empathy</span>
+                <span class="behavior-pill">🪨 Stay consistent</span>
+                <span class="behavior-pill">🚪 Be accessible</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 10: CONCLUSION ======================== -->
+    <section class="slide" id="slide-10" role="region" aria-label="Conclusion">
+        <div class="slide-bg bg-sunrise">
+            <canvas id="confetti-canvas"></canvas>
+        </div>
+        <div class="slide-content title-slide">
+            <p class="animate-in section-label" style="--delay: 0; color: rgba(255,255,255,0.7);">The Takeaway</p>
+            <h2 class="animate-in hero-title conclusion-title" style="--delay: 1">
+                The Future of Work<br>is <span class="gradient-text-sunrise">Well-being</span>
+            </h2>
+            <div class="takeaways animate-in" style="--delay: 2">
+                <div class="takeaway-item">✅ PERMA provides a comprehensive framework for happiness</div>
+                <div class="takeaway-item">✅ Each element is measurable and actionable</div>
+                <div class="takeaway-item">✅ Corporate wellness drives business success</div>
+                <div class="takeaway-item">✅ Leaders play a crucial role in implementation</div>
+            </div>
+            <div class="cta-section animate-in" style="--delay: 3">
+                <div class="cta-item">🚀 Start with one element this week</div>
+                <div class="cta-item">📊 Measure your team's PERMA baseline</div>
+                <div class="cta-item">📝 Create your wellness action plan</div>
+            </div>
+            <div class="final-statement animate-in" style="--delay: 4">
+                <p class="glow-text">"When people flourish, organizations thrive."</p>
+            </div>
+            <div class="animate-in credits-block conclusion-credits" style="--delay: 5">
+                <div class="credits-row">
+                    <div class="credit-item">
+                        <span class="credit-name">Ayush Vihan</span>
+                        <span class="credit-id">RA2411003030443</span>
+                    </div>
+                    <div class="credit-item">
+                        <span class="credit-name">Arjun Singh Yadav</span>
+                        <span class="credit-id">RA2411003030467</span>
+                    </div>
+                    <div class="credit-item">
+                        <span class="credit-name">Shashwat Rai</span>
+                        <span class="credit-id">RA2411003030472</span>
+                    </div>
+                </div>
+                <div class="guide-row">Under the guidance of <strong>Mr. Mudit Kumar</strong></div>
+            </div>
+        </div>
+    </section>
+
+    <script src="script.js"></script>
+</body>
+</html>

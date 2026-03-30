@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Process of Solid Waste Management</title>
+    <meta name="description" content="Apple-event inspired presentation on Solid Waste Management.">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Progress Bar -->
+    <div class="progress-bar" id="progress-bar"></div>
+
+    <!-- Navigation Arrows -->
+    <button class="nav-arrow nav-prev" id="nav-prev" aria-label="Previous slide">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+    </button>
+    <button class="nav-arrow nav-next" id="nav-next" aria-label="Next slide">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"></polyline></svg>
+    </button>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter" id="slide-counter">1 / 14</div>
+
+    <!-- Navigation Dots -->
+    <div class="slide-dots" id="slide-dots"></div>
+
+    <!-- Fullscreen Toggle -->
+    <button class="fullscreen-btn" id="fullscreen-btn" aria-label="Toggle fullscreen">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/></svg>
+    </button>
+
+    <!-- ======================== SLIDE 1: TITLE ======================== -->
+    <section class="slide active" id="slide-1" role="region" aria-label="Title Slide">
+        <div class="slide-bg title-bg">
+            <canvas id="particles-canvas"></canvas>
+        </div>
+        <div class="slide-content title-slide">
+            <div class="animate-in" style="--delay: 0">
+                <div class="perma-badge">ENVIRONMENTAL SCIENCE</div>
+            </div>
+            <h1 class="animate-in hero-title" style="--delay: 1">
+                Solid Waste<br><span class="gradient-text-hero">Management</span>
+            </h1>
+            <p class="animate-in subtitle" style="--delay: 2">The Comprehensive Process from Source to Disposal</p>
+            <div class="animate-in meta-row" style="--delay: 3">
+                <span class="tag">System Lifecycle</span>
+                <span class="divider">·</span>
+                <span>21CYM101T</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 2: AUTHORS ======================== -->
+    <section class="slide" id="slide-2" role="region" aria-label="Team Members">
+        <div class="slide-bg bg-electric"></div>
+        <div class="slide-content split-layout">
+            <div class="split-left animate-in" style="--delay: 0">
+                <div class="perma-diagram">
+                    <div class="perma-circle center-circle" style="background: linear-gradient(135deg, var(--teal), var(--blue));">TEAM</div>
+                    <div class="perma-circle orbit-circle orbit-p" style="background: rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); box-shadow:none;">A</div>
+                    <div class="perma-circle orbit-circle orbit-e" style="background: rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); box-shadow:none;">D</div>
+                    <div class="perma-circle orbit-circle orbit-r" style="background: rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); box-shadow:none;">S</div>
+                    <div class="perma-circle orbit-circle orbit-m" style="background: rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); box-shadow:none;">H</div>
+                    <div class="perma-circle orbit-circle orbit-a" style="background: rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); box-shadow:none;">S</div>
+                    <svg class="orbit-lines" viewBox="0 0 300 300">
+                        <line x1="150" y1="150" x2="150" y2="30" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+                        <line x1="150" y1="150" x2="264" y2="87" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+                        <line x1="150" y1="150" x2="220" y2="255" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+                        <line x1="150" y1="150" x2="80" y2="255" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+                        <line x1="150" y1="150" x2="36" y2="87" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+                    </svg>
+                </div>
+            </div>
+            <div class="split-right">
+                <p class="animate-in section-label" style="--delay: 0">Presented By</p>
+                <h2 class="animate-in slide-heading" style="--delay: 1">Our <span class="gradient-text-electric">Group</span></h2>
+                <div class="animate-in credits-block" style="--delay: 2; text-align: left;">
+                    <div class="credits-row" style="justify-content: center; margin-bottom: 24px; gap: clamp(24px, 4vw, 48px);">
+                        <div class="credit-item" style="text-align: left;">
+                            <span class="credit-name" style="font-size: clamp(16px, 2vw, 24px);">Mohd Ayan Khan</span>
+                            <span class="credit-id" style="font-size: clamp(12px, 1.5vw, 16px);">RA2511003030020</span>
+                        </div>
+                        <div class="credit-item" style="text-align: left;">
+                            <span class="credit-name" style="font-size: clamp(16px, 2vw, 24px);">Dhairya Agrawal</span>
+                            <span class="credit-id" style="font-size: clamp(12px, 1.5vw, 16px);">RA2511003030019</span>
+                        </div>
+                        <div class="credit-item" style="text-align: left;">
+                            <span class="credit-name" style="font-size: clamp(16px, 2vw, 24px);">Swapneel Mohanty</span>
+                            <span class="credit-id" style="font-size: clamp(12px, 1.5vw, 16px);">RA2511003030023</span>
+                        </div>
+                    </div>
+                    <div class="credits-row" style="justify-content: center; gap: clamp(24px, 4vw, 48px);">
+                        <div class="credit-item" style="text-align: left;">
+                            <span class="credit-name" style="font-size: clamp(16px, 2vw, 24px);">Hrishikesh</span>
+                            <span class="credit-id" style="font-size: clamp(12px, 1.5vw, 16px);">RA2511003030021</span>
+                        </div>
+                        <div class="credit-item" style="text-align: left;">
+                            <span class="credit-name" style="font-size: clamp(16px, 2vw, 24px);">Sudha Sharma</span>
+                            <span class="credit-id" style="font-size: clamp(12px, 1.5vw, 16px);">RA2511003030024</span>
+                        </div>
+                    </div>
+                    <div style="margin-top: 40px; font-size: clamp(14px, 1.5vw, 20px); color: rgba(255,255,255,0.5); text-align: center;">
+                        Under the guidance of <strong>Dr. Yogendra Bhaskar</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 3: PROCESS PIPELINE ======================== -->
+    <section class="slide" id="slide-3" role="region" aria-label="Process Pipeline">
+        <div class="slide-bg bg-subtle-geo"></div>
+        <div class="slide-content perma-slide">
+            <div class="perma-content" style="text-align: center;">
+                <p class="animate-in section-label" style="--delay: 0">Lifecycle Agenda</p>
+                <h2 class="animate-in slide-heading" style="--delay: 1">The <span class="gradient-text">6 Steps</span> of Management</h2>
+                
+                <div class="meaning-journey animate-in" style="--delay: 2" style="margin-top: 60px;">
+                    <div class="journey-path">
+                        <div class="journey-step"><div class="journey-icon">🏠</div><span>1. Generation</span></div>
+                        <div class="journey-connector"></div>
+                        <div class="journey-step"><div class="journey-icon">🗑️</div><span>2. Segregation</span></div>
+                        <div class="journey-connector"></div>
+                        <div class="journey-step"><div class="journey-icon">🚛</div><span>3. Collection</span></div>
+                        <div class="journey-connector"></div>
+                        <div class="journey-step"><div class="journey-icon">🛣️</div><span>4. Transport</span></div>
+                        <div class="journey-connector"></div>
+                        <div class="journey-step"><div class="journey-icon">♻️</div><span>5. Processing</span></div>
+                        <div class="journey-connector"></div>
+                        <div class="journey-step"><div class="journey-icon">🏔️</div><span>6. Disposal</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 4: WHAT IS SOLID WASTE? ======================== -->
+    <section class="slide" id="slide-4" role="region" aria-label="Definition">
+        <div class="slide-bg bg-warm"></div>
+        <div class="slide-content perma-slide" style="align-items: center;">
+            <div class="perma-letter-block animate-in" style="--delay: 0; position:relative; margin-right: 40px;">
+                <span class="big-letter letter-p" style="font-size: 200px;">🗑️</span>
+            </div>
+            <div class="perma-content">
+                <p class="animate-in section-label" style="--delay: 0">Introduction</p>
+                <h2 class="animate-in slide-heading" style="--delay: 1">What is <span class="gradient-text-warm">Solid Waste?</span></h2>
+                <p class="animate-in slide-body" style="--delay: 2">
+                    Solid material, non-liquid, and non-gaseous waste generated from domestic, commercial, industrial, and agricultural activities that has been discarded.
+                </p>
+                <p class="animate-in slide-body" style="--delay: 3">
+                    It is an inevitable byproduct of human existence, heavily influenced by our economic growth and technological advancement.
+                </p>
+                <blockquote class="animate-in quote-block" style="--delay: 4">
+                    "There is no such thing as 'away'. When we throw anything away, it must go somewhere."
+                    <cite>— Annie Leonard</cite>
+                </blockquote>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 5: GENERATION STATS ======================== -->
+    <section class="slide" id="slide-5" role="region" aria-label="Generation Stats">
+        <div class="slide-bg bg-corporate"></div>
+        <div class="slide-content">
+            <p class="animate-in section-label" style="--delay: 0">Step 1: Generation</p>
+            <h2 class="animate-in slide-heading" style="--delay: 1">The Scale of the <span class="gradient-text">Problem</span></h2>
+            
+            <p class="animate-in slide-body" style="--delay: 2" style="margin: 0 auto 60px auto; text-align:center;">
+                Global waste generation is accelerating at an alarming rate, straining municipal resources and natural environments.
+            </p>
+
+            <div class="corporate-stats animate-in" style="--delay: 3">
+                <div class="corp-stat">
+                    <span class="stat-number" data-count="2">0</span><span class="stat-suffix">B</span>
+                    <span class="stat-label">Tonnes of MSW generated globally per year</span>
+                </div>
+                <div class="corp-stat">
+                    <span class="stat-number" data-count="3">0</span><span class="stat-suffix">.4B</span>
+                    <span class="stat-label">Tonnes projected by 2050 (A 70% increase)</span>
+                </div>
+                <div class="corp-stat">
+                    <span class="stat-number" data-count="33">0</span><span class="stat-suffix">%</span>
+                    <span class="stat-label">Of global waste is not managed in an environmentally safe manner</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 6: SOURCES & TYPES ======================== -->
+    <section class="slide" id="slide-6" role="region" aria-label="Sources & Types">
+        <div class="slide-bg bg-leader"></div>
+        <div class="slide-content">
+            <p class="animate-in section-label" style="--delay: 0">Origins</p>
+            <h2 class="animate-in slide-heading" style="--delay: 1">Sources & <span class="gradient-text-green">Categories</span></h2>
+            
+            <div class="guide-grid animate-in" style="--delay: 2">
+                <div class="guide-card glass-card" data-perma="A">
+                    <div class="guide-letter">M</div>
+                    <h3>Municipal</h3>
+                    <ul><li>Households, markets, streets. Contains organics, plastics, paper.</li></ul>
+                </div>
+                <div class="guide-card glass-card" data-perma="E">
+                    <div class="guide-letter">I</div>
+                    <h3>Industrial</h3>
+                    <ul><li>Manufacturing plants, construction grids. Can be toxic.</li></ul>
+                </div>
+                <div class="guide-card glass-card" data-perma="R">
+                    <div class="guide-letter">H</div>
+                    <h3>Hazardous</h3>
+                    <ul><li>Chemicals, paints, explosive materials. Highly reactive.</li></ul>
+                </div>
+                <div class="guide-card glass-card" data-perma="M">
+                    <div class="guide-letter">B</div>
+                    <h3>Biomedical</h3>
+                    <ul><li>Hospitals and labs. Syringes, human tissues, highly infectious.</li></ul>
+                </div>
+                <div class="guide-card glass-card" data-perma="P">
+                    <div class="guide-letter">E</div>
+                    <h3>E-Waste</h3>
+                    <ul><li>Circuit boards, batteries. Toxic heavy metals (lead/mercury).</li></ul>
+                </div>
+            </div>
+            
+            <div class="leader-behaviors animate-in" style="--delay: 3" style="margin-top: 20px;">
+                <span class="behavior-pill" style="border-color: rgba(48,209,88,0.3); color: var(--green);">Biodegradable (Wet)</span>
+                <span class="behavior-pill" style="border-color: rgba(41,151,255,0.3); color: var(--blue);">Non-Biodegradable (Dry)</span>
+                <span class="behavior-pill" style="border-color: rgba(255,55,95,0.3); color: var(--pink);">Toxic / Reject</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 7: SEGREGATION ======================== -->
+    <section class="slide" id="slide-7" role="region" aria-label="Segregation">
+        <div class="slide-bg bg-deep"></div>
+        <div class="slide-content">
+            <p class="animate-in section-label" style="--delay: 0">Step 2</p>
+            <h2 class="animate-in slide-heading" style="--delay: 1">Segrega<span class="gradient-text-gold">tion</span></h2>
+            <p class="animate-in slide-body" style="--delay: 2" style="text-align: center; margin-bottom: 40px;">
+                The most critical phase: dividing waste at the point of origin minimizes contamination and maximizes recycling value.
+            </p>
+            
+            <div class="three-columns animate-in" style="--delay: 3">
+                <div class="level-card glass-card" style="border-top: 4px solid var(--green);">
+                    <div class="level-icon">🌿</div>
+                    <h3>Green Bin (Wet)</h3>
+                    <ul>
+                        <li>Food scraps & leftovers</li>
+                        <li>Fruit & vegetable peels</li>
+                        <li>Garden waste / leaves</li>
+                        <li>Biodegradable</li>
+                    </ul>
+                </div>
+                <div class="level-card glass-card" style="border-top: 4px solid var(--blue);">
+                    <div class="level-icon">📦</div>
+                    <h3>Blue Bin (Dry)</h3>
+                    <ul>
+                        <li>Plastics & wrappers</li>
+                        <li>Paper & cardboard</li>
+                        <li>Clean glass & metals</li>
+                        <li>Highly Recyclable</li>
+                    </ul>
+                </div>
+                <div class="level-card glass-card" style="border-top: 4px solid var(--pink);">
+                    <div class="level-icon">⚠️</div>
+                    <h3>Red/Black Bin (Reject)</h3>
+                    <ul>
+                        <li>Bio-medical waste</li>
+                        <li>Sanitary napkins</li>
+                        <li>Hazardous chemicals</li>
+                        <li>Requires incineration</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 8: COLLECTION ======================== -->
+    <section class="slide" id="slide-8" role="region" aria-label="Collection">
+        <div class="slide-bg bg-warm-connect"></div>
+        <div class="slide-content perma-slide" style="align-items: center;">
+            <div class="perma-letter-block animate-in" style="--delay: 0">
+                <div class="network-visual">
+                    <div class="network-node node-center" style="font-size:30px;">🏠</div>
+                    <div class="network-node node-1">🗑️</div>
+                    <div class="network-node node-2">🗑️</div>
+                    <div class="network-node node-3">🚛</div>
+                    <div class="network-node node-4">🧑‍🌾</div>
+                    <div class="network-node node-5">🏢</div>
+                    <div class="network-node node-6">🚛</div>
+                </div>
+            </div>
+            <div class="perma-content">
+                <p class="animate-in section-label" style="--delay: 0">Step 3</p>
+                <h2 class="animate-in slide-heading" style="--delay: 1">Collec<span class="gradient-text-rose">tion</span></h2>
+                <div class="corporate-apps animate-in" style="--delay: 2" style="margin-top:20px;">
+                    <h3>Collection Methods</h3>
+                    <div class="app-items">
+                        <div class="app-item">🚪 <strong>Door-to-Door</strong>: Municipal workers pick up directly from houses daily.</div>
+                        <div class="app-item">🏘️ <strong>Community Bins</strong>: Central skips placed in neighborhoods; cleared regularly.</div>
+                        <div class="app-item">🚧 <strong>Curbside Pick-up</strong>: Bins rolled to the street edge on specific days.</div>
+                        <div class="app-item">📱 <strong>Smart Bins</strong>: IoT enabled bins that alert authorities when 80% full.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 9: TRANSPORTATION ======================== -->
+    <section class="slide" id="slide-9" role="region" aria-label="Transportation">
+        <div class="slide-bg bg-subtle-geo"></div>
+        <div class="slide-content perma-slide" style="flex-direction: column; align-items:center;">
+            <div class="perma-content" style="text-align: center; width: 100%;">
+                <p class="animate-in section-label" style="--delay: 0">Step 4</p>
+                <h2 class="animate-in slide-heading" style="--delay: 1">Transpor<span class="gradient-text">tation</span></h2>
+                <p class="animate-in slide-body" style="--delay: 2" style="margin: 0 auto 40px auto;">
+                    Moving waste from collection points to processing facilities or transfer stations to minimize logistics cost and carbon footprint.
+                </p>
+            </div>
+            <div class="flow-visual animate-in" style="--delay: 3" style="width: 100%; display: flex; justify-content: center;">
+                <div class="journey-path">
+                    <div class="journey-step"><div class="journey-icon">🗑️</div><span>Local Hubs</span></div>
+                    <div class="journey-connector"></div>
+                    <div class="journey-step"><div class="journey-icon">🛻</div><span>Small Trucks</span></div>
+                    <div class="journey-connector"></div>
+                    <div class="journey-step"><div class="journey-icon">🏭</div><span>Transfer Station</span></div>
+                    <div class="journey-connector"></div>
+                    <div class="journey-step"><div class="journey-icon">🚛</div><span>Heavy Haulers</span></div>
+                    <div class="journey-connector"></div>
+                    <div class="journey-step"><div class="journey-icon">⚙️</div><span>Processing Plant</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 10: PROCESSING INTRO ======================== -->
+    <section class="slide" id="slide-10" role="region" aria-label="Processing Intro">
+        <div class="slide-bg title-bg"></div>
+        <div class="slide-content title-slide">
+            <p class="animate-in section-label" style="--delay: 0">Step 5</p>
+            <h1 class="animate-in hero-title" style="--delay: 1">
+                <span class="gradient-text-green">Processing &<br>Recovery</span>
+            </h1>
+            <p class="animate-in subtitle" style="--delay: 2">Transforming waste back into resources.</p>
+            
+            <div class="staircase-visual animate-in" style="--delay: 3" style="margin-top:40px; width: 60%;">
+                <div class="stair stair-1" style="background: rgba(48,209,88,0.2);"><span>Compost</span></div>
+                <div class="stair stair-2" style="background: rgba(90,200,250,0.2);"><span>Recycle</span></div>
+                <div class="stair stair-3" style="background: rgba(41,151,255,0.2);"><span>Incinerate</span></div>
+                <div class="stair stair-4" style="background: rgba(191,90,242,0.2);"><span>Biogas</span></div>
+                <div class="stair stair-5" style="background: rgba(255,214,10,0.2);"><span>Dispose</span></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 11: PROCESSING DETAIL ======================== -->
+    <section class="slide" id="slide-11" role="region" aria-label="Processing Detailed">
+        <div class="slide-bg bg-electric"></div>
+        <div class="slide-content">
+            <p class="animate-in section-label" style="--delay: 0">Technologies</p>
+            <h2 class="animate-in slide-heading" style="--delay: 1">Core Processing <span class="gradient-text-electric">Methods</span></h2>
+            
+            <div class="three-columns animate-in" style="--delay: 2" style="grid-template-columns: repeat(2, 1fr);">
+                <div class="level-card glass-card">
+                    <div class="level-icon">🌿</div>
+                    <h3>Composting</h3>
+                    <p style="font-size: clamp(12px, 1.4vw, 16px); color: rgba(255,255,255,0.7); line-height: 1.5;">Biological decomposition of organic waste by microorganisms in aerated environments. Creates rich fertilizer.</p>
+                </div>
+                <div class="level-card glass-card">
+                    <div class="level-icon">♻️</div>
+                    <h3>Recycling</h3>
+                    <p style="font-size: clamp(12px, 1.4vw, 16px); color: rgba(255,255,255,0.7); line-height: 1.5;">Material recovery and reprocessing of separated dry waste (plastic, paper, glass) into brand new consumer products.</p>
+                </div>
+                <div class="level-card glass-card">
+                    <div class="level-icon">🔥</div>
+                    <h3>Incineration (WtE)</h3>
+                    <p style="font-size: clamp(12px, 1.4vw, 16px); color: rgba(255,255,255,0.7); line-height: 1.5;">Thermal treatment at extremely high temperatures (850-1100°C) equipped to capture energy and reduce waste volume by 90%.</p>
+                </div>
+                <div class="level-card glass-card">
+                    <div class="level-icon">💨</div>
+                    <h3>Biomethanation</h3>
+                    <p style="font-size: clamp(12px, 1.4vw, 16px); color: rgba(255,255,255,0.7); line-height: 1.5;">Anaerobic digestion of wet organic waste to produce methane/biogas as fuel, leaving behind a digestate liquid fertilizer.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 12: DISPOSAL ======================== -->
+    <section class="slide" id="slide-12" role="region" aria-label="Disposal">
+        <div class="slide-bg bg-achieve"></div>
+        <div class="slide-content perma-slide" style="align-items: center;">
+            <div class="perma-letter-block animate-in" style="--delay: 0" style="margin-right:40px;">
+                <span class="big-letter letter-a" style="font-size: 150px;">🏔️</span>
+            </div>
+            <div class="perma-content">
+                <p class="animate-in section-label" style="--delay: 0">Step 6</p>
+                <h2 class="animate-in slide-heading" style="--delay: 1">Sanitary <span class="gradient-text-gold">Landfills</span></h2>
+                <p class="animate-in slide-body" style="--delay: 2">
+                    The final destination for <em>reject</em>, non-recyclable, and incombustible inert waste. Open dumping is extremely harmful, requiring engineered solutions.
+                </p>
+                <div class="corporate-apps animate-in" style="--delay: 3">
+                    <h3>Engineered Safeguards</h3>
+                    <div class="app-items" style="grid-template-columns: 1fr;">
+                        <div class="app-item">🛡️ <strong>Bottom Liner:</strong> Thick plastic clay layers preventing soil contamination.</div>
+                        <div class="app-item">💧 <strong>Leachate Collection:</strong> Drainage pipes to collect toxic liquid run-offs.</div>
+                        <div class="app-item">💨 <strong>Methane Traps:</strong> Vents to capture greenhouse gases emitted from decay.</div>
+                        <div class="app-item">盖 <strong>Daily Cover:</strong> Capping waste with soil to prevent pests and odors.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 13: CHALLENGES & FORWARD ======================== -->
+    <section class="slide" id="slide-13" role="region" aria-label="Challenges vs Solutions">
+        <div class="slide-bg bg-subtle-geo"></div>
+        <div class="slide-content" style="justify-content: center;">
+            <p class="animate-in section-label" style="--delay: 0">The Roadmap</p>
+            <h2 class="animate-in slide-heading" style="--delay: 1">Challenges & <span class="gradient-text-green">Solutions</span></h2>
+            
+            <div class="three-columns animate-in" style="--delay: 2; grid-template-columns: repeat(2, 1fr); width: 100%; max-width: 1000px; margin: 30px auto 0 auto;">
+                <div class="level-card glass-card" style="border-top: 4px solid var(--pink); text-align:left;">
+                    <div class="level-icon">⚠️</div>
+                    <h3 style="color: var(--pink); font-size: clamp(18px, 2vw, 24px); margin-bottom: 20px;">The Bottlenecks</h3>
+                    <ul style="font-size: clamp(14px, 1.6vw, 18px); color: rgba(255,255,255,0.7); line-height: 1.8; list-style: none; padding: 0;">
+                        <li style="margin-bottom: 12px; display: flex; align-items: flex-start; gap: 10px; padding-left:0;">
+                            <span style="color: var(--pink);">×</span> <span>Lack of strict source segregation protocols.</span>
+                        </li>
+                        <li style="margin-bottom: 12px; display: flex; align-items: flex-start; gap: 10px; padding-left:0;">
+                            <span style="color: var(--pink);">×</span> <span>Insufficient processing & recycling infrastructure.</span>
+                        </li>
+                        <li style="margin-bottom: 12px; display: flex; align-items: flex-start; gap: 10px; padding-left:0;">
+                            <span style="color: var(--pink);">×</span> <span>Low public awareness & participation.</span>
+                        </li>
+                        <li style="margin-bottom: 12px; display: flex; align-items: flex-start; gap: 10px; padding-left:0;">
+                            <span style="color: var(--pink);">×</span> <span>Landfill exhaustion leading to accidental fires.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="level-card glass-card" style="border-top: 4px solid var(--green); text-align:left;">
+                    <div class="level-icon">🎯</div>
+                    <h3 style="color: var(--green); font-size: clamp(18px, 2vw, 24px); margin-bottom: 20px;">The Way Forward</h3>
+                    <ul style="font-size: clamp(14px, 1.6vw, 18px); color: rgba(255,255,255,0.7); line-height: 1.8; list-style: none; padding: 0;">
+                        <li style="margin-bottom: 12px; display: flex; align-items: flex-start; gap: 10px; padding-left:0;">
+                            <span style="color: var(--green);">→</span> <span>Mandatory Extended Producer Responsibility (EPR).</span>
+                        </li>
+                        <li style="margin-bottom: 12px; display: flex; align-items: flex-start; gap: 10px; padding-left:0;">
+                            <span style="color: var(--green);">→</span> <span>Transitioning into a true Circular Economy model.</span>
+                        </li>
+                        <li style="margin-bottom: 12px; display: flex; align-items: flex-start; gap: 10px; padding-left:0;">
+                            <span style="color: var(--green);">→</span> <span>Digital fleet tracking via IoT and smart bins.</span>
+                        </li>
+                        <li style="margin-bottom: 12px; display: flex; align-items: flex-start; gap: 10px; padding-left:0;">
+                            <span style="color: var(--green);">→</span> <span>Converting saturated dump-sites into bio-parks.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="leader-behaviors animate-in" style="--delay: 3" style="margin-top: 40px;">
+                <span class="behavior-pill" style="border-color: rgba(90, 200, 250, 0.3); color: var(--teal);">Policy Intervention</span>
+                <span class="behavior-pill" style="border-color: rgba(41, 151, 255, 0.3); color: var(--blue);">Tech Innovation</span>
+                <span class="behavior-pill" style="border-color: rgba(191, 90, 242, 0.3); color: var(--purple);">Public Behavior</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 14: CONCLUSION ======================== -->
+    <section class="slide" id="slide-14" role="region" aria-label="Conclusion">
+        <div class="slide-bg bg-sunrise">
+            <canvas id="confetti-canvas"></canvas>
+        </div>
+        <div class="slide-content title-slide">
+            <p class="animate-in section-label" style="--delay: 0; color: rgba(255,255,255,0.7);">The Takeaway</p>
+            <h2 class="animate-in hero-title conclusion-title" style="--delay: 1">
+                Waste is a Resource.<br>Management is the <span class="gradient-text-sunrise">Key.</span>
+            </h2>
+            <div class="takeaways animate-in" style="--delay: 2" style="align-items:center;">
+                <div class="takeaway-item">✅ Effective management requires government & citizen collaboration.</div>
+                <div class="takeaway-item">✅ "Reduce, Reuse, Recycle" is more relevant than ever.</div>
+            </div>
+            
+            <div class="final-statement animate-in" style="--delay: 3">
+                <p class="glow-text">"When communities recycle, the Earth heals."</p>
+                <div style="font-size: 24px; color:rgba(255,255,255,0.5); margin-top: 40px;">Thank You</div>
+            </div>
+            
+            <div class="animate-in credits-block conclusion-credits" style="--delay: 4">
+                <div class="guide-row" style="font-size:16px;">
+                    Environmental Science | <strong>21CYM101T</strong>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="script.js"></script>
+</body>
+</html>

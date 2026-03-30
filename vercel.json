@@ -3,6 +3,9 @@
         { "source": "/api/(.*)", "destination": "/api/$1" }
     ],
     "redirects": [
-        { "source": "/presentation", "destination": "/presentation/", "statusCode": 301 }
+        { "source": "/presentation", "destination": "/presentation/", "statusCode": 301 },
+        { "source": "/evs", "destination": "/evs/", "statusCode": 301 },
+        { "source": "/socials", "destination": "/socials/", "statusCode": 301 },
+        { "source": "/oopd", "destination": "/oopd/", "statusCode": 301 }
     ]
 }

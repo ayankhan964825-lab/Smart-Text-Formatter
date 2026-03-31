@@ -9,7 +9,7 @@
     // ============================================================
     // CONFIG & STATE
     // ============================================================
-    const TOTAL_SLIDES = 12;
+    const TOTAL_SLIDES = 13;
     const TRANSITION_DURATION = 800;
     let currentSlide = 1;
     let isTransitioning = false;

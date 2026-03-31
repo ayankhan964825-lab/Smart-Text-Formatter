@@ -21,12 +21,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Save current slide index to restore later
                 const originalActiveSlide = document.querySelector('.slide.active');
                 
+                // Initialize PPTX
                 let pptx = new PptxGenJS();
                 pptx.layout = 'LAYOUT_16x9';
 
                 // Grab all structural slides DOM nodes
                 const slides = document.querySelectorAll('.slide');
                 const totalSlides = slides.length;
+
+                // 🌟 FIX: Inject a global style override to instantly force all elements painted and skip animations
+                const forceStaticStyle = document.createElement('style');
+                forceStaticStyle.innerHTML = `
+                    * { transition: none !important; animation: none !important; }
+                    .animate-in { opacity: 1 !important; transform: none !important; }
+                    .slide { opacity: 1 !important; visibility: visible !important; }
+                `;
+                document.head.appendChild(forceStaticStyle);
 
                 for (let i = 0; i < totalSlides; i++) {
                     pctLabel.innerText = `Taking high-res snapshot of Slide ${i + 1}/${totalSlides}...`;
@@ -37,18 +47,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
                     slide.classList.add('active');
                     
-                    // Temporarily force all internally animated CSS elements to be 100% visible
-                    // otherwise html2canvas might capture them while they are invisible (opacity 0)
-                    const animatedChildren = slide.querySelectorAll('.animate-in');
-                    animatedChildren.forEach(el => {
-                        el.style.opacity = '1';
-                        el.style.transform = 'none';
-                        el.style.animation = 'none';
-                        el.style.transition = 'none';
-                    });
-
-                    // Wait a tiny bit for the DOM changes to visually snap into place
-                    await new Promise(r => setTimeout(r, 150));
+                    // 🌟 FIX: Wait a significantly longer time (600ms) to allow the browser's Paint engine to fully render the heavy CSS/SVG geometry before snapping
+                    await new Promise(r => setTimeout(r, 600));
 
                     // Take Snapshot using html2canvas
                     const canvas = await html2canvas(slide, {
@@ -74,17 +74,12 @@ document.addEventListener('DOMContentLoaded', () => {
                         y: 0,
                         w: 10,     // PowerPoint sets LAYOUT_16x9 width dynamically as 10 inches natively
                         h: 5.625,  // Height mathematically equivalent to 16:9
-                        anim: { type: 'fade', speed: 'fast' } // <--- THE FAKED SLIDE TRANSITION (Fades perfectly into view)
-                    });
-
-                    // Cleanup forced static styles to not break the DOM engine
-                    animatedChildren.forEach(el => {
-                        el.style.opacity = '';
-                        el.style.transform = '';
-                        el.style.animation = '';
-                        el.style.transition = '';
+                        anim: { type: 'fade', speed: 'fast' } // THE FAKED SLIDE TRANSITION
                     });
                 }
+
+                // 🌟 FIX: Remove the forced static styles so the web presentation returns to normal fluid animations
+                document.head.removeChild(forceStaticStyle);
 
                 pctLabel.innerText = 'Compiling native .pptx file...';
 

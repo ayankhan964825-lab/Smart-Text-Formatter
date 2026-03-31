@@ -1,5 +1,5 @@
 // exportPptx.js
-// Custom High-Res Screenshot PPTX Exporter (Option A)
+// Custom High-Res Screenshot PPTX Exporter with Invisible Hyperlink Engine
 
 document.addEventListener('DOMContentLoaded', () => {
     const exportBtn = document.getElementById('export-pptx-btn');
@@ -14,90 +14,120 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             try {
-                // Show overlay
                 overlay.style.display = 'flex';
                 pctLabel.innerText = 'Initializing snapshot engine...';
 
-                // Save current slide index to restore later
                 const originalActiveSlide = document.querySelector('.slide.active');
                 
-                // Initialize PPTX
                 let pptx = new PptxGenJS();
-                pptx.layout = 'LAYOUT_16x9';
+                pptx.layout = 'LAYOUT_16x9'; 
 
-                // Grab all structural slides DOM nodes
                 const slides = document.querySelectorAll('.slide');
                 const totalSlides = slides.length;
 
-                // 🌟 FIX: Inject a global style override to instantly force all elements painted and skip animations
-                const forceStaticStyle = document.createElement('style');
-                forceStaticStyle.innerHTML = `
-                    * { transition: none !important; animation: none !important; }
-                    .animate-in { opacity: 1 !important; transform: none !important; }
-                    .slide { opacity: 1 !important; visibility: visible !important; }
+                // 🌟 FIX: Absolute Animation Killer
+                // This violently stops all CSS animations, transforms, and SVG transitions instantly.
+                const cssThrottler = document.createElement('style');
+                cssThrottler.innerHTML = `
+                    * { 
+                        transition: none !important; 
+                        animation: none !important; 
+                        animation-play-state: paused !important;
+                    }
+                    .animate-in { 
+                        opacity: 1 !important; 
+                        transform: none !important; 
+                    }
+                    .slide { 
+                        opacity: 1 !important; 
+                        visibility: visible !important; 
+                    }
                 `;
-                document.head.appendChild(forceStaticStyle);
+                document.head.appendChild(cssThrottler);
 
                 for (let i = 0; i < totalSlides; i++) {
-                    pctLabel.innerText = `Taking high-res snapshot of Slide ${i + 1}/${totalSlides}...`;
-                    
                     const slide = slides[i];
                     
-                    // Force the slide to be active for accurate DOM rendering
                     document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
                     slide.classList.add('active');
                     
-                    // 🌟 FIX: Wait a significantly longer time (600ms) to allow the browser's Paint engine to fully render the heavy CSS/SVG geometry before snapping
-                    await new Promise(r => setTimeout(r, 600));
+                    pctLabel.innerText = `Preparing Slide ${i + 1}/${totalSlides} for snapshot...`;
 
-                    // Take Snapshot using html2canvas
+                    // 🌟 FIX: Massive wait time + requestAnimationFrame 
+                    // This forces the browser to actually paint the stopped CSS layout to screen memory before snap
+                    await new Promise(resolve => setTimeout(resolve, 1200)); 
+                    await new Promise(resolve => requestAnimationFrame(resolve));
+
+                    pctLabel.innerText = `Capturing High-Res Snapshot ${i + 1}...`;
                     const canvas = await html2canvas(slide, {
-                        scale: 2, // 2x High resolution for crisp PowerPoint text viewing
-                        backgroundColor: '#0D0E15', 
+                        scale: 2, 
+                        backgroundColor: '#0D0E15',
                         logging: false,
                         allowTaint: true,
                         useCORS: true
                     });
 
-                    // Convert to base64 generic image format
                     const base64Image = canvas.toDataURL("image/jpeg", 0.9);
 
-                    // Create PowerPoint slide
                     let pptSlide = pptx.addSlide();
                     pptSlide.background = { color: "0D0E15" };
 
-                    // Append the High-Res Image covering EXACTLY 100% of the slide (Widescreen 16:9)
-                    // We attach the 'fade' animation specifically to simulate a SLIDE TRANSITION effect naturally
+                    // 🌟 SLIDE TRANSITION FIX
+                    // Embed the image taking exactly 10 inches by 5.625 inches natively.
+                    // The 'fade' animation creates the simulated slide-to-slide transition!
                     pptSlide.addImage({
                         data: base64Image,
                         x: 0,
                         y: 0,
-                        w: 10,     // PowerPoint sets LAYOUT_16x9 width dynamically as 10 inches natively
-                        h: 5.625,  // Height mathematically equivalent to 16:9
-                        anim: { type: 'fade', speed: 'fast' } // THE FAKED SLIDE TRANSITION
+                        w: 10,  
+                        h: 5.625,
+                        anim: { type: 'fade', speed: 'fast' }
                     });
+
+                    // 🌟 HYPERLINK MAPPING ENGINE
+                    // Finds all <a> tags (like GitHub, Live Demo buttons) on this specific slide
+                    const slideLinks = slide.querySelectorAll('a[href]');
+                    if (slideLinks.length > 0) {
+                        const slideRect = slide.getBoundingClientRect();
+                        
+                        slideLinks.forEach(link => {
+                            const linkRect = link.getBoundingClientRect();
+                            
+                            // Math: Translate HTML absolute box pixels to percentages relative to slide
+                            const relX = linkRect.left - slideRect.left;
+                            const relY = linkRect.top - slideRect.top;
+                            
+                            // Math: Convert percentages to PptxGenJS Inches (10x5.625 master canvas)
+                            const pptX = (relX / slideRect.width) * 10;
+                            const pptY = (relY / slideRect.height) * 5.625;
+                            const pptW = (linkRect.width / slideRect.width) * 10;
+                            const pptH = (linkRect.height / slideRect.height) * 5.625;
+                            
+                            // Inject a 100% Invisible Rectangle precisely over the button in the picture
+                            pptSlide.addShape(pptx.ShapeType.rect, {
+                                x: pptX, y: pptY, w: pptW, h: pptH,
+                                fill: { transparency: 100 },
+                                line: { transparency: 100 },
+                                hyperlink: { url: link.href, tooltip: "Open Web Link" }
+                            });
+                        });
+                    }
                 }
 
-                // 🌟 FIX: Remove the forced static styles so the web presentation returns to normal fluid animations
-                document.head.removeChild(forceStaticStyle);
-
-                pctLabel.innerText = 'Compiling native .pptx file...';
-
-                // Securely restore the exactly originally viewed slide for the user
+                // Restore Presentation Vitality
+                document.head.removeChild(cssThrottler);
                 document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
                 if (originalActiveSlide) originalActiveSlide.classList.add('active');
 
-                // Output File
+                pctLabel.innerText = 'Compiling native .pptx...';
                 await pptx.writeFile({ fileName: "OOPD_Showcase_HighRes.pptx" });
                 
-                pctLabel.innerText = 'Download Complete!';
+                pctLabel.innerText = 'Ready!';
                 await new Promise(r => setTimeout(r, 1000));
-
             } catch (err) {
                 console.error("PPTX Generation Error:", err);
                 alert("Failed to export PPTX snapshots. Check console log.");
             } finally {
-                // Always assure overlay closes securely
                 overlay.style.display = 'none';
                 pctLabel.innerText = '';
             }

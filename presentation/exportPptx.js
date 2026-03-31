@@ -8,8 +8,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (exportBtn) {
         exportBtn.addEventListener('click', async () => {
-            if (typeof pptxgen === 'undefined') {
-                alert('PptxGenJS library is not loaded. Please check your internet connection.');
+            if (typeof PptxGenJS === 'undefined') {
+                alert('PptxGenJS library is not loaded. Please wait a few seconds or check your internet connection.');
                 return;
             }
 
@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Allow UI to update
                 await new Promise(r => setTimeout(r, 100));
 
-                let pptx = new pptxgen();
+                let pptx = new PptxGenJS();
                 pptx.layout = 'LAYOUT_16x9';
 
                 // Global formatting constants

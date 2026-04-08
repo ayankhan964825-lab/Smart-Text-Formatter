@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Smart Text Formatter Presentation</title>
+    <meta name="description" content="Technical presentation for the Smart Text Formatter Web Application.">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .justified-text {
+            text-align: justify;
+            text-justify: inter-word;
+            line-height: 1.6;
+            margin: 0 auto 30px auto;
+            max-width: 800px;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: clamp(14px, 1.8vw, 22px);
+        }
+
+        .app-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .app-item {
+            flex: 1 1 calc(50% - 20px);
+            min-width: 200px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Progress Bar -->
+    <div class="progress-bar" id="progress-bar"></div>
+
+    <!-- Navigation Arrows -->
+    <button class="nav-arrow nav-prev" id="nav-prev" aria-label="Previous slide">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+    </button>
+    <button class="nav-arrow nav-next" id="nav-next" aria-label="Next slide">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="9 6 15 12 9 18"></polyline>
+        </svg>
+    </button>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter" id="slide-counter">1 / 11</div>
+
+    <!-- Navigation Dots -->
+    <div class="slide-dots" id="slide-dots"></div>
+
+    <!-- Fullscreen Toggle -->
+    <button class="fullscreen-btn" id="fullscreen-btn" aria-label="Toggle fullscreen">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3" />
+        </svg>
+    </button>
+
+    <!-- ======================== SLIDE 1 ======================== -->
+    <section class="slide active" id="slide-1" role="region" aria-label="Title Slide">
+        <div class="slide-bg title-bg">
+            <canvas id="particles-canvas"></canvas>
+        </div>
+        <div class="slide-content title-slide">
+            <div class="animate-in" style="--delay: 0">
+                <div class="perma-badge">PROJECT PRESENTATION</div>
+            </div>
+            <h1 class="animate-in hero-title" style="--delay: 1">
+                Smart Text<br><span class="gradient-text-hero">Formatter</span>
+            </h1>
+            <p class="animate-in subtitle" style="--delay: 2">Easy & Automated Document Generation</p>
+            <div class="animate-in meta-row" style="--delay: 3">
+                <span class="tag">Web Engineering</span>
+                <span class="divider">·</span>
+                <span>AI Logic</span>
+                <span class="divider">·</span>
+                <span>Vanilla JS</span>
+            </div>
+            <div class="animate-in credits-block" style="--delay: 4">
+                <div class="credits-row">
+                    <div class="credit-item">
+                        <span class="credit-label">Made by</span>
+                        <span class="credit-name">Ayush Vihan</span>
+                        <span class="credit-id">RA2411003030443</span>
+                    </div>
+                    <div class="credit-item">
+                        <span class="credit-name">Arjun Singh Yadav</span>
+                        <span class="credit-id">RA2411003030467</span>
+                    </div>
+                    <div class="credit-item">
+                        <span class="credit-name">Shashwat Rai</span>
+                        <span class="credit-id">RA2411003030472</span>
+                    </div>
+                </div>
+                <div class="guide-row">Under the guidance of <strong>Mr. Mudit Kumar</strong></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 2 ======================== -->
+    <section class="slide" id="slide-2" role="region" aria-label="The Problem">
+        <div class="slide-bg bg-subtle-geo"></div>
+        <div class="slide-content" style="text-align: center;">
+            <p class="animate-in section-label" style="--delay: 0">The Core Challenges</p>
+            <h2 class="animate-in slide-heading" style="--delay: 1">The Formatting <span
+                    class="gradient-text-warm">Struggle</span></h2>
+
+            <p class="animate-in slide-body" style="--delay: 2"
+                style="max-width: 800px; margin: 0 auto 40px auto; color: rgba(255,255,255,0.7);">
+                Modern document creation suffers from severe inefficiencies. Working with raw text and exported PDFs
+                presents two critical bottlenecks:
+            </p>
+
+            <div class="two-problems-grid animate-in" style="--delay: 3">
+                <div class="guide-card glass-card problem-card">
+                    <div class="problem-icon" style="font-size: 50px; margin-bottom: 20px;">⏳</div>
+                    <h3 style="font-size: 24px; margin-bottom: 15px; color: var(--gold);">Manual Tedium</h3>
+                    <p style="font-size: 16px; line-height: 1.6; text-align: left; color: rgba(255,255,255,0.85);">
+                        Creating professional documents requires repetitive manual effort. Highlighting text, enforcing
+                        consistent fonts, aligning paragraphs, and repeatedly switching formatting styles wastes hours
+                        of human potential.
+                    </p>
+                </div>
+
+                <div class="guide-card glass-card problem-card">
+                    <div class="problem-icon" style="font-size: 50px; margin-bottom: 20px;">⚠️</div>
+                    <h3 style="font-size: 24px; margin-bottom: 15px; color: var(--rose);">OCR & Data Noise</h3>
+                    <p style="font-size: 16px; line-height: 1.6; text-align: left; color: rgba(255,255,255,0.85);">
+                        Copying data from scanned PDFs, Google Lens, or messy websites introduces severe artifacts.
+                        Random line breaks, broken text references, and floating page numbers like `[24]` ruin document
+                        integrity.
+                    </p>
+                </div>
+            </div>
+
+            <style>
+                #slide-2 .two-problems-grid {
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 30px;
+                    max-width: 900px;
+                    margin: 0 auto;
+                }
+
+                #slide-2 .problem-card {
+                    padding: 40px 30px;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    border: 1px solid rgba(255, 55, 95, 0.25);
+                    background: rgba(255, 107, 138, 0.05);
+                    /* Very subtle warm tint */
+                    transition: transform 0.3s ease, background 0.3s ease;
+                }
+
+                #slide-2 .problem-card:hover {
+                    transform: translateY(-5px);
+                    background: rgba(255, 107, 138, 0.1);
+                    border: 1px solid rgba(255, 55, 95, 0.45);
+                    box-shadow: 0 10px 40px rgba(255, 55, 95, 0.15);
+                }
+            </style>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 3 ======================== -->
+    <section class="slide" id="slide-3" role="region" aria-label="Solution">
+        <div class="slide-bg bg-electric"></div>
+        <div class="slide-content perma-slide">
+            <div class="perma-content" style="text-align: center; max-width: 800px; margin: 0 auto;">
+                <p class="animate-in section-label" style="--delay: 0;">Our Solution</p>
+                <h2 class="animate-in slide-heading" style="--delay: 1">Smart Text <span
+                        class="gradient-text-electric">Formatter</span></h2>
+                <p class="animate-in slide-body" style="--delay: 2">
+                    A web application that automatically structures, cleans, and styles your text instantly. Just paste
+                    the raw messy text, and it magically turns into a clean document.
+                </p>
+                <div class="emotions-grid animate-in" style="--delay: 3" style="justify-content: center;">
+                    <span class="emotion-chip">📝 Auto-Paragraphs</span>
+                    <span class="emotion-chip">📌 Smart Headings</span>
+                    <span class="emotion-chip">⚡ Very Fast</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 4 ======================== -->
+    <section class="slide" id="slide-4" role="region" aria-label="UX">
+        <div class="slide-bg bg-leader"></div>
+        <div class="slide-content">
+            <p class="animate-in section-label" style="--delay: 0">User Experience</p>
+            <h2 class="animate-in slide-heading" style="--delay: 1">Professional <span
+                    class="gradient-text-green">Design</span></h2>
+            <div class="three-columns animate-in" style="--delay: 2" style="margin-top: 30px;">
+                <div class="level-card glass-card">
+                    <div class="level-icon">🖥️</div>
+                    <h3>Split View Setup</h3>
+                    <ul>
+                        <li>Paste ugly text on the left.</li>
+                        <li>See beautiful live preview on the right.</li>
+                    </ul>
+                </div>
+                <div class="level-card glass-card">
+                    <div class="level-icon">🎛️</div>
+                    <h3>Floating Ribbon</h3>
+                    <ul>
+                        <li>A Word-like ribbon at the top.</li>
+                        <li>Change fonts globally with one click safely.</li>
+                    </ul>
+                </div>
+                <div class="level-card glass-card">
+                    <div class="level-icon">✏️</div>
+                    <h3>Hybrid Editing</h3>
+                    <ul>
+                        <li>You can also click into the document to edit manually at any time!</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 5 ======================== -->
+    <section class="slide" id="slide-5" role="region" aria-label="Tech Stack">
+        <div class="slide-bg bg-warm-connect"></div>
+        <div class="slide-content perma-slide" style="flex-direction: column;">
+            <div class="perma-content" style="text-align: center; margin: 0 auto; max-width: 900px;">
+                <h2 class="animate-in slide-heading" style="--delay: 0">The <span class="gradient-text-rose">Tech
+                        Stack</span></h2>
+                <p class="animate-in slide-body" style="--delay: 1">
+                    Instead of using heavy and slow frameworks like React or Node.js, we coded everything in raw, basic
+                    web technologies to make it incredibly fast.
+                </p>
+                <div class="flow-visual animate-in" style="--delay: 2; margin: 30px auto;">
+                    <div class="flow-chars" style="justify-content: center;">
+                        <div class="flow-char-item" style="font-size: 18px;">🌐 HTML5</div>
+                        <div class="flow-char-item" style="font-size: 18px;">🎨 CSS3 (Flexbox & Variables)</div>
+                        <div class="flow-char-item" style="font-size: 18px;">⚙️ Vanilla JavaScript (ES6+)</div>
+                    </div>
+                </div>
+                <div class="corporate-apps animate-in" style="--delay: 3">
+                    <div class="app-items">
+                        <div class="app-item"><strong>HTML:</strong> Provides the semantic skeleton layout.</div>
+                        <div class="app-item"><strong>CSS:</strong> Uses variables for light mode and soft shadows.
+                        </div>
+                        <div class="app-item"><strong>JS:</strong> Uses the Fetch API to talk to AI directly.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 6 ======================== -->
+    <section class="slide" id="slide-6" role="region" aria-label="Privacy">
+        <div class="slide-bg bg-deep"></div>
+        <div class="slide-content perma-slide">
+            <div class="perma-letter-block animate-in" style="--delay: 0">
+                <span class="big-letter letter-m">🔒</span>
+            </div>
+            <div class="perma-content">
+                <h2 class="animate-in slide-heading" style="--delay: 1">100% <span
+                        class="gradient-text-gold">Private</span></h2>
+                <p class="animate-in slide-body" style="--delay: 2">
+                    <strong>Zero Servers. Zero Databases.</strong> This application is a "Static Client-Side
+                    Application".
+                </p>
+                <p class="animate-in slide-body" style="--delay: 3">
+                    It runs entirely on your own laptop or phone's browser. This guarantees your important documents are
+                    never uploaded or saved on our servers.
+                </p>
+                <div class="corporate-apps animate-in" style="--delay: 4">
+                    <div class="app-items">
+                        <div class="app-item">💾 Keeps settings via your LocalStorage.</div>
+                        <div class="app-item">🛡️ Maximum data privacy for users.</div>
+                        <div class="app-item">⚡ Opens instantly without loading times.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 7 ======================== -->
+    <section class="slide" id="slide-7" role="region" aria-label="AI Engine">
+        <div class="slide-bg bg-corporate"></div>
+        <div class="slide-content" style="text-align: center;">
+            <p class="animate-in section-label" style="--delay: 0">The API Layer</p>
+            <h2 class="animate-in slide-heading" style="--delay: 1">Connecting to <span class="gradient-text">Gemini
+                    AI</span></h2>
+            <p class="animate-in slide-body" style="--delay: 2" style="margin: 0 auto;">
+                We integrated Google's Gemini 2.5 Flash API directly into JavaScript.
+            </p>
+            <div class="guide-grid animate-in" style="--delay: 3">
+                <div class="guide-card glass-card" data-perma="P">
+                    <div class="guide-letter">1</div>
+                    <h3>Send the Text</h3>
+                    <ul>
+                        <li>JS sends your ugly text safely to Google API.</li>
+                    </ul>
+                </div>
+                <div class="guide-card glass-card" data-perma="E">
+                    <div class="guide-letter">2</div>
+                    <h3>JSON Prompting</h3>
+                    <ul>
+                        <li>We command the AI to reply ONLY in a strict machine-readable format (JSON).</li>
+                    </ul>
+                </div>
+                <div class="guide-card glass-card" data-perma="R">
+                    <div class="guide-letter">3</div>
+                    <h3>Re-Building</h3>
+                    <ul>
+                        <li>Our program reads this JSON data and re-creates beautiful paragraphs in the HTML.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <style>
+                /* Slide 7 specific overrides to make the 3 boxes larger and centered */
+                #slide-7 .guide-grid {
+                    grid-template-columns: repeat(3, 1fr) !important;
+                    max-width: 1000px;
+                    margin: 50px auto 0 auto;
+                    gap: 30px;
+                }
+
+                #slide-7 .guide-card {
+                    padding: 40px 30px;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: flex-start;
+                    align-items: center;
+                }
+
+                #slide-7 .guide-letter {
+                    font-size: 60px;
+                    margin-bottom: 10px;
+                }
+
+                #slide-7 .guide-card h3 {
+                    font-size: 22px;
+                    margin-bottom: 20px;
+                }
+
+                #slide-7 .guide-card ul {
+                    text-align: left;
+                    font-size: 16px;
+                }
+            </style>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 8 ======================== -->
+    <section class="slide" id="slide-8" role="region" aria-label="Noise">
+        <div class="slide-bg bg-warm"></div>
+        <div class="slide-content perma-slide" style="flex-direction: column;">
+            <div class="perma-content" style="text-align: center; max-width: 900px;">
+                <h2 class="animate-in slide-heading" style="--delay: 0">AI <span class="gradient-text-warm">Noise
+                        Filtering</span></h2>
+                <p class="animate-in slide-body" style="--delay: 1">
+                    How do we fix messy OCR (image-to-text) errors automatically?
+                </p>
+                <div class="staircase-visual animate-in" style="--delay: 2"
+                    style="margin: 40px auto; justify-content: center; width: 80%;">
+                    <div class="stair stair-1" style="background: rgba(255,55,95,0.2);"><span>Stray "page 4"</span>
+                    </div>
+                    <div class="stair stair-2" style="background: rgba(255,159,10,0.2);"><span>Line Break Here</span>
+                    </div>
+                    <div class="stair stair-3"><span>AI Scans Context</span></div>
+                    <div class="stair stair-4"><span>AI Recognizes Error</span></div>
+                    <div class="stair stair-5" style="font-size: 16px;"><span>Clean Merged Paragraph</span></div>
+                </div>
+                <p class="animate-in slide-body" style="--delay: 3">
+                    The AI is trained to distinguish between a real section heading and a random floating number,
+                    deleting the junk permanently.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 9 ======================== -->
+    <section class="slide" id="slide-9" role="region" aria-label="Diagrams">
+        <div class="slide-bg bg-electric"></div>
+        <div class="slide-content perma-slide">
+            <div class="perma-letter-block animate-in" style="--delay: 0">
+                <span class="big-letter letter-e">📊</span>
+            </div>
+            <div class="perma-content">
+                <h2 class="animate-in slide-heading" style="--delay: 1">Smart <span
+                        class="gradient-text-electric">Diagrams</span></h2>
+                <p class="animate-in slide-body" style="--delay: 2">
+                    Our app detects step-by-step processes in your text and uses a library called
+                    <strong>Mermaid.js</strong> to draw real flowchart graphs automatically!
+                </p>
+                <div class="corporate-apps animate-in" style="--delay: 3">
+                    <h3>Auto-Healing Feature</h3>
+                    <div class="app-items">
+                        <div class="app-item">⚠️ <strong>Error Catching:</strong> If Mermaid fails to draw because the
+                            code had a typo...</div>
+                        <div class="app-item">🔨 <strong>Healing:</strong> Our app silently catches the error, sends it
+                            back to the AI, and the AI fixes it instantly.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 10 ======================== -->
+    <section class="slide" id="slide-10" role="region" aria-label="Exports">
+        <div class="slide-bg bg-subtle-geo"></div>
+        <div class="slide-content" style="text-align: center;">
+            <p class="animate-in section-label" style="--delay: 0">The Output</p>
+            <h2 class="animate-in slide-heading" style="--delay: 1">Clean <span
+                    class="gradient-text-warm">Exports</span></h2>
+            <p class="animate-in slide-body" style="--delay: 2"
+                style="margin: 0 auto; margin-bottom: 40px; max-width: 700px;">
+                Web views are nice, but people need files. We integrated powerful libraries to give you actual,
+                downloadable documents in one click.
+            </p>
+            <div class="three-columns animate-in" style="--delay: 3; max-width: 800px; margin: 0 auto;">
+                <div class="level-card glass-card">
+                    <div class="level-icon">📄</div>
+                    <h3>jsPDF</h3>
+                    <ul>
+                        <li>Takes a perfect "photo" of your clean text.</li>
+                        <li>Exports to PDF format securely.</li>
+                    </ul>
+                </div>
+                <div class="level-card glass-card" style="visibility: hidden;"></div>
+                <div class="level-card glass-card">
+                    <div class="level-icon">📝</div>
+                    <h3>html-docx-js</h3>
+                    <ul>
+                        <li>Converts our HTML code into Microsoft Word XML data.</li>
+                        <li>Download as a native .docx file.</li>
+                    </ul>
+                </div>
+            </div>
+            <style>
+                #slide-10 .three-columns {
+                    grid-template-columns: repeat(2, 1fr) !important;
+                    max-width: 600px;
+                }
+
+                #slide-10 .glass-card:nth-child(2) {
+                    display: none;
+                }
+            </style>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 11 ======================== -->
+    <section class="slide" id="slide-11" role="region" aria-label="Conclusion">
+        <div class="slide-bg bg-sunrise">
+            <canvas id="confetti-canvas"></canvas>
+        </div>
+        <div class="slide-content title-slide">
+            <h2 class="animate-in hero-title conclusion-title" style="--delay: 1">
+                Thank <span class="gradient-text-sunrise">You</span>!
+            </h2>
+
+            <div class="animate-in" style="--delay: 2">
+                <p
+                    style="text-align: center; line-height: 1.6; margin: 0 auto 40px auto; max-width: 800px; color: rgba(255,255,255,0.85); font-size: clamp(16px, 1.8vw, 24px);">
+                    By combining fast client-side web technologies with Google Gemini's AI, we've built a highly secure
+                    platform that fully automates document formatting. <br><br>
+                    <span style="color: var(--gold); font-size: 110%;">Because your time is meant for great ideas, not
+                        fixing broken fonts.</span>
+                </p>
+            </div>
+
+            <div class="takeaways animate-in" style="--delay: 3" style="text-align: center; margin-bottom: 40px;">
+                <div class="takeaway-item" style="text-align: center;">🌐 Experience it live at:</div>
+                <div class="takeaway-item" style="text-align: center; font-weight: bold; font-size: 26px;">
+                    <a href="https://smart-formatter.vercel.app" target="_blank"
+                        style="color: var(--gold); text-decoration: none; border-bottom: 2px solid var(--gold);">smart-formatter.vercel.app</a>
+                </div>
+            </div>
+
+            <div class="animate-in credits-block conclusion-credits" style="--delay: 5">
+                <div class="credits-row">
+                    <div class="credit-item">
+                        <span class="credit-name">Vinay Pratap Singh</span>
+                        <span class="credit-id">RA2411003030443</span>
+
+                    </div>
+                    <div class="guide-row">Under the guidance of <strong>Mr. Mudit Kumar</strong></div>
+                </div>
+            </div>
+    </section>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

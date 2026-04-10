@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>IoT in Power Utility Industry</title>
+    <meta name="description" content="Apple-event inspired presentation on IoT in Power Utility Industry.">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Progress Bar -->
+    <div class="progress-bar" id="progress-bar"></div>
+
+    <!-- Navigation Arrows -->
+    <button class="nav-arrow nav-prev" id="nav-prev" aria-label="Previous slide">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+    </button>
+    <button class="nav-arrow nav-next" id="nav-next" aria-label="Next slide">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"></polyline></svg>
+    </button>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter" id="slide-counter">1 / 10</div>
+
+    <!-- Navigation Dots -->
+    <div class="slide-dots" id="slide-dots"></div>
+
+    <!-- Fullscreen Toggle -->
+    <button class="fullscreen-btn" id="fullscreen-btn" aria-label="Toggle fullscreen">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/></svg>
+    </button>
+
+    <!-- ======================== SLIDE 1: TITLE ======================== -->
+    <section class="slide active" id="slide-1" role="region" aria-label="Title Slide">
+        <div class="slide-bg title-bg">
+            <canvas id="particles-canvas"></canvas>
+        </div>
+        <div class="slide-content title-slide">
+            <div class="animate-in" style="--delay: 0">
+                <div class="perma-badge">INTERNET OF THINGS (IOT)</div>
+            </div>
+            <h1 class="animate-in hero-title" style="--delay: 1">
+                Power Utility<br><span class="gradient-text-hero">Industry</span>
+            </h1>
+            <p class="animate-in subtitle" style="--delay: 2">Transforming the Grid with Intelligent Connectivity</p>
+            <div class="animate-in meta-row" style="--delay: 3">
+                <span class="tag">Smart Grids</span>
+                <span class="divider">·</span>
+                <span>Energy 4.0</span>
+            </div>
+            <div class="animate-in credits-block" style="--delay: 4">
+                <div class="credits-row">
+                    <div class="credit-item">
+                        <span class="credit-label">Given by</span>
+                        <span class="credit-name">Shashwat Mishra</span>
+                        <span class="credit-id">RA2411003030460</span>
+                    </div>
+                </div>
+                <div class="guide-row" style="margin-top: 15px;">Under the guidance of <strong>Mrs. Shiwanki Sharma</strong></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 2: THE SMART GRID REVOLUTION ======================== -->
+    <section class="slide" id="slide-2" role="region" aria-label="Smart Grid Revolution">
+        <div class="slide-bg bg-subtle-geo"></div>
+        <div class="slide-content split-layout">
+            <div class="split-left animate-in" style="--delay: 0">
+                <div class="perma-diagram">
+                    <div class="perma-circle center-circle" style="background: linear-gradient(135deg, var(--teal), var(--blue));">GRID</div>
+                    <div class="perma-circle orbit-circle orbit-p" data-letter="S" style="background: var(--gray-800);">📡</div>
+                    <div class="perma-circle orbit-circle orbit-e" data-letter="D" style="background: var(--gray-800);">💡</div>
+                    <div class="perma-circle orbit-circle orbit-r" data-letter="A" style="background: var(--gray-800);">🏭</div>
+                    <div class="perma-circle orbit-circle orbit-m" data-letter="C" style="background: var(--gray-800);">⚡</div>
+                    <svg class="orbit-lines" viewBox="0 0 300 300">
+                        <line x1="150" y1="150" x2="150" y2="30" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+                        <line x1="150" y1="150" x2="264" y2="87" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+                        <line x1="150" y1="150" x2="220" y2="255" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+                        <line x1="150" y1="150" x2="80" y2="255" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+                        <line x1="150" y1="150" x2="36" y2="87" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+                    </svg>
+                </div>
+            </div>
+            <div class="split-right">
+                <p class="animate-in section-label" style="--delay: 0">The Problem vs Solution</p>
+                <h2 class="animate-in slide-heading" style="--delay: 1">The Smart Grid <span class="gradient-text">Revolution</span></h2>
+                <p class="animate-in slide-body" style="--delay: 2">
+                    Traditional utility grids are one-way streets. Power flows rigidly from the plant to the consumer with zero real-time insights or visibility. 
+                </p>
+                <p class="animate-in slide-body" style="--delay: 3">
+                    IoT provides a two-way flow of electricity and data. By embedding sensors at every endpoint, networks become highly agile <strong>Smart Grids</strong>.
+                </p>
+                <blockquote class="animate-in quote-block" style="--delay: 4">
+                    "The integration of IoT makes physical networks intelligent, responsive, and vastly more efficient."
+                </blockquote>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 3: SMART METERING ======================== -->
+    <section class="slide" id="slide-3" role="region" aria-label="Smart Metering">
+        <div class="slide-bg bg-electric"></div>
+        <div class="slide-content perma-slide" style="flex-direction: column;">
+            <div class="perma-content" style="text-align: center; max-width: 900px; margin: 0 auto;">
+                <p class="animate-in section-label" style="--delay: 0;">Advanced Metering Infrastructure</p>
+                <h2 class="animate-in slide-heading" style="--delay: 1">Smart <span class="gradient-text-electric">Metering</span></h2>
+                <p class="animate-in slide-body" style="--delay: 2">
+                    Advanced Metering Infrastructure (AMI) replaces analog meters with digital smart meters that report exact consumption rates in real time.
+                </p>
+                <div class="stats-row animate-in" style="--delay: 3" style="margin-top: 30px;">
+                    <div class="stat-card">
+                        <span class="stat-number" data-count="15">0</span><span class="stat-suffix">min</span>
+                        <span class="stat-label">Interval Data Refresh Rates</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" data-count="99">0</span><span class="stat-suffix">%</span>
+                        <span class="stat-label">Billing Accuracy compared to Manual</span>
+                    </div>
+                </div>
+                <div class="corporate-apps animate-in" style="--delay: 4">
+                    <h3>Key Advantages</h3>
+                    <div class="app-items">
+                        <div class="app-item">📡 Eliminates manual meter reading tasks</div>
+                        <div class="app-item">📉 Dynamic time-of-use (TOU) pricing</div>
+                        <div class="app-item">⚡ Instant outage alerts given to utility centers</div>
+                        <div class="app-item">🔎 Micro-level usage profiling for consumers</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 4: LOAD BALANCING ======================== -->
+    <section class="slide" id="slide-4" role="region" aria-label="Real-time Load Balancing">
+        <div class="slide-bg bg-corporate"></div>
+        <div class="slide-content perma-slide">
+            <div class="perma-letter-block animate-in" style="--delay: 0">
+                <span class="big-letter letter-e" style="color: var(--teal);">⚖️</span>
+            </div>
+            <div class="perma-content">
+                <h2 class="animate-in slide-heading" style="--delay: 1">Load <span class="gradient-text-electric">Balancing</span></h2>
+                <p class="animate-in slide-body" style="--delay: 2">
+                    Electricity cannot be easily stored on an industrial scale. Grids must perfectly balance generation with immediate demand. Supply mismatches lead to blackouts and massive monetary loss.
+                </p>
+                <div class="flow-visual animate-in" style="--delay: 3">
+                    <div class="flow-chart">
+                        <div class="flow-axis-y">Supply ↑</div>
+                        <div class="flow-axis-x">Demand →</div>
+                        <div class="flow-zone anxiety" style="background: rgba(255, 55, 95, 0.2); border: 1px solid var(--pink);">Overload</div>
+                        <div class="flow-zone flow-state">Equilibrium</div>
+                        <div class="flow-zone boredom" style="background: rgba(255, 159, 10, 0.2); border: 1px solid var(--orange);">Waste</div>
+                        <div class="flow-channel" style="background: rgba(90, 200, 250, 0.1);"></div>
+                    </div>
+                </div>
+                <div class="corporate-apps animate-in" style="--delay: 4">
+                    <p style="font-size: 14px; line-height: 1.6; color: rgba(255,255,255,0.7);">
+                        IoT scales power distribution intelligently. By interacting with AI, algorithms reroute electrons instantaneously based on the fluctuating consumption waves, enforcing perfect equilibrium.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 5: PREDICTIVE MAINTENANCE ======================== -->
+    <section class="slide" id="slide-5" role="region" aria-label="Predictive Maintenance">
+        <div class="slide-bg bg-warm"></div>
+        <div class="slide-content perma-slide" style="flex-direction: column;">
+            <div class="perma-content" style="text-align: center; max-width: 900px; margin: 0 auto;">
+                <h2 class="animate-in slide-heading" style="--delay: 0">Predictive <span class="gradient-text-warm">Maintenance</span></h2>
+                <p class="animate-in slide-body" style="--delay: 1">
+                    Instead of a routine schedule, maintenance can now be prescribed individually based on live telemetry using Thermal, Vibration, and Acoustic sensors.
+                </p>
+                <div class="staircase-visual animate-in" style="--delay: 2" style="margin: 40px auto; justify-content: center; width: 80%;">
+                    <div class="stair stair-1" style="background: rgba(255,55,95,0.2);"><span>Breakdown / React</span></div>
+                    <div class="stair stair-2" style="background: rgba(255,159,10,0.2);"><span>Routine Scans</span></div>
+                    <div class="stair stair-3"><span>Live Telemetry</span></div>
+                    <div class="stair stair-4"><span>AI Anomaly Detect</span></div>
+                    <div class="stair stair-5" style="font-size: 16px;"><span>Predictive Action</span></div>
+                </div>
+                <div class="stats-row animate-in" style="--delay: 3">
+                    <div class="stat-card">
+                        <span class="stat-number" data-count="40">0</span><span class="stat-suffix">%</span>
+                        <span class="stat-label">Reduction in Maintenance Costs</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" data-count="75">0</span><span class="stat-suffix">%</span>
+                        <span class="stat-label">Decrease in Equipment Failures</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 6: EDGE COMPUTING ======================== -->
+    <section class="slide" id="slide-6" role="region" aria-label="Edge Computing">
+        <div class="slide-bg bg-deep"></div>
+        <div class="slide-content perma-slide">
+            <div class="perma-letter-block animate-in" style="--delay: 0">
+                <span class="big-letter letter-m" style="color: var(--teal);">💻</span>
+            </div>
+            <div class="perma-content">
+                <h2 class="animate-in slide-heading" style="--delay: 1">Edge <span class="gradient-text-electric">Computing</span></h2>
+                <p class="animate-in slide-body" style="--delay: 2">
+                    Millions of sensors generate Petabytes of data. Sending all raw bytes back to central cloud servers creates severe latency and chokes network bandwidth.
+                </p>
+                <div class="meaning-journey animate-in" style="--delay: 3" style="margin-top: 30px;">
+                    <div class="journey-path">
+                        <div class="journey-step">
+                            <div class="journey-icon">📡</div>
+                            <span>Sensor Generates Data</span>
+                        </div>
+                        <div class="journey-connector"></div>
+                        <div class="journey-step">
+                            <div class="journey-icon">💻</div>
+                            <span>Local Node Evaluates (Edge)</span>
+                        </div>
+                        <div class="journey-connector"></div>
+                        <div class="journey-step">
+                            <div class="journey-icon">⚡</div>
+                            <span>Instant Sub-Millisecond Action</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="corporate-apps animate-in" style="--delay: 4" style="margin-top: 20px;">
+                    <p style="font-size: 14px; line-height: 1.6; color: rgba(255,255,255,0.7);">
+                        Edge nodes filter the noise. They process data locally at the source—triggering safety protocols instantly while only sending highly relevant analytics up to the main cloud.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 7: RENEWABLE ENERGY ======================== -->
+    <section class="slide" id="slide-7" role="region" aria-label="Renewable Integration">
+        <div class="slide-bg bg-leader"></div>
+        <div class="slide-content perma-slide">
+            <div class="perma-letter-block animate-in" style="--delay: 0">
+                <span class="big-letter letter-a" style="color: var(--green);">🌿</span>
+            </div>
+            <div class="perma-content">
+                <h2 class="animate-in slide-heading" style="--delay: 1">Renewable <span class="gradient-text-green">Integration</span></h2>
+                <p class="animate-in slide-body" style="--delay: 2">
+                    Wind and solar are highly erratic based on weather. Integrating micro-grids and renewables into a monolithic utility structure requires an intricate orchestration of data.
+                </p>
+                <div class="corporate-apps animate-in" style="--delay: 3" style="margin-top: 30px;">
+                    <h3>IoT Microgrids Enable</h3>
+                    <div class="app-items">
+                        <div class="app-item">☀️ Predicting solar yield based on weather APIs</div>
+                        <div class="app-item">🔋 Managing large-scale battery storage clusters</div>
+                        <div class="app-item">⚡ Reversing power flow (consumers giving back to grid)</div>
+                        <div class="app-item">🌍 De-centralizing regional energy hubs</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 8: CYBERSECURITY ======================== -->
+    <section class="slide" id="slide-8" role="region" aria-label="Cybersecurity">
+        <div class="slide-bg bg-warm-connect"></div>
+        <div class="slide-content">
+            <p class="animate-in section-label" style="--delay: 0">The Essential Risk</p>
+            <h2 class="animate-in slide-heading" style="--delay: 1">Smart Grid <span class="gradient-text-rose">Cybersecurity</span></h2>
+            <div class="three-columns animate-in" style="--delay: 2" style="margin-top: 20px;">
+                <div class="level-card glass-card">
+                    <div class="level-icon">🔒</div>
+                    <h3>DDoS Threats</h3>
+                    <ul>
+                        <li>Malicious disruption of telemetry.</li>
+                        <li>Overloading edge nodes.</li>
+                    </ul>
+                </div>
+                <div class="level-card glass-card">
+                    <div class="level-icon">🛡️</div>
+                    <h3>Intrusion Detection</h3>
+                    <ul>
+                        <li>AI analyzing baseline node behavior.</li>
+                        <li>Automated isolation of compromised domains.</li>
+                    </ul>
+                </div>
+                <div class="level-card glass-card">
+                    <div class="level-icon">🔑</div>
+                    <h3>Encryption</h3>
+                    <ul>
+                        <li>End-to-End Cryptography.</li>
+                        <li>Securing SCADA and OT protocols continuously.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="corporate-stats animate-in" style="--delay: 3">
+                <p style="font-size: 16px; margin: 0 auto; max-width: 600px; color: rgba(255,255,255,0.7); text-align: center;">
+                    Expanding connectivity inherently expands the attack surface. An unprotected Smart Grid is catastrophic; national grids must treat IoT devices with zero-trust architecture.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 9: ENVIRONMENTAL IMPACT ======================== -->
+    <section class="slide" id="slide-9" role="region" aria-label="Environmental Impact">
+        <div class="slide-bg bg-achieve"></div>
+        <div class="slide-content perma-slide" style="flex-direction: column;">
+            <div class="perma-content" style="text-align: center; margin: 0 auto; max-width: 900px;">
+                <h2 class="animate-in slide-heading" style="--delay: 0">Environmental <span class="gradient-text-green">Impact</span></h2>
+                <p class="animate-in slide-body" style="--delay: 1">
+                    IoT provides the necessary transparent foundation for achieving zero-carbon objectives by removing energy losses.
+                </p>
+                <div class="emotions-grid animate-in" style="--delay: 2" style="justify-content: center; margin: 30px 0;">
+                    <span class="emotion-chip" style="background: rgba(48,209,88,0.15);">🌍 Lower CO2 Emissions</span>
+                    <span class="emotion-chip" style="background: rgba(41,151,255,0.15);">💧 Reduced Transmission Loss</span>
+                    <span class="emotion-chip" style="background: rgba(191,90,242,0.15);">🔋 Prolonged Asset Lifespan</span>
+                    <span class="emotion-chip" style="background: rgba(255,159,10,0.15);">♻️ Eco-Friendly Policies</span>
+                </div>
+                <div class="stat-callout animate-in" style="--delay: 3" style="max-width: 400px; margin: 0 auto;">
+                    <span class="stat-number" data-count="30">0</span><span class="stat-suffix">%</span>
+                    <span class="stat-label">Reduction in wasted energy projected by 2030</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 10: CONCLUSION ======================== -->
+    <section class="slide" id="slide-10" role="region" aria-label="Conclusion">
+        <div class="slide-bg bg-sunrise">
+            <canvas id="confetti-canvas"></canvas>
+        </div>
+        <div class="slide-content title-slide">
+            <p class="animate-in section-label" style="--delay: 0; color: rgba(255,255,255,0.7);">Summary</p>
+            <h2 class="animate-in hero-title conclusion-title" style="--delay: 1">
+                The Energy Web<br><span class="gradient-text-sunrise">Is Here</span>
+            </h2>
+            <div class="takeaways animate-in" style="--delay: 2">
+                <div class="takeaway-item" style="font-size: 16px;">✅ IoT moves power grids from reactive to intelligent operation.</div>
+                <div class="takeaway-item" style="font-size: 16px;">✅ Smart Sensors prevent blackouts and wasted electricity.</div>
+                <div class="takeaway-item" style="font-size: 16px;">✅ Edge computing secures latency for critical infrastructure.</div>
+            </div>
+            
+            <div class="final-statement animate-in" style="--delay: 3">
+                <p class="glow-text">"Digitization is no longer optional for utilities, it is the standard."</p>
+            </div>
+            <div class="animate-in credits-block conclusion-credits" style="--delay: 4">
+                <div class="credits-row">
+                    <div class="credit-item">
+                        <span class="credit-name">Shashwat Mishra</span>
+                        <span class="credit-id">RA2411003030460</span>
+                    </div>
+                </div>
+                <div class="guide-row" style="margin-top: 15px;">Under the guidance of <strong>Mrs. Shiwanki Sharma</strong></div>
+            </div>
+        </div>
+    </section>
+
+    <script src="script.js"></script>
+</body>
+</html>

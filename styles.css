@@ -555,32 +555,13 @@ body {
 ::-webkit-scrollbar-thumb:hover {
     background-color: rgba(156, 163, 175, 0.6);
 }
-/* Wrapper for the paper to allow scrolling while keeping toolbar fixed */
-.preview-scroll-wrapper {
-    flex: 1;
-    overflow-y: auto;
-    background-color: var(--bg-body); /* Grey desk background */
-    padding-bottom: 40px;
-}
 
 .output-panel .preview-container {
-    flex: 0 0 auto; /* Allow the container to grow, don't squish */
-    margin: 16px auto;
-    /* Strict A4 Setup to perfectly mirror PDF margins */
-    width: 210mm;
-    padding: 25.4mm; /* 1-inch margins used by Word and our PDF Exporter */
-    box-sizing: border-box; /* Width includes the padding */
-    min-height: 297mm; /* Ensure at least 1 A4 page height */
-    position: relative; /* For absolute mapping of page boundaries */
-    
-    background-color: var(--bg-panel);
-    border-radius: 4px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.08); /* Paper shadow */
-    
-    /* Instead of scrolling internally, overflow visible lets the wrapper scroll it */
-    overflow: visible;
+    flex: 1;
+    padding: 20px 32px;
+    overflow-y: auto;
+    background-color: transparent;
 }
-
 
 .placeholder-text {
     color: var(--text-muted);

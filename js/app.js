@@ -315,9 +315,113 @@ document.addEventListener('DOMContentLoaded', () => {
             // Reset dropdown visual state
             e.target.selectedIndex = 0;
             previewContainer.focus();
+            scheduleBoundaryUpdate(); // Update boundaries after manual break
         });
     }
 
+    // --- SMART PAGE BOUNDARY ENGINE ---
+    // PDF format uses A4 (297mm height) with 25.4mm margins on top and bottom.
+    // Content height per page = 297mm - 50.8mm = 246.2mm.
+    // 246.2mm in pixels ≈ 930.5px.
+    const PAGE_CONTENT_HEIGHT_PX = 930.5;
+    let boundaryTimeout = null;
+
+    function renderSmartPageBoundaries() {
+        const previewContainer = document.getElementById('formatted-preview');
+        if (!previewContainer) return;
+
+        // Remove old boundaries
+        const oldBoundaries = previewContainer.querySelectorAll('.smart-page-boundary');
+        oldBoundaries.forEach(b => b.remove());
+
+        if (previewContainer.querySelector('.placeholder-text')) return;
+
+        // The top padding of the A4 page container is our starting offset
+        // CSS padding is 25.4mm = 96px
+        const TOP_PADDING = 96; 
+        let currentPageStartOffset = TOP_PADDING;
+
+        const children = previewContainer.childNodes;
+        
+        for (let i = 0; i < children.length; i++) {
+            const node = children[i];
+            
+            // Only process Element nodes (blocks)
+            if (node.nodeType === 1) {
+                if (node.classList.contains('smart-page-boundary')) continue;
+
+                const nodeTop = node.offsetTop;
+                const nodeBottom = nodeTop + node.offsetHeight;
+
+                // Manual Page Break Handling
+                if (node.classList.contains('page-break-before')) {
+                    // Update start offset to this node's top
+                    currentPageStartOffset = nodeTop;
+                    
+                    // Draw a boundary just above this node
+                    const boundary = document.createElement('div');
+                    boundary.className = 'smart-page-boundary';
+                    boundary.style.top = `${nodeTop - 15}px`;
+                    boundary.contentEditable = "false";
+                    previewContainer.appendChild(boundary);
+                    continue; 
+                }
+
+                // Natural Page Break Handling
+                if (nodeBottom > (currentPageStartOffset + PAGE_CONTENT_HEIGHT_PX)) {
+                    // Calculate exactly how many pages we overflowed 
+                    const overflowDistance = nodeBottom - currentPageStartOffset;
+                    const pagesCrossed = Math.floor(overflowDistance / PAGE_CONTENT_HEIGHT_PX);
+
+                    for (let p = 1; p <= pagesCrossed; p++) {
+                        const lineY = currentPageStartOffset + (p * PAGE_CONTENT_HEIGHT_PX);
+                        
+                        const boundary = document.createElement('div');
+                        boundary.className = 'smart-page-boundary';
+                        boundary.style.top = `${lineY}px`;
+                        boundary.contentEditable = "false";
+                        previewContainer.appendChild(boundary);
+                    }
+
+                    // Reset the start offset to the start of the LAST page that was spawned
+                    currentPageStartOffset = currentPageStartOffset + (pagesCrossed * PAGE_CONTENT_HEIGHT_PX);
+                }
+            }
+        }
+    }
+
+    function scheduleBoundaryUpdate() {
+        if (boundaryTimeout) clearTimeout(boundaryTimeout);
+        boundaryTimeout = setTimeout(renderSmartPageBoundaries, 500);
+    }
+
+    // Attach to real-time events on the preview container
+    previewContainerEl.addEventListener('input', scheduleBoundaryUpdate);
+    previewContainerEl.addEventListener('keyup', scheduleBoundaryUpdate);
+
+    // Watch for structural changes (like initial load, or formatting updates)
+    const observer = new MutationObserver((mutations) => {
+        // Ignore mutations that are just our own boundaries being added/removed
+        let shouldUpdate = false;
+        for (let m of mutations) {
+            if (m.addedNodes.length || m.removedNodes.length) {
+                // Check if it's purely our boundary divs
+                const isOnlyBoundaries = Array.from(m.addedNodes).every(n => n.nodeType === 1 && n.classList.contains('smart-page-boundary')) && 
+                                         Array.from(m.removedNodes).every(n => n.nodeType === 1 && n.classList.contains('smart-page-boundary'));
+                if (!isOnlyBoundaries) {
+                    shouldUpdate = true;
+                    break;
+                }
+            }
+        }
+        if (shouldUpdate) scheduleBoundaryUpdate();
+    });
+
+    if (previewContainerEl) {
+        observer.observe(previewContainerEl, { childList: true, subtree: true, characterData: true });
+        // Initial render trigger
+        setTimeout(renderSmartPageBoundaries, 1000); 
+    }
     // --- Overwrite/Append Modal Logic ---
     const appendModal = document.getElementById('append-modal');
     const modalOverwriteBtn = document.getElementById('modal-overwrite-btn');

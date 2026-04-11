@@ -90,9 +90,11 @@ const DocxExporter = (() => {
             const tg = el.tagName.toLowerCase();
 
             if (/^h[1-6]$/.test(tg)) {
-                xml += '<w:p><w:pPr><w:pStyle w:val="Heading' + tg[1] + '"/><w:keepNext/></w:pPr>' + runs(el) + '</w:p>';
+                const pb = el.classList && el.classList.contains('page-break-before') ? '<w:pageBreakBefore/>' : '';
+                xml += '<w:p><w:pPr><w:pStyle w:val="Heading' + tg[1] + '"/>' + pb + '<w:keepNext/></w:pPr>' + runs(el) + '</w:p>';
             } else if (tg === 'p') {
-                xml += '<w:p>' + runs(el) + '</w:p>';
+                const pb = el.classList && el.classList.contains('page-break-before') ? '<w:pPr><w:pageBreakBefore/></w:pPr>' : '';
+                xml += '<w:p>' + pb + runs(el) + '</w:p>';
             } else if (tg === 'ul' || tg === 'ol') {
                 const nid = tg === 'ul' ? '1' : '2';
                 for (const li of el.children) {

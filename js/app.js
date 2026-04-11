@@ -174,6 +174,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const miniToolbar = document.getElementById('mini-rtf-toolbar');
     const previewContainerEl = document.getElementById('formatted-preview');
 
+    // Selection caching to prevent loss of focus when clicking toolbar inputs (like font size)
+    let savedSelectionRange = null;
+    document.addEventListener('selectionchange', () => {
+        if (!window.isCustomizationActive) return;
+        const sel = window.getSelection();
+        if (sel.rangeCount > 0 && previewContainerEl.contains(sel.anchorNode)) {
+            savedSelectionRange = sel.getRangeAt(0).cloneRange();
+        }
+    });
+
+    const restoreSelection = () => {
+        if (savedSelectionRange) {
+            const sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(savedSelectionRange);
+        }
+    };
+
     customizeBtn.addEventListener('click', () => {
         window.isCustomizationActive = !window.isCustomizationActive;
 
@@ -197,6 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
     rtfBtns.forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.preventDefault();
+            restoreSelection(); // Restore text selection before applying command
             const command = btn.getAttribute('data-command');
             document.execCommand(command, false, null);
             document.getElementById('formatted-preview').focus();
@@ -206,6 +225,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const rtfSelects = document.querySelectorAll('.rtf-select');
     rtfSelects.forEach(select => {
         select.addEventListener('change', () => {
+            if (select.id === 'page-break-select') return; // Handled separately
+            restoreSelection();
             const command = select.getAttribute('data-command');
             if (command) {
                 document.execCommand(command, false, select.value);
@@ -220,6 +241,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const rtfColors = document.querySelectorAll('.rtf-color');
     rtfColors.forEach(input => {
         input.addEventListener('input', () => {
+            restoreSelection();
             const command = input.getAttribute('data-command');
             document.execCommand(command, false, input.value);
             document.getElementById('formatted-preview').focus();
@@ -229,6 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const rtfNumbers = document.querySelectorAll('.rtf-number');
     rtfNumbers.forEach(input => {
         input.addEventListener('change', () => {
+            restoreSelection();
             const command = input.getAttribute('data-command');
             if (command === 'fontSizePt') {
                 // Hack: Apply a dummy size '7' using execCommand, then swap it for the precise pt size.
@@ -242,6 +265,44 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    // --- Custom RTF Page Break Logic ---
+    const pageBreakSelect = document.getElementById('page-break-select');
+    if (pageBreakSelect) {
+        pageBreakSelect.addEventListener('change', (e) => {
+            restoreSelection();
+            const val = e.target.value;
+            const previewContainer = document.getElementById('formatted-preview');
+            
+            if (val === 'current') {
+                const sel = window.getSelection();
+                if (sel.rangeCount > 0 && previewContainer.contains(sel.anchorNode)) {
+                    let node = sel.anchorNode;
+                    while (node && node !== previewContainer) {
+                        if (node.nodeType === 1) {
+                            const tagName = node.tagName.toUpperCase();
+                            const display = window.getComputedStyle(node).display;
+                            if (['H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'P', 'UL', 'OL', 'TABLE', 'BLOCKQUOTE', 'PRE'].includes(tagName) || display === 'block') {
+                                node.classList.toggle('page-break-before');
+                                break;
+                            }
+                        }
+                        node = node.parentNode;
+                    }
+                }
+            } else if (val === 'all-h2') {
+                previewContainer.querySelectorAll('h2').forEach(node => node.classList.add('page-break-before'));
+            } else if (val === 'all-h3') {
+                previewContainer.querySelectorAll('h3').forEach(node => node.classList.add('page-break-before'));
+            } else if (val === 'clear-all') {
+                previewContainer.querySelectorAll('.page-break-before').forEach(node => node.classList.remove('page-break-before'));
+            }
+            
+            // Reset dropdown visual state
+            e.target.selectedIndex = 0;
+            previewContainer.focus();
+        });
+    }
 
     // --- Overwrite/Append Modal Logic ---
     const appendModal = document.getElementById('append-modal');

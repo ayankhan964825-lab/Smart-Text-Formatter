@@ -93,7 +93,7 @@
     <nav class="formatting-ribbon">
         <!-- Heading 1 Controls -->
         <div class="ribbon-group">
-            <span class="ribbon-label">Heading</span>
+            <span class="ribbon-label" title="Document Title or Main Topic">Title (H1)</span>
             <div class="ribbon-controls">
                 <select id="h1-font" class="toolbar-select">
                     <option value="inherit">Default Font</option>
@@ -108,7 +108,7 @@
 
         <!-- Heading 2 Controls -->
         <div class="ribbon-group">
-            <span class="ribbon-label">Sub heading</span>
+            <span class="ribbon-label" title="Main Section Headings">Heading (H2)</span>
             <div class="ribbon-controls">
                 <select id="h2-font" class="toolbar-select">
                     <option value="inherit">Default Font</option>
@@ -123,7 +123,7 @@
 
         <!-- Sub-subheading Controls -->
         <div class="ribbon-group">
-            <span class="ribbon-label">Sub-subheading</span>
+            <span class="ribbon-label" title="Subsections">Subheading (H3)</span>
             <div class="ribbon-controls">
                 <select id="sub-sub-font" class="toolbar-select">
                     <option value="inherit">Default Font</option>
@@ -232,9 +232,9 @@
                     max="72" title="Size (pt)" style="width: 45px;">
                 <select class="rtf-select" data-command="formatBlock" title="Heading">
                     <option value="P">Para</option>
-                    <option value="H1">H1</option>
-                    <option value="H2">H2</option>
-                    <option value="H3">H3</option>
+                    <option value="H1">Title</option>
+                    <option value="H2">Heading</option>
+                    <option value="H3">Subhead</option>
                 </select>
 
                 <!-- Basic Styles -->
@@ -261,6 +261,13 @@
                     <button class="icon-btn rtf-btn" data-command="insertUnorderedList" title="Bullet">•</button>
                     <button class="icon-btn rtf-btn" data-command="insertOrderedList" title="Number">1.</button>
                 </div>
+                <select class="rtf-select" id="page-break-select" title="Page Break Options" style="font-size: 11px; font-weight: 500; min-width: 90px; padding-left: 4px; padding-right: 18px;">
+                    <option value="" disabled selected>📄 Break...</option>
+                    <option value="current">Current Selection (Toggle)</option>
+                    <option value="all-h2">All Headings (H2)</option>
+                    <option value="all-h3">All Subheadings (H3)</option>
+                    <option value="clear-all">Clear All Breaks</option>
+                </select>
             </div>
 
             <div id="formatted-preview" class="preview-container" contenteditable="false">

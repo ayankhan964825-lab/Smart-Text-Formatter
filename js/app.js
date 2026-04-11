@@ -1837,6 +1837,9 @@ document.addEventListener('DOMContentLoaded', () => {
             // Deep clone the preview container so we don't modify the live DOM with our image swaps
             const clonedPreview = previewContainer.cloneNode(true);
 
+            // Remove our dynamic JS visual boundaries to prevent them from rendering in the PDF
+            clonedPreview.querySelectorAll('.smart-page-boundary').forEach(b => b.remove());
+
             // Convert any Mermaid SVGs in the cloned node to PNG/SVG images so html2canvas renders them
             await convertSvgsToImages(clonedPreview);
 
@@ -1937,6 +1940,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Deep clone the preview container
             const clonedPreview = previewContainer.cloneNode(true);
+
+            // Remove our dynamic JS visual boundaries to prevent them from exporting
+            clonedPreview.querySelectorAll('.smart-page-boundary').forEach(b => b.remove());
 
             // Convert Mermaid containers on the cloned DOM
             await convertSvgsToImages(clonedPreview);

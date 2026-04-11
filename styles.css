@@ -1464,35 +1464,10 @@ body {
     color: #1a202c;
 }
 
-/* --- Page Break Marker (For Edit Mode) --- */
+/* --- Page Break Marker --- */
+/* The visual line is now dynamically fully handled by JS .smart-page-boundary */
 .page-break-before {
     page-break-before: always;
     break-before: page;
     position: relative;
-}
-
-[contenteditable="true"] .page-break-before::before {
-    content: '📄 Page Break';
-    display: block;
-    width: calc(100% + 64px);
-    margin-left: -32px;
-    text-align: center;
-    font-size: 0.75rem;
-    color: #a0aec0;
-    font-family: var(--font-sans, sans-serif);
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    padding: 8px 0;
-    margin-bottom: 16px;
-    background-image: linear-gradient(to right, transparent, #e2e8f0 10%, #e2e8f0 90%, transparent);
-    background-size: 100% 1px;
-    background-position: center;
-    background-repeat: no-repeat;
-    user-select: none;
-    cursor: default;
-}
-
-[data-theme="dark"] [contenteditable="true"] .page-break-before::before {
-    color: #4a5568;
-    background-image: linear-gradient(to right, transparent, #2d3748 10%, #2d3748 90%, transparent);
 }

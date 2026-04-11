@@ -181,6 +181,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const sel = window.getSelection();
         if (sel.rangeCount > 0 && previewContainerEl.contains(sel.anchorNode)) {
             savedSelectionRange = sel.getRangeAt(0).cloneRange();
+            
+            // Auto-detect font size and update the input
+            const node = sel.anchorNode;
+            const element = node.nodeType === 3 ? node.parentNode : node;
+            if (element && element.nodeType === 1) {
+                const computed = window.getComputedStyle(element);
+                const fontSizePx = parseFloat(computed.fontSize);
+                if (!isNaN(fontSizePx)) {
+                    // Convert px to pt (pt ≈ px * 0.75)
+                    let fontSizePt = Math.round(fontSizePx * 0.75);
+                    const rtfNumberInput = document.querySelector('.rtf-number[data-command="fontSizePt"]');
+                    if (rtfNumberInput && rtfNumberInput !== document.activeElement) {
+                        rtfNumberInput.value = fontSizePt;
+                    }
+                }
+            }
         }
     });
 
@@ -292,8 +308,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             } else if (val === 'all-h2') {
                 previewContainer.querySelectorAll('h2').forEach(node => node.classList.add('page-break-before'));
-            } else if (val === 'all-h3') {
-                previewContainer.querySelectorAll('h3').forEach(node => node.classList.add('page-break-before'));
             } else if (val === 'clear-all') {
                 previewContainer.querySelectorAll('.page-break-before').forEach(node => node.classList.remove('page-break-before'));
             }

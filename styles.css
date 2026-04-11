@@ -581,29 +581,6 @@ body {
     overflow: visible;
 }
 
-/* Dynamically injected by JS Layout Engine */
-.smart-page-boundary {
-    position: absolute;
-    left: 0;
-    right: 0;
-    height: 1px;
-    border-top: 2px dashed rgba(220, 38, 38, 0.5); /* Red dashed line */
-    background: transparent;
-    pointer-events: none; /* User can click/type through it */
-    z-index: 10;
-}
-.smart-page-boundary::after {
-    content: "Page Break";
-    position: absolute;
-    right: 32px;
-    top: -10px;
-    background-color: white;
-    padding: 0 4px;
-    color: rgba(220, 38, 38, 0.7);
-    font-size: 10px;
-    font-weight: 600;
-    font-family: sans-serif;
-}
 
 .placeholder-text {
     color: var(--text-muted);
@@ -1464,10 +1441,35 @@ body {
     color: #1a202c;
 }
 
-/* --- Page Break Marker --- */
-/* The visual line is now dynamically fully handled by JS .smart-page-boundary */
+/* --- Page Break Marker (For Edit Mode) --- */
 .page-break-before {
     page-break-before: always;
     break-before: page;
     position: relative;
+}
+
+[contenteditable="true"] .page-break-before::before {
+    content: '📄 Page Break';
+    display: block;
+    width: calc(100% + 64px);
+    margin-left: -32px;
+    text-align: center;
+    font-size: 0.75rem;
+    color: #a0aec0;
+    font-family: var(--font-sans, sans-serif);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    padding: 8px 0;
+    margin-bottom: 16px;
+    background-image: linear-gradient(to right, transparent, #e2e8f0 10%, #e2e8f0 90%, transparent);
+    background-size: 100% 1px;
+    background-position: center;
+    background-repeat: no-repeat;
+    user-select: none;
+    cursor: default;
+}
+
+[data-theme="dark"] [contenteditable="true"] .page-break-before::before {
+    color: #4a5568;
+    background-image: linear-gradient(to right, transparent, #2d3748 10%, #2d3748 90%, transparent);
 }

@@ -3,7 +3,9 @@
     "dev": "node server.js"
   },
   "dependencies": {
+    "dotenv": "^17.4.2",
     "jsdom": "^28.1.0",
-    "puppeteer": "^24.37.5"
+    "puppeteer": "^24.37.5",
+    "tesseract.js": "^7.0.0"
   }
 }

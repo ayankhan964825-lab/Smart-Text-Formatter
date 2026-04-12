@@ -15,6 +15,62 @@
     <!-- Dependencies for Exporting -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://unpkg.com/html-docx-js/dist/html-docx.js"></script>
+
+    <!-- Native Print / Selectable PDF Styles -->
+    <style media="print">
+        @page {
+            size: A4;
+            margin: 0.625in;
+        }
+        /* Reset all structural contraints from body and parents */
+        body, html, main, section, .workspace, .output-panel {
+            height: auto !important;
+            min-height: auto !important;
+            overflow: visible !important;
+            display: block !important;
+            position: static !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            background: none !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+
+        /* Hide all sibling UI elements explicitly */
+        .menu-overlay, .settings-panel, .top-bar, .formatting-ribbon, 
+        .input-panel, .panel-header, .mini-toolbar, .mobile-export-container, 
+        #append-modal, #loading-overlay, #toast-container {
+            display: none !important;
+        }
+
+        /* Ensure the preview container stretches fully */
+        #formatted-preview {
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            box-shadow: none !important;
+            border: none !important;
+            color: #000 !important;
+            display: block !important;
+        }
+        /* Ensure specific academic typography matches Word closely across PDF printing */
+        #formatted-preview {
+            font-family: 'Times New Roman', serif !important;
+            font-size: 11pt !important;
+            line-height: 1.5 !important;
+        }
+        #formatted-preview h1, #formatted-preview h2, #formatted-preview h3, 
+        #formatted-preview h4, #formatted-preview h5, #formatted-preview h6 {
+            line-height: 1.2 !important;
+            margin-top: 18pt !important;
+            margin-bottom: 8pt !important;
+            page-break-after: avoid;
+        }
+        #formatted-preview p, #formatted-preview ul, #formatted-preview ol, #formatted-preview table {
+            margin-top: 0 !important;
+            margin-bottom: 12pt !important;
+        }
+    </style>
 </head>
 
 <body>
@@ -311,10 +367,10 @@
     <script src="js/config.local.js?v=600" onerror="console.log('No local config found, using server proxy.')"></script>
     <script src="js/aiFormatter.js?v=600"></script>
     <script src="js/ruleEngine.js?v=600"></script>
-    <script src="js/outputGenerator.js?v=700"></script>
-    <script src="js/docxExporter.js?v=700"></script>
+    <script src="js/outputGenerator.js?v=800"></script>
+    <script src="js/docxExporter.js?v=800"></script>
     <!-- Core Application Logic -->
-    <script src="js/app.js?v=700"></script>
+    <script src="js/app.js?v=800"></script>
 
     <!-- Attractive Loading Overlay -->
     <div id="loading-overlay" class="loading-overlay" style="display: none;">

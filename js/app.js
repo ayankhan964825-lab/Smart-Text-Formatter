@@ -1727,86 +1727,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
             statusText.textContent = "Generating PDF...";
 
-            // Check if TOC is included to determine page numbering offset
-            const hasToc = previewContainer.querySelector('.toc-container') !== null;
-
-            // Deep clone the preview container so we don't modify the live DOM with our image swaps
-            const clonedPreview = previewContainer.cloneNode(true);
-
-            // Convert any Mermaid SVGs in the cloned node to PNG/SVG images so html2canvas renders them
-            await convertSvgsToImages(clonedPreview);
-
-            // --- Build the PDF wrapper ---
-            // Let html2pdf.js natively handle the bounding box. We just inject the content
-            // and apply the precise typography CSS so text spacing matches Word exactly.
-            const wrapper = document.createElement('div');
-            wrapper.innerHTML = buildExportHtml(clonedPreview.innerHTML);
-            wrapper.style.backgroundColor = '#ffffff';
-            // Do NOT apply explicit widths or paddings here. html2pdf temporally resizes the DOM 
-            // to match the exact PDF width minus margins during rendering. Forcing widths causes clipping.
-            // Explicit font scaling removed from here since buildExportHtml CSS handles strict px now
-
-            // --- Mark elements for page-break avoidance ---
-            // html2pdf.js respects CSS page-break-* properties in 'css' mode.
-            // We ensure all critical elements have page-break-inside: avoid.
-            wrapper.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach(el => {
-                el.style.pageBreakAfter = 'avoid';
-                el.style.pageBreakInside = 'avoid';
-            });
-            wrapper.querySelectorAll('.keep-together, .mermaid-container, table, img').forEach(el => {
-                el.style.pageBreakInside = 'avoid';
-            });
-            wrapper.querySelectorAll('p, li').forEach(el => {
-                el.style.pageBreakInside = 'avoid';
-            });
-
-            // --- html2pdf configuration ---
-            // We set the 1-inch (25.4mm) margins directly in jsPDF. 
-            // html2pdf will automatically squeeze the HTML to fit within the a4 width minus 50.8mm,
-            // matching Word's text wrapping perfectly.
-            const opt = {
-                margin: [25.4, 25.4, 25.4, 25.4],
-                filename: 'formatted_document.pdf',
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { 
-                    scale: 2, // High resolution canvas for crisp text
-                    useCORS: true,
-                    logging: false
-                },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                pagebreak: { 
-                    mode: ['avoid-all', 'css', 'legacy'],
-                    avoid: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'tr', 'img', '.keep-together', '.mermaid-container', 'p', 'li']
-                }
-            };
-
-            html2pdf().set(opt).from(wrapper).toPdf().get('pdf').then(function (pdf) {
-                const totalPages = pdf.internal.getNumberOfPages();
-                const pageWidth = pdf.internal.pageSize.getWidth();
-                const pageHeight = pdf.internal.pageSize.getHeight();
-
-                const tocPages = hasToc ? 1 : 0;
-                const contentTotalPages = totalPages - tocPages;
-
-                for (let i = 1; i <= totalPages; i++) {
-                    pdf.setPage(i);
-                    // Only add page numbers to content pages (after TOC)
-                    if (i > tocPages) {
-                        pdf.setFontSize(9);
-                        pdf.setTextColor(120);
-                        // Display "Page X of Y" matching Word footer style
-                        const displayPageNum = i - tocPages;
-                        const footerText = `Page ${displayPageNum} of ${contentTotalPages}`;
-                        // Position footer within the bottom margin area
-                        pdf.text(footerText, pageWidth / 2, pageHeight - 10, { align: 'center' });
-                    }
-                }
-            }).save().then(() => {
-                statusText.textContent = "PDF Exported ✨";
-            }).catch(err => {
-                console.error("PDF Export Error:", err);
-                statusText.textContent = "Export Failed: " + (err.message || String(err));
-            });
+            // To provide 100% native selectable text and accurate CSS kerning,
+            // we use the browser's native print API with a `@media print` print stylesheet.
+            setTimeout(() => {
+                window.print();
+                statusText.textContent = "Print window opened. Select 'Save as PDF' 📄";
+            }, 100);
         } catch (globalErr) {
             console.error("Critical PDF Error:", globalErr);
             statusText.textContent = "Export Failed: " + (globalErr.message || String(globalErr));
@@ -1833,6 +1759,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Deep clone the preview container
             const clonedPreview = previewContainer.cloneNode(true);
+
+            // Force inline page-break styles so MS Word's HTML parser natively breaks pages
+            clonedPreview.querySelectorAll('.page-break-before').forEach(el => {
+                el.style.pageBreakBefore = 'always';
+            });
 
             // Convert Mermaid containers on the cloned DOM
             await convertSvgsToImages(clonedPreview);
@@ -1869,17 +1800,18 @@ document.addEventListener('DOMContentLoaded', () => {
                         <title>Exported Document</title>
                         <!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom><w:DoNotOptimizeForBrowser/></w:WordDocument></xml><![endif]-->
                         <style>
-                            @page { mso-page-orientation: portrait; size: A4; margin: 2.54cm; mso-header-margin: 1.27cm; mso-footer-margin: 1.27cm; }
+                            @page { mso-page-orientation: portrait; size: A4; margin: 0.625in; mso-header-margin: 1.27cm; mso-footer-margin: 1.27cm; }
                             @page TocSection { mso-footer: none; }
                             div.TocSection { page: TocSection; }
                             @page ContentSection { mso-footer: f1; mso-page-numbers-start: 1; }
                             div.ContentSection { page: ContentSection; }
-                            body { font-family: 'Times New Roman', serif; font-size: 11pt; line-height: 1.5; }
+                            body { font-family: 'Times New Roman', serif; font-size: 11pt; mso-line-height-rule: exactly; line-height: 18pt; }
                             h1,h2,h3,h4,h5,h6 { page-break-after: avoid; margin-top: 18pt; margin-bottom: 8pt; }
                             p,ul,ol,table { margin-top: 0; margin-bottom: 12pt; }
                             .keep-together, .mermaid-container, img { page-break-inside: avoid; }
                             .toc-table { width: 100%; border-collapse: collapse; }
                             .toc-table th, .toc-table td { border: 1px solid #000; padding: 6px 10px; }
+                            .page-break-before { page-break-before: always !important; }
                         </style>
                     </head>
                     <body>
@@ -2034,7 +1966,7 @@ document.addEventListener('DOMContentLoaded', () => {
         measureWrapper.style.left = '-9999px';
         measureWrapper.style.visibility = 'hidden';
         measureWrapper.style.width = '210mm'; // A4 width
-        measureWrapper.style.padding = '25.4mm'; // 1-inch export margins
+        measureWrapper.style.padding = '15.875mm'; // 0.625-inch export margins
         measureWrapper.style.boxSizing = 'border-box';
         measureWrapper.style.fontFamily = "'Times New Roman', serif";
         measureWrapper.style.fontSize = "11pt";
@@ -2044,9 +1976,9 @@ document.addEventListener('DOMContentLoaded', () => {
         measureWrapper.innerHTML = container.innerHTML;
         document.body.appendChild(measureWrapper);
 
-        // Available content height per page: A4 = 297mm - 25.4mm top - 25.4mm bottom = 246.2mm
+        // Available content height per page: A4 = 297mm - 15.875mm top - 15.875mm bottom = 265.25mm
         const pageMeasurement = document.createElement('div');
-        pageMeasurement.style.height = '246.2mm'; 
+        pageMeasurement.style.height = '265.25mm'; 
         measureWrapper.appendChild(pageMeasurement);
 
         // Let the browser paint to settle layout metrics

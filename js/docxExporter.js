@@ -172,14 +172,17 @@ const DocxExporter = (() => {
             '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
             '<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">' +
             '<w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/>' +
-            '<w:pPr><w:spacing w:after="240" w:line="360" w:lineRule="auto"/></w:pPr>' +
-            '<w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman"/><w:sz w:val="22"/></w:rPr></w:style>' +
+            '<w:pPr><w:spacing w:after="240" w:line="390" w:lineRule="exact"/><w:jc w:val="both"/></w:pPr>' +
+            '<w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman" w:cs="Times New Roman"/><w:sz w:val="24"/><w:szCs w:val="24"/></w:rPr></w:style>' +
             [1,2,3,4,5,6].map(n => {
-                const sz = [48,36,28,24,22,20][n-1];
+                const sz = [32,28,26,24,24,24][n-1]; // 16pt, 14pt, 13pt, 12pt
+                const before = [480,600,360,240,240,240][n-1]; // 24pt before H1, 30pt before H2, 18pt before others
+                const after = [480,240,240,240,240,240][n-1];  // 24pt after H1, 12pt after others
+                const jc = n === 1 ? '<w:jc w:val="center"/>' : '<w:jc w:val="left"/>';
                 return '<w:style w:type="paragraph" w:styleId="Heading' + n + '"><w:name w:val="heading ' + n + '"/>' +
                     '<w:basedOn w:val="Normal"/><w:next w:val="Normal"/>' +
-                    '<w:pPr><w:keepNext/><w:spacing w:before="360" w:after="120"/></w:pPr>' +
-                    '<w:rPr><w:b/><w:sz w:val="' + sz + '"/></w:rPr></w:style>';
+                    '<w:pPr><w:keepNext/>' + jc + '<w:spacing w:before="' + before + '" w:after="' + after + '"/></w:pPr>' +
+                    '<w:rPr><w:b/><w:sz w:val="' + sz + '"/><w:szCs w:val="' + sz + '"/></w:rPr></w:style>';
             }).join('') +
             '</w:styles>');
 
@@ -202,7 +205,7 @@ const DocxExporter = (() => {
             'xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">' +
             '<w:body>' + bodyXml +
             '<w:sectPr><w:pgSz w:w="11906" w:h="16838"/>' +
-            '<w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440" w:header="720" w:footer="720" w:gutter="0"/>' +
+            '<w:pgMar w:top="900" w:right="900" w:bottom="900" w:left="900" w:header="720" w:footer="720" w:gutter="0"/>' +
             '</w:sectPr></w:body></w:document>');
 
         // Add image binary files

@@ -120,8 +120,9 @@ D. TYPOS: Do not fix general spelling mistakes or grammar. Only fix the citation
                 throw new Error(`Gemini API Failed: ${proxyResponse.status} - ${errText}`);
             }
         } catch (proxyErr) {
-            console.error('[AIFormatter] Server proxy unavailable:', proxyErr.message);
-            throw new Error("No API key available. Open the ☰ Settings menu and enter your free Gemini API key to format text.");
+            console.error('[AIFormatter] Server proxy unavailable. Full error:', proxyErr);
+            // Surface the REAL error so we can diagnose it properly
+            throw new Error(proxyErr.message || "Server proxy failed — check console for details.");
         }
     }
 

@@ -1508,10 +1508,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                     `;
                 }
-            } else if (errorMsg.includes('API key') || errorMsg.includes('No API key')) {
-                statusText.textContent = "⚠️ No API key configured. Set your Gemini API key.";
+            } else if (errorMsg.includes('API key') || errorMsg.includes('No API key') || errorMsg.includes('not configured')) {
+                statusText.textContent = "⚠️ Server Error: " + errorMsg;
                 if (previewContainer) {
-                    previewContainer.innerHTML = '<div style="padding: 20px; color: #d32f2f;">Error: Gemini API key is missing.</div>';
+                    previewContainer.innerHTML = `<div style="padding: 20px; color: #d32f2f; font-family: monospace; font-size: 13px; background: #fff5f5; border: 1px solid #ffcdd2; border-radius: 8px; margin: 20px;">
+                        <strong>🔴 Server Debug Error:</strong><br><br>${errorMsg}<br><br>
+                        <small>Open DevTools Console (F12) → Network tab → /api/format request to see full server response.</small>
+                    </div>`;
                 }
             } else {
                 statusText.textContent = "Error Formatting — check console for details";

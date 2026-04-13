@@ -29,10 +29,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const saveApiKeyBtn = document.getElementById('save-api-key-btn');
     const apiKeyStatus = document.getElementById('api-key-status');
 
-    // Clear saved API key on every page refresh (user requested)
-    localStorage.removeItem('gemini_api_key');
     if (customApiKeyInput) {
-        customApiKeyInput.value = '';
+        const existingKey = localStorage.getItem('gemini_api_key');
+        if (existingKey) {
+            customApiKeyInput.value = existingKey;
+        } else {
+            customApiKeyInput.value = '';
+        }
     }
 
     function openMenu() {
@@ -1719,7 +1722,78 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 2. Export PDF (using html2pdf.js)
+    // 2. Export PDF — Selectable text via native print with page number injection
+    const printLayoutOverlay = document.getElementById('print-layout-overlay');
+    const printPreviewScrollArea = document.getElementById('print-preview-scroll-area');
+    const pdfExportConfirmBtn = document.getElementById('pdf-export-confirm');
+    const pdfExportCancelBtn = document.getElementById('pdf-export-cancel');
+    const closePreviewTopBtn = document.getElementById('close-preview-top-btn');
+    const previewStartPageInput = document.getElementById('preview-pdf-start-page');
+    const previewPageNumRadios = document.querySelectorAll('input[name="preview-page-num-mode"]');
+
+    // Global state for preview
+    let printSimulatorActive = false;
+
+    // Helper to calculate simulated pagination and render numbers
+    const updatePrintPreviewNumbers = () => {
+        if (!printSimulatorActive) return;
+        const selectedMode = document.querySelector('input[name="preview-page-num-mode"]:checked')?.value || 'after-toc';
+        const customStartPage = parseInt(previewStartPageInput?.value || '1', 10);
+        
+        let numberingStartsAtPhysicalPage = 1;
+        let displayStartNumber = 1;
+
+        if (selectedMode === 'after-toc') {
+            const hasToc = document.querySelector('.toc-container');
+            if (hasToc) numberingStartsAtPhysicalPage = 2;
+            displayStartNumber = 1;
+        } else if (selectedMode === 'custom') {
+            numberingStartsAtPhysicalPage = 1;
+            displayStartNumber = customStartPage;
+        }
+
+        const pages = printPreviewScrollArea.querySelectorAll('.a4-page-simulation');
+        pages.forEach((page, index) => {
+            const physicalPageNum = index + 1;
+            // Clear old footer
+            const oldFooter = page.querySelector('.preview-page-footer');
+            if (oldFooter) oldFooter.remove();
+
+            if (selectedMode === 'none') return;
+            
+            if (physicalPageNum >= numberingStartsAtPhysicalPage) {
+                const footer = document.createElement('div');
+                footer.className = 'preview-page-footer';
+                footer.textContent = displayStartNumber + (physicalPageNum - numberingStartsAtPhysicalPage);
+                page.appendChild(footer);
+            }
+        });
+    };
+
+    // Enable/disable custom page number input based on radio selection
+    if (previewPageNumRadios) {
+        previewPageNumRadios.forEach(radio => {
+            radio.addEventListener('change', () => {
+                if (previewStartPageInput) {
+                    previewStartPageInput.disabled = radio.value !== 'custom' || !radio.checked;
+                    // Enable only when 'custom' is selected
+                    const customRadio = document.querySelector('input[name="preview-page-num-mode"][value="custom"]');
+                    previewStartPageInput.disabled = !customRadio?.checked;
+                    
+                    // RE-RENDER PREVIEW NUMBERS LIVE
+                    updatePrintPreviewNumbers();
+                }
+            });
+        });
+    }
+    
+    // Live update when custom start page number changes
+    if (previewStartPageInput) {
+        previewStartPageInput.addEventListener('input', () => {
+            updatePrintPreviewNumbers();
+        });
+    }
+
     const handleExportPdf = async () => {
         try {
             const previewContainer = document.getElementById('formatted-preview');
@@ -1728,19 +1802,221 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            statusText.textContent = "Generating PDF...";
+            // SIMULATED PAGINATION BUILDER
+            printPreviewScrollArea.innerHTML = '';
+            printLayoutOverlay.style.display = 'flex';
+            printSimulatorActive = true;
 
-            // To provide 100% native selectable text and accurate CSS kerning,
-            // we use the browser's native print API with a `@media print` print stylesheet.
-            setTimeout(() => {
-                window.print();
-                statusText.textContent = "Print window opened. Select 'Save as PDF' 📄";
-            }, 100);
+            const contentChildren = Array.from(previewContainer.children);
+            
+            // A4 page simulation metrics (297mm height = approx 1122px at 96dpi)
+            // Usable height = 1122px - margins (45px top + 61px bottom) = 1016px. We use 1000px as a safe threshold.
+            const SAFE_PAGE_HEIGHT_PX = 1000;
+
+            let currentPage = document.createElement('div');
+            currentPage.className = 'a4-page-simulation';
+            printPreviewScrollArea.appendChild(currentPage);
+            
+            let currentHeight = 0;
+            
+            for (let i = 0; i < contentChildren.length; i++) {
+                const sourceNode = contentChildren[i];
+                const clone = sourceNode.cloneNode(true);
+                clone.style.pageBreakBefore = 'avoid'; // Disable native CSS breaks for dom calculation
+                clone.style.pageBreakAfter = 'avoid';
+                
+                // If the element expects a forced page break natively (like TOC)
+                if (sourceNode.style.pageBreakBefore === 'always' || sourceNode.classList.contains('toc-container') && i > 0) {
+                    currentPage = document.createElement('div');
+                    currentPage.className = 'a4-page-simulation';
+                    printPreviewScrollArea.appendChild(currentPage);
+                    currentHeight = 0;
+                }
+
+                // Temporary append to calculate height
+                currentPage.appendChild(clone);
+                
+                // Quick height reading
+                let nodeHeight = clone.offsetHeight;
+                const computed = window.getComputedStyle(clone);
+                nodeHeight += parseFloat(computed.marginTop) + parseFloat(computed.marginBottom);
+                
+                if (currentHeight + nodeHeight > SAFE_PAGE_HEIGHT_PX && currentHeight > 0) {
+                    // Overflow! Move it to a new page
+                    currentPage.removeChild(clone);
+                    
+                    currentPage = document.createElement('div');
+                    currentPage.className = 'a4-page-simulation';
+                    printPreviewScrollArea.appendChild(currentPage);
+                    currentPage.appendChild(clone);
+                    currentHeight = nodeHeight;
+                } else {
+                    currentHeight += nodeHeight;
+                }
+            }
+
+            updatePrintPreviewNumbers();
+
         } catch (globalErr) {
             console.error("Critical PDF Error:", globalErr);
-            statusText.textContent = "Export Failed: " + (globalErr.message || String(globalErr));
+            statusText.textContent = "Preview Generation Failed: " + (globalErr.message || String(globalErr));
+            printLayoutOverlay.style.display = 'none';
         }
     };
+
+    // Cancel Preview
+    const closePrintPreview = () => {
+        printLayoutOverlay.style.display = 'none';
+        printPreviewScrollArea.innerHTML = '';
+        printSimulatorActive = false;
+    };
+
+    if (pdfExportCancelBtn) pdfExportCancelBtn.addEventListener('click', closePrintPreview);
+    if (closePreviewTopBtn) closePreviewTopBtn.addEventListener('click', closePrintPreview);
+
+    // Confirm PDF export — restore native view, inject table wrapper, and print!
+    if (pdfExportConfirmBtn) {
+        pdfExportConfirmBtn.addEventListener('click', async () => {
+            
+            const selectedMode = document.querySelector('input[name="preview-page-num-mode"]:checked')?.value || 'after-toc';
+            const customStartPage = parseInt(previewStartPageInput?.value || '1', 10);
+            
+            closePrintPreview();
+            statusText.textContent = "Sending document to printer...";
+
+            const previewContainer = document.getElementById('formatted-preview');
+
+            // --- Determine page numbering offset ---
+            let numberingStartsAtPhysicalPage = 1;
+            let displayStartNumber = 1;
+
+            if (selectedMode === 'after-toc') {
+                const tocContainer = previewContainer.querySelector('.toc-container');
+                if (tocContainer) numberingStartsAtPhysicalPage = 2;
+                displayStartNumber = 1;
+            } else if (selectedMode === 'custom') {
+                numberingStartsAtPhysicalPage = 1;
+                displayStartNumber = customStartPage;
+            }
+
+            // --- Inject visible page numbers using fixed footer + Table spacer trick ---
+            const injectedElements = [];
+            
+            if (selectedMode !== 'none') {
+                const tableWrapper = document.createElement('table');
+                tableWrapper.id = 'pdf-print-table-wrapper';
+                tableWrapper.style.cssText = 'width: 100%; border: none; border-collapse: collapse;';
+                
+                const tbody = document.createElement('tbody');
+                const trBody = document.createElement('tr');
+                const tdBody = document.createElement('td');
+                tdBody.style.cssText = 'border: none; padding: 0;';
+                
+                // Move all children of previewContainer into tdBody
+                while (previewContainer.firstChild) {
+                    tdBody.appendChild(previewContainer.firstChild);
+                }
+                
+                trBody.appendChild(tdBody);
+                tbody.appendChild(trBody);
+                
+                const tfoot = document.createElement('tfoot');
+                tfoot.style.cssText = 'display: table-footer-group;';
+                const trFoot = document.createElement('tr');
+                const tdFoot = document.createElement('td');
+                // Reserve 40px of blank space at the bottom of EVERY printed page
+                tdFoot.style.cssText = 'height: 40px; border: none; padding: 0;';
+                
+                trFoot.appendChild(tdFoot);
+                tfoot.appendChild(trFoot);
+                
+                tableWrapper.appendChild(tbody);
+                tableWrapper.appendChild(tfoot);
+                
+                previewContainer.appendChild(tableWrapper);
+                injectedElements.push({ type: 'wrapper', container: previewContainer, table: tableWrapper, cell: tdBody });
+
+                // Now create the fixed page-number footer
+                // It will sit at bottom: 0, safely occupying the 40px space reserved by the tfoot above!
+                const footerEl = document.createElement('div');
+                footerEl.className = 'injected-page-number-footer';
+                footerEl.id = 'injected-fixed-page-footer';
+                document.body.appendChild(footerEl);
+                injectedElements.push({ type: 'el', el: footerEl });
+
+                const tocExists = !!tdBody.querySelector('.toc-container');
+
+                const counterStyle = document.createElement('style');
+                counterStyle.id = 'pdf-counter-style';
+                counterStyle.textContent = `
+                    @media print {
+                        body {
+                            counter-reset: page ${displayStartNumber - 1 - (numberingStartsAtPhysicalPage - 1)};
+                        }
+                        /* Use the fixed footer for page numbers on every page */
+                        #injected-fixed-page-footer {
+                            display: block !important;
+                            position: fixed;
+                            bottom: 0px; 
+                            left: 0;
+                            right: 0;
+                            text-align: center;
+                            font-family: 'Times New Roman', serif;
+                            font-size: 10.5pt;
+                            color: #333;
+                            padding-bottom: 5px;
+                            z-index: 99999;
+                        }
+                        #injected-fixed-page-footer::after {
+                            content: counter(page, decimal);
+                        }
+                        ${tocExists && selectedMode === 'after-toc' ? `
+                        /* Hide footer on TOC page(s) */
+                        .toc-container {
+                            page: tocPage;
+                        }
+                        @page tocPage {
+                            @bottom-center { content: none; }
+                            margin-bottom: 0.85in;
+                        }
+                        /* Force fixed footer invisible on TOC */
+                        .toc-container ~ #injected-fixed-page-footer {
+                            display: none !important;
+                        }
+                        ` : ''}
+                    }
+                `;
+                document.head.appendChild(counterStyle);
+                injectedElements.push({ type: 'el', el: counterStyle });
+            }
+
+            // Trigger native print dialog (produces selectable text PDF)
+            setTimeout(() => {
+                window.print();
+                
+                // Cleanup: Unwrap table and remove injected styles/footers
+                if (selectedMode !== 'none') {
+                    injectedElements.forEach(item => {
+                        if (item.type === 'wrapper') {
+                            // Move children back to previewContainer
+                            while (item.cell.firstChild) {
+                                item.container.appendChild(item.cell.firstChild);
+                            }
+                            item.container.removeChild(item.table);
+                        } else if (item.type === 'el') {
+                            if (item.el.parentNode) item.el.parentNode.removeChild(item.el);
+                        }
+                    });
+                }
+                
+                // Cleanup global styles
+                const counterStyle = document.getElementById('pdf-counter-style');
+                if (counterStyle) counterStyle.remove();
+                
+                statusText.textContent = "PDF export complete 📄";
+            }, 200);
+        });
+    }
 
     // Fetch mobile buttons since they were missing declarations in the global scope
     const mobileExportPdfBtn = document.getElementById('mobile-export-pdf');

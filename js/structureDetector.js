@@ -58,7 +58,7 @@ class StructureDetector {
                     const isNumSubheading = /^(?:#{1,6}\s+)?(\d+\.\d+(?:\.\d+)*)\.?\s+(.*)$/.test(line);
                     const isRomanHeading = /^(IX|IV|V?I{0,3})\.\s+(.*)$/i.test(line);
                     const isAlphabetHeading = /^([A-Z])\.\s+(.*)$/.test(line);
-                    const isKeywordHeading = /^(Abstract|Introduction|Conclusion[s]?|Reference[s]?|Acknowledgment[s]?|Methodology|Keywords|Overview)\s*$/i.test(line);
+                    const isKeywordHeading = /^(Abstract|Introduction|Conclusion[s]?|Reference[s]?|Acknowledgment[s]?|Methodology|Keywords|Overview|Discussion|Results|Analysis|Summary|Background|Literature\s+Review|Related\s+Work|System\s+Design|Implementation|Testing|Future\s+Work|Bibliography|Appendix|Scope|Objectives?|Problem\s+Statement|Proposed\s+(?:System|Method|Approach)|Chapter\s+\d+|Section\s+\d+)\s*$/i.test(line);
                     const isMarkdownHeading = /^(#{1,6})\s+(.*)$/.test(line);
 
                     // Special case for main numbers (e.g., "4. "): Ensure it's not just a list item.
@@ -173,13 +173,35 @@ class StructureDetector {
 
         // 1.8 Detect Academic/Common Keywords Standalone Headings
         // (e.g., "Abstract", "References" sitting on their own line)
-        const keywordMatch = block.match(/^(Abstract|Introduction|Conclusion[s]?|Reference[s]?|Acknowledgment[s]?|Methodology|Keywords|Overview)\s*$/i);
+        const keywordMatch = block.match(/^(Abstract|Introduction|Conclusion[s]?|Reference[s]?|Acknowledgment[s]?|Methodology|Keywords|Overview|Discussion|Results|Analysis|Summary|Background|Literature\s+Review|Related\s+Work|System\s+Design|Implementation|Testing|Future\s+Work|Bibliography|Appendix|Scope|Objectives?|Problem\s+Statement|Proposed\s+(?:System|Method|Approach)|Chapter\s+\d+|Section\s+\d+)\s*$/i);
         if (keywordMatch && keywordMatch.index === 0 && !block.includes('\n')) {
             // Preserve their exact spelling/casing to prevent data destruction
             return {
                 type: 'h2',
                 content: block.trim()
             };
+        }
+
+        // 1.9 Detect short Title Case / ALL CAPS lines as potential headings
+        // Catches patterns like "System Architecture", "DATA FLOW DIAGRAM" that aren't numbered
+        if (!block.includes('\n') && block.length < 60 && block.length > 2) {
+            const words = block.trim().split(/\s+/);
+            const wordCount = words.length;
+            const endsWithPeriod = /[.!?]$/.test(block.trim());
+            
+            // Title Case: Most words start with uppercase (allow small connector words)
+            const titleCaseWords = words.filter(w => /^[A-Z]/.test(w) || /^(a|an|the|and|or|of|in|on|to|for|with|by|at|is|as)$/i.test(w));
+            const isTitleCase = titleCaseWords.length >= Math.ceil(wordCount * 0.7);
+            
+            // ALL CAPS check
+            const isAllCaps = block.trim() === block.trim().toUpperCase() && /[A-Z]/.test(block);
+            
+            if (wordCount >= 2 && wordCount <= 8 && !endsWithPeriod && (isTitleCase || isAllCaps)) {
+                return {
+                    type: 'h2',
+                    content: block.trim()
+                };
+            }
         }
 
         // 2. Detect Headings (Markdown style: #, ##, ###)

@@ -38,9 +38,37 @@ Rules:
 HEADINGS AND BODY TEXT MUST ALWAYS BE SEPARATE OBJECTS.
 - A heading (h1, h2, sub-subheading) must NEVER contain body paragraph text in the same object.
 - A body paragraph (p) must NEVER contain heading text.
-- If a heading like "1. Introduction" is immediately followed by paragraph text on the same line or next line, you MUST split them into two separate JSON objects: one for the heading and one for the paragraph.
-- Example: If input is "1. Introduction The rapid evolution...", output MUST be:
+- If a heading like "1. Introduction" or "ABSTRACT" is immediately followed by paragraph text on the same line or next line, you MUST split them into two separate JSON objects: one for the heading and one for the paragraph.
+- Example 1: If input is "1. Introduction The rapid evolution...", output MUST be:
   [{"type": "h2", "content": "1. Introduction"}, {"type": "p", "content": "The rapid evolution..."}]
+- Example 2 (Run-in Headings): If input is "ABSTRACT Due to the pace in...", output MUST be:
+  [{"type": "h2", "content": "ABSTRACT"}, {"type": "p", "content": "Due to the pace in..."}]
+
+--- ADVANCED HEADING vs BODY TEXT DETECTION RULES ---
+Use these heuristics to classify content accurately:
+
+A. HEADINGS are ALWAYS:
+   - SHORT: Typically under 12 words. If text has more than 15 words, it is almost certainly a paragraph, not a heading.
+   - DO NOT end with a period (.). Body text sentences end with periods. Headings don't.
+   - Are often in TITLE CASE or ALL CAPS.
+   - Often start with numbers like "1.", "2.", "3.1", "IV.", "A." etc.
+   - Common standalone heading keywords: Abstract, Introduction, Methodology, Literature Review, Conclusion, Conclusions, References, Acknowledgment, Acknowledgments, Overview, Results, Discussion, Future Work, Bibliography, Appendix, Summary, Background, Related Work, System Design, Implementation, Testing, Analysis.
+   - If a line matches "Chapter X" or "Section X" patterns, it's always a heading (h2).
+
+B. BODY TEXT (paragraphs) are ALWAYS:
+   - LONG: Multiple sentences, typically 20+ words.
+   - Contain full sentences that END with periods, question marks, or exclamation marks.
+   - Flow naturally as continuous prose.
+   - NEVER classify a full flowing sentence as a heading, even if it appears on its own line.
+
+C. TRICKY CASES — resolve as follows:
+   - "Smart Text Formatter" (short, no period) → h1 or h2
+   - "The system implements a modular architecture for text processing." (long, ends with period) → p
+   - "2.1 System Architecture" → sub-subheading
+   - "2. System Design" → h2
+   - "This chapter discusses the design decisions made during development." → p (it's a sentence, NOT a heading)
+   - "Object-Oriented Programming" (short, no period, title case) → likely h2 or sub-subheading depending on context
+   - Lines that are just labels like "Figure 1", "Table 2" → p
 
 --- DISTINGUISHING sub-subheading FROM p ---
 - "sub-subheading" is for nested headings with multi-level numbering (e.g., "2.1", "3.2.1") or single letters (e.g., "A.", "B.").
@@ -68,6 +96,31 @@ D. TYPOS: Do not fix general spelling mistakes or grammar. Only fix the citation
 
 6. Do NOT return markdown formatting like \\\`\\\`\\\`json. Return only raw JSON data.`;
 
+        // Helper to call server proxy
+        const callServerProxy = async () => {
+            try {
+                console.log('[AIFormatter] Trying server proxy /api/format ...');
+                const proxyResponse = await fetch('/api/format', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ rawText, systemInstruction })
+                });
+
+                if (proxyResponse.ok) {
+                    console.log('[AIFormatter] ✅ Server proxy succeeded!');
+                    const data = await proxyResponse.json();
+                    return this._parseResponse(data);
+                } else {
+                    const errText = await proxyResponse.text();
+                    console.error('[AIFormatter] ❌ Server proxy error:', proxyResponse.status, errText);
+                    throw new Error(`Gemini API Failed: ${proxyResponse.status} - ${errText}`);
+                }
+            } catch (proxyErr) {
+                console.error('[AIFormatter] Server proxy unavailable. Full error:', proxyErr);
+                throw new Error(proxyErr.message || "Server proxy failed — check console for details.");
+            }
+        };
+
         // ============================================================
         // PATH 1: User has a CUSTOM API key → call Gemini DIRECTLY
         //          (bypasses the Node proxy entirely, uses user's quota)
@@ -82,48 +135,43 @@ D. TYPOS: Do not fix general spelling mistakes or grammar. Only fix the citation
                 generationConfig: { temperature: 0.1, responseMimeType: "application/json" }
             };
 
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(requestBody)
-            });
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(requestBody)
+                });
 
-            if (!response.ok) {
-                const errText = await response.text();
-                console.error('[AIFormatter] ❌ Direct Gemini API Failed:', response.status, errText);
-                throw new Error(`Gemini API Failed: ${response.status} - ${errText}`);
+                if (!response.ok) {
+                    const errText = await response.text();
+                    console.error('[AIFormatter] ❌ Direct Gemini API Failed:', response.status, errText);
+                    
+                    // If the custom key hit its quota limit, clear it automatically and FALLBACK!
+                    if (response.status === 429 || errText.includes('quota') || errText.includes('RESOURCE_EXHAUSTED')) {
+                        console.warn('[AIFormatter] Custom API key exhausted. Clearing it and triggering auto-fallback to proxy.');
+                        localStorage.removeItem('gemini_api_key');
+                        window.GEMINI_API_KEY_LOCAL = '';
+                        return await callServerProxy();
+                    }
+
+                    throw new Error(`Gemini API Failed (Local Key): ${response.status} - ${errText}`);
+                }
+
+                console.log('[AIFormatter] ✅ Direct Gemini API succeeded!');
+                const data = await response.json();
+                return this._parseResponse(data);
+            } catch (e) {
+                // If it was a network error or API error (not caught by the quota check), optionally fallback
+                if (e.message.includes('exhausted') || e.message.includes('proxy')) throw e;
+                console.error("Direct fetch failed, falling back to proxy:", e);
+                return await callServerProxy();
             }
-
-            console.log('[AIFormatter] ✅ Direct Gemini API succeeded!');
-            const data = await response.json();
-            return this._parseResponse(data);
         }
 
         // ============================================================
         // PATH 2: No custom key → use the server-side proxy (Vercel/.env)
         // ============================================================
-        try {
-            console.log('[AIFormatter] No custom key. Trying server proxy /api/format ...');
-            const proxyResponse = await fetch('/api/format', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ rawText, systemInstruction })
-            });
-
-            if (proxyResponse.ok) {
-                console.log('[AIFormatter] ✅ Server proxy succeeded!');
-                const data = await proxyResponse.json();
-                return this._parseResponse(data);
-            } else {
-                const errText = await proxyResponse.text();
-                console.error('[AIFormatter] ❌ Server proxy error:', proxyResponse.status, errText);
-                throw new Error(`Gemini API Failed: ${proxyResponse.status} - ${errText}`);
-            }
-        } catch (proxyErr) {
-            console.error('[AIFormatter] Server proxy unavailable. Full error:', proxyErr);
-            // Surface the REAL error so we can diagnose it properly
-            throw new Error(proxyErr.message || "Server proxy failed — check console for details.");
-        }
+        return await callServerProxy();
     }
 
     /**

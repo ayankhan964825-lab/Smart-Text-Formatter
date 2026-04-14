@@ -29,13 +29,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const saveApiKeyBtn = document.getElementById('save-api-key-btn');
     const apiKeyStatus = document.getElementById('api-key-status');
 
+    // Clear saved API key on every page refresh (user requested)
+    localStorage.removeItem('gemini_api_key');
     if (customApiKeyInput) {
-        const existingKey = localStorage.getItem('gemini_api_key');
-        if (existingKey) {
-            customApiKeyInput.value = existingKey;
-        } else {
-            customApiKeyInput.value = '';
-        }
+        customApiKeyInput.value = '';
     }
 
     function openMenu() {
@@ -1511,13 +1508,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                     `;
                 }
-            } else if (errorMsg.includes('API key') || errorMsg.includes('No API key') || errorMsg.includes('not configured')) {
-                statusText.textContent = "⚠️ Server Error: " + errorMsg;
+            } else if (errorMsg.includes('API key') || errorMsg.includes('No API key')) {
+                statusText.textContent = "⚠️ No API key configured. Set your Gemini API key.";
                 if (previewContainer) {
-                    previewContainer.innerHTML = `<div style="padding: 20px; color: #d32f2f; font-family: monospace; font-size: 13px; background: #fff5f5; border: 1px solid #ffcdd2; border-radius: 8px; margin: 20px;">
-                        <strong>🔴 Server Debug Error:</strong><br><br>${errorMsg}<br><br>
-                        <small>Open DevTools Console (F12) → Network tab → /api/format request to see full server response.</small>
-                    </div>`;
+                    previewContainer.innerHTML = '<div style="padding: 20px; color: #d32f2f;">Error: Gemini API key is missing.</div>';
                 }
             } else {
                 statusText.textContent = "Error Formatting — check console for details";
@@ -1722,78 +1716,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 2. Export PDF — Selectable text via native print with page number injection
-    const printLayoutOverlay = document.getElementById('print-layout-overlay');
-    const printPreviewScrollArea = document.getElementById('print-preview-scroll-area');
-    const pdfExportConfirmBtn = document.getElementById('pdf-export-confirm');
-    const pdfExportCancelBtn = document.getElementById('pdf-export-cancel');
-    const closePreviewTopBtn = document.getElementById('close-preview-top-btn');
-    const previewStartPageInput = document.getElementById('preview-pdf-start-page');
-    const previewPageNumRadios = document.querySelectorAll('input[name="preview-page-num-mode"]');
-
-    // Global state for preview
-    let printSimulatorActive = false;
-
-    // Helper to calculate simulated pagination and render numbers
-    const updatePrintPreviewNumbers = () => {
-        if (!printSimulatorActive) return;
-        const selectedMode = document.querySelector('input[name="preview-page-num-mode"]:checked')?.value || 'after-toc';
-        const customStartPage = parseInt(previewStartPageInput?.value || '1', 10);
-        
-        let numberingStartsAtPhysicalPage = 1;
-        let displayStartNumber = 1;
-
-        if (selectedMode === 'after-toc') {
-            const hasToc = document.querySelector('.toc-container');
-            if (hasToc) numberingStartsAtPhysicalPage = 2;
-            displayStartNumber = 1;
-        } else if (selectedMode === 'custom') {
-            numberingStartsAtPhysicalPage = 1;
-            displayStartNumber = customStartPage;
-        }
-
-        const pages = printPreviewScrollArea.querySelectorAll('.a4-page-simulation');
-        pages.forEach((page, index) => {
-            const physicalPageNum = index + 1;
-            // Clear old footer
-            const oldFooter = page.querySelector('.preview-page-footer');
-            if (oldFooter) oldFooter.remove();
-
-            if (selectedMode === 'none') return;
-            
-            if (physicalPageNum >= numberingStartsAtPhysicalPage) {
-                const footer = document.createElement('div');
-                footer.className = 'preview-page-footer';
-                footer.textContent = displayStartNumber + (physicalPageNum - numberingStartsAtPhysicalPage);
-                page.appendChild(footer);
-            }
-        });
-    };
-
-    // Enable/disable custom page number input based on radio selection
-    if (previewPageNumRadios) {
-        previewPageNumRadios.forEach(radio => {
-            radio.addEventListener('change', () => {
-                if (previewStartPageInput) {
-                    previewStartPageInput.disabled = radio.value !== 'custom' || !radio.checked;
-                    // Enable only when 'custom' is selected
-                    const customRadio = document.querySelector('input[name="preview-page-num-mode"][value="custom"]');
-                    previewStartPageInput.disabled = !customRadio?.checked;
-                    
-                    // RE-RENDER PREVIEW NUMBERS LIVE
-                    updatePrintPreviewNumbers();
-                }
-            });
-        });
-    }
-    
-    // Live update when custom start page number changes
-    if (previewStartPageInput) {
-        previewStartPageInput.addEventListener('input', () => {
-            updatePrintPreviewNumbers();
-        });
-    }
-
+    // 2. Export PDF (using html2pdf.js)
     const handleExportPdf = async () => {
         try {
             const previewContainer = document.getElementById('formatted-preview');
@@ -1802,221 +1725,93 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // SIMULATED PAGINATION BUILDER
-            printPreviewScrollArea.innerHTML = '';
-            printLayoutOverlay.style.display = 'flex';
-            printSimulatorActive = true;
+            statusText.textContent = "Generating PDF...";
 
-            const contentChildren = Array.from(previewContainer.children);
-            
-            // A4 page simulation metrics (297mm height = approx 1122px at 96dpi)
-            // Usable height = 1122px - margins (45px top + 61px bottom) = 1016px. We use 1000px as a safe threshold.
-            const SAFE_PAGE_HEIGHT_PX = 1000;
+            // Check if TOC is included to determine page numbering offset
+            const hasToc = previewContainer.querySelector('.toc-container') !== null;
 
-            let currentPage = document.createElement('div');
-            currentPage.className = 'a4-page-simulation';
-            printPreviewScrollArea.appendChild(currentPage);
-            
-            let currentHeight = 0;
-            
-            for (let i = 0; i < contentChildren.length; i++) {
-                const sourceNode = contentChildren[i];
-                const clone = sourceNode.cloneNode(true);
-                clone.style.pageBreakBefore = 'avoid'; // Disable native CSS breaks for dom calculation
-                clone.style.pageBreakAfter = 'avoid';
-                
-                // If the element expects a forced page break natively (like TOC)
-                if (sourceNode.style.pageBreakBefore === 'always' || sourceNode.classList.contains('toc-container') && i > 0) {
-                    currentPage = document.createElement('div');
-                    currentPage.className = 'a4-page-simulation';
-                    printPreviewScrollArea.appendChild(currentPage);
-                    currentHeight = 0;
+            // Deep clone the preview container so we don't modify the live DOM with our image swaps
+            const clonedPreview = previewContainer.cloneNode(true);
+
+            // Convert any Mermaid SVGs in the cloned node to PNG/SVG images so html2canvas renders them
+            await convertSvgsToImages(clonedPreview);
+
+            // --- Build the PDF wrapper ---
+            // Let html2pdf.js natively handle the bounding box. We just inject the content
+            // and apply the precise typography CSS so text spacing matches Word exactly.
+            const wrapper = document.createElement('div');
+            wrapper.innerHTML = buildExportHtml(clonedPreview.innerHTML);
+            wrapper.style.backgroundColor = '#ffffff';
+            // Do NOT apply explicit widths or paddings here. html2pdf temporally resizes the DOM 
+            // to match the exact PDF width minus margins during rendering. Forcing widths causes clipping.
+            // Explicit font scaling removed from here since buildExportHtml CSS handles strict px now
+
+            // --- Mark elements for page-break avoidance ---
+            // html2pdf.js respects CSS page-break-* properties in 'css' mode.
+            // We ensure all critical elements have page-break-inside: avoid.
+            wrapper.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach(el => {
+                el.style.pageBreakAfter = 'avoid';
+                el.style.pageBreakInside = 'avoid';
+            });
+            wrapper.querySelectorAll('.keep-together, .mermaid-container, table, img').forEach(el => {
+                el.style.pageBreakInside = 'avoid';
+            });
+            wrapper.querySelectorAll('p, li').forEach(el => {
+                el.style.pageBreakInside = 'avoid';
+            });
+
+            // --- html2pdf configuration ---
+            // We set the 1-inch (25.4mm) margins directly in jsPDF. 
+            // html2pdf will automatically squeeze the HTML to fit within the a4 width minus 50.8mm,
+            // matching Word's text wrapping perfectly.
+            const opt = {
+                margin: [25.4, 25.4, 25.4, 25.4],
+                filename: 'formatted_document.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { 
+                    scale: 2, // High resolution canvas for crisp text
+                    useCORS: true,
+                    logging: false
+                },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                pagebreak: { 
+                    mode: ['avoid-all', 'css', 'legacy'],
+                    avoid: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'tr', 'img', '.keep-together', '.mermaid-container', 'p', 'li']
                 }
+            };
 
-                // Temporary append to calculate height
-                currentPage.appendChild(clone);
-                
-                // Quick height reading
-                let nodeHeight = clone.offsetHeight;
-                const computed = window.getComputedStyle(clone);
-                nodeHeight += parseFloat(computed.marginTop) + parseFloat(computed.marginBottom);
-                
-                if (currentHeight + nodeHeight > SAFE_PAGE_HEIGHT_PX && currentHeight > 0) {
-                    // Overflow! Move it to a new page
-                    currentPage.removeChild(clone);
-                    
-                    currentPage = document.createElement('div');
-                    currentPage.className = 'a4-page-simulation';
-                    printPreviewScrollArea.appendChild(currentPage);
-                    currentPage.appendChild(clone);
-                    currentHeight = nodeHeight;
-                } else {
-                    currentHeight += nodeHeight;
+            html2pdf().set(opt).from(wrapper).toPdf().get('pdf').then(function (pdf) {
+                const totalPages = pdf.internal.getNumberOfPages();
+                const pageWidth = pdf.internal.pageSize.getWidth();
+                const pageHeight = pdf.internal.pageSize.getHeight();
+
+                const tocPages = hasToc ? 1 : 0;
+                const contentTotalPages = totalPages - tocPages;
+
+                for (let i = 1; i <= totalPages; i++) {
+                    pdf.setPage(i);
+                    // Only add page numbers to content pages (after TOC)
+                    if (i > tocPages) {
+                        pdf.setFontSize(9);
+                        pdf.setTextColor(120);
+                        // Display "Page X of Y" matching Word footer style
+                        const displayPageNum = i - tocPages;
+                        const footerText = `Page ${displayPageNum} of ${contentTotalPages}`;
+                        // Position footer within the bottom margin area
+                        pdf.text(footerText, pageWidth / 2, pageHeight - 10, { align: 'center' });
+                    }
                 }
-            }
-
-            updatePrintPreviewNumbers();
-
+            }).save().then(() => {
+                statusText.textContent = "PDF Exported ✨";
+            }).catch(err => {
+                console.error("PDF Export Error:", err);
+                statusText.textContent = "Export Failed: " + (err.message || String(err));
+            });
         } catch (globalErr) {
             console.error("Critical PDF Error:", globalErr);
-            statusText.textContent = "Preview Generation Failed: " + (globalErr.message || String(globalErr));
-            printLayoutOverlay.style.display = 'none';
+            statusText.textContent = "Export Failed: " + (globalErr.message || String(globalErr));
         }
     };
-
-    // Cancel Preview
-    const closePrintPreview = () => {
-        printLayoutOverlay.style.display = 'none';
-        printPreviewScrollArea.innerHTML = '';
-        printSimulatorActive = false;
-    };
-
-    if (pdfExportCancelBtn) pdfExportCancelBtn.addEventListener('click', closePrintPreview);
-    if (closePreviewTopBtn) closePreviewTopBtn.addEventListener('click', closePrintPreview);
-
-    // Confirm PDF export — restore native view, inject table wrapper, and print!
-    if (pdfExportConfirmBtn) {
-        pdfExportConfirmBtn.addEventListener('click', async () => {
-            
-            const selectedMode = document.querySelector('input[name="preview-page-num-mode"]:checked')?.value || 'after-toc';
-            const customStartPage = parseInt(previewStartPageInput?.value || '1', 10);
-            
-            closePrintPreview();
-            statusText.textContent = "Sending document to printer...";
-
-            const previewContainer = document.getElementById('formatted-preview');
-
-            // --- Determine page numbering offset ---
-            let numberingStartsAtPhysicalPage = 1;
-            let displayStartNumber = 1;
-
-            if (selectedMode === 'after-toc') {
-                const tocContainer = previewContainer.querySelector('.toc-container');
-                if (tocContainer) numberingStartsAtPhysicalPage = 2;
-                displayStartNumber = 1;
-            } else if (selectedMode === 'custom') {
-                numberingStartsAtPhysicalPage = 1;
-                displayStartNumber = customStartPage;
-            }
-
-            // --- Inject visible page numbers using fixed footer + Table spacer trick ---
-            const injectedElements = [];
-            
-            if (selectedMode !== 'none') {
-                const tableWrapper = document.createElement('table');
-                tableWrapper.id = 'pdf-print-table-wrapper';
-                tableWrapper.style.cssText = 'width: 100%; border: none; border-collapse: collapse;';
-                
-                const tbody = document.createElement('tbody');
-                const trBody = document.createElement('tr');
-                const tdBody = document.createElement('td');
-                tdBody.style.cssText = 'border: none; padding: 0;';
-                
-                // Move all children of previewContainer into tdBody
-                while (previewContainer.firstChild) {
-                    tdBody.appendChild(previewContainer.firstChild);
-                }
-                
-                trBody.appendChild(tdBody);
-                tbody.appendChild(trBody);
-                
-                const tfoot = document.createElement('tfoot');
-                tfoot.style.cssText = 'display: table-footer-group;';
-                const trFoot = document.createElement('tr');
-                const tdFoot = document.createElement('td');
-                // Reserve 40px of blank space at the bottom of EVERY printed page
-                tdFoot.style.cssText = 'height: 40px; border: none; padding: 0;';
-                
-                trFoot.appendChild(tdFoot);
-                tfoot.appendChild(trFoot);
-                
-                tableWrapper.appendChild(tbody);
-                tableWrapper.appendChild(tfoot);
-                
-                previewContainer.appendChild(tableWrapper);
-                injectedElements.push({ type: 'wrapper', container: previewContainer, table: tableWrapper, cell: tdBody });
-
-                // Now create the fixed page-number footer
-                // It will sit at bottom: 0, safely occupying the 40px space reserved by the tfoot above!
-                const footerEl = document.createElement('div');
-                footerEl.className = 'injected-page-number-footer';
-                footerEl.id = 'injected-fixed-page-footer';
-                document.body.appendChild(footerEl);
-                injectedElements.push({ type: 'el', el: footerEl });
-
-                const tocExists = !!tdBody.querySelector('.toc-container');
-
-                const counterStyle = document.createElement('style');
-                counterStyle.id = 'pdf-counter-style';
-                counterStyle.textContent = `
-                    @media print {
-                        body {
-                            counter-reset: page ${displayStartNumber - 1 - (numberingStartsAtPhysicalPage - 1)};
-                        }
-                        /* Use the fixed footer for page numbers on every page */
-                        #injected-fixed-page-footer {
-                            display: block !important;
-                            position: fixed;
-                            bottom: 0px; 
-                            left: 0;
-                            right: 0;
-                            text-align: center;
-                            font-family: 'Times New Roman', serif;
-                            font-size: 10.5pt;
-                            color: #333;
-                            padding-bottom: 5px;
-                            z-index: 99999;
-                        }
-                        #injected-fixed-page-footer::after {
-                            content: counter(page, decimal);
-                        }
-                        ${tocExists && selectedMode === 'after-toc' ? `
-                        /* Hide footer on TOC page(s) */
-                        .toc-container {
-                            page: tocPage;
-                        }
-                        @page tocPage {
-                            @bottom-center { content: none; }
-                            margin-bottom: 0.85in;
-                        }
-                        /* Force fixed footer invisible on TOC */
-                        .toc-container ~ #injected-fixed-page-footer {
-                            display: none !important;
-                        }
-                        ` : ''}
-                    }
-                `;
-                document.head.appendChild(counterStyle);
-                injectedElements.push({ type: 'el', el: counterStyle });
-            }
-
-            // Trigger native print dialog (produces selectable text PDF)
-            setTimeout(() => {
-                window.print();
-                
-                // Cleanup: Unwrap table and remove injected styles/footers
-                if (selectedMode !== 'none') {
-                    injectedElements.forEach(item => {
-                        if (item.type === 'wrapper') {
-                            // Move children back to previewContainer
-                            while (item.cell.firstChild) {
-                                item.container.appendChild(item.cell.firstChild);
-                            }
-                            item.container.removeChild(item.table);
-                        } else if (item.type === 'el') {
-                            if (item.el.parentNode) item.el.parentNode.removeChild(item.el);
-                        }
-                    });
-                }
-                
-                // Cleanup global styles
-                const counterStyle = document.getElementById('pdf-counter-style');
-                if (counterStyle) counterStyle.remove();
-                
-                statusText.textContent = "PDF export complete 📄";
-            }, 200);
-        });
-    }
 
     // Fetch mobile buttons since they were missing declarations in the global scope
     const mobileExportPdfBtn = document.getElementById('mobile-export-pdf');
@@ -2038,11 +1833,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Deep clone the preview container
             const clonedPreview = previewContainer.cloneNode(true);
-
-            // Force inline page-break styles so MS Word's HTML parser natively breaks pages
-            clonedPreview.querySelectorAll('.page-break-before').forEach(el => {
-                el.style.pageBreakBefore = 'always';
-            });
 
             // Convert Mermaid containers on the cloned DOM
             await convertSvgsToImages(clonedPreview);
@@ -2079,18 +1869,17 @@ document.addEventListener('DOMContentLoaded', () => {
                         <title>Exported Document</title>
                         <!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom><w:DoNotOptimizeForBrowser/></w:WordDocument></xml><![endif]-->
                         <style>
-                            @page { mso-page-orientation: portrait; size: A4; margin: 0.625in; mso-header-margin: 1.27cm; mso-footer-margin: 1.27cm; }
+                            @page { mso-page-orientation: portrait; size: A4; margin: 2.54cm; mso-header-margin: 1.27cm; mso-footer-margin: 1.27cm; }
                             @page TocSection { mso-footer: none; }
                             div.TocSection { page: TocSection; }
                             @page ContentSection { mso-footer: f1; mso-page-numbers-start: 1; }
                             div.ContentSection { page: ContentSection; }
-                            body { font-family: 'Times New Roman', serif; font-size: 11pt; mso-line-height-rule: exactly; line-height: 18pt; }
+                            body { font-family: 'Times New Roman', serif; font-size: 11pt; line-height: 1.5; }
                             h1,h2,h3,h4,h5,h6 { page-break-after: avoid; margin-top: 18pt; margin-bottom: 8pt; }
                             p,ul,ol,table { margin-top: 0; margin-bottom: 12pt; }
                             .keep-together, .mermaid-container, img { page-break-inside: avoid; }
                             .toc-table { width: 100%; border-collapse: collapse; }
                             .toc-table th, .toc-table td { border: 1px solid #000; padding: 6px 10px; }
-                            .page-break-before { page-break-before: always !important; }
                         </style>
                     </head>
                     <body>
@@ -2245,7 +2034,7 @@ document.addEventListener('DOMContentLoaded', () => {
         measureWrapper.style.left = '-9999px';
         measureWrapper.style.visibility = 'hidden';
         measureWrapper.style.width = '210mm'; // A4 width
-        measureWrapper.style.padding = '15.875mm'; // 0.625-inch export margins
+        measureWrapper.style.padding = '25.4mm'; // 1-inch export margins
         measureWrapper.style.boxSizing = 'border-box';
         measureWrapper.style.fontFamily = "'Times New Roman', serif";
         measureWrapper.style.fontSize = "11pt";
@@ -2255,9 +2044,9 @@ document.addEventListener('DOMContentLoaded', () => {
         measureWrapper.innerHTML = container.innerHTML;
         document.body.appendChild(measureWrapper);
 
-        // Available content height per page: A4 = 297mm - 15.875mm top - 15.875mm bottom = 265.25mm
+        // Available content height per page: A4 = 297mm - 25.4mm top - 25.4mm bottom = 246.2mm
         const pageMeasurement = document.createElement('div');
-        pageMeasurement.style.height = '265.25mm'; 
+        pageMeasurement.style.height = '246.2mm'; 
         measureWrapper.appendChild(pageMeasurement);
 
         // Let the browser paint to settle layout metrics

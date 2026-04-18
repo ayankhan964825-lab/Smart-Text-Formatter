@@ -64,7 +64,25 @@ document.addEventListener('DOMContentLoaded', () => {
                         backgroundColor: '#0D0E15',
                         logging: false,
                         allowTaint: true,
-                        useCORS: true
+                        useCORS: true,
+                        onclone: (clonedDoc) => {
+                            // FIX: html2canvas does not support background-clip: text.
+                            // It renders the background gradient as a solid block over the text.
+                            // We strip the background and fallback to a solid color for the snapshot.
+                            const gradients = clonedDoc.querySelectorAll('[class*="gradient-text"]');
+                            gradients.forEach(el => {
+                                el.style.background = 'none';
+                                el.style.webkitTextFillColor = 'initial';
+                                
+                                if (el.classList.contains('gradient-text-hero')) el.style.color = '#5AC8FA'; // Teal
+                                else if (el.classList.contains('gradient-text-electric')) el.style.color = '#2997FF'; // Blue
+                                else if (el.classList.contains('gradient-text-warm')) el.style.color = '#FF9F0A'; // Orange
+                                else if (el.classList.contains('gradient-text-gold')) el.style.color = '#FFD60A'; // Gold
+                                else if (el.classList.contains('gradient-text-green') || el.classList.contains('gradient-text-sunrise')) el.style.color = '#30D158'; // Green
+                                else if (el.classList.contains('gradient-text-rose')) el.style.color = '#FF6B8A'; // Pink
+                                else el.style.color = '#BF5AF2'; // Default Purple
+                            });
+                        }
                     });
 
                     const base64Image = canvas.toDataURL("image/jpeg", 0.9);

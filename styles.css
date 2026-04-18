@@ -1346,6 +1346,11 @@ body {
         display: none !important;
     }
 
+    /* Force-hide any Vercel injected toolbars, browser extensions, or floating widgets */
+    body > *:not(.workspace) {
+        display: none !important;
+    }
+
     .workspace, .output-panel, .preview-container {
         display: block !important;
         width: 100% !important;

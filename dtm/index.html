@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Disruptive Methods for a Pollution-Free Society — DTM Presentation</title>
+    <meta name="description" content="A Design Thinking approach to global ecosystem restoration — 20 slides on disruptive methods to make society pollution-free.">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- Progress Bar -->
+    <div class="progress-bar" id="progress-bar"></div>
+
+    <!-- Navigation Arrows -->
+    <button class="nav-arrow nav-prev" id="nav-prev" aria-label="Previous slide">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+    </button>
+    <button class="nav-arrow nav-next" id="nav-next" aria-label="Next slide">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"></polyline></svg>
+    </button>
+
+    <!-- Slide Counter -->
+    <div class="slide-counter" id="slide-counter">1 / 20</div>
+
+    <!-- Navigation Dots -->
+    <div class="slide-dots" id="slide-dots"></div>
+
+    <!-- Fullscreen Toggle -->
+    <button class="fullscreen-btn" id="fullscreen-btn" aria-label="Toggle fullscreen" title="Fullscreen">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/></svg>
+    </button>
+
+    <!-- Download PPT Toggle -->
+    <a href="DTM_Presentation.pptx" download="Disruptive_Methods_Pollution_Free.pptx" class="download-btn" id="download-btn" aria-label="Download PPTX" title="Download PPT">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+    </a>
+
+    <!-- ======================== SLIDE 1: TITLE ======================== -->
+    <section class="slide active" id="slide-1" role="region" aria-label="Title Slide">
+        <div class="slide-bg title-bg">
+            <canvas id="particles-canvas"></canvas>
+        </div>
+        <div class="slide-content title-slide" style="justify-content: center; padding-top: clamp(20px, 3vh, 40px); padding-bottom: clamp(20px, 3vh, 40px);">
+            <div class="animate-in" style="--delay: 0">
+                <h2 class="institution-name" style="font-size: clamp(13px, 2vw, 26px);">SRM INSTITUTE OF SCIENCE AND TECHNOLOGY</h2>
+                <p class="campus-sub">Delhi-NCR Campus, Ghaziabad, UP</p>
+                <p class="campus-sub">(B.Tech, II -Year, 4<sup>th</sup> Semester)</p>
+            </div>
+            <h1 class="animate-in hero-title" style="--delay: 1; margin-top: 10px; font-size: clamp(24px, 5vw, 72px);">
+                Disruptive Methods to Make Society a<br><span class="gradient-text-hero">Pollution-Free Environment</span>
+            </h1>
+            <p class="animate-in subtitle" style="--delay: 2; font-size: clamp(12px, 1.8vw, 22px); margin-bottom: clamp(8px, 1.5vh, 16px);">A Design Thinking Approach to Global Ecosystem Restoration</p>
+
+            <!-- Team Table matching PPTX layout -->
+            <div class="animate-in team-table-wrap" style="--delay: 3">
+                <table class="team-table">
+                    <thead>
+                        <tr>
+                            <th>S.No</th>
+                            <th>Name</th>
+                            <th>Registration No</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>1</td><td>Kaustubh Acharya</td><td>RA2411004030022</td></tr>
+                        <tr><td>2</td><td>Harman Singh Cameotra</td><td>RA2411004030023</td></tr>
+                        <tr><td>3</td><td>Shamshad Ahmad Khan</td><td>RA2411004030025</td></tr>
+                        <tr><td>4</td><td>Rudrakshi Singh</td><td>RA2411004030026</td></tr>
+                        <tr><td>5</td><td>Sanskriti Sharma</td><td>RA2411004030027</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 2: AGENDA ======================== -->
+    <section class="slide" id="slide-2" role="region" aria-label="Agenda">
+        <div class="slide-bg bg-subtle-geo"></div>
+        <div class="slide-content">
+            <h2 class="animate-in slide-heading" style="--delay: 0"><span class="gradient-text-green">AGENDA</span></h2>
+            <div class="animate-in agenda-list" style="--delay: 1">
+                <div class="agenda-item"><span class="agenda-num">1</span> Problem Statement</div>
+                <div class="agenda-item"><span class="agenda-num">2</span> Stakeholders</div>
+                <div class="agenda-item"><span class="agenda-num">3</span> Power Index Matrix</div>
+                <div class="agenda-item"><span class="agenda-num">4</span> L0 Chart</div>
+                <div class="agenda-item"><span class="agenda-num">5</span> Opportunity Statement</div>
+                <div class="agenda-item"><span class="agenda-num">6</span> Divergence of Ideas</div>
+                <div class="agenda-item"><span class="agenda-num">7</span> Convergence of Ideas</div>
+                <div class="agenda-item"><span class="agenda-num">8</span> Persona</div>
+                <div class="agenda-item"><span class="agenda-num">9</span> Journey Map</div>
+                <div class="agenda-item"><span class="agenda-num">10</span> Three Laws of Design Thinking</div>
+                <div class="agenda-item"><span class="agenda-num">11</span> Storytelling</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 3: PROBLEM STATEMENT (Intro+Cards) ======================== -->
+    <section class="slide" id="slide-3" role="region" aria-label="Problem Statement Intro">
+        <div class="slide-bg bg-warm"></div>
+        <div class="slide-content">
+            <p class="animate-in section-label" style="--delay: 0">Context</p>
+            <h2 class="animate-in slide-heading" style="--delay: 1"><span class="gradient-text-warm">PROBLEM STATEMENT</span></h2>
+            <h3 class="animate-in problem-subtitle" style="--delay: 2">Disruptive Methods to Make Society a Pollution-Free Environment</h3>
+
+            <div class="three-columns animate-in" style="--delay: 3; grid-template-columns: repeat(4, 1fr);">
+                <div class="level-card glass-card ps-card">
+                    <h3>What is pollution?</h3>
+                    <ul><li>Introduction to air, water, soil, noise pollution types and their sources</li></ul>
+                </div>
+                <div class="level-card glass-card ps-card">
+                    <h3>Impact on health &amp; ecosystems</h3>
+                    <ul><li>Health crises, biodiversity loss, climate acceleration</li></ul>
+                </div>
+                <div class="level-card glass-card ps-card">
+                    <h3>Disruptive vs. traditional solutions</h3>
+                    <ul><li>Why incremental policies fail and radical innovations are needed</li></ul>
+                </div>
+                <div class="level-card glass-card ps-card">
+                    <h3>Growth vs. sustainability gap</h3>
+                    <ul><li>Industrial growth outpacing the planet's natural filtration</li></ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 4: PROBLEM STATEMENT (Detail) ======================== -->
+    <section class="slide" id="slide-4" role="region" aria-label="Problem Statement Detail">
+        <div class="slide-bg bg-corporate"></div>
+        <div class="slide-content" style="text-align:left;">
+            <p class="animate-in section-label" style="--delay: 0">Problem Depth</p>
+            <h2 class="animate-in slide-heading" style="--delay: 1">Problem Statement &amp; <span class="gradient-text">Background</span></h2>
+
+            <p class="animate-in slide-body ps-detail" style="--delay: 2">
+                Despite growing environmental awareness, global pollution levels continue to surpass the planet's natural remediation capacity. Traditional, incremental environmental policies — while well-intentioned — are fundamentally failing to address the exponential growth curve of industrial pollution.
+            </p>
+
+            <div class="animate-in ps-bullet-block" style="--delay: 3">
+                <div class="ps-bullet">
+                    <strong>Fragmented Engagement Channels:</strong> Citizen action, corporate ESG, and tech innovations exist in isolated silos. There is no unified, digital-first platform to integrate these efforts into a cohesive anti-pollution strategy.
+                </div>
+                <div class="ps-bullet">
+                    <strong>Missing Economic Incentives:</strong> Environmentalism is treated as "charity" rather than professional partnership. Without formal recognition or financial returns for sustainable behavior, it is difficult to sustain long-term engagement.
+                </div>
+                <div class="ps-bullet">
+                    <strong>Inefficient Matching Mechanisms:</strong> Current green-tech efforts often fail to deploy the right solution in the right geography. AI-driven, data-matched deployment is needed to maximize impact and avoid waste.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 5: PROBLEM STATEMENT (Impact) ======================== -->
+    <section class="slide" id="slide-5" role="region" aria-label="Problem Statement Impact">
+        <div class="slide-bg bg-deep"></div>
+        <div class="slide-content" style="text-align:left;">
+            <p class="animate-in section-label" style="--delay: 0">Consequences</p>
+            <h2 class="animate-in slide-heading" style="--delay: 1">Impact of <span class="gradient-text-purple">Inaction</span></h2>
+
+            <div class="animate-in ps-bullet-block" style="--delay: 2">
+                <div class="ps-bullet">
+                    <strong>Stagnation of Green Innovation Pipeline:</strong> Without disruptive systemic integration, clean-tech startups struggle to move past the prototype phase, leaving the market dominated by legacy polluters.
+                </div>
+                <div class="ps-bullet">
+                    <strong>Weakened Ecosystem Feedback Loop:</strong> The absence of real-time IoT pollution data and AI-driven analytics prevents the continuous optimization of resource deployment, widening the gap between pilot projects and planetary-scale impact.
+                </div>
+                <div class="ps-bullet">
+                    <strong>Missed Investment &amp; Behavioral Opportunities:</strong> Without gamified incentive structures and blockchain-verified green-credits, there is no economic motivation for citizens and corporations to adopt disruptive sustainable practices at scale.
+                </div>
+                <div class="ps-bullet">
+                    <strong>Communication Gaps:</strong> The general public often doesn't know how to participate in disruptive eco-solutions. Without clear, accessible, gamified calls-to-action, even willing citizens remain on the sidelines.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 6: KEY STAKEHOLDERS (Intro) ======================== -->
+    <section class="slide" id="slide-6" role="region" aria-label="Key Stakeholders Intro">
+        <div class="slide-bg bg-leader"></div>
+        <div class="slide-content">
+            <p class="animate-in section-label" style="--delay: 0">Ecosystem Players</p>
+            <h2 class="animate-in slide-heading" style="--delay: 1"><span class="gradient-text-green">KEY STAKEHOLDERS</span></h2>
+            <p class="animate-in slide-body" style="--delay: 2; max-width: 900px; text-align: center;">
+                The success of a pollution-free ecosystem depends on a coordinated network of key contributors. These stakeholders bridge the gap between disruptive technology and systemic adoption by providing the essential expertise, resources, and capital needed to scale clean solutions globally.
+            </p>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 7: STAKEHOLDER MAPPING (Detail) ======================== -->
+    <section class="slide" id="slide-7" role="region" aria-label="Stakeholder Mapping">
+        <div class="slide-bg bg-electric"></div>
+        <div class="slide-content">
+            <p class="animate-in section-label" style="--delay: 0">Network</p>
+            <h2 class="animate-in slide-heading" style="--delay: 1">THE STAKEHOLDER <span class="gradient-text-electric">MAPPING</span></h2>
+
+            <div class="stakeholder-map animate-in" style="--delay: 2">
+                <div class="stake-card" style="border-color: rgba(48,209,88,0.4);">
+                    <div class="stake-icon">⚡</div>
+                    <h3>Innovators &amp; Engineers</h3>
+                    <p>Established professionals creating disruptive hardware, biotech, and frontier clean-tech solutions.</p>
+                </div>
+                <div class="stake-card" style="border-color: rgba(41,151,255,0.4);">
+                    <div class="stake-icon">🏛️</div>
+                    <h3>Governments</h3>
+                    <p>The leadership providing the regulatory frameworks, funding, and infrastructure for planetary deployment.</p>
+                </div>
+                <div class="stake-card" style="border-color: rgba(255,159,10,0.4);">
+                    <div class="stake-icon">🏢</div>
+                    <h3>Corporate Partners</h3>
+                    <p>External firms scaling disruptive tech through industrial adoption, pilot opportunities, and ESG investment.</p>
+                </div>
+                <div class="stake-card center-stake" style="border-color: rgba(0,201,167,0.5); grid-column: 1 / -1;">
+                    <div class="stake-icon">🌍</div>
+                    <h3>Pollution-Free Ecosystem</h3>
+                    <p style="color: var(--emerald);">The central hub connecting all stakeholders toward zero-pollution outcomes.</p>
+                </div>
+                <div class="stake-card" style="border-color: rgba(191,90,242,0.4);">
+                    <div class="stake-icon">👥</div>
+                    <h3>Citizens</h3>
+                    <p>Primary beneficiaries driving baseline behavioral shifts, crowdsourced data reporting, and daily adoption.</p>
+                </div>
+                <div class="stake-card" style="border-color: rgba(255,214,10,0.4);">
+                    <div class="stake-icon">💰</div>
+                    <h3>Green VCs</h3>
+                    <p>Capital providers fueling the high-risk, high-reward pipeline for rapid deployment of clean-tech ventures.</p>
+                </div>
+                <div class="stake-card" style="border-color: rgba(255,107,138,0.4);">
+                    <div class="stake-icon">🔬</div>
+                    <h3>Faculty &amp; Research Labs</h3>
+                    <p>Technical experts bridging the gap between academic environmental research and commercial green products.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 8: POWER INTEREST MATRIX ======================== -->
+    <section class="slide" id="slide-8" role="region" aria-label="Power Interest Matrix">
+        <div class="slide-bg bg-warm-connect"></div>
+        <div class="slide-content">
+            <h2 class="animate-in slide-heading" style="--delay: 0"><span class="gradient-text-warm">POWER INTEREST MATRIX</span></h2>
+
+            <div class="animate-in power-matrix" style="--delay: 1">
+                <div class="pm-axis-y">POWER</div>
+                <div class="pm-axis-x">INTEREST</div>
+
+                <div class="pm-cell pm-tl" style="border-color: rgba(255,55,95,0.3);">
+                    <h4 style="color: var(--pink);">HIGH POWER HIGH INTEREST</h4>
+                    <div class="pm-items">
+                        <span class="pm-tag" style="background: rgba(41,151,255,0.15); border-color: rgba(41,151,255,0.3);">Governments</span>
+                        <span class="pm-tag" style="background: rgba(255,214,10,0.15); border-color: rgba(255,214,10,0.3);">Green VCs</span>
+                    </div>
+                </div>
+                <div class="pm-cell pm-tr" style="border-color: rgba(255,159,10,0.3);">
+                    <h4 style="color: var(--orange);">HIGH POWER LOW INTEREST</h4>
+                    <div class="pm-items">
+                        <span class="pm-tag" style="background: rgba(255,159,10,0.15); border-color: rgba(255,159,10,0.3);">Heavy Industry</span>
+                        <span class="pm-tag" style="background: rgba(134,134,139,0.15); border-color: rgba(134,134,139,0.3);">Fossil Fuel Lobby</span>
+                    </div>
+                </div>
+                <div class="pm-cell pm-bl" style="border-color: rgba(48,209,88,0.3);">
+                    <h4 style="color: var(--green);">LOW POWER HIGH INTEREST</h4>
+                    <div class="pm-items">
+                        <span class="pm-tag" style="background: rgba(48,209,88,0.15); border-color: rgba(48,209,88,0.3);">Eco-conscious Citizens</span>
+                        <span class="pm-tag" style="background: rgba(191,90,242,0.15); border-color: rgba(191,90,242,0.3);">Tech Startups</span>
+                    </div>
+                </div>
+                <div class="pm-cell pm-br" style="border-color: rgba(134,134,139,0.3);">
+                    <h4 style="color: var(--gray-500);">LOW POWER LOW INTEREST</h4>
+                    <div class="pm-items">
+                        <span class="pm-tag" style="background: rgba(134,134,139,0.1); border-color: rgba(134,134,139,0.2);">Disengaged General Public</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 9: L0 CHART ======================== -->
+    <section class="slide" id="slide-9" role="region" aria-label="L0 Chart">
+        <div class="slide-bg bg-electric"></div>
+        <div class="slide-content">
+            <h2 class="animate-in slide-heading" style="--delay: 0"><span class="gradient-text-electric">L0 Chart</span></h2>
+
+            <div class="animate-in l0-chart" style="--delay: 1">
+                <!-- Left column inputs -->
+                <div class="l0-col l0-left">
+                    <div class="l0-box" style="border-color: rgba(41,151,255,0.3);">
+                        <h4>CITIZEN ENGAGEMENT</h4>
+                        <ul>
+                            <li>AR Pollution Viz Apps</li>
+                            <li>Gamified Recycling Bins</li>
+                            <li>Wearable Toxicity Monitors</li>
+                        </ul>
+                    </div>
+                    <div class="l0-box" style="border-color: rgba(48,209,88,0.3);">
+                        <h4>BIOTECH DEPLOYMENT</h4>
+                        <ul>
+                            <li>Super-algae CO₂ Farms</li>
+                            <li>Mycelium Packaging</li>
+                            <li>Plastic-eating Bacteria</li>
+                        </ul>
+                    </div>
+                    <div class="l0-box" style="border-color: rgba(255,214,10,0.3);">
+                        <h4>RESOURCE ACCESS</h4>
+                        <ul>
+                            <li>Green VC Capital</li>
+                            <li>Carbon Credit Trading</li>
+                            <li>Industry Partnerships</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Center engine -->
+                <div class="l0-col l0-center">
+                    <div class="l0-engine">
+                        <h3>POLLUTION-FREE<br>ECOSYSTEM<br>PIPELINE</h3>
+                    </div>
+                    <div class="l0-sub-boxes">
+                        <div class="l0-mini" style="border-color: rgba(0,212,255,0.3);">
+                            <strong>IoT Data Engine</strong><p>Real-time sensor mesh</p>
+                        </div>
+                        <div class="l0-mini" style="border-color: rgba(191,90,242,0.3);">
+                            <strong>AI Matching Algorithm</strong><p>Solution ↔ Geography</p>
+                        </div>
+                        <div class="l0-mini" style="border-color: rgba(0,201,167,0.3);">
+                            <strong>Blockchain Ledger</strong><p>Impact verification</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right column outputs -->
+                <div class="l0-col l0-right">
+                    <div class="l0-box" style="border-color: rgba(255,107,138,0.3);">
+                        <h4>IMPACT REPORTING</h4>
+                        <ul>
+                            <li>Clean Air/Water Metrics</li>
+                            <li>City AQI Dashboards</li>
+                            <li>ROI for Governments</li>
+                        </ul>
+                    </div>
+                    <div class="l0-box" style="border-color: rgba(255,159,10,0.3);">
+                        <h4>RECOGNITION &amp; REWARDS</h4>
+                        <ul>
+                            <li>Eco-Token Crypto Rewards</li>
+                            <li>Corporate Tax Credits</li>
+                            <li>Green Leaderboards</li>
+                        </ul>
+                    </div>
+                    <div class="l0-box" style="border-color: rgba(168,224,99,0.3);">
+                        <h4>CONTINUOUS IMPROVEMENT</h4>
+                        <ul>
+                            <li>Citizen Surveys</li>
+                            <li>System Iterations</li>
+                            <li>Success Metrics Analysis</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 10: OPPORTUNITY STATEMENT (Intro) ======================== -->
+    <section class="slide" id="slide-10" role="region" aria-label="Opportunity Statement Intro">
+        <div class="slide-bg bg-achieve"></div>
+        <div class="slide-content" style="text-align:left;">
+            <p class="animate-in section-label" style="--delay: 0">From Problem to Possibility</p>
+            <h2 class="animate-in slide-heading" style="--delay: 1">Opportunity <span class="gradient-text-green">Statement</span></h2>
+
+            <div class="animate-in opp-intro" style="--delay: 2">
+                <h3>What is an Opportunity Statement?</h3>
+                <ul>
+                    <li>A reframing of a problem into a design challenge</li>
+                    <li>Written as a "How Might We…" (HMW) question</li>
+                    <li>Sits between Define and Ideate in Design Thinking</li>
+                    <li>Opens up possibilities without limiting creativity</li>
+                </ul>
+            </div>
+
+            <div class="animate-in opp-types" style="--delay: 3">
+                <h3>Three types of HMW:</h3>
+                <div class="opp-type-row">
+                    <div class="opp-type" style="border-color: rgba(255,55,95,0.3);">
+                        <span style="color: var(--pink);">Too Narrow</span> — limits ideas
+                    </div>
+                    <div class="opp-type" style="border-color: rgba(255,159,10,0.3);">
+                        <span style="color: var(--orange);">Too Broad</span> — no direction
+                    </div>
+                    <div class="opp-type" style="border-color: rgba(48,209,88,0.3);">
+                        <span style="color: var(--green);">Just Right</span> — opens doors
+                    </div>
+                </div>
+            </div>
+
+            <div class="animate-in" style="--delay: 4">
+                <blockquote class="quote-block">
+                    Example (Just Right): "How Might We make citizens feel like active stakeholders in a pollution-free future?"
+                </blockquote>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 11: OPPORTUNITY STATEMENT (HMW) ======================== -->
+    <section class="slide" id="slide-11" role="region" aria-label="Opportunity Statement HMW">
+        <div class="slide-bg title-bg"></div>
+        <div class="slide-content" style="text-align:left;">
+            <p class="animate-in section-label" style="--delay: 0">Our HMW Statement</p>
+            <h2 class="animate-in slide-heading" style="--delay: 1">Opportunity <span class="gradient-text-hero">Statement</span></h2>
+
+            <div class="animate-in hmw-block" style="--delay: 2">
+                <p class="hmw-text">
+                    "How Might We inspire citizens, corporations, and governments to become financially and emotionally invested co-creators of a radically disruptive, zero-pollution ecosystem?"
+                </p>
+            </div>
+
+            <div class="animate-in hmw-breakdown" style="--delay: 3">
+                <h3>Breaking it down:</h3>
+                <div class="hmw-item"><strong>How Might We</strong> — Open, optimistic, team-based framing</div>
+                <div class="hmw-item"><strong>Inspire citizens, corps &amp; govts</strong> — Focus on motivation, not obligation</div>
+                <div class="hmw-item"><strong>Financially &amp; emotionally invested</strong> — Long-term engagement, not performative</div>
+                <div class="hmw-item"><strong>Co-creators</strong> — All parties as active partners, not passive donors</div>
+                <div class="hmw-item"><strong>Zero-pollution ecosystem</strong> — Specific to radical environmental disruption</div>
+            </div>
+
+            <div class="animate-in hmw-derived" style="--delay: 4">
+                <h3>Derived from:</h3>
+                <p><strong>Pain Point:</strong> Fragmented systems — citizen, corporate, and tech solutions exist in silos</p>
+                <p><strong>Insight:</strong> People want impact, recognition, and financial incentive — not just guilt</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 12: DIVERGENCE OF IDEAS (Table) ======================== -->
+    <section class="slide" id="slide-12" role="region" aria-label="Divergence of Ideas">
+        <div class="slide-bg bg-subtle-geo"></div>
+        <div class="slide-content">
+            <h2 class="animate-in slide-heading" style="--delay: 0">Divergence — <span class="gradient-text">100 Ideas</span></h2>
+            <p class="animate-in" style="--delay: 0; font-size: clamp(11px, 1.2vw, 15px); color: rgba(255,255,255,0.5); margin-bottom: 12px;">
+                Disruptive Methods to Make Society a Pollution-Free Environment
+            </p>
+
+            <div class="animate-in divergence-table-wrap" style="--delay: 1">
+                <table class="divergence-table">
+                    <thead>
+                        <tr>
+                            <th class="dt-ka">KA</th>
+                            <th class="dt-hsc">HSC</th>
+                            <th class="dt-sk">SK</th>
+                            <th class="dt-rs">RS</th>
+                            <th class="dt-ss">SS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1. Drone smog scrubbers</td>
+                            <td>1. Wireless EV charge lanes</td>
+                            <td>1. Graphene water filters</td>
+                            <td>1. Super-algae CO₂ eaters</td>
+                            <td>1. Carbon crypto-rewards</td>
+                        </tr>
+                        <tr>
+                            <td>2. IoT traffic optimization</td>
+                            <td>2. Kinetic sidewalks</td>
+                            <td>2. Carbon-capture concrete</td>
+                            <td>2. Bioluminescent lights</td>
+                            <td>2. Gamified AI recycling</td>
+                        </tr>
+                        <tr>
+                            <td>3. AQI smart streetlights</td>
+                            <td>3. Algae bio-fuel jets</td>
+                            <td>3. Magnetic microplastic extraction</td>
+                            <td>3. Mycelium packaging</td>
+                            <td>3. Carpool lottery apps</td>
+                        </tr>
+                        <tr>
+                            <td>4. AI emission controls</td>
+                            <td>4. Hyperloop transit</td>
+                            <td>4. Edible water packaging</td>
+                            <td>4. Plastic-eating bacteria</td>
+                            <td>4. Algo tax breaks</td>
+                        </tr>
+                        <tr>
+                            <td>5. Wearable air monitors</td>
+                            <td>5. Maglev urban pods</td>
+                            <td>5. Hemp vehicle bodies</td>
+                            <td>5. Modular moss walls</td>
+                            <td>5. VR eco-tourism funding</td>
+                        </tr>
+                        <tr>
+                            <td>6. Blockchain carbon track</td>
+                            <td>6. Transparent solar glass</td>
+                            <td>6. Ocean plastic clothing</td>
+                            <td>6. Hyper-carbon-sink trees</td>
+                            <td>6. School green incubators</td>
+                        </tr>
+                        <tr>
+                            <td>7. 3D smog-eating facades</td>
+                            <td>7. Wind-tree turbines</td>
+                            <td>7. Nanotech air filters</td>
+                            <td>7. Enzyme water purification</td>
+                            <td>7. Pollution dashboards</td>
+                        </tr>
+                        <tr>
+                            <td>8. Ocean plastic skimmers</td>
+                            <td>8. Piezoelectric tracks</td>
+                            <td>8. Recyclable turbine blades</td>
+                            <td>8. Mycelium bricks</td>
+                            <td>8. Eco-points currency</td>
+                        </tr>
+                        <tr>
+                            <td>9. Satellite GHG mapping</td>
+                            <td>9. Tidal surge barriers</td>
+                            <td>9. Waterless textile dye</td>
+                            <td>9. Plant micro filtration</td>
+                            <td>9. P2P solar micro-grids</td>
+                        </tr>
+                        <tr>
+                            <td>10. AI pollution apps</td>
+                            <td>10. Bio EV batteries</td>
+                            <td>10. Self-healing concrete</td>
+                            <td>10. Synth bio decomp</td>
+                            <td>10. Blockchain green-ledgers</td>
+                        </tr>
+                        <tr>
+                            <td>11. Smart HVAC grids</td>
+                            <td>11. Auto freight platoons</td>
+                            <td>11. CO₂ synth diamonds</td>
+                            <td>11. Breathing facades</td>
+                            <td>11. Tokenized tree planting</td>
+                        </tr>
+                        <tr>
+                            <td>12. Acoustic smoke disp</td>
+                            <td>12. Drone deliveries</td>
+                            <td>12. Modular electronics</td>
+                            <td>12. Algae-fueled buses</td>
+                            <td>12. Green-bond micro-invest</td>
+                        </tr>
+                        <tr>
+                            <td>13. Robotic river skimmers</td>
+                            <td>13. Solar water generators</td>
+                            <td>13. Biodegradable 3D filament</td>
+                            <td>13. Bio-reactive NOx paint</td>
+                            <td>13. Local carbon offsets</td>
+                        </tr>
+                        <tr>
+                            <td>14. Municipal dashboards</td>
+                            <td>14. V2G infrastructure</td>
+                            <td>14. Aerosol-free packaging</td>
+                            <td>14. Soil microbiome kits</td>
+                            <td>14. Zero-waste boards</td>
+                        </tr>
+                        <tr>
+                            <td>15. Citizen sensor nets</td>
+                            <td>15. Geothermal urban grids</td>
+                            <td>15. Seaweed bio-plastics</td>
+                            <td>15. Rooftop aeroponic cool</td>
+                            <td>15. Eco-grocery subsidies</td>
+                        </tr>
+                        <tr>
+                            <td>16. Smart window vent</td>
+                            <td>16. Hydrogen ferries</td>
+                            <td>16. Green steel mfg</td>
+                            <td>16. Methane bio-domes</td>
+                            <td>16. IoT tool-sharing libs</td>
+                        </tr>
+                        <tr>
+                            <td>17. AR pollution viz</td>
+                            <td>17. Blimp zero-emission</td>
+                            <td>17. Industrial symbiosis</td>
+                            <td>17. Cellulose bio-electronics</td>
+                            <td>17. Eco-transparency tags</td>
+                        </tr>
+                        <tr>
+                            <td>18. ML energy routing</td>
+                            <td>18. E-bike highways</td>
+                            <td>18. Lab-grown leather</td>
+                            <td>18. Fungal bioremediation</td>
+                            <td>18. P2P energy trading</td>
+                        </tr>
+                        <tr>
+                            <td>19. Open emissions APIs</td>
+                            <td>19. AI-routed buses</td>
+                            <td>19. Plant acoustic insulation</td>
+                            <td>19. Bio-char farming</td>
+                            <td>19. Climate impact labels</td>
+                        </tr>
+                        <tr>
+                            <td>20. VR climate empathy</td>
+                            <td>20. Space solar beaming</td>
+                            <td>20. CO₂ industrial spirits</td>
+                            <td>20. Phytoremediation parks</td>
+                            <td>20. AR beach clean-ups</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 13: CONVERGENCE OF IDEAS ======================== -->
+    <section class="slide" id="slide-13" role="region" aria-label="Convergence of Ideas">
+        <div class="slide-bg bg-converge-1"></div>
+        <div class="slide-content">
+            <h2 class="animate-in slide-heading" style="--delay: 0">Convergence of <span class="gradient-text-electric">Ideas</span></h2>
+            <p class="animate-in" style="--delay: 0; font-size: clamp(11px, 1.2vw, 15px); color: rgba(255,255,255,0.5); margin-bottom: 12px;">
+                Filtering 100 ideas → Top 10 Selected &nbsp;|&nbsp; Based on Impact &amp; Feasibility
+            </p>
+
+            <div class="animate-in convergence-table-wrap" style="--delay: 1">
+                <table class="convergence-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Selected Idea</th>
+                            <th>Category</th>
+                            <th>By</th>
+                            <th>Impact</th>
+                            <th>Feasibility</th>
+                            <th>Decision</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>1</td><td>Drone smog scrubbers</td><td>Tech/IoT</td><td>KA</td><td class="hi">High</td><td class="hi">High</td><td class="proto">Take to Prototype</td></tr>
+                        <tr><td>2</td><td>Carbon crypto-rewards</td><td>Gamification</td><td>SS</td><td class="hi">High</td><td class="hi">High</td><td class="proto">Take to Prototype</td></tr>
+                        <tr><td>3</td><td>Super-algae CO₂ farms</td><td>Biotech</td><td>RS</td><td class="hi">High</td><td class="hi">High</td><td class="proto">Take to Prototype</td></tr>
+                        <tr><td>4</td><td>Carbon-capture concrete</td><td>Materials</td><td>SK</td><td class="hi">High</td><td class="hi">High</td><td class="proto">Take to Prototype</td></tr>
+                        <tr><td>5</td><td>Gamified AI recycling bins</td><td>Gamification</td><td>SS</td><td class="hi">High</td><td class="hi">High</td><td class="proto">Take to Prototype</td></tr>
+                        <tr><td>6</td><td>Wireless EV charge lanes</td><td>Energy</td><td>HSC</td><td class="hi">High</td><td class="md">Medium</td><td class="refine">Refine Further</td></tr>
+                        <tr><td>7</td><td>Transparent solar glass</td><td>Energy</td><td>HSC</td><td class="hi">High</td><td class="md">Medium</td><td class="refine">Refine Further</td></tr>
+                        <tr><td>8</td><td>Graphene water filters</td><td>Materials</td><td>SK</td><td class="hi">High</td><td class="md">Medium</td><td class="refine">Refine Further</td></tr>
+                        <tr><td>9</td><td>Plastic-eating bacteria</td><td>Biotech</td><td>RS</td><td class="hi">High</td><td class="md">Medium</td><td class="refine">Refine Further</td></tr>
+                        <tr><td>10</td><td>AI emission controls</td><td>Tech/IoT</td><td>KA</td><td class="hi">High</td><td class="md">Medium</td><td class="refine">Refine Further</td></tr>
+                    </tbody>
+                </table>
+                <div class="convergence-legend">
+                    <span style="color: var(--green);">Take to Prototype = Best ideas, move forward</span>
+                    <span style="color: var(--orange);">Refine Further = Good, needs more work</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 14: PERSONA 1 ======================== -->
+    <section class="slide" id="slide-14" role="region" aria-label="Persona 1">
+        <div class="slide-bg bg-persona"></div>
+        <div class="slide-content">
+            <div class="animate-in persona-card" style="--delay: 0">
+                <div class="persona-header">
+                    <div class="persona-avatar" style="background: linear-gradient(135deg, rgba(41,151,255,0.2), rgba(0,212,255,0.2)); border: 2px solid rgba(41,151,255,0.3);">🌊</div>
+                    <div>
+                        <div class="persona-name">Persona 1: Boyan Slat<span style="font-size:0.6em; font-weight:400; color: rgba(255,255,255,0.5);"> (Inspired by The Ocean Cleanup)</span></div>
+                    </div>
+                </div>
+                <div class="persona-grid">
+                    <div class="persona-section">
+                        <h4>BACKGROUND</h4>
+                        <ul>
+                            <li>Disruptive engineer trying to scale a frontier clean-tech startup.</li>
+                            <li>Former student inventor turned environmental entrepreneur.</li>
+                            <li>Focused on autonomous ocean-cleaning robotics.</li>
+                        </ul>
+                    </div>
+                    <div class="persona-section">
+                        <h4>CHALLENGES FACED</h4>
+                        <ul>
+                            <li>Navigating regulatory red tape across multiple jurisdictions.</li>
+                            <li>Securing the immense capital required for frontier hardware.</li>
+                            <li>Navigating intense global environmental scrutiny.</li>
+                        </ul>
+                    </div>
+                    <div class="persona-section">
+                        <h4>MOTIVATION</h4>
+                        <ul>
+                            <li>Use autonomous robotics to permanently clean major waterways.</li>
+                            <li>Prove that technology can solve pollution faster than policy.</li>
+                        </ul>
+                    </div>
+                    <div class="persona-section">
+                        <h4>DOUBT/FEAR</h4>
+                        <ul>
+                            <li>Worries about irreversible ecological collapse before tech is ready.</li>
+                            <li>Anxious about greenwashing diluting genuine impact.</li>
+                        </ul>
+                    </div>
+                    <div class="persona-section" style="grid-column: 1 / -1;">
+                        <h4>ASPIRATIONS</h4>
+                        <ul>
+                            <li>Establish global frameworks for autonomous environmental cleanup.</li>
+                            <li>Advance carbon-negative construction to power future cities.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 15: PERSONA 2 ======================== -->
+    <section class="slide" id="slide-15" role="region" aria-label="Persona 2">
+        <div class="slide-bg bg-persona" style="background: linear-gradient(135deg, #140a1a 0%, #281435 40%, #140a1a 100%);"></div>
+        <div class="slide-content">
+            <div class="animate-in persona-card" style="--delay: 0">
+                <div class="persona-header">
+                    <div class="persona-avatar" style="background: linear-gradient(135deg, rgba(48,209,88,0.2), rgba(168,224,99,0.2)); border: 2px solid rgba(48,209,88,0.3);">🚀</div>
+                    <div>
+                        <div class="persona-name">Persona 2: Elon Musk<span style="font-size:0.6em; font-weight:400; color: rgba(255,255,255,0.5);"> (CEO &amp; Co-founder, Tesla &amp; SpaceX)</span></div>
+                    </div>
+                </div>
+                <div class="persona-grid">
+                    <div class="persona-section">
+                        <h4>BACKGROUND</h4>
+                        <ul>
+                            <li>Visionary CEO driving mass adoption of electric vehicles globally.</li>
+                            <li>Pioneer of consumer-grade solar energy (SolarCity/Tesla Energy).</li>
+                            <li>Advocate for transitioning the world entirely off fossil fuels.</li>
+                        </ul>
+                    </div>
+                    <div class="persona-section">
+                        <h4>CHALLENGES FACED</h4>
+                        <ul>
+                            <li>Overcoming legacy auto-industry resistance to electrification.</li>
+                            <li>Scaling battery production to meet exponential EV demand.</li>
+                            <li>Managing public perception &amp; regulatory battles across nations.</li>
+                        </ul>
+                    </div>
+                    <div class="persona-section">
+                        <h4>MOTIVATION</h4>
+                        <ul>
+                            <li>Accelerate the world's transition to sustainable energy.</li>
+                            <li>Prove that clean-tech can be commercially dominant, not just ethical.</li>
+                        </ul>
+                    </div>
+                    <div class="persona-section">
+                        <h4>DOUBT/FEAR</h4>
+                        <ul>
+                            <li>Concerned that the pace of climate change outstrips tech deployment.</li>
+                            <li>Worried about geopolitical disruptions to critical mineral supply chains.</li>
+                        </ul>
+                    </div>
+                    <div class="persona-section" style="grid-column: 1 / -1;">
+                        <h4>ASPIRATIONS</h4>
+                        <ul>
+                            <li>Achieve a fully solar-powered global grid with distributed Tesla Powerwalls.</li>
+                            <li>Make zero-emission transportation the default mode worldwide by 2040.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 16: JOURNEY MAP 1 ======================== -->
+    <section class="slide" id="slide-16" role="region" aria-label="Journey Map - Boyan">
+        <div class="slide-bg bg-journey"></div>
+        <div class="slide-content">
+            <h2 class="animate-in slide-heading" style="--delay: 0">JOURNEY MAPPING: <span class="gradient-text-electric">Boyan Slat's Perspective</span></h2>
+
+            <div class="animate-in journey-timeline" style="--delay: 1">
+                <!-- Y-axis label -->
+                <div class="jt-y-axis">EXPERIENCE</div>
+
+                <!-- Graph with scale -->
+                <div class="jt-graph-container">
+                    <div class="jt-scale">
+                        <span>+5</span><span>+3</span><span>+1</span><span>0</span><span>-1</span><span>-3</span><span>-5</span>
+                    </div>
+                    <div class="jt-graph">
+                        <!-- Data points with numbered X-axis positions -->
+                        <div class="jt-point jt-up" style="left:6%; bottom:55%;">
+                            <span class="jt-label">Conceptualizing<br>Ocean Cleanup</span>
+                            <span class="jt-x-num">1</span>
+                        </div>
+                        <div class="jt-point jt-high" style="left:16%; bottom:85%;">
+                            <span class="jt-label">Developing<br>Prototype v1</span>
+                            <span class="jt-x-num">3</span>
+                        </div>
+                        <div class="jt-point jt-up" style="left:26%; bottom:65%;">
+                            <span class="jt-label">Recruiting<br>key engineers</span>
+                            <span class="jt-x-num">5</span>
+                        </div>
+                        <div class="jt-point jt-high" style="left:36%; bottom:78%;">
+                            <span class="jt-label">First successful<br>ocean test</span>
+                            <span class="jt-x-num">7</span>
+                        </div>
+                        <div class="jt-point jt-down" style="left:46%; bottom:25%;">
+                            <span class="jt-label">Equipment<br>breaks down</span>
+                            <span class="jt-x-num">9</span>
+                        </div>
+                        <div class="jt-point jt-high" style="left:56%; bottom:80%;">
+                            <span class="jt-label">Redesigned<br>System 002</span>
+                            <span class="jt-x-num">11</span>
+                        </div>
+                        <div class="jt-point jt-down" style="left:66%; bottom:30%;">
+                            <span class="jt-label">Regulatory<br>red tape</span>
+                            <span class="jt-x-num">13</span>
+                        </div>
+                        <div class="jt-point jt-up" style="left:76%; bottom:60%;">
+                            <span class="jt-label">Global<br>partnerships</span>
+                            <span class="jt-x-num">15</span>
+                        </div>
+                        <div class="jt-point jt-high" style="left:88%; bottom:72%;">
+                            <span class="jt-label">Scaling to<br>all oceans</span>
+                            <span class="jt-x-num">18</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Annotation boxes (matching PPTX style) -->
+                <div class="jt-annotations">
+                    <div class="jt-anno" style="border-color: rgba(255,55,95,0.5); background: rgba(255,55,95,0.1);">
+                        <strong style="color: var(--pink);">N1 (Red):</strong>
+                        <p>Conceptualizing Ocean Cleanup (Doubt: Scale of Plastics)</p>
+                    </div>
+                    <div class="jt-anno" style="border-color: rgba(41,151,255,0.5); background: rgba(41,151,255,0.1);">
+                        <strong style="color: var(--blue);">N3 (Blue):</strong>
+                        <p>Recruiting engineers &amp; safety staff (Motivation: Save Oceans)</p>
+                    </div>
+                    <div class="jt-anno" style="border-color: rgba(255,159,10,0.5); background: rgba(255,159,10,0.1);">
+                        <strong style="color: var(--orange);">N5 (Orange):</strong>
+                        <p>First ocean test — Unexpected effectiveness</p>
+                    </div>
+                    <div class="jt-anno" style="border-color: rgba(255,214,10,0.5); background: rgba(255,214,10,0.1);">
+                        <strong style="color: var(--gold);">N6 (Yellow):</strong>
+                        <p>Conflict: Scale fast or optimize carefully?</p>
+                    </div>
+                    <div class="jt-anno" style="border-color: rgba(191,90,242,0.5); background: rgba(191,90,242,0.1);">
+                        <strong style="color: var(--purple);">N9 (Purple):</strong>
+                        <p>Regulatory challenges across jurisdictions (Challenge)</p>
+                    </div>
+                    <div class="jt-anno" style="border-color: rgba(48,209,88,0.5); background: rgba(48,209,88,0.1);">
+                        <strong style="color: var(--green);">N11 (Green):</strong>
+                        <p>Establishing global cleanup partnerships (Aspiration)</p>
+                    </div>
+                </div>
+
+                <!-- Phase chevrons -->
+                <div class="jt-phases">
+                    <div class="jt-phase" style="background: rgba(255,55,95,0.2); border-color: rgba(255,55,95,0.4);">ANTICIPATE</div>
+                    <div class="jt-phase" style="background: rgba(41,151,255,0.2); border-color: rgba(41,151,255,0.4);">ENTER</div>
+                    <div class="jt-phase" style="background: rgba(255,159,10,0.2); border-color: rgba(255,159,10,0.4);">ENGAGE</div>
+                    <div class="jt-phase" style="background: rgba(48,209,88,0.2); border-color: rgba(48,209,88,0.4);">REFLECT</div>
+                </div>
+
+                <div class="jt-legend">
+                    <span>🟢 Achievement / Success</span>
+                    <span>🔴 Challenge / Failure / Losing</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 17: JOURNEY MAP 2 ======================== -->
+    <section class="slide" id="slide-17" role="region" aria-label="Journey Map - Elon Musk">
+        <div class="slide-bg bg-journey" style="background: linear-gradient(135deg, #0a1a0a 0%, #143014 40%, #0a1a0a 100%);"></div>
+        <div class="slide-content">
+            <h2 class="animate-in slide-heading" style="--delay: 0">JOURNEY MAPPING: <span class="gradient-text-green">Elon Musk's Clean Energy Pivot</span></h2>
+
+            <div class="animate-in journey-timeline" style="--delay: 1">
+                <!-- Y-axis label -->
+                <div class="jt-y-axis">Emotional Experience Score</div>
+
+                <!-- Graph with scale -->
+                <div class="jt-graph-container">
+                    <div class="jt-scale">
+                        <span>+5</span><span>+3</span><span>+1</span><span>0</span><span>-1</span><span>-3</span><span>-5</span>
+                    </div>
+                    <div class="jt-graph">
+                        <div class="jt-point jt-down" style="left:4%; bottom:32%;">
+                            <span class="jt-label">Fear of fossil<br>fuel dominance</span>
+                            <span class="jt-x-num">Early 2000s</span>
+                        </div>
+                        <div class="jt-point jt-up" style="left:14%; bottom:55%;">
+                            <span class="jt-label">Founding<br>Tesla Motors</span>
+                            <span class="jt-x-num">2003</span>
+                        </div>
+                        <div class="jt-point jt-down" style="left:24%; bottom:20%;">
+                            <span class="jt-label">Near-bankruptcy<br>2008 crisis</span>
+                            <span class="jt-x-num">2008</span>
+                        </div>
+                        <div class="jt-point jt-up" style="left:34%; bottom:60%;">
+                            <span class="jt-label">Model S<br>launch</span>
+                            <span class="jt-x-num">2012</span>
+                        </div>
+                        <div class="jt-point jt-high" style="left:44%; bottom:82%;">
+                            <span class="jt-label">Gigafactory<br>announcement</span>
+                            <span class="jt-x-num">2014</span>
+                        </div>
+                        <div class="jt-point jt-down" style="left:54%; bottom:28%;">
+                            <span class="jt-label">Production<br>hell (Model 3)</span>
+                            <span class="jt-x-num">2018</span>
+                        </div>
+                        <div class="jt-point jt-high" style="left:64%; bottom:88%;">
+                            <span class="jt-label">Becoming world's<br>most valuable auto</span>
+                            <span class="jt-x-num">2020</span>
+                        </div>
+                        <div class="jt-point jt-up" style="left:76%; bottom:65%;">
+                            <span class="jt-label">Scaling<br>global Gigafactories</span>
+                            <span class="jt-x-num">2023</span>
+                        </div>
+                        <div class="jt-point jt-high" style="left:90%; bottom:75%;">
+                            <span class="jt-label">Full solar grid<br>vision</span>
+                            <span class="jt-x-num">Future</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Annotation boxes -->
+                <div class="jt-annotations">
+                    <div class="jt-anno" style="border-color: rgba(255,55,95,0.5); background: rgba(255,55,95,0.1);">
+                        <strong style="color: var(--pink);">N1 (Red):</strong>
+                        <p>Constant motivating fear of fossil fuel lock-in</p>
+                    </div>
+                    <div class="jt-anno" style="border-color: rgba(41,151,255,0.5); background: rgba(41,151,255,0.1);">
+                        <strong style="color: var(--blue);">N3 (Blue):</strong>
+                        <p>Pioneering EV manufacturing beyond industry limits</p>
+                    </div>
+                    <div class="jt-anno" style="border-color: rgba(255,159,10,0.5); background: rgba(255,159,10,0.1);">
+                        <strong style="color: var(--orange);">N5 (Orange):</strong>
+                        <p>Gigafactory success — Unexpected global demand</p>
+                    </div>
+                    <div class="jt-anno" style="border-color: rgba(255,214,10,0.5); background: rgba(255,214,10,0.1);">
+                        <strong style="color: var(--gold);">N6 (Yellow):</strong>
+                        <p>Managing complex global supply chains (Challenge)</p>
+                    </div>
+                    <div class="jt-anno" style="border-color: rgba(191,90,242,0.5); background: rgba(191,90,242,0.1);">
+                        <strong style="color: var(--purple);">N9 (Purple):</strong>
+                        <p>Fierce competition from legacy automakers going electric</p>
+                    </div>
+                    <div class="jt-anno" style="border-color: rgba(48,209,88,0.5); background: rgba(48,209,88,0.1);">
+                        <strong style="color: var(--green);">N11 (Green):</strong>
+                        <p>Achieving a fully solar-powered global grid (Aspiration)</p>
+                    </div>
+                </div>
+
+                <!-- Phase chevrons -->
+                <div class="jt-phases">
+                    <div class="jt-phase" style="background: rgba(255,214,10,0.2); border-color: rgba(255,214,10,0.4);">EARLY YEARS</div>
+                    <div class="jt-phase" style="background: rgba(255,159,10,0.2); border-color: rgba(255,159,10,0.4);">EV FOUNDATION</div>
+                    <div class="jt-phase" style="background: rgba(48,209,88,0.2); border-color: rgba(48,209,88,0.4);">GLOBAL SCALING</div>
+                    <div class="jt-phase" style="background: rgba(41,151,255,0.2); border-color: rgba(41,151,255,0.4);">FUTURE ASPIRATIONS</div>
+                </div>
+
+                <div class="jt-legend">
+                    <span>🟢 Achievement / Success</span>
+                    <span>🔴 Challenge / Failure / Losing</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 18: THREE LAWS ======================== -->
+    <section class="slide" id="slide-18" role="region" aria-label="Three Laws of Design Thinking">
+        <div class="slide-bg bg-laws"></div>
+        <div class="slide-content" style="text-align: left;">
+            <h2 class="animate-in slide-heading" style="--delay: 0; text-align: center;"><span class="gradient-text-warm">Three Laws Of Design Thinking</span></h2>
+
+            <div class="laws-list animate-in" style="--delay: 1">
+                <div class="law-item">
+                    <h3 style="color: var(--green);">Less is More</h3>
+                    <ul>
+                        <li>Ditch complex eco-applications. Use simple one-tap gamified interfaces for instant recycling verification and pollution reporting.</li>
+                        <li>Emphasize the value of a targeted 5-minute AR pollution scan over complex, manual reporting systems that nobody uses.</li>
+                    </ul>
+                </div>
+                <div class="law-item">
+                    <h3 style="color: var(--blue);">Theory of Prioritization</h3>
+                    <ul>
+                        <li>Don't deploy generic clean-tech everywhere; match each city's specific pollution data with the mathematically optimal solution — don't build wind-trees where solar is superior.</li>
+                        <li>Create flexible paths for participation, ranging from high-impact biotech deployment to low-effort "flash eco-actions" via mobile apps.</li>
+                    </ul>
+                </div>
+                <div class="law-item">
+                    <h3 style="color: var(--orange);">The Last 2% = 200%</h3>
+                    <ul>
+                        <li>Make it policy for cities to report back on the tangible AQI improvements directly resulting from deployed solutions.</li>
+                        <li>Use the final touches — beautiful gamification UX, public celebration of corporate green milestones, and instant crypto rewards — to transform a one-time participant into a lifelong eco-champion.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 19: STORYTELLING ======================== -->
+    <section class="slide" id="slide-19" role="region" aria-label="Storytelling">
+        <div class="slide-bg bg-achieve"></div>
+        <div class="slide-content" style="text-align: left;">
+            <h2 class="animate-in slide-heading" style="--delay: 0; text-align:center;"><span class="gradient-text-green">STORYTELLING</span></h2>
+
+            <div class="animate-in story-block" style="--delay: 1">
+                <p class="story-intro">This Design Thinking project from SRM Institute of Science and Technology focuses on creating disruptive methods to make society a pollution-free environment.</p>
+
+                <div class="story-section">
+                    <h3>The Problem:</h3>
+                    <p>While citizens are aware, there is a significant engagement gap caused by fragmented systems, a lack of economic incentives, and inefficient technology deployment between available solutions and actual pollution hotspots.</p>
+                </div>
+
+                <div class="story-section">
+                    <h3>The Strategy:</h3>
+                    <p>The team reframed this as an opportunity: "How Might We inspire citizens, corporations, and governments to become financially and emotionally invested co-creators?" Their proposed ecosystem includes:</p>
+                    <ul>
+                        <li><strong>Precision Matching:</strong> AI algorithms to link specific clean-tech solutions with geographic pollution data.</li>
+                        <li><strong>Engagement Tracking:</strong> Real-time IoT dashboards to show tangible AQI improvements to all stakeholders.</li>
+                        <li><strong>Formal Recognition:</strong> Using gamified crypto-rewards and corporate tax credits to move from "charity" to professional partnership.</li>
+                    </ul>
+                </div>
+
+                <div class="story-section">
+                    <h3>The Three Laws of Design Thinking:</h3>
+                    <ul>
+                        <li><strong>Less is More:</strong> Prioritizing one-tap gamified eco-actions over complex reporting systems.</li>
+                        <li><strong>Theory of Prioritization:</strong> Deploying tech where data demands it — not where politics dictates.</li>
+                        <li><strong>The Last 2%=200%:</strong> Ensuring lifelong engagement through beautiful UX and mandatory "impact win" reporting.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 20: THANK YOU ======================== -->
+    <section class="slide" id="slide-20" role="region" aria-label="Thank You">
+        <div class="slide-bg bg-sunrise">
+            <canvas id="confetti-canvas"></canvas>
+        </div>
+        <div class="slide-content title-slide">
+            <h1 class="animate-in hero-title" style="--delay: 1">
+                <span class="gradient-text-hero">THANK YOU</span>
+            </h1>
+            <div class="animate-in" style="--delay: 2; margin-top: 30px;">
+                <p style="font-size: clamp(14px, 1.5vw, 20px); color: rgba(255,255,255,0.5);">
+                    SRM Institute of Science and Technology · Delhi-NCR Campus, Ghaziabad
+                </p>
+                <p style="font-size: clamp(12px, 1.2vw, 16px); color: rgba(255,255,255,0.35); margin-top: 10px;">
+                    B.Tech, II Year, 4th Semester · Design Thinking Methodology
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <script src="script.js"></script>
+</body>
+</html>

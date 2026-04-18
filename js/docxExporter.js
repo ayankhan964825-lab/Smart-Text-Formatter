@@ -167,19 +167,28 @@ const DocxExporter = (() => {
         docRels += '</Relationships>';
         zip.file('word/_rels/document.xml.rels', docRels);
 
-        // word/styles.xml
+        // word/styles.xml — Shiv Prakash Research Paper Format Rules:
+        // Body: Times New Roman, 12pt, justify, line-height 1.6
+        // H1: 14pt, bold, centered, uppercase
+        // H2: 12pt, bold, uppercase, left
+        // H3-H6: 12pt, bold, left
+        // Margins: 1.25 inch (1800 twips)
         zip.file('word/styles.xml',
             '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
             '<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">' +
             '<w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/>' +
-            '<w:pPr><w:spacing w:after="240" w:line="360" w:lineRule="auto"/></w:pPr>' +
-            '<w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman"/><w:sz w:val="22"/></w:rPr></w:style>' +
+            '<w:pPr><w:spacing w:after="200" w:line="384" w:lineRule="auto"/><w:jc w:val="both"/></w:pPr>' +
+            '<w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman" w:cs="Times New Roman"/><w:sz w:val="24"/><w:szCs w:val="24"/></w:rPr></w:style>' +
             [1,2,3,4,5,6].map(n => {
-                const sz = [48,36,28,24,22,20][n-1];
+                // H1: 14pt (28 half-pts), H2-H6: 12pt (24 half-pts) per research paper rules
+                const sz = n === 1 ? 28 : 24;
+                const before = [360,300,240,200,200,200][n-1];
+                const after = [240,200,160,120,120,120][n-1];
+                const jc = n === 1 ? '<w:jc w:val="center"/>' : '<w:jc w:val="left"/>';
                 return '<w:style w:type="paragraph" w:styleId="Heading' + n + '"><w:name w:val="heading ' + n + '"/>' +
                     '<w:basedOn w:val="Normal"/><w:next w:val="Normal"/>' +
-                    '<w:pPr><w:keepNext/><w:spacing w:before="360" w:after="120"/></w:pPr>' +
-                    '<w:rPr><w:b/><w:sz w:val="' + sz + '"/></w:rPr></w:style>';
+                    '<w:pPr><w:keepNext/>' + jc + '<w:spacing w:before="' + before + '" w:after="' + after + '"/></w:pPr>' +
+                    '<w:rPr><w:b/><w:bCs/><w:sz w:val="' + sz + '"/><w:szCs w:val="' + sz + '"/></w:rPr></w:style>';
             }).join('') +
             '</w:styles>');
 
@@ -195,7 +204,7 @@ const DocxExporter = (() => {
             '<w:num w:numId="2"><w:abstractNumId w:val="1"/></w:num>' +
             '</w:numbering>');
 
-        // word/document.xml
+        // word/document.xml — 1 inch margins = 1440 twips (Actual Shiv Prakash implementation)
         zip.file('word/document.xml',
             '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
             '<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" ' +

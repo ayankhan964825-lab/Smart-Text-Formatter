@@ -86,7 +86,11 @@
                 style="opacity: 0.5; cursor: not-allowed;">Export to PDF</button>
             <button id="export-word" class="btn primary btn-small" disabled
                 style="opacity: 0.5; cursor: not-allowed;">Export to Word</button>
+            <button id="add-page-numbers-btn" class="btn primary btn-small"
+                title="Upload a PDF and add page numbers">📄 Add Page Numbers</button>
         </div>
+        <!-- Hidden file input for PDF page number injection -->
+        <input type="file" id="pdf-upload-input" accept=".pdf" style="display:none;">
     </header>
 
     <!-- Formatting Ribbon (Word-like Home Tab) -->
@@ -280,6 +284,7 @@
     <div class="mobile-export-container" id="mobile-export-bar">
         <button id="mobile-export-pdf" class="btn primary mobile-export-btn" disabled>📄 Export PDF</button>
         <button id="mobile-export-word" class="btn primary mobile-export-btn" disabled>📝 Export Word</button>
+        <button id="mobile-add-page-numbers" class="btn primary mobile-export-btn">📄 Page #</button>
     </div>
 
     <!-- Overwrite/Append Modal -->
@@ -289,11 +294,9 @@
             <p>You have manually edited the output. How would you like to add the new formatted text?</p>
             <div class="modal-actions">
                 <button id="modal-overwrite-btn" class="btn danger">Overwrite (Clear previous)</button>
-                <button id="modal-append-btn" class="btn primary" title="Inserts at cursor or end">Append (Keep
-                    previous)</button>
+                <button id="modal-append-btn" class="btn primary" title="Inserts at cursor or end">Append (Keep previous)</button>
             </div>
-            <button id="modal-cancel-btn" class="btn-small secondary"
-                style="margin-top:20px; width: 100%;">Cancel</button>
+            <button id="modal-cancel-btn" class="btn-small secondary" style="margin-top:20px; width: 100%;">Cancel</button>
         </div>
     </div>
 
@@ -301,6 +304,7 @@
     <!-- External Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
     <script>mermaid.initialize({ startOnLoad: false, theme: 'default', securityLevel: 'loose', suppressErrorRendering: true, flowchart: { htmlLabels: false } });</script>
 

@@ -1316,24 +1316,80 @@ body {
 }
 
 /* ==========================================================================
-   Print / PDF Export Specific Styling (Mimics Word Documents)
+   Print / PDF Export Specific Styling (Research Paper Format)
+   Rules: Times New Roman, 12pt body, 14pt H1, 1in margins, justify, 1.6 line-height
    ========================================================================== */
+
+/* @page rule for window.print() based PDF — 1 inch margins */
+@page {
+    size: A4;
+    margin: 2.54cm; /* 1 inch (Actual Shiv Prakash implementation) */
+}
+
 @media print {
     /* Base settings for A4 print */
     body {
         margin: 0;
         padding: 0;
         background-color: #ffffff;
+        font-family: 'Times New Roman', serif;
+        font-size: 12pt;
+        line-height: 1.6;
+        text-align: justify;
+        color: #000;
+    }
+
+    /* Hide non-printable UI elements */
+    .top-bar, .formatting-ribbon, .input-panel, .settings-panel, .menu-overlay,
+    .mobile-export-container, .loading-overlay, .toast-container,
+    .mini-toolbar, .modal-overlay, .no-print, .panel-header {
+        display: none !important;
+    }
+
+    .workspace, .output-panel, .preview-container {
+        display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+        overflow: visible !important;
+    }
+
+    .preview-container h1 {
+        font-size: 14pt;
+        font-weight: bold;
+        text-align: center;
+        text-transform: uppercase;
+    }
+
+    .preview-container h2 {
+        font-size: 12pt;
+        font-weight: bold;
+        text-align: left;
+        text-transform: uppercase;
+    }
+
+    .preview-container h3, .preview-container h4,
+    .preview-container h5, .preview-container h6 {
+        font-size: 12pt;
+        font-weight: bold;
+        text-align: left;
     }
 }
 
 /* 
   These classes apply when html2pdf renders the cloned wrapper.
   They enforce strict pagination rules to prevent "line cutting" across page boundaries.
+  Updated to Research Paper Format: 12pt body, 1.6 line-height, justify
 */
 .pdf-export-wrapper {
-    font-size: 11pt !important; /* Standard Word Size */
-    line-height: 1.5 !important;
+    font-family: 'Times New Roman', serif !important;
+    font-size: 12pt !important;
+    line-height: 1.6 !important;
+    text-align: justify !important;
+    color: #000 !important;
 }
 
 /* Prevent paragraphs and list items from splitting wildly across pages */
@@ -1342,7 +1398,6 @@ body {
 .pdf-export-wrapper td,
 .pdf-export-wrapper th {
     page-break-inside: auto; /* Allow normal breaks if paragraph is very long */
-    /* Orphans and widows control how many lines can be left stranded on a page break (requires modern browser support) */
     orphans: 3;
     widows: 3;
 }
@@ -1356,15 +1411,33 @@ body {
 }
 
 /* Keep headings attached to their following paragraph (avoid stranded headings) */
-.pdf-export-wrapper h1, 
-.pdf-export-wrapper h2, 
+.pdf-export-wrapper h1 {
+    font-size: 14pt !important;
+    font-weight: bold !important;
+    text-align: center !important;
+    text-transform: uppercase !important;
+    page-break-after: avoid !important;
+    page-break-inside: avoid !important;
+}
+
+.pdf-export-wrapper h2 {
+    font-size: 12pt !important;
+    font-weight: bold !important;
+    text-align: left !important;
+    text-transform: uppercase !important;
+    page-break-after: avoid !important;
+    page-break-inside: avoid !important;
+}
+
 .pdf-export-wrapper h3, 
 .pdf-export-wrapper h4, 
 .pdf-export-wrapper h5, 
 .pdf-export-wrapper h6 {
+    font-size: 12pt !important;
+    font-weight: bold !important;
+    text-align: left !important;
     page-break-after: avoid !important;
     page-break-inside: avoid !important;
-    margin-bottom: 8px !important; 
 }
 
 /* Usually start major sections (H1) on a new page, UNLESS it's the very first element */

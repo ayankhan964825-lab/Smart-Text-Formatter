@@ -514,6 +514,9 @@ document.addEventListener('DOMContentLoaded', () => {
             loadingOverlay.classList.add(activeCustomKey ? 'theme-rcb' : 'theme-csk');
 
             loadingOverlay.style.display = 'flex';
+            
+            // Force browser to paint the loading UI before executing heavy synchronous parsing
+            await new Promise(resolve => setTimeout(resolve, 50));
         }
 
         try {
@@ -1551,28 +1554,55 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Helper: Build export-ready HTML with page number footer styles
     function buildExportHtml(contentHtml) {
+        // Shiv Prakash Research Paper Format Rules:
+        // Body: Times New Roman, 12pt (16px), line-height 1.6, justify
+        // H1: 14pt (18.66px), bold, centered, uppercase
+        // H2: 12pt (16px), bold, uppercase, left
+        // H3-H6: 12pt, bold, left
+        // Margins: 1 inch = 25.4mm (Actual implementation in Shiv project)
         return `
             <style>
-                /* Force PDF export to strictly match Word's native typography and spacing */
-                /* Conversion: 1pt = 1.3333px (at 96 DPI) */
                 .pdf-export-wrapper {
                     font-family: 'Times New Roman', serif;
                     color: #000;
-                    font-size: 14.66px !important;    /* 11pt */
-                    line-height: 22px !important;     /* 11 * 1.5 = 16.5pt -> 22px */
+                    font-size: 16px !important;       /* 12pt */
+                    line-height: 1.6 !important;      /* 1.6x line spacing */
+                    text-align: justify !important;
+                    word-wrap: break-word !important;
                 }
-                .pdf-export-wrapper h1, .pdf-export-wrapper h2, .pdf-export-wrapper h3, 
-                .pdf-export-wrapper h4, .pdf-export-wrapper h5, .pdf-export-wrapper h6 {
-                    margin-top: 24px !important;      /* 18pt */
-                    margin-bottom: 10.6px !important; /* 8pt */
-                    line-height: 1.2 !important;
+                .pdf-export-wrapper h1 {
+                    font-size: 18.66px !important;    /* 14pt */
+                    font-weight: bold !important;
+                    text-align: center !important;
+                    text-transform: uppercase !important;
+                    margin-top: 24px !important;
+                    margin-bottom: 16px !important;
+                    line-height: 1.3 !important;
+                }
+                .pdf-export-wrapper h2 {
+                    font-size: 16px !important;       /* 12pt */
+                    font-weight: bold !important;
+                    text-align: left !important;
+                    text-transform: uppercase !important;
+                    margin-top: 20px !important;
+                    margin-bottom: 12px !important;
+                    line-height: 1.3 !important;
+                }
+                .pdf-export-wrapper h3, .pdf-export-wrapper h4, 
+                .pdf-export-wrapper h5, .pdf-export-wrapper h6 {
+                    font-size: 16px !important;       /* 12pt */
+                    font-weight: bold !important;
+                    text-align: left !important;
+                    margin-top: 16px !important;
+                    margin-bottom: 10px !important;
+                    line-height: 1.3 !important;
                 }
                 .pdf-export-wrapper p, .pdf-export-wrapper ul, .pdf-export-wrapper ol, .pdf-export-wrapper table {
                     margin-top: 0 !important;
-                    margin-bottom: 16px !important;   /* 12pt */
+                    margin-bottom: 12px !important;   /* 9pt */
                 }
                 .pdf-export-wrapper li {
-                    margin-bottom: 5.3px !important;  /* 4pt */
+                    margin-bottom: 4px !important;
                 }
             </style>
             <div class="pdf-export-wrapper">
@@ -1716,101 +1746,30 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 2. Export PDF (using html2pdf.js)
-    const handleExportPdf = async () => {
-        try {
-            const previewContainer = document.getElementById('formatted-preview');
-            if (previewContainer.querySelector('.placeholder-text')) {
-                alert("No content to export. Please format some text first.");
-                return;
-            }
-
-            statusText.textContent = "Generating PDF...";
-
-            // Check if TOC is included to determine page numbering offset
-            const hasToc = previewContainer.querySelector('.toc-container') !== null;
-
-            // Deep clone the preview container so we don't modify the live DOM with our image swaps
-            const clonedPreview = previewContainer.cloneNode(true);
-
-            // Convert any Mermaid SVGs in the cloned node to PNG/SVG images so html2canvas renders them
-            await convertSvgsToImages(clonedPreview);
-
-            // --- Build the PDF wrapper ---
-            // Let html2pdf.js natively handle the bounding box. We just inject the content
-            // and apply the precise typography CSS so text spacing matches Word exactly.
-            const wrapper = document.createElement('div');
-            wrapper.innerHTML = buildExportHtml(clonedPreview.innerHTML);
-            wrapper.style.backgroundColor = '#ffffff';
-            // Do NOT apply explicit widths or paddings here. html2pdf temporally resizes the DOM 
-            // to match the exact PDF width minus margins during rendering. Forcing widths causes clipping.
-            // Explicit font scaling removed from here since buildExportHtml CSS handles strict px now
-
-            // --- Mark elements for page-break avoidance ---
-            // html2pdf.js respects CSS page-break-* properties in 'css' mode.
-            // We ensure all critical elements have page-break-inside: avoid.
-            wrapper.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach(el => {
-                el.style.pageBreakAfter = 'avoid';
-                el.style.pageBreakInside = 'avoid';
-            });
-            wrapper.querySelectorAll('.keep-together, .mermaid-container, table, img').forEach(el => {
-                el.style.pageBreakInside = 'avoid';
-            });
-            wrapper.querySelectorAll('p, li').forEach(el => {
-                el.style.pageBreakInside = 'avoid';
-            });
-
-            // --- html2pdf configuration ---
-            // We set the 1-inch (25.4mm) margins directly in jsPDF. 
-            // html2pdf will automatically squeeze the HTML to fit within the a4 width minus 50.8mm,
-            // matching Word's text wrapping perfectly.
-            const opt = {
-                margin: [25.4, 25.4, 25.4, 25.4],
-                filename: 'formatted_document.pdf',
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { 
-                    scale: 2, // High resolution canvas for crisp text
-                    useCORS: true,
-                    logging: false
-                },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                pagebreak: { 
-                    mode: ['avoid-all', 'css', 'legacy'],
-                    avoid: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'tr', 'img', '.keep-together', '.mermaid-container', 'p', 'li']
-                }
-            };
-
-            html2pdf().set(opt).from(wrapper).toPdf().get('pdf').then(function (pdf) {
-                const totalPages = pdf.internal.getNumberOfPages();
-                const pageWidth = pdf.internal.pageSize.getWidth();
-                const pageHeight = pdf.internal.pageSize.getHeight();
-
-                const tocPages = hasToc ? 1 : 0;
-                const contentTotalPages = totalPages - tocPages;
-
-                for (let i = 1; i <= totalPages; i++) {
-                    pdf.setPage(i);
-                    // Only add page numbers to content pages (after TOC)
-                    if (i > tocPages) {
-                        pdf.setFontSize(9);
-                        pdf.setTextColor(120);
-                        // Display "Page X of Y" matching Word footer style
-                        const displayPageNum = i - tocPages;
-                        const footerText = `Page ${displayPageNum} of ${contentTotalPages}`;
-                        // Position footer within the bottom margin area
-                        pdf.text(footerText, pageWidth / 2, pageHeight - 10, { align: 'center' });
-                    }
-                }
-            }).save().then(() => {
-                statusText.textContent = "PDF Exported ✨";
-            }).catch(err => {
-                console.error("PDF Export Error:", err);
-                statusText.textContent = "Export Failed: " + (err.message || String(err));
-            });
-        } catch (globalErr) {
-            console.error("Critical PDF Error:", globalErr);
-            statusText.textContent = "Export Failed: " + (globalErr.message || String(globalErr));
+    // 2. Export PDF (Using browser Print Layout - per Shiv Prakash format)
+    // 2. Export PDF (Using browser Print Layout - per Shiv Prakash format)
+    const handleExportPdf = () => {
+        const previewContainer = document.getElementById('formatted-preview');
+        if (previewContainer.querySelector('.placeholder-text')) {
+            alert("No content to export. Please format some text first.");
+            return;
         }
+
+        statusText.textContent = "Opening Print Layout...";
+
+        // Temporarily change document title so the default Save As PDF filename is nice
+        const originalTitle = document.title;
+        document.title = "Research_Paper_Formatted";
+
+        // Delay slightly so UI can update the status text before blocking main thread
+        setTimeout(() => {
+            // Native browser print dialog
+            window.print();
+            
+            // Restore original document title
+            document.title = originalTitle;
+            statusText.textContent = "Print dialog completed ✨";
+        }, 100);
     };
 
     // Fetch mobile buttons since they were missing declarations in the global scope
@@ -1874,8 +1833,10 @@ document.addEventListener('DOMContentLoaded', () => {
                             div.TocSection { page: TocSection; }
                             @page ContentSection { mso-footer: f1; mso-page-numbers-start: 1; }
                             div.ContentSection { page: ContentSection; }
-                            body { font-family: 'Times New Roman', serif; font-size: 11pt; line-height: 1.5; }
-                            h1,h2,h3,h4,h5,h6 { page-break-after: avoid; margin-top: 18pt; margin-bottom: 8pt; }
+                            body { font-family: 'Times New Roman', serif; font-size: 12pt; line-height: 1.6; text-align: justify; }
+                            h1 { font-size: 14pt; text-align: center; text-transform: uppercase; page-break-after: avoid; margin-top: 18pt; margin-bottom: 12pt; }
+                            h2 { font-size: 12pt; text-align: left; text-transform: uppercase; page-break-after: avoid; margin-top: 18pt; margin-bottom: 8pt; }
+                            h3,h4,h5,h6 { font-size: 12pt; text-align: left; page-break-after: avoid; margin-top: 14pt; margin-bottom: 8pt; }
                             p,ul,ol,table { margin-top: 0; margin-bottom: 12pt; }
                             .keep-together, .mermaid-container, img { page-break-inside: avoid; }
                             .toc-table { width: 100%; border-collapse: collapse; }
@@ -1914,6 +1875,82 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (exportWordBtn) exportWordBtn.addEventListener('click', handleExportWord);
     if (mobileExportWordBtn) mobileExportWordBtn.addEventListener('click', handleExportWord);
+
+    // 4. Add Page Numbers to PDF (using pdf-lib) — Feature from Shiv Prakash Research Paper
+    const addPageNumbersBtn = document.getElementById('add-page-numbers-btn');
+    const mobileAddPageNumbersBtn = document.getElementById('mobile-add-page-numbers');
+    const pdfUploadInput = document.getElementById('pdf-upload-input');
+
+    const triggerPdfUpload = () => {
+        if (pdfUploadInput) pdfUploadInput.click();
+    };
+
+    if (addPageNumbersBtn) addPageNumbersBtn.addEventListener('click', triggerPdfUpload);
+    if (mobileAddPageNumbersBtn) mobileAddPageNumbersBtn.addEventListener('click', triggerPdfUpload);
+
+    if (pdfUploadInput) {
+        pdfUploadInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            // Prompt user for page numbering config
+            const startPageStr = prompt("Start numbering from which page? (e.g., 2 to skip cover page)", "2");
+            if (startPageStr === null) { pdfUploadInput.value = ''; return; }
+            const startPage = parseInt(startPageStr) || 2;
+
+            const startNumStr = prompt("What should the first page number be?", "1");
+            if (startNumStr === null) { pdfUploadInput.value = ''; return; }
+            const startNum = parseInt(startNumStr) || 1;
+
+            statusText.textContent = "Adding page numbers...";
+
+            try {
+                const arrayBuffer = await file.arrayBuffer();
+                const pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
+                const pages = pdfDoc.getPages();
+                const font = await pdfDoc.embedFont(PDFLib.StandardFonts.TimesRoman);
+
+                const totalNumberedPages = pages.length - (startPage - 1);
+
+                for (let i = startPage - 1; i < pages.length; i++) {
+                    const page = pages[i];
+                    const { width, height } = page.getSize();
+                    const pageNum = startNum + (i - (startPage - 1));
+                    const text = `${pageNum}`;
+                    const textWidth = font.widthOfTextAtSize(text, 11);
+
+                    page.drawText(text, {
+                        x: (width - textWidth) / 2,
+                        y: 30, // 30pt from bottom
+                        size: 11,
+                        font: font,
+                        color: PDFLib.rgb(0.3, 0.3, 0.3),
+                    });
+                }
+
+                const pdfBytes = await pdfDoc.save();
+                const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = file.name.replace('.pdf', '_numbered.pdf');
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                statusText.textContent = "Page numbers added ✨";
+                showToast(`✅ Added page numbers (${startNum}–${startNum + totalNumberedPages - 1}) starting from page ${startPage}`);
+            } catch (err) {
+                console.error("Page number injection error:", err);
+                statusText.textContent = "Failed: " + (err.message || String(err));
+                showToast("❌ Failed to add page numbers: " + err.message, true);
+            }
+
+            // Reset file input so same file can be re-selected
+            pdfUploadInput.value = '';
+        });
+    }
 
     // --- Live Alignment Update from Ribbon ---
     const globalAlignmentSelect = document.getElementById('global-alignment');

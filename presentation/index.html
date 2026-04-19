@@ -10,7 +10,7 @@
     <!-- PptxGenJS Dependencies -->
     <script src="https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs@3.12.0/libs/jszip.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs@3.12.0/dist/pptxgen.min.js"></script>
-    <!-- Screenshot Capability -->
+    <!-- Background Capture Engine -->
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 </head>
 <body>
@@ -555,7 +555,7 @@
     <!-- Overlay for Export -->
     <div id="export-overlay" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.8); backdrop-filter:blur(10px); color:white; flex-direction:column; align-items:center; justify-content:center;">
         <div class="spinner" style="width:40px; height:40px; border:4px solid rgba(255,255,255,0.2); border-top-color:var(--blue); border-radius:50%; animation:spin 1s linear infinite;"></div>
-        <p style="margin-top:20px; font-family:var(--font-mono); letter-spacing:1px;">Building native .pptx... <span id="export-pct"></span></p>
+        <p style="margin-top:20px; font-family:var(--font-mono); letter-spacing:1px;">Building editable PPTX... <span id="export-pct"></span></p>
     </div>
     <style>@keyframes spin {100%{transform:rotate(360deg)}}</style>
 

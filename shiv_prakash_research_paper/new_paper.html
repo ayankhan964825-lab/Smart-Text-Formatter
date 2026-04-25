@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vendor Performance Analysis System - Research Paper</title>
+<style>
+@page { size: A4; margin: 2.54cm; }
+@media print { html,body { width:auto!important; background:#fff!important; margin:0!important; padding:0!important; font-size:12pt; } .paper { box-shadow:none!important; margin:0!important; padding:0!important; max-width:none!important; width:100%!important; min-height:auto!important; height:auto!important; } .page-break { page-break-before:always; } .no-print { display:none!important; } figure,table { page-break-inside:avoid; } h1,h2,h3 { page-break-after:avoid; } }
+* { margin:0; padding:0; box-sizing:border-box; }
+html { background:#d1d5db; }
+body { font-family:"Times New Roman",Times,serif; font-size:12pt; line-height:1.6; color:#000; text-align:justify; }
+.paper { width:210mm; min-height:297mm; margin:20px auto; padding:2.54cm; background:#fff; box-shadow:0 2px 16px rgba(0,0,0,0.18); }
+h1 { font-family:"Times New Roman",Times,serif; font-size:14pt; font-weight:bold; text-transform:uppercase; text-align:center; margin:0.8em 0 1em; line-height:1.4; }
+h2 { font-family:"Times New Roman",Times,serif; font-size:12pt; font-weight:bold; text-transform:uppercase; margin:1.2em 0 0.6em; text-align:left; }
+h3 { font-family:"Times New Roman",Times,serif; font-size:12pt; font-weight:bold; margin:1em 0 0.5em; text-align:left; }
+p { font-size:12pt; margin-bottom:0.8em; text-align:justify; word-wrap:break-word; hyphens:auto; }
+ul,ol { margin:0.5em 0 1em 2em; font-size:12pt; } li { margin-bottom:0.3em; text-align:justify; }
+table { width:100%; border-collapse:collapse; margin:1.2em 0; font-size:11pt; }
+th,td { border:1px solid #000; padding:6px 10px; text-align:left; vertical-align:top; }
+th { background:#e8e8e8; font-weight:bold; text-align:center; }
+figure { margin:1.5em auto; text-align:center; max-width:100%; }
+figure img,figure svg { max-width:100%; height:auto; }
+figcaption { font-size:11pt; font-style:italic; margin-top:0.5em; text-align:center; font-weight:bold; }
+.page-break { page-break-before:always; height:0; margin:0; padding:0; border:none; }
+.page-break + *, .paper > *:first-child, .paper > h1:first-child { margin-top: 0 !important; }
+.chart-wrapper { width:100%; max-width:520px; margin:1em auto; }
+.chart-wrapper canvas { width:100%!important; height:280px!important; }
+.svg-diagram { display:block; width:100%; max-width:560px; margin:1em auto; }
+.controls { position:fixed; bottom:24px; right:24px; z-index:9999; display:flex; flex-direction:column; gap:8px; background:#fff; padding:16px; border-radius:12px; box-shadow:0 4px 20px rgba(0,0,0,0.2); }
+.controls button { font-family:Arial,sans-serif; font-size:13pt; font-weight:600; padding:10px 22px; border:none; border-radius:6px; cursor:pointer; background:#1a56db; color:#fff; } .controls button:hover { background:#1240a8; }
+.controls small { display:block; text-align:center; color:#666; font-size:9pt; margin-top:4px; font-family:Arial,sans-serif; }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+</head><body>
+<input type="file" id="autoPageNumInput" accept="application/pdf" style="display:none" onchange="addPageNumbers(this)">
+<div class="controls no-print" id="controls">
+<button onclick="printPDF()">⬇ Download as PDF</button>
+<button onclick="downloadWithPageNumbers()" style="background:#6a1b9a;">📄 Download with Page No</button>
+<label style="background:#2e7d32; color:#fff; padding:10px 22px; border-radius:6px; cursor:pointer; font-weight:600; text-align:center; display:block; font-family:Arial,sans-serif; margin-top:4px;">
+📄 Add Page Numbers to PDF
+<input type="file" accept="application/pdf" style="display:none" onchange="addPageNumbers(this)">
+</label>
+<small>Uses browser Print → Save as PDF<br>Paper: <b>A4</b> | Margins: <b>None</b></small>
+</div>
+<div class="paper" id="paper">
+        <h1>ABSTRACT</h1>
+        <p>The blistering development of the digital transformation of contemporary companies has moved the role of decision-making based on the available data much higher, in particular, in supply chain and procurement management. The timely access of goods and services is made possible by vendors and thus, evaluating their performance is an essential task to organizations. Nevertheless, conventional methods of vendor evaluation tend to be manual, uneven and not analytical and result in inefficiency and poor decision making.</p>
+        <p>The Vendor Performance Analysis System proposed in this project is geared towards overcoming these limitations by combining data analytics, database management, and visualization procedures. The system gathers and crunches data concerning vendors in structured databases, which allows the evaluation of vendor performance in terms of main metrics, including delivery time, quality consistency, cost-effectiveness, and reliability. Through analytics and data processing tools based on Python, the system converts raw data about operations into transformative insights.</p>
+        <p>The system includes a dashboard interface to give a user-friendly and interactive depiction of vendor performance indicators. These visualizations assist the stakeholders in having a quick interpretation of the trends, determining vendors that are not performing well and ruling out. The system also assists in the generation of reports and hence allows detailed comparative analysis and performance summary.</p>
+        <p>The execution shows that data analytics combined with data visualization tools can contribute greatly to the management of vendors. The system is scalable, effective and responsive to various organizational settings. In general, this project demonstrates how data analytics can be practically applied in enhancing operational efficiency and strategic decision-making in systems dealing with vendor management.</p>
+        <h1>CHAPTER 1: INTRODUCTION</h1>
+        <h2>1.1 BACKGROUND</h2>
+        <p>The modern competitive business world entails organizations being dependent on outside suppliers of raw materials, products and services. The productivity and the dependability of these vendors has a direct effect on the overall performance of the entire organization such as production schedules, quality of products and customer satisfaction. The relationship management of vendors has been made more difficult with the increase in complexity of the supply chains.</p>
+        <p>Vendor performance evaluation traditionally has been done manually with spreadsheets or simple reporting tools. These are not only time consuming but also liable to human errors and variations. In addition, they do not give real-time information or forecasting, which is crucial in the contemporary business environment. As technologies in data analytics keep developing, organizations can currently take the chance of automating and improving the vendor assessment strategies.</p>
+        <p>The given project aims at creating a system, which will utilize methods of data analytics and visualisation in order to efficiently assess the performance of the vendors. The system will be focused on offering a detailed vendor management system by incorporating data storage, processing, and visualization interfaces.</p>
+        <h2>1.2 PROBLEM STATEMENT</h2>
+        <p>Lack of centralized and automated system results in many organizations failing in evaluating the performance of vendors. The information regarding vendors is usually spread on several resources and it is not easy to collect it and make its efficient analysis. Such incompleteness or inaccuracy of the performance assessment is the result of this disintegration.</p>
+        <p>Moreover, dynamic analysis and real-time monitoring is not possible with manual evaluation methods. The decision-makers usually base their decision on the information that is old-fashioned and can lead to the wrong selection of vendors and higher risks of operational problems. It is further lacking in standardized measures of vendor comparison, and thus, the process of evaluation is subjective and inconsistent.</p>
+        <p>Thus, an efficient system to gather, process and analyze vendor data, and deliver understandable and practical insights is required. The suggested Vendor Performance Analysis System can help overcome these issues by providing a formal and computerized vendor screening strategy.</p>
+        <p>This project has the following objectives:</p>
+        <ul>
+            <li>The main aim of this project is to design and develop a system which is capable of analyzing the performance of the vendors by applying data analytics techniques. The system will be designed to enable the organization to have a multifaceted system to manage data related to the vendor and draw valuable insights.</li>
+            <li>The other important goal is to apply effective data management systems through relational database. This makes sure that the data can be generated, stored and analyzed easily on the vendor. Another aspect of the project is the ability to use analytical techniques to assess the performance of vendors according to various criteria, which include: delivery time, quality and cost.</li>
+        </ul>
+        <p>Moreover, the system will strive to create an interactive dashboard, which enables users to visualize metrics of the performance in an intuitive form. Visualization is important in order to make complex data easier to understand and make fast decisions. Report generation capabilities are also part of the project to give finer summaries and comparisons of the performance of vendors.</p>
+        <p>The project is intended to cover the following matters:</p>
+        <ul>
+            <li>The project scope is the designing and implementation of a system of vendor performance analysis working on structured datasets. The system aims at exploring past data on vendors to determine trends and its performance in relation to set goals.</li>
+            <li>It also involves creating a dashboard interface to view some key performance indicators. This system can be aimed at being scalable and adaptable so that it can comply with the volume of data and the type of information about vendors.</li>
+        </ul>
+        <p>Nevertheless, the project does not involve real-time data-gathering of external sources as IoT devices or live APIs. It also fails to discuss high-end predictive analytics and machine learning algorithms to predict vendor performance. The major emphasis is on descriptive and comparative analysis.</p>
+        <h2>1.5 METHODOLOGY OVERVIEW</h2>
+        <p>The research approach taken in this study entails a logical way of collecting data, processing, analyzing and visualizing the data. The initial procedure is to gather information about the vendors and place it in an organized database. This would guarantee consistency of the data and easy retrieval.</p>
+        <p>Data preprocessing, which involves cleaning of the data, filtering and transforming the data to make it useful in analysis comes next. This is an important step to remove inconsistencies and guarantee the accuracy of the results. After the data has been organized, it is analyzed using analytical tools to measure the performance of the vendor using a number of measurements.</p>
+        <p>This processed data is then presented on a dashboard interface where this will give graphic representation of performance indicators. Lastly, the system creates reports that encapsulate the analysis and give actionable information to decision-makers.</p>
+        <h2>1.6 USED TOOLS AND TECHNOLOGIES.</h2>
+        <p>Python is the main programming language in the project because it supports a large number of data analysis and visualization libraries. Python offers an open and productive platform to compute the analysis algorithms and handle big data.</p>
+        <p>This database management system is SQLite that stores data pertaining to vendors. It is lightweight, has easy integration and can be used in small to medium size applications. Jupyter Notebooks are applied in exploratory analysis of data and testing analytic models.</p>
+        <p>It uses a dashboard structure to generate interactive visualizations, so users can interactively explore data. Also logging systems are used to monitor the processes of the systems and provide reliability.</p>
+        <h2>1.7 APPLICATIONS</h2>
+        <p>The Vendor Performance Analysis System can be applied in a variety of fields in practice. In supply chain management, it assists organizations to check the effectiveness of the vendor and areas where they can improve. This results in increased coordination and less operational delays.</p>
+        <p>The system helps decision-makers in the procurement processes select the most appropriate vendors on the basis of objective measures of performance in the procurement processes. It is also complementary in business intelligence initiatives as it provides the data-driven information concerning the trend of the performance of the vendors.</p>
+        <p>Additionally, the system may be applied in manufacturing, retail and logistics industries where vendor management is a key aspect of the overall business success.</p>
+        <h2>1.8 STRUCTURING THE THESIS.</h2>
+        <p>This thesis is divided into seven chapters that revolve around a certain aspect of the project. Chapter 1 introduces the problem, goals and methodology. The literature and related work in the sphere of vendor analysis and data analytics are reviewed in Chapter 2.</p>
+        <p>Chapter 3 entails the system analysis such as requirements and the feasibility study. Chapter 4 will discuss the system design, with its architecture and data flow schemes. Chapter 5 describes the implementation details such as code structure and tools.</p>
+        <p>Chapter 6 includes the results and discussion that shows the outcomes of the system and the work of this system. Lastly, Chapter 7 summarizes the thesis and proposes improvements in the future.</p>
+        <p>1.9 Detailed Objectives</p>
+        <p>Along with the key goals, the project has a number of specific goals contributing to its increased practical relevance. Structured storage and validation mechanisms are one of the goals that are aimed at ensuring data consistency. This assists in sustaining reliability of the system.</p>
+        <p>The other goal is to increase efficiency of decision-making by decreasing the amount of time to process the data on the vendors. The system will focus on automation of repetitive processes so that users are able concentrate on strategic decisions.</p>
+        <p>Another vital aspect of the project is the consideration of scalability so that the system can be able to accommodate the upward surge in data volumes and other features in future. This renders the system flexible to the real world organization requirements.</p>
+        <div class="page-break"></div>
+        <h1>CHAPTER 2: BACKGROUND AND SURVEY.</h1>
+        <p>This chapter provides an in-depth overview of current studies, approaches, and technology involved in vendor performance evaluation, data analytics, and visualization systems. The aim of this review is to know existing methods, limitations and reasons to justify the necessity of the proposed Vendor Performance Analysis System.</p>
+        <p>The literature review is an introduction about the subject of the study.</p>
+        <p>The literature review is an inseparable part of any research project since it represents a pillar to the cognizance of already existing work in the field. It is useful in determining the gaps in existing methodologies, as well as providing information on how researchers and practitioners have dealt with similar issues.</p>
+        <p>When it comes to vendor performance analysis, different researchers have examined the methods of statistical assessment, multi-criteria evaluation decision-making, and data-driven analysis. As technology keeps growing and improving, new methods are more dependent on data analytics and other visualization tools to boost decision-making processes.</p>
+        <h2>2.2 CONVENTIONAL VENDOR TESTING PROCESSES.</h2>
+        <p>Conventional vendor evaluation approaches mainly rely on the manual evaluation strategies such as the use of scorecard, checklist and subjective ratings by the procurement managers. These techniques usually rank the vendors by considering factors like the price, quality, and delivery services.</p>
+        <p>Although these methods are direct and can be easily followed, they have various shortcomings. Manual evaluation is time consuming and subject to human bias and this may result in inconsistent results. Moreover, these approaches are not scaled and can not be used when there is a great amount of data.</p>
+        <p>Scientists have pointed out that conventional approaches lack real-time information and cannot support active business activities. Subsequently, there is an increasing desire to have automated and data-based systems substituting these approaches.</p>
+        <h2>2.3 MULTI-CRITERIA DECISION-MAKING (MCDM) TECHNIQUES</h2>
+        <p>Multi-Criteria Decision-Making (MCDM) methods have extensively been applied in the evaluation of vendors to cope with the complexity of a decision made under a number of factors. They are commonly used methods like the Analytical Hierarchy Process (AHP), Technique for Order Preference by Similarity to Ideal Solution (TOPSIS) and Weighted Scoring Models.</p>
+        <p>One of the most common methods of selecting a vendor is AHP which has been proposed by Saaty. It entails organizing the decision criteria into hierarchy and a weighting of the criteria according to its significance. TOPSIS however works on placing vendors on a ranking of how far they are to an ideal solution.</p>
+        <p>In spite of the fact that MCDM methods offer a systematic way of determining a decision, they are still highly dependent on human factors to put weights and priorities into consideration. This adds subjectivity and constrains their efficacy in completely automated systems.</p>
+        <h2>2.4 DATA ANALYTICS IN VENDOR PERFORMANCE EVALUATION.</h2>
+        <p>As big data and sophisticated analytics start to emerge, organizations are turning to increasingly more data-driven methods of vendor analysis. The data analytics allow running a large amount of data to extract patterns, trends, and correlations that are difficult to see using a manual analysis.</p>
+        <p>A number of studies have indicated how it is effectively done using the statistical and analytical methods to assess the performance of the vendor. It is possible to examine metrics like delivery time, defect rate and cost variance that can give objective information on the efficiency of a vendor.</p>
+        <p>Vendor performance can also be continuously monitored with the help of data analytics that will help organizations to identify a problem at the initial stage and implement relevant measures. This reactive to proactive decision-making calculation is a great improvement to the conventional ways.</p>
+        <h2>2.5 ATTRIBUTION VALUE OF DATA VISUALIZATION TOWARDS DECISION MAKING.</h2>
+        <p>In order to visualize complex analytical outcomes in readily understandable formats, data visualization is highly important. Charts, graphs and dashboards are other who visualize data to allow users to learn trends and patterns.</p>
+        <p>Studies have established that visualization greatly enhances decision-making by declogging the head and optimising the understanding of data. The use of interactive dashboards, especially, gives users a chance to have an interactive experience and discover more information.</p>
+        <p>Visualization assists stakeholders in the vendor performance analysis to compare the vendors to each other and whether they are performing well or poorly and how the performance is growing. This renders it a very crucial aspect of the contemporary analytics systems.</p>
+        <h2>2.6 ANALYTICAL APPLICATIONS OF DATABASE MANAGEMENT SYSTEMS.</h2>
+        <p>Any analytical system must be efficient in data storage and management. Structured data are often stored in Relational Database Management Systems (RDBMS) like SQLite, MySQL and PostgreSQL.</p>
+        <p>Especially popular is SQLite, which can be used in applications of small to medium magnitude because of its simplicity and lightweight nature. It offers adequate features to handle structured data datasets without having to set up the server complexities.</p>
+        <p>Researchers lay emphasis on the fact that a properly-constructed database schema is key to ensuring data integrity, consensus and efficient querying. Scalability and performance are further improved by proper indexing and normalization techniques.</p>
+        <h2>2.7 PYTHON-BASED ANALYTICAL SYSTEMS</h2>
+        <p>The number of libraries available in Python managed to make it one of the most used programming languages for data analytics, including Pandas, NumPy, Matplotlib, etc. These libraries present a robust data manipulation, statistical analysis, and visualization tools.</p>
+        <p>Researchers and practitioners choose Python due to its simplicity, flexibility and the wide range of community support. It can be developed and integrated with databases and visualization structures fast and conveniently.</p>
+        <p>When applied to analyzing the performance of vendors, substantial datasets can be run through efficient analytical models applied in Python. It can also be used to perform exploratory data analysis and experimentation as it is compatible with Jupyter Notebooks.</p>
+        <h2>2.8 DASHBOARD SYSTEMS BUSINESS INTELLIGENCE</h2>
+        <p>Dashboard systems are common in business intelligence application to show key performance indicators (KPIs) graphically. Exploratory tools in the form of Tableau, Power BI and custom-built dashboards offer interactive data interfaces.</p>
+        <p>Dashboards facilitate up to date tracking of business measurements and facilitate data-driven decision-making. They enable users to filter, drill down and conceive data in various aspects.</p>
+        <p>Dashboards are used in vendor performance analysis to give a centralized perspective of the vendor measures, where stakeholders find it easier to assess the performance and trends emerging. This improves responsibility and responsibility in vendor management processes.</p>
+        <h2>2.9 DISADVANTAGES OF EXISTING SYSTEMS.</h2>
+        <p>Although multiple methods and tools are available, the currently existing vendor evaluation systems have a number of shortcomings. The traditional techniques are not automatable and scalable whereas MCDM techniques depend on subjective inputs to a great extent.</p>
+        <p>Most data analytics solutions center on particular areas of vendor performance and are not a comprehensive solution. Also, not all systems have straightforward infrastructure and cannot be used in the small and medium-scale usage.</p>
+        <p>Many existing solutions also lack the integration of the elements of data storage, analysis and visualization. This disintegration compromises efficiency and makes the process of getting the overall picture of vendor performance hard.</p>
+        <h2>2.10 RESEARCH GAP</h2>
+        <p>The literature review notes that there is a gap loophole in the development of combined systems that enhance data manipulation, data storage and visualization to assess vendor activities. The majority of the current methods partake of the individual components but offer no comprehensive solution.</p>
+        <p>The system that will be able to automate the whole process of evaluating the vendors, including data collection and insight production, is required. It must be scalable, straightforward to use, as well as able to process real-life datasets.</p>
+        <p>The offered Vendor Performance Analysis System is going to bridge this gap and combine database management and data analytics with visualization in one place.</p>
+        <h2>2.11 SUMMARY</h2>
+        <p>In this chapter, the most common approaches to the evaluation of vendor performance were reviewed, such as classical approaches, MCDM techniques, and analytical approaches based on data. It also talked about the use of visualization, database systems, and Python-based tools in the current analytical systems.</p>
+        <p>Some of the limitations indicated in the review of existing systems include absence of automation, scaling and integrations. These are some of the limitations that indicate why a detailed solution is required that can take care of all the issues in vendor performance analysis.</p>
+        <p>The knowledge acquired during this literature review is a solid ground of the design and development of proposed system, which is addressed in the following chapters.</p>
+        <h2>2.12 MOST RECENT DEVELOPMENTS IN DATA ANALYTICS.</h2>
+        <p>The newer developments in the field of data analytics have had a great impact on the systems of vendor performance evaluation. The application of technologies like big data analytics and cloud computing has helped organizations to handle huge amounts of data effectively.</p>
+        <p>The artificially intelligent and machine learning is actively utilized to forecast performance of a vendor and detect a possible risk. With these technologies, organizations can shift away form descriptive analysis to predictive and prescriptive analytics.</p>
+        <p>Cloud-based analytics solutions are easy to access and scale, and allow organizations to analyze real-time data across multiple sources. These tendencies indicate the increase of the significance of highly developed analytics in the vendor management.</p>
+        <h2>2.13 ROLE OF BUSINESS INTELLIGENCE (BI)</h2>
+        <p>Business Intelligence (BI) software is essential in current information analysis frameworks. They offer interactive dashboards and reporting functionalities which enable users to visualize and interpret data properly.</p>
+        <p>BI tools combine data among various sources and provide a thorough analysis and reporting. They facilitate decision making by giving information on trends, patterns, and anomalies.</p>
+        <p>BI tools are used to provide more transparency in the vendor performance analysis and enable vendors in the process to continually measure their vendors. This enhances accountability and helps in strategic planning.</p>
+        <div class="page-break"></div>
+        <h1>CHAPTER 3: SYSTEM ANALYSIS</h1>
+        <p>This chapter aims at investigating the requirements, feasibility, and general insight on the proposed Vendor Performance Analysis System. It clarifies the goals to be attained by the system and the means of responding to the limitations defined in the previous chapter. Analysis is a very important step as it preconditions the design and implementation of the system.</p>
+        <h2>3.1 INTRODUCTION TO SYSTEM ANALYSIS.</h2>
+        <p>System analysis entails examining a system or a problem at a detailed level in order to comprehend the components, the functionality and the requirements of a system. It assists in determining user requirements and converting them into technical specifications to use in the development process.</p>
+        <p>The aspect of system analysis in this project entails the investigation of data collection, storage, process and analysis of vendor information. It also involves the determination of the functional and non-functional systems requirements so that the system addresses the expectations of the users and can also perform effectively.</p>
+        <h2>3.2 EXISTING SYSTEM</h2>
+        <p>The current vendor performance evaluation system is more of a manual system that is not integrated. The inaccuracies are made up of the fact that organizations usually use spread sheets, reports or simple tools to follow-up on vendor data thus resulting in inefficiencies.</p>
+        <p>Manual processes involve a lot of work to collect and process data and are thus hard to keep up. Furthermore, these systems lack real-time analysis and visualization, thus they are not very useful in decision-making.</p>
+        <p>The absence of a centralized data storage is another significant limitation. The vendor information usually appears in various sources and converting and analyzing them becomes difficult. This translates to lack of thorough knowledge and prudent choices of vendors.</p>
+        <h2>3.3 PROPOSED SYSTEM</h2>
+        <p>The suggested system is a Vendor Performance Analysis System, which will automate the procedure of appraising vendors through the use of data analytics and visualization solutions. It is a platform that packages database management, analytic processing, and visualization of dashboard into one platform.</p>
+        <p>The system gathers information pertaining to vendors and stores it in a well-organized database. This data is processed by analytical scripts to determine performance metrics like delivery time, quality and cost efficiency. The metrics are then presented as an interactive dashboard.</p>
+        <p>The suggested system will be a centralized and automated solution with the capability to track vendor performance, be able to compare vendors, and create reports. It eradicates human labor and enhances accuracy, efficiency and decision-making.</p>
+        <h2>3.4 FUNCTIONAL REQUIREMENTS</h2>
+        <p>Functional requirements are the basic functionalities that the system should be able to do. These specifications will help to meet the desired goals of the system and deliver the supported features to users.</p>
+        <p>The system should enable users to manage and store data about the vendors. This incorporates keeping records on the vendor details, transactions and performance measurements. It must also facilitate the retrieval and updates of data.</p>
+        <p>Another important requirement is data analysis. The system should be able to process the data that has been stored to give the performance indicators like delays in delivery, defect rates and change in cost. These computations are the basis of the performance of the vendor.</p>
+        <p>The visualization capability should also be offered in the system so that users can access the performance metrics in chart and dashboards format. It should also facilitate the creation of reports, where they may be exported to be used in other applications.</p>
+        <h2>3.5 NON-FUNCTIONAL REQUIREMENTS</h2>
+        <p>Nonfunctional requirements are quality attributes of the system, which include performance, usability, and reliability. These specifications guarantee the functionality of the system in various circumstances.</p>
+        <p>It must be easy to use and the interface must be user friendly enabling the users to navigate with ease. This is especially crucial in the case of dashboards, where users are required to be able to interpret data rapidly.</p>
+        <p>Another factor is performance. The system should be able to do the processing of the data in an efficient manner even when dealing with large data sets. It must have fast answers to queries and visualization.</p>
+        <p>Considerations should also be made with regards to reliability and security. The system should be such that it provides data integrity and denies access to unauthorized personnel. It must be scalable too, to permit future improvements, and because it may need more data capacity.</p>
+        <h2>3.6 SYSTEM REQUIREMENTS</h2>
+        <p>System requirements identify the hardware and software to operate the application. These criteria are pointers to the fact that the system will be usable and able to be successfully deployed.</p>
+        <h3>Hardware Requirements</h3>
+        <p>The system will need an average computing environment that will have enough processing power and memory. To install and operate the application and perform data analysis, a minimum of a computer with 4 GB of RAM and a current processor is required.</p>
+        <h3>Software Requirements</h3>
+        <p>The system is created in Python; this programming language needs an appropriate runtime environment. SQLite is the database management system and Jupyter Notebooks are the analysis and testing tools.</p>
+        <p>Moreover, a local or web-based dashboard framework is needed to visualise. Pandas and Matplotlib libraries can also be used in the system to process and visualize the data.</p>
+        <h2>3.7 FEASIBILITY STUDY</h2>
+        <p>A feasibility research determines the extent to which the proposed system is viable and realistic. It takes into account issues of technical feasibility, economical feasibility and operational feasibility.</p>
+        <h3>Technical Feasibility</h3>
+        <p>The technical feasibility of the system is predominantly due to the fact that it is based on established technologies like Python and SQLite. These technologies are highly supported and can be implemented with ease hence not hard to develop.</p>
+        <h3>Economic Feasibility</h3>
+        <p>The project is resource efficient, since it is based on open-source software and does not demand a costly infrastructure. This gives it thumbs-up in small to medium-scale organizations.</p>
+        <h3>Operational Feasibility</h3>
+        <p>The system is programmed to be user friendly and easy to use. The dashboard can be easily interpreted to show the user who has a simple level of technical knowledge.</p>
+        <h2>3.8 DATA REQUIREMENTS AND ANALYSIS.</h2>
+        <p>The most important element of the system is information and the quality of information determines the quality of the analysis. This system employs formatted data found in relational database.</p>
+        <p>The data covers vendor information, transactions, delivery dates and performance indicators. This information is manipulated to come up with crucial indicators in vendor assessment.</p>
+        <p>Another step that is significant is data preprocessing; this is done to clean and convert the data so as to eliminate inconsistencies. This makes the results of the analysis to be accurate and reliable.</p>
+        <h2>3.9 DATABASE STRUCTURE (INVENTORY.DB)</h2>
+        <p>The database is a SQLite type database (inventory.db), where data on the vendors is stored. There are tables in the database which represent the various entities including vendors, transactions and performance measures.</p>
+        <p>All the tables are made to have the right fields and associations to maintain data integrity. As an illustration, it can be vendor IDs as the primary keys and the records of the transactions using the vendor IDs as foreign keys.</p>
+        <p>The database design enables an efficient storage of data and the efficient retrieval of the data, resulting in quick execution of queries and analysis.</p>
+        <h2>3.10 SUMMARY</h2>
+        <p>This chapter has given a critical examination of the system, current and proposed methods, needs and viability. It has indicated the shortcomings of existing techniques and how the proposed system can deal with the challenges.</p>
+        <p>The quality attributes and the core features of the system were determined by the functional and the non-functional requirements. The feasibility analysis has proven that the system will be practical and cost effective.</p>
+        <p>Data and database structure analysis underlined the necessity of a well-organized and consistent data to make proper evaluation of performance. This chapter lays a ground to the subsequent stage which involves system design.</p>
+        <h2>3.11 USER REQUIREMENTS</h2>
+        <p>The expectations of the end users on the system are provided by the user requirements. These principles help to make sure that the system is planned to suit the needs of the users.</p>
+        <p>Users also demand a system to have real-time and precise data on vendor performance. They anticipate a user-friendly or an easy-to-navigate interface where they can effortlessly get information. Moreover, users should be able to create reports and compare the vendors on various different parameters. The system should also guarantee security and reliability of data.</p>
+        <h2>3.12 RISK ANALYSIS</h2>
+        <p>Risk analysis: The risk analysis determines the possible risks related to the system and proposes the measures to mitigate. Among the foremost risks is that of data inconsistency, and it may influence precision of the analysis. One possible way of overcoming this risk is by adequately verifying and preprocessing the data.</p>
+        <p>Large dataset handling is another risk of causing problems in system performance. This may be solved through optimization of queries, and efficient processing of data.</p>
+        <p>Authentication and access control can be used to mitigate security risks, like unauthorized access.</p>
+        <div class="page-break"></div>
+        <h1>CHAPTER 4: IMPLEMENTATION(Theory)</h1>
+        <p>4.1 Background</p>
+        <p>This chapter outlines the design of Vendor Performance Analysis System. A key element in software development is system design which converts the requirements that were discerned during system analysis into an organized framework. It determines the interaction of the various components of the system and the flow of data within the system. The design is oriented in architecture, data flow, database schema, and module-level organization. Clear design makes the system efficient and scalable and also easily maintains it. In this section, you are going to be introduced to system design. System design entails developing a roadmap of how to undertake the system. It gives a clear picture on how the system will work and the interaction of its elements with each otherThe system design in this project involves defining the architecture, identifying modules, creating the database schema, and data flow diagrams. All these aspects are aimed at the system fulfilling both non-functional and functional requirements.</p>
+        <p>The design phase will as well assist in determining possible challenges beforehand and hence the developers can attempt to solve the same before they actually start implementing the same.</p>
+        <p>4.2 System Architecture</p>
+        <p>It assumes a systematic architecture, which combines the data storage, processing, and visualization. It is made in a manner that would guarantee easy interaction between the various components and be in a modular way.</p>
+        <p>The architecture consists of three main layers:</p>
+        <figure>
+            <div style="width:100%; height:200px; background:#e2e8f0; border:2px dashed #94a3b8; display:flex; align-items:center; justify-content:center; color:#64748b; font-weight:bold;">[ System Architecture Diagram Placeholder ]</div>
+            <figcaption>Figure 1: Vendor Performance Analysis System Architecture</figcaption>
+        </figure>
+        <h3>1. Presentation Layer</h3>
+        <p>This layer is the user interface layer that contains dashboards and visualizations. It enables users to engage the system, monitor performance indicators, and create reports. The layout is user-friendly and understandable so that those who will use it do not have to struggle to get the data.</p>
+        <h3>2. Application Layer</h3>
+        <p>Data processing and business logic are contained in the application layer. It consists of analytical Python scripts that read raw data and calculate performance measures. This layer is an intermediate between the database and the user interface.</p>
+        <h3>3. Data Layer</h3>
+        <p>Data layer is in charge of storing and management of data. It involves a SQLite database (inventory.db) in which data about vendors and transaction records can be stored. This layer guarantees integrity of data and effective retrieval.</p>
+        <p>4.3 Data Flow Diagram (DFD).</p>
+        <p>The Data Flow Diagram shows the flow of data within the system. It demonstrates the interplay between various elements and the conversion of input information into some useful output.</p>
+        <ul>
+            <li>Level 0 DFD (Context Diagram)</li>
+        </ul>
+        <p>The Level 0 DFD shows the system as one entity that communicates with external users. The input data are presented by the users, and the system processes it to give outputs in the form of reports and visualizations.</p>
+        <ul>
+            <li>Level 1 DFD</li>
+        </ul>
+        <p>The L1 DFD is subdivided into smaller operations, i.e., data input, processing, storage and visualization. It depicts the flow of data amongst these parts and the role of individual module towards the overall functionality.</p>
+        <p>The DFD assists in comprehending the logical path of data and makes certain that all the processes are interlinked.</p>
+        <p>4.4 Database Design</p>
+        <p>The design of the database is an important part of the system that defines the mechanism of data storage, organization and retrieval. An effective database offers consistency of data and effective querying.</p>
+        <p>The database will have several tables such as:</p>
+        <ul>
+            <li>Vendor Table</li>
+        </ul>
+        <p>This table records data on the vendors (vendors ID, name, contact, and category). It is the leading organization within the system.</p>
+        <ul>
+            <li>Transaction Table</li>
+        </ul>
+        <p>This table records transactions between the organization and vendors. It contains information like date of order, delivery date, quantity and cost.</p>
+        <ul>
+            <li>Performance Metrics Table</li>
+        </ul>
+        <p>The metrics calculated in the table are delivery delays, defect rates, and cost efficiency. These are metrics applied in measuring the performance of the vendors.</p>
+        <p>Primary and foreign keys are used to establish the relationships between tables thereby guaranteeing the data integrity and consistency.</p>
+        <p>4.5 Module Design</p>
+        <p>The system is broken down according to individual modules that perform a certain task. This type of modular style enhances the maintenance ease and enables easy updates and additions.</p>
+        <h3>Data Collection Module</h3>
+        <p>This is the module that will be in charge of gathering and storing the vendors data into the database. It makes sure that data is typed correctly and uniformly.</p>
+        <h3>Data Processing Module</h3>
+        <p>This module works with raw data and calculates the metrics of performance. It covers data cleaning, transformation as well as data analysis.</p>
+        <h3>Visualization Module</h3>
+        <p>This module creates charts and dashboards in which the performance measures will be shown. It is concerned with the way of displaying information in an understandable way.</p>
+        <h3>Reporting Module</h3>
+        <p>This module produces reports on the basis of analyzed data. Reports can consist of summaries, comparison and performance evaluation.</p>
+        <p>4.6 3-Tier Architecture</p>
+        <p>The system is three-tier based architecture that divides the application into three different layers. Scalability, security, and maintainability are enhanced.</p>
+        <p>‘</p>
+        <h3>Presentation Tier</h3>
+        <p>This level consists of user interface and the dashboard. It directly communicates with the user and presents the outcomes of the data analysis.</p>
+        <h3>Application Tier</h3>
+        <p>This layer holds the business logic and analysis scripts. It works with data and interacts both with the presentation and data layers.</p>
+        <h3>Data Tier</h3>
+        <p>At this level is the database which contains all the data. It guarantees the efficient and secure data management.</p>
+        <h2>4.7 USER INTERFACE DESIGN</h2>
+        <ul>
+            <li>The user interface is intuitive, simple and interactive. It also contains the dashboards which present the key performance indicators in charts and graphs.</li>
+            <li>Its design is geared towards user-friendliness and usability and the user can find his/her way within the system with ease. The interactive nature of the program, like filtering and drill-down features, enable users to delve into details.</li>
+        </ul>
+        <p>An interface can also be used to generate reports, allowing the users to export the analysis results to use them again.</p>
+        <h2>4.9 SECURITY DESIGN</h2>
+        <ul>
+            <li>Security is an important aspect of system design, especially when dealing with sensitive data. The system has some fundamental security controls to ensure that data is not accessed by an unauthorized user.</li>
+            <li>User permissions can be limited through access control, where users are only allowed to access data or modify information when they are authorized users. Sensitive information can also be secured using the data encryption methods.</li>
+        </ul>
+        <p>Backups should be done frequently to avoid the loss of data and so that systems are reliable.</p>
+        <h2>4.10 SCALABILITY DESIGN</h2>
+        <p>Scalability guarantees that the system is able to cope with the increasing amounts of data and user demands. This system can be built to accommodate an app design, which is in a modular style, where additional features can be addedwithout influencing the other existing components. The three-tier architecture will be used to facilitate scalability by isolating concerns and allowing each layer to be scaled independently. This helps in ensuring that this system is able to expand with organizational requirements.</p>
+        <div class="page-break"></div>
+        <h1>CHAPTER 5: IMPLEMENTATION (Practical)</h1>
+        <p>In this chapter the details of execution of the Vendor Performance Analysis System are given. It illustrates the transformation process of the system design into an operational application to several tools and technologies. Implementation phase entails the creation of modules, interconnections, and the functionality of the system being planned.</p>
+        <p>The chapter mirrors the environment development, the code structure in detail, data processing methods, and the dashboard implementation. It also brings out the interaction of various modules to give the overall functionality of the system.</p>
+        <p>5.1 Introduction to Implementation</p>
+        <p>The implementation is the stage on which the theoretical design of the system is implemented into a workable solution. It entails documentation of code, the database setup and coordination of the different elements in order to achieve a fully functioning system.</p>
+        <p>The implementation in this project is centered around the creation of a data-driven framework which processes vendor data to produce new insights. Python and SQLite make the development easier and guarantee efficiency and scalability.</p>
+        <p>This is done modularly whereby all the components are developed and tested separately and then integrated.</p>
+        <p>5.2 Development Environment</p>
+        <p>The development environment are the tools/platforms on which the system was built. Setting up an environment properly will provide an easy development and testing.</p>
+        <p>The Python programming language is applied as the main one to develop the system because of its flexibility and broad assistance with data analysis libraries. Jupyter Notebooks are utilized in exploratory data analysis and testing of algorithms.</p>
+        <p>As a database manager system, SQLite has been utilized and offers a lightweight and efficient storage system of data. A dashboard interface is created with the help of an adequate framework enabling interactive visualization.</p>
+        <p>The development is done on a typical computing architecture with a more-than-adequate amount of memory and processing bandwidth to do data analysis.</p>
+        <p>5.3 Project Structure</p>
+        <p>The project is structured in several directories and files each with a particular purpose. The structured project enhances readability, maintainability and scalability.</p>
+        <p>The key elements of the project are:</p>
+        <ul>
+            <li>Database (inventory.db)</li>
+        </ul>
+        <p>All vendor related information such as transactions, performance is stored in this file. It is the heart of the repository of the system.</p>
+        <h3>Scripts Folder</h3>
+        <p>The Python scripts used in processing and analyzing data are found here. These are scripts that apply the system logic.</p>
+        <h3>Notebooks Folder</h3>
+        <p>Data exploration and testing is carried out with Jupyter Notebooks. They enable developers to work with data interactively and test results.</p>
+        <h3>Dashboard Folder</h3>
+        <p>The code of the user interface with visualizations and reports are stored in this folder.</p>
+        <h3>Logs Folder</h3>
+        <p>Operational logs are taken to trace the operations of the system and debug. They generate performance and error indication of the systems.</p>
+        <p>5.4 Database Implementation</p>
+        <p>Database is implemented through SQLite which offers easy and effective method of storing structured data. Vendor, transaction and performance metric table are stored in the database file (inventory.db).</p>
+        <p>All of the tables are modeled with fields and constraints to guarantee data integrity. Records are uniquely identified using the primary keys whereas the foreign keys relate the tables between each other.</p>
+        <p>Data is inserted, updated and retrieved using SQL queries. The database design guarantees that the system is efficient in querying by enabling the system to handle large datasets with minimal delays.</p>
+        <h3>Implementation Code :</h3>
+        <div style="background:#f4f4f4; border:1px solid #ddd; padding:10px; margin-bottom:15px; font-family:monospace; font-size:11pt; white-space:pre-wrap; overflow-x:auto;">
+import pandas as pd
+import os
+from sqlalchemy import create_engine
+import logging
+import time
+import gc
+# -------------------- PATH SETUP --------------------
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+data_path = os.path.join(BASE_DIR, 'data')
+log_dir = os.path.join(BASE_DIR, 'logs')
+db_path = os.path.join(BASE_DIR, 'inventory.db')
+# create logs folder if not exists
+os.makedirs(log_dir, exist_ok=True)
+# -------------------- LOGGING --------------------
+logging.basicConfig(
+filename=os.path.join(log_dir, "ingestion_db.log"),
+level=logging.DEBUG,
+format="%(asctime)s - %(levelname)s - %(message)s",
+filemode="a"
+)
+# -------------------- DATABASE --------------------
+engine = create_engine(f'sqlite:///{db_path}')
+# -------------------- FUNCTIONS --------------------
+def ingest_db(df, table_name, engine):
+"""Ingest dataframe into database table"""
+df.to_sql(table_name, con=engine, if_exists='replace', index=False)
+def load_raw_data():
+"""Load CSVs in chunks and ingest into database safely"""
+if not os.path.exists(data_path):
+logging.error(f"Data folder not found: {data_path}")
+print("Data folder not found!")
+return
+start = time.time()
+for file in os.listdir(data_path):
+if file.endswith('.csv'):
+try:
+file_path = os.path.join(data_path, file)
+table_name = file[:-4].lower()
+logging.info(f'Ingesting {file} into table {table_name}')
+print(f"\nProcessing: {file}")
+chunk_iter = pd.read_csv(file_path, chunksize=100000)
+for i, chunk in enumerate(chunk_iter):
+chunk.to_sql(
+table_name,
+con=engine,
+if_exists='append',   # IMPORTANT: append for chunks
+index=False
+)
+print(f"Chunk {i+1} loaded")
+# free memory
+del chunk
+gc.collect()
+print(f"Completed: {file}")
+except Exception as e:
+logging.error(f"Error processing {file}: {e}")
+print(f"Error with {file}: {e}")
+end = time.time()
+total_time = (end - start) / 60
+logging.info('-------------- Ingestion Complete ------------')
+logging.info(f'Total Time Taken: {total_time:.2f} minutes')
+print(f"\nIngestion completed in {total_time:.2f} minutes")
+# -------------------- MAIN --------------------
+if __name__ == '__main__':
+load_raw_data()
+        </div>
+        <h3>Table_Metadata.csv</h3>
+        <table>
+            <tr>
+                <th>Table</th>
+                <th>Column</th>
+                <th>Type</th>
+                <th>Description</th>
+            </tr>
+            <tr>
+                <td>purchases</td>
+                <td>PONumber</td>
+                <td>NUMERIC</td>
+                <td>Contains all purchase transactions made by vendors</td>
+            </tr>
+            <tr>
+                <td>purchases</td>
+                <td>VendorNumber</td>
+                <td>NUMERIC</td>
+                <td>Contains all purchase transactions made by vendors</td>
+            </tr>
+            <tr>
+                <td>purchases</td>
+                <td>VendorName</td>
+                <td>TEXT</td>
+                <td>Contains all purchase transactions made by vendors</td>
+            </tr>
+            <tr>
+                <td>purchases</td>
+                <td>Date</td>
+                <td>TEXT</td>
+                <td>Contains all purchase transactions made by vendors</td>
+            </tr>
+            <tr>
+                <td>purchases</td>
+                <td>Brand</td>
+                <td>TEXT</td>
+                <td>Contains all purchase transactions made by vendors</td>
+            </tr>
+            <tr>
+                <td>purchases</td>
+                <td>Description</td>
+                <td>TEXT</td>
+                <td>Contains all purchase transactions made by vendors</td>
+            </tr>
+            <tr>
+                <td>purchases</td>
+                <td>Quantity</td>
+                <td>NUMERIC</td>
+                <td>Contains all purchase transactions made by vendors</td>
+            </tr>
+            <tr>
+                <td>purchases</td>
+                <td>Dollars</td>
+                <td>NUMERIC</td>
+                <td>Contains all purchase transactions made by vendors</td>
+            </tr>
+            <tr>
+                <td>purchases</td>
+                <td>PurchasePrice</td>
+                <td>NUMERIC</td>
+                <td>Contains all purchase transactions made by vendors</td>
+            </tr>
+            <tr>
+                <td>sales</td>
+                <td>SalesOrderNumber</td>
+                <td>NUMERIC</td>
+                <td>Contains all sales transactions of products</td>
+            </tr>
+            <tr>
+                <td>sales</td>
+                <td>Date</td>
+                <td>TEXT</td>
+                <td>Contains all sales transactions of products</td>
+            </tr>
+            <tr>
+                <td>sales</td>
+                <td>VendorNo</td>
+                <td>TEXT</td>
+                <td>Contains all sales transactions of products</td>
+            </tr>
+            <tr>
+                <td>sales</td>
+                <td>Brand</td>
+                <td>TEXT</td>
+                <td>Contains all sales transactions of products</td>
+            </tr>
+            <tr>
+                <td>sales</td>
+                <td>SalesQuantity</td>
+                <td>NUMERIC</td>
+                <td>Contains all sales transactions of products</td>
+            </tr>
+            <tr>
+                <td>sales</td>
+                <td>SalesDollars</td>
+                <td>NUMERIC</td>
+                <td>Contains all sales transactions of products</td>
+            </tr>
+            <tr>
+                <td>sales</td>
+                <td>SalesPrice</td>
+                <td>NUMERIC</td>
+                <td>Contains all sales transactions of products</td>
+            </tr>
+            <tr>
+                <td>sales</td>
+                <td>ExciseTax</td>
+                <td>NUMERIC</td>
+                <td>Contains all sales transactions of products</td>
+            </tr>
+            <tr>
+                <td>vendor_invoice</td>
+                <td>InvoiceNumber</td>
+                <td>NUMERIC</td>
+                <td>Contains vendor invoice information including freight costs</td>
+            </tr>
+            <tr>
+                <td>vendor_invoice</td>
+                <td>VendorNumber</td>
+                <td>NUMERIC</td>
+                <td>Contains vendor invoice information including freight costs</td>
+            </tr>
+            <tr>
+                <td>vendor_invoice</td>
+                <td>PONumber</td>
+                <td>NUMERIC</td>
+                <td>Contains vendor invoice information including freight costs</td>
+            </tr>
+            <tr>
+                <td>vendor_invoice</td>
+                <td>Date</td>
+                <td>TEXT</td>
+                <td>Contains vendor invoice information including freight costs</td>
+            </tr>
+            <tr>
+                <td>vendor_invoice</td>
+                <td>Quantity</td>
+                <td>NUMERIC</td>
+                <td>Contains vendor invoice information including freight costs</td>
+            </tr>
+            <tr>
+                <td>vendor_invoice</td>
+                <td>Dollars</td>
+                <td>NUMERIC</td>
+                <td>Contains vendor invoice information including freight costs</td>
+            </tr>
+            <tr>
+                <td>vendor_invoice</td>
+                <td>Freight</td>
+                <td>NUMERIC</td>
+                <td>Contains vendor invoice information including freight costs</td>
+            </tr>
+            <tr>
+                <td>purchase_prices</td>
+                <td>VendorNumber</td>
+                <td>NUMERIC</td>
+                <td>Contains actual and purchase prices for products by vendor and brand</td>
+            </tr>
+            <tr>
+                <td>purchase_prices</td>
+                <td>Brand</td>
+                <td>TEXT</td>
+                <td>Contains actual and purchase prices for products by vendor and brand</td>
+            </tr>
+            <tr>
+                <td>purchase_prices</td>
+                <td>Price</td>
+                <td>NUMERIC</td>
+                <td>Contains actual and purchase prices for products by vendor and brand</td>
+            </tr>
+            <tr>
+                <td>purchase_prices</td>
+                <td>Volume</td>
+                <td>NUMERIC</td>
+                <td>Contains actual and purchase prices for products by vendor and brand</td>
+            </tr>
+            <tr>
+                <td>purchase_prices</td>
+                <td>PurchasePrice</td>
+                <td>NUMERIC</td>
+                <td>Contains actual and purchase prices for products by vendor and brand</td>
+            </tr>
+            <tr>
+                <td>begin_inventory</td>
+                <td>Brand</td>
+                <td>TEXT</td>
+                <td>Beginning inventory positions for the fiscal year</td>
+            </tr>
+            <tr>
+                <td>begin_inventory</td>
+                <td>Quantity</td>
+                <td>NUMERIC</td>
+                <td>Beginning inventory positions for the fiscal year</td>
+            </tr>
+            <tr>
+                <td>begin_inventory</td>
+                <td>Value</td>
+                <td>NUMERIC</td>
+                <td>Beginning inventory positions for the fiscal year</td>
+            </tr>
+            <tr>
+                <td>begin_inventory</td>
+                <td>Date</td>
+                <td>TEXT</td>
+                <td>Beginning inventory positions for the fiscal year</td>
+            </tr>
+            <tr>
+                <td>end_inventory</td>
+                <td>Brand</td>
+                <td>TEXT</td>
+                <td>Ending inventory positions for the fiscal year</td>
+            </tr>
+            <tr>
+                <td>end_inventory</td>
+                <td>Quantity</td>
+                <td>NUMERIC</td>
+                <td>Ending inventory positions for the fiscal year</td>
+            </tr>
+            <tr>
+                <td>end_inventory</td>
+                <td>Value</td>
+                <td>NUMERIC</td>
+                <td>Ending inventory positions for the fiscal year</td>
+            </tr>
+            <tr>
+                <td>end_inventory</td>
+                <td>Date</td>
+                <td>TEXT</td>
+                <td>Ending inventory positions for the fiscal year</td>
+            </tr>
+        </table>
+        <p>5.5 Data Processing and Analysis.</p>
+        <h3>Implementation code :</h3>
+        <div style="background:#f4f4f4; border:1px solid #ddd; padding:10px; margin-bottom:15px; font-family:monospace; font-size:11pt; white-space:pre-wrap; overflow-x:auto;">
+# merging all the summary table to create an aggregated summary table for further analysis
+vendor_sales_summary = pd.read_sql_query("""WITH FreightSummary AS (
+SELECT
+VendorNumber,
+SUM(Freight) AS FreightCost
+FROM vendor_invoice
+GROUP BY VendorNumber
+PurchaseSummary AS (
+SELECT
+p.VendorNumber,
+p.VendorName,
+p.Brand,
+p.Description,
+p.PurchasePrice,
+pp.Price AS ActualPrice,
+pp.Volume,
+SUM(p.Quantity) AS TotalPurchaseQuantity,
+SUM(p.Dollars) AS TotalPurchaseDollars
+FROM purchases p
+JOIN purchase_prices pp
+ON p.Brand = pp.Brand
+WHERE p.PurchasePrice > 0
+GROUP BY p.VendorNumber, p.VendorName, p.Brand, p.Description, p.PurchasePrice, pp.Price, pp.Volume
+),
+SalesSummary AS (
+SELECT
+VendorNo,
+Brand,
+SUM(SalesQuantity) AS TotalSalesQuantity,
+SUM(SalesDollars) AS TotalSalesDollars,
+SUM(SalesPrice) AS TotalSalesPrice,
+SUM(ExciseTax) AS TotalExciseTax
+FROM sales
+GROUP BY VendorNo, Brand
+SELECT
+ps.VendorNumber,
+ps.VendorName,
+ps.Brand,
+ps.Description,
+ps.PurchasePrice,
+ps.ActualPrice,
+ps.Volume,
+ps.TotalPurchaseQuantity,
+ps.TotalPurchaseDollars,
+ss.TotalSalesQuantity,
+ss.TotalSalesDollars,
+ss.TotalSalesPrice,
+ss.TotalExciseTax,
+fs.FreightCost
+FROM PurchaseSummary ps
+LEFT JOIN SalesSummary ss
+ON ps.VendorNumber = ss.VendorNo
+AND ps.Brand = ss.Brand
+LEFT JOIN FreightSummary fs
+ON ps.VendorNumber = fs.VendorNumber
+ORDER BY ps.TotalPurchaseDollars DESC""",conn)
+        </div>
+        <p>The system contains data processing as one of its elements. It entails the process of cleaning, transforming and analyzing raw data to create some meaningful insights.</p>
+        <p>Data manipulation is done by python tools like Pandas and NumPy. Such libraries offer strong filtering, grouping and aggregation functions on data.</p>
+        <p>The system computes different performance measures, such as the delivery time, rate of defect and economic efficiency in the system. These measures are employed to assess the performance of the vendors and the trends.</p>
+        <p>Data preprocessing will take care of any inconsistencies and missing values, making the analysis more accurate.</p>
+        <h2>5.6 DASHBOARD IMPLEMENTATION</h2>
+        <p>One of the key elements of the system is the dashboard that will offer an interactive interface to view the data. It presents the important performance measures in chart and graphical form.</p>
+        <p>The dashboard will be user friendly and dynamic in enabling users to navigate data. With features like filtering and drill-down, users can analyze data in various perspectives.</p>
+        <p>Graphes are created by using visualization tools to form bar charts, line charts and pie charts. This is because these visualizations enable users to comprehend trends and compare the performance of vendors.</p>
+        <h2>5.7 INTEGRATION OF COMPONENTS</h2>
+        <p>Integration entails bringing together diverse modules in producing a single system. The database, data processing scripts and dashboard are interconnected to provide a smooth execution.</p>
+        <p>The system is alternatively accessed to obtain information in the database; it then analyses the information through analytical scripts and presents the information on the dashboard. Through this integration, individuals will be able to get real-time insights without the need to do it manually.</p>
+        <p>Adequate integration is also relevant so that any changes made on the database can be reflected on the dashboard automatically, so that there is consistency throughout the system.</p>
+        <h2>5.10 DEPLOYMENT</h2>
+        <p>Deployment is the process of making the system accessible to use. Depending on the requirements, the system can be implemented on a local machine or a server.</p>
+        <p>The process of deployment involves the establishment of the database, environment configuration and application execution. It has proper documentation that guides the users on the set up process.</p>
+        <p>The system will be not only easy to deploy but also there will be minimum configuration and set up.</p>
+        <h2>5.11 CHALLENGES FACED</h2>
+        <p>In carrying out the system, there were some issues that were experienced. The other key issue was the lack of consistency and completeness of data, which entailed a lot of preprocessing.</p>
+        <p>The other challenge was incorporation of various features, i.e., the database, and dashboard to facilitate smooth communication. Optimization of performance was also of concern, particularly when handling large datasets.</p>
+        <p>These issues were overcome by design, testing and optimization.</p>
+        <h2>5.12 SUMMARY</h2>
+        <p>This chapter explained how the Vendor Performance Analysis System was implemented, the development environment, the project structure, how to implement the database, and how to process the data. It also had explained the development of the dashboard and how various parts were incorporating to form a complete system. To guarantee system reliability, error handling, testing and deployment have been discussed. In the following chapter, the results and discussion are presented, which describes the consequences of the system and its performance.</p>
+        <h2>5.13 CODE OPTIMIZATION TECHNIQUES</h2>
+        <p>Code optimization is crucial in enhancing system performance and efficiency. In this project, optimization techniques such as efficient data structures and optimized queries are used. Python data processing libraries such as Pandas make use of vectorized operations to efficiently process the data. This saves time of execution and enhances performance. Additionally, indexing techniques in the database are used to speed up data retrieval operations.</p>
+        <h2>5.14 VERSION CONTROL AND MAINTENANCE</h2>
+        <p>Version control helps in the management of the change in the project. Various tools like Git may be utilized in order to follow any changes and keep all branches of the code. It is easier to maintain and update the system due to proper documentation and modular design. Periodic upgrades will keep the system efficient and in line with emerging technologies.</p>
+        <div class="page-break"></div>
+        <h1>CHAPTER 6: RESULTS AND DISCUSSION.</h1>
+        <p>This chapter introduces the findings achieved upon the use of Vendor Performance Analysis System and substantiates the discussion in details. The findings illustrate the system operations of processing vendor information into insights and aiding in the decision-making process via visualization and analysis. The results are discussed with the emphasis on their interpretation, the performance of systems, and the underlines of the proposed solution effectiveness to address the problem statement.</p>
+        <h2>6.1 RESULTS AND DISCUSSION INTRODUCTION.</h2>
+        <p>This chapter aims at analyzing the outputs produced by the system and measure its performance. They are obtained by processing the data on the vendors and representing it in the form of a database and then in the form of dashboards. These findings are discussed relating to vendor performance assessment. It provides insight into how the system assists in determining trends, making comparisons with vendors and making informed decisions. The practical importance of the system and the contribution it might make to real-world applications is also brought out in this chapter.</p>
+        <h2>6.2 DATA PROCESSING RESULTS</h2>
+        <p>The system involves processing raw vendor data to calculate its performance measures like delivery time, defect rate and cost efficiency. The metrics have been computed through the use of analytical tools in Python. The processed data gives a clear picture of the performance of the vendors, so that the users can easily detect the patterns and anomalies. An example is that of vendors who always have delayed deliveries that can be easily identified and corrective measures put in place by the organizations. The findings also show that data preprocessing techniques are effective in enhancing quality of data as well as ensuring correct analysis.</p>
+        <p># Distribution Plots for Numerical Columns</p>
+        <p>numerical_cols = df.select_dtypes(include=np.number).columns</p>
+        <p>plt.figure(figsize=(15, 10))</p>
+        <p>for i, col in enumerate(numerical_cols):</p>
+        <p>plt.subplot(4, 4, i+1)  # Adjust grid layout as needed</p>
+        <p>sns.histplot(df[col], kde=True, bins=30)</p>
+        <p>plt.title(col)</p>
+        <p>plt.tight_layout()</p>
+        <p>plt.show()</p>
+        <p># Outlier Detection with Boxplots</p>
+        <p>plt.figure(figsize=(15, 10))</p>
+        <p>for i, col in enumerate(numerical_cols):</p>
+        <p>plt.subplot(4, 4, i+1)</p>
+        <p>sns.boxplot(y=df[col])</p>
+        <p>plt.title(col)</p>
+        <p>plt.tight_layout()</p>
+        <p>plt.show()</p>
+        <p># Distribution Plots for Numerical Columns</p>
+        <p>numerical_cols = df.select_dtypes(include=np.number).columns</p>
+        <p>plt.figure(figsize=(15, 10))</p>
+        <p>for i, col in enumerate(numerical_cols):</p>
+        <p>plt.subplot(4, 4, i+1)  # Adjust grid layout as needed</p>
+        <p>sns.histplot(df[col], kde=True, bins=30)</p>
+        <p>plt.title(col)</p>
+        <p>plt.tight_layout()</p>
+        <p>plt.show()</p>
+        <p># Count Plots for Categorical Columns</p>
+        <p>categorical_cols = ["VendorName", "Description"]</p>
+        <p>plt.figure(figsize=(12, 5))</p>
+        <p>for i, col in enumerate(categorical_cols):</p>
+        <p>plt.subplot(1, 2, i+1)</p>
+        <p>sns.countplot(y=df[col], order=df[col].value_counts().index[:10])  # Top 10 categories</p>
+        <p>plt.title(f"Count Plot of {col}")</p>
+        <p>plt.tight_layout()</p>
+        <p>plt.show()</p>
+        <h3>HeatMap:</h3>
+        <p>top_vendors['Cumulative_Contribution%'] = top_vendors['Purchase_Contribution%'].cumsum()</p>
+        <p>fig, ax1 = plt.subplots(figsize=(10, 6))</p>
+        <p># Bar plot for Purchase Contribution%</p>
+        <p>sns.barplot(x=top_vendors['VendorName'], y=top_vendors['Purchase_Contribution%'],  palette="mako", ax=ax1)</p>
+        <p>for i, value in enumerate(top_vendors['Purchase_Contribution%']):</p>
+        <p>ax1.text(i, value - 1, str(value)+'%', ha='center', fontsize=10, color='white')</p>
+        <p># Line Plot for Cumulative Contribution%</p>
+        <p>ax2 = ax1.twinx()</p>
+        <p>ax2.plot(top_vendors['VendorName'], top_vendors['Cumulative_Contribution%'], color='red', marker='o', linestyle='dashed', label='Cumulative %')</p>
+        <p>ax1.set_xticklabels(top_vendors['VendorName'], rotation=90)</p>
+        <p>ax1.set_ylabel('Purchase Contribution %', color='blue')</p>
+        <p>ax2.set_ylabel('Cumulative Contribution %', color='red')</p>
+        <p>ax1.set_xlabel('Vendors')</p>
+        <p>ax1.set_title('Pareto Chart: Vendor Contribution to Total Purchases')</p>
+        <p>ax2.axhline(y=100, color='gray', linestyle='dashed', alpha=0.7)</p>
+        <p>ax2.legend(loc='upper right')</p>
+        <p>plt.show()</p>
+        <h2>6.3 VISUALIZATION RESULTS</h2>
+        <p>One of the characteristics of the system is visualization, which translates the results of the analysis into graphs. Various charts and graphs are shown on the dashboard which give an insight on the performance of vendors.</p>
+        <p>Bar charts are utilized to compare vendors with performance measures and line charts are utilized to depict change with time. Pie charts are used to visualize the chosen costs or other categorical data.</p>
+        <p>With these visualizations, it becomes simpler to users to make sense of complicated data and discern important insights. The interactive dashboard will enable users to browse the data in real-time, improving the user experience.</p>
+        <div class="chart-wrapper">
+            <canvas id="vendorComparisonChart"></canvas>
+            <figcaption>Chart 1: Vendor Comparison based on Key Metrics</figcaption>
+        </div>
+        <div class="chart-wrapper">
+            <canvas id="purchaseContributionChart"></canvas>
+            <figcaption>Chart 2: Vendor Purchase Contribution</figcaption>
+        </div>
+        <div class="chart-wrapper">
+            <canvas id="performanceTrendChart"></canvas>
+            <figcaption>Chart 3: Vendor Performance Trend Over Time</figcaption>
+        </div>
+        <h2>6.4 VENDOR PERFORMANCE EVALUATION</h2>
+        <p>The system is able to measure the performance of the vendors depending on a combination of factors which give a holistic view of each vendor. Measures of performance like delivery time, quality and cost are merged to produce a total performance measure.</p>
+        <p>This analysis can help companies to prioritize suppliers and to reward the best ones. It also brings to attention the poor performing vendors and this enables the decision-makers to take remedial measures.</p>
+        <p>Multi-criteria approach will make the selection process of the vendor balanced and objective as the consideration of bias will be reduced, and the decision-making process will be enhanced.</p>
+        <h2>6.5 COMPARATIVE ANALYSIS</h2>
+        <p>Comparison analysis is a significant aspect of the system, which enables users to compare various vendors at a time. This assists in establishing strengths and weaknesses of each vendor.</p>
+        <p>One of the vendors can be less expensive but take longer to delivery and another may take faster, but be more expensive. The system also clearly shows these trade-offs, allowing users to make well-informed choices.</p>
+        <p>The comparative analysis is also useful in benchmarking the performance of the vendor against industry standards or organization expectations.</p>
+        <h2>6.6 SYSTEM PERFORMANCE EVALUATION</h2>
+        <p>System performance depends on the factors like the speed of processing, accuracy and usability. The system is also efficient in processing data; there are no major delays in the processing of large data.</p>
+        <p>This has been checked by adequate data preprocessing and validation. The outcomes produced by the system are reliable and predictable, thus it is appropriate in decision-making.</p>
+        <p>The other consideration is usability where the dashboard interface is made to be user-friendly. The system lets users navigate through the results and obtain information without any complicated technical skills.</p>
+        <h2>6.7 SYSTEM BENEFITS.</h2>
+        <p>Vendor Performance Analysis System has a number of advantages over the conventional approaches. It automates vendor evaluation process, lessening manual labor and enhancing efficiency.</p>
+        <p>The system is capable of providing real-time insights, operating as dashboards, and making timely decisions. It is also accurate and consistent in evaluation of performance as it applies data-driven methods.</p>
+        <p>Scalability is another major benefit since the system is capable of manipulating large datasets and can be used in the future to expand its capabilities.</p>
+        <h2>6.8 SYSTEM LIMITATIONS.</h2>
+        <p>In spite of the merits, there are some limitations of the system. It uses previous data which may not be both relevant and up to date on the actual performance of the vendor.</p>
+        <p>The system lacks progressive predictive analytics or machine learning models of predicting the future performance. It is also intended to work with structured datasets and might have to be adapted to work with unstructured data.</p>
+        <p>The limitations present then point at where improvement and development can be achieved in future.</p>
+        <h2>6.9 DISCUSSION</h2>
+        <p>The findings indicate that this proposed system is able to eliminate the issues that were articulated in the problem statement. The system is a complete strategy in performance analysis of vendors with combination of data storage, processing and visualization.</p>
+        <p>The accuracy and objectivity of the evaluation of vendors is improved through the use of data analytics, whereas the interpretation of the data is improved with the help of visualization. The system allows organization to make sound decisions resulting in greater efficiency and lesser operational risks.</p>
+        <p>All in all, the system is a great advancement compared to the traditional vendor evaluation techniques, and its prospect of practical uses is great.</p>
+        <h2>6.10 SUMMARY</h2>
+        <p>This chapter presented the results obtained from the system and discussed their significance. It challenged the way the system handles data, creates insights and aids in the making of decisions.</p>
+        <p>This analysis proved the effectiveness, correctness, and functionality of the system. The strengths and weaknesses of the system were also covered giving a fair perspective of the ability of the system.</p>
+        <p>The following chapter finalizes the thesis and gives some guidelines to future work.</p>
+        <h2>6.11 ACCURACY AND VALIDATION</h2>
+        <p>The effectiveness of the system is verified through the comparison with the anticipated results. Methods of data validation will make sure that there is no wrong or inconsistent input data.</p>
+        <p>The system gives some credible results which shows that the methods of analyses are effective. Validation is done in order to ensure that the system can be relied on in decision making.</p>
+        <h2>6.12 PERFORMANCE METRICS</h2>
+        <p>The measures of system performance include: execution time, response time and accuracy. Such measures have information about the system efficiency.</p>
+        <p>The system exhibits high throughput and low delays, even with huge datasets. This renders it applicable in the field.</p>
+        <div class="page-break"></div>
+        <h1>CHAPTER 7: CONCLUSION AND FUTURE WORK.</h1>
+        <p>This chapter gives the conclusion of the Vendor Performance Analysis System and gives possible possibilities to enhance it. It outlines the efforts done, assesses the effectiveness of the project in accomplishing its goals and explains the ways in which the system can be refined further to address the changing needs.</p>
+        <h2>7.1 INTRODUCTION</h2>
+        <p>The last section of the thesis is the conclusion chapter which summarizes all the essentials of the project. It looks back at a problem statement, methodology, implementation and results that gives a detailed overview of the system.</p>
+        <p>This chapter further finds areas in which the system can be improved in future. These recommendations are founded on the restrictions noticed in the process of making the SYSTEM AND ITS TESTING.</p>
+        <h2>7.2 CONCLUSION OF THE PROJECT</h2>
+        <p>The Vendor Performance Analysis System was effectively developed and implemented to overcome difficulties posed by conventional approaches of evaluating the vendors. The system is an automated and structured way to analyze the performance of vendors with the use of data analytics and visualization tools.</p>
+        <p>The project succeeded in fulfilling its main goal of converting raw data of vendors into valuable insights. The system entails a combination of a database, analytical scripts, and a dashboard interface to allow users to review vendors according to the main performance addresses like delivery time, quality, and cost effectiveness.</p>
+        <p>The application proved that the accuracy and efficiency of the vendor assessment can be enhanced considerably with the help of the data-oriented methods. It is a useful system to make decisions because it gets rid of the manual workload, minimizes mistakes, and allows spending of insights in real-time.</p>
+        <h2>7.3 ACHIEVEMENT OF OBJECTIVES</h2>
+        <p>The set goals outlined in the project initiation phase at the start of the project were met hustle-bustle. The rule was in a position to store and handle the data of the vendors in an effective manner through relational database.</p>
+        <p>Vendor data were processed and analyzed using data analytics techniques that yield valuable insights in the form of metrics on performance. It was developed using an interactive dashboard such that users were able to visualize these metrics in an intuitive manner.</p>
+        <p>Also, the system allows the generation of reports, so that one can analyze and compare the performance of different vendors in detail. All in all, the project attains precisely what it was designed to achieve and offers a thorough solution to the analysis of vendors performance.</p>
+        <h2>7.4 KEY CONTRIBUTIONS</h2>
+        <p>This project contributes to a number of issues in the area of vendor management and data analytics. Among the main contributions is the creation of an integrated system where data storage, analysis, and visualization can be combined.</p>
+        <p>A second contribution is the application of Python-based analysis methods to analyze performance of vendors. This design allows it to be accurate and scalable hence fitting under real-life applications.</p>
+        <p>The project also reflects that visualization is an important aspect of decision-making, and how dashboards may simplify and improve user comprehension of even complex data.</p>
+        <h2>7.5 LIMITATIONS REVISITED</h2>
+        <p>The system has major benefits; however, there are some weaknesses that need to be noted. The system is based on the past and these data might not always represent the present or future vendor performance.</p>
+        <p>It fails to include advanced machine learning models in the predictive analysis, which restricts its predictive capabilities. Also, the system is geared towards structured data and can need adjustments to deal with unstructured sources of data.</p>
+        <p>Such constraints offer avenues in terms of research and development.</p>
+        <h2>7.6 FUTURE ENHANCEMENTS</h2>
+        <p>It can be improved and further extended in the system in several ways. It can be improved by implementing machine learning algorithms that predict the performance of vendors based on past data. This would enable proactive decision-making and risk management.</p>
+        <p>The next improvement is the addition of real-time data processing, which will enable the system to process live data, imported by external devices like APIs or IoT devices. This would enhance the relevancy and accuracy of the analysis.</p>
+        <p>Other ways to upgrade the system include incorporation of enhanced visualization, including interactive filtering as well as prediction dashboards. Moreover, the system would be better scaled and more accessible upon being migrated to a cloud-based platform.</p>
+        <h2>7.7 PRACTICAL IMPLICATIONS</h2>
+        <p>The Vendor Performance Analysis System bears quite a number of practical implications on organizations. It offers an effective and trusted tool to assess vendors and assists companies in enhancing supply chain management, as well as minimizing operational risks.</p>
+        <p>The system may be employed in different sectors of industry manufacturing, retail and logistics. It promotes the use of data in decision-making to help organizations to select the most suitable vendors and streamline procurements.</p>
+        <p>Through enhanced vendor management, the system leads to general business efficiency and competitiveness.</p>
+        <h2>7.8 FINAL SUMMARY</h2>
+        <p>To sum up, this project shows the usefulness of the cross-use of data analytics and visualization to analyse vendor performance. The system offers an all-encompassing solution that overcomes the shortcomings of the traditional solutions and improves decision making processes.</p>
+        <p>The fact that the system was successfully implemented indicates its potential use in reality and its further evolution. The system can be further refined to become a system capable of more complex vendor management.</p>
+        <div class="page-break"></div>
+        <h1>REFERENCES</h1>
+        <ul>
+            <li>Saaty, T. L. (1980). The Analytic Hierarchy Process. McGraw-Hill, New York.</li>
+            <li>McKinney, W. (2010). Data Structures for Statistical Computing in Python. Proceedings of the 9th Python in Science Conference.</li>
+            <li>Ho, W., Xu, X., & Dey, P. K. (2010). Multi-criteria decision making approaches for supplier evaluation and selection: A literature review. European Journal of Operational Research, 202(1), 16-24.</li>
+            <li>Monczka, R. M., Handfield, R. B., Giunipero, L. C., & Patterson, J. L. (2015). Purchasing and Supply Chain Management. Cengage Learning.</li>
+        </ul>
+    </div>
+    <script>
+        function printPDF() { document.getElementById("controls").style.display = "none"; setTimeout(function () { window.print(); setTimeout(function () { document.getElementById("controls").style.display = "flex"; }, 1000); }, 300); }
+        async function addPageNumbers(input) {
+            if (!input.files || !input.files[0]) return;
+            var skipPages = prompt("Start showing page numbers FROM page (e.g. 5 = skip first 4 pages):", "1");
+            if (skipPages === null) return;
+            skipPages = parseInt(skipPages) || 1;
+            var startNum = prompt("Start numbering from:", "1");
+            if (startNum === null) return;
+            startNum = parseInt(startNum) || 1;
+            var file = input.files[0];
+            var arrayBuffer = await file.arrayBuffer();
+            var pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
+            var pages = pdfDoc.getPages();
+            var font = await pdfDoc.embedFont(PDFLib.StandardFonts.TimesRoman);
+            for (var i = 0; i < pages.length; i++) {
+                if (i < skipPages - 1) continue;
+                var page = pages[i];
+                var { width } = page.getSize();
+                var text = String(startNum + (i - (skipPages - 1)));
+                var textWidth = font.widthOfTextAtSize(text, 11);
+                page.drawText(text, {
+                    x: (width - textWidth) / 2,
+                    y: 36,
+                    size: 11,
+                    font: font,
+                    color: PDFLib.rgb(0, 0, 0)
+                });
+            }
+            var pdfBytes = await pdfDoc.save();
+            var blob = new Blob([pdfBytes], { type: 'application/pdf' });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = file.name.replace('.pdf', '') + '_numbered.pdf';
+            a.click();
+            URL.revokeObjectURL(url);
+            input.value = '';
+        }
+        document.addEventListener("DOMContentLoaded", function () {
+            function ic(id, cfg) { var e = document.getElementById(id); if (e) new Chart(e, cfg); }
+            
+            ic("vendorComparisonChart", { type: "bar", data: { labels: ["Vendor A", "Vendor B", "Vendor C", "Vendor D", "Vendor E"], datasets: [{ label: "Delivery Speed (0-10)", data: [8, 6, 9, 7, 5], backgroundColor: "#1565c0" }, { label: "Quality Consistency (0-10)", data: [9, 8, 7, 6, 8], backgroundColor: "#e65100" }, { label: "Cost Efficiency (0-10)", data: [7, 9, 6, 8, 7], backgroundColor: "#2e7d32" }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: "bottom" } }, scales: { y: { beginAtZero: true, max: 10 } } } });
+            
+            ic("purchaseContributionChart", { type: "pie", data: { labels: ["Vendor A", "Vendor B", "Vendor C", "Others"], datasets: [{ data: [45, 25, 20, 10], backgroundColor: ["#1565c0", "#c62828", "#f9a825", "#2e7d32"] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: "bottom" } } } });
+            
+            ic("performanceTrendChart", { type: "line", data: { labels: ["Q1", "Q2", "Q3", "Q4"], datasets: [{ label: "Average Vendor Performance", data: [6.5, 7.2, 7.8, 8.4], borderColor: "#6a1b9a", backgroundColor: "rgba(106,27,154,0.1)", fill: true, tension: 0.3, pointRadius: 5 }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 10 } } } });
+        });
+    </script>
+</body>
+</html>

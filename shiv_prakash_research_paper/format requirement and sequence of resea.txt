@@ -1,0 +1,34 @@
+format requirement and sequence of research paper 
+1. DECLARATION BY STUDENT
+2. AKNOWLEDGEMENT 
+3. CERTIFICATE (Bonafied….)
+4. CERTIFICATE FROM THE COMPANY
+5. PLAGRISM REPORT (<10 %)
+6. ABSTRACT
+i. What is problem facing now a days with your topic and technology
+ii. What improvement you are thinking
+7. INTRODUCTION
+i. Title
+ii. Concern technology in market
+iii. Difference with previous technology used with new one u are using
+iv. Application area
+8. PROJECT MODULE DESCRIPTION
+9. DEPLOYMENT ENVIRONMENT
+10.MODULE WORKED ON IN THIS PROJECT (Description of module done by 
+you)
+11.SRS REPORT
+12.PROJECT DESIGN( DFD,ER-DIAGRAM,TABLES,DATA STRUCTURE)
+13.INPLIMENTATION (SOURCE CODE AND INTERFACE PAGES)
+14.FUTURE OF THE WORK
+15.REFERENCES
+i. From where the material you are collecting. eg. Books name, web site 
+name, paper name.
+16.Published Research Paper/ Acceptance email/Payment Proof/Published 
+Paper
+Minimum pages : 100( Approx.)
+All the material should be written in “Times New Roman/Arial” font
+Font Size of report is : 12
+Heading font size( in capital letters) : 14
+Sub heading font size : 12
+Indent : Justify
+Margin : 1.25 (top, bottom, left, right)

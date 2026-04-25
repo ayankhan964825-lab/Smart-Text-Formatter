@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -10,9 +11,10 @@
     <!-- PptxGenJS Dependencies -->
     <script src="https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs@3.12.0/libs/jszip.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs@3.12.0/dist/pptxgen.min.js"></script>
-    <!-- Background Capture Engine -->
+    <!-- Screenshot Capability -->
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 </head>
+
 <body>
 
     <!-- Progress Bar -->
@@ -20,10 +22,14 @@
 
     <!-- Navigation Arrows -->
     <button class="nav-arrow nav-prev" id="nav-prev" aria-label="Previous slide">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
     </button>
     <button class="nav-arrow nav-next" id="nav-next" aria-label="Next slide">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"></polyline></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="9 6 15 12 9 18"></polyline>
+        </svg>
     </button>
 
     <!-- Slide Counter -->
@@ -34,12 +40,17 @@
 
     <!-- Fullscreen Toggle -->
     <button class="fullscreen-btn" id="fullscreen-btn" aria-label="Toggle fullscreen">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3" />
+        </svg>
     </button>
 
     <!-- Download PPTX Export Button -->
-    <button class="export-pptx-btn" id="export-pptx-btn" aria-label="Export to PowerPoint" style="position: fixed; top: 20px; right: 80px; z-index: 1000; width: 44px; height: 44px; border-radius: 50%; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255,255,255,0.2); backdrop-filter: blur(10px); color: white; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease;">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+    <button class="export-pptx-btn" id="export-pptx-btn" aria-label="Export to PowerPoint"
+        style="position: fixed; top: 20px; right: 80px; z-index: 1000; width: 44px; height: 44px; border-radius: 50%; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255,255,255,0.2); backdrop-filter: blur(10px); color: white; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" />
+        </svg>
     </button>
 
     <!-- ======================== SLIDE 1: TITLE ======================== -->
@@ -57,7 +68,8 @@
             <p class="animate-in subtitle" style="--delay: 2">Intelligent Document Formatting, Reimagined.</p>
             <div class="animate-in meta-row" style="--delay: 3">
                 <span class="tag">Object-Oriented Programming & Design</span>
-            </div></div>
+            </div>
+        </div>
     </section>
 
     <!-- ======================== SLIDE 2: AUTHORS ======================== -->
@@ -66,30 +78,42 @@
         <div class="slide-content split-layout">
             <div class="split-left animate-in" style="--delay: 0">
                 <div class="perma-diagram">
-                    <div class="perma-circle center-circle" style="background: linear-gradient(135deg, var(--teal), var(--blue));">TEAM</div>
-                    <div class="perma-circle orbit-circle orbit-p" style="background: rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); box-shadow:none;">M</div>
-                    <div class="perma-circle orbit-circle orbit-e" style="background: rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); box-shadow:none;">T</div>
-                    <div class="perma-circle orbit-circle orbit-r" style="background: rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); box-shadow:none;">S</div>
-                    <div class="perma-circle orbit-circle orbit-m" style="background: rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); box-shadow:none;">Y</div>
+                    <div class="perma-circle center-circle"
+                        style="background: linear-gradient(135deg, var(--teal), var(--blue));">TEAM</div>
+                    <div class="perma-circle orbit-circle orbit-p"
+                        style="background: rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); box-shadow:none;">
+                        M</div>
+                    <div class="perma-circle orbit-circle orbit-e"
+                        style="background: rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); box-shadow:none;">
+                        T</div>
+                    <div class="perma-circle orbit-circle orbit-r"
+                        style="background: rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); box-shadow:none;">
+                        S</div>
+                    <div class="perma-circle orbit-circle orbit-m"
+                        style="background: rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); box-shadow:none;">
+                        Y</div>
                     <svg class="orbit-lines" viewBox="0 0 300 300">
-                        <line x1="150" y1="150" x2="150" y2="30" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
-                        <line x1="150" y1="150" x2="264" y2="87" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
-                        <line x1="150" y1="150" x2="220" y2="255" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
-                        <line x1="150" y1="150" x2="80" y2="255" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+                        <line x1="150" y1="150" x2="150" y2="30" stroke="rgba(255,255,255,0.15)" stroke-width="1" />
+                        <line x1="150" y1="150" x2="264" y2="87" stroke="rgba(255,255,255,0.15)" stroke-width="1" />
+                        <line x1="150" y1="150" x2="220" y2="255" stroke="rgba(255,255,255,0.15)" stroke-width="1" />
+                        <line x1="150" y1="150" x2="80" y2="255" stroke="rgba(255,255,255,0.15)" stroke-width="1" />
                     </svg>
                 </div>
             </div>
             <div class="split-right">
                 <p class="animate-in section-label" style="--delay: 0">Presented By</p>
-                <h2 class="animate-in slide-heading" style="--delay: 1">Our <span class="gradient-text-electric">Group</span></h2>
+                <h2 class="animate-in slide-heading" style="--delay: 1">Our <span
+                        class="gradient-text-electric">Group</span></h2>
                 <div class="animate-in credits-block" style="--delay: 2; text-align: left;">
-                    <div class="credits-row" style="justify-content: center; margin-bottom: 24px; gap: clamp(24px, 4vw, 48px);">
+                    <div class="credits-row"
+                        style="justify-content: center; margin-bottom: 24px; gap: clamp(24px, 4vw, 48px);">
                         <div class="credit-item" style="text-align: left;">
                             <span class="credit-name" style="font-size: clamp(16px, 2vw, 24px);">Mohd Ayan Khan</span>
                             <span class="credit-id" style="font-size: clamp(12px, 1.5vw, 16px);">RA2511003030020</span>
                         </div>
                         <div class="credit-item" style="text-align: left;">
-                            <span class="credit-name" style="font-size: clamp(16px, 2vw, 24px);">Tapish Ganesh Ingle</span>
+                            <span class="credit-name" style="font-size: clamp(16px, 2vw, 24px);">Tapish Ganesh
+                                Ingle</span>
                             <span class="credit-id" style="font-size: clamp(12px, 1.5vw, 16px);">RA2511003030044</span>
                         </div>
                     </div>
@@ -103,8 +127,10 @@
                             <span class="credit-id" style="font-size: clamp(12px, 1.5vw, 16px);">RA2511003030003</span>
                         </div>
                     </div>
-                    <div style="margin-top: 40px; font-size: clamp(14px, 1.5vw, 20px); color: rgba(255,255,255,0.5); text-align: center;">
-                        Under the guidance of <strong>Dr. Umma Meena <br><span style="font-size:14px">(Associate Professor, OOPD)</span></strong>
+                    <div
+                        style="margin-top: 40px; font-size: clamp(14px, 1.5vw, 20px); color: rgba(255,255,255,0.5); text-align: center;">
+                        Under the guidance of <strong>Dr. Umma Meena <br><span style="font-size:14px">(Associate
+                                Professor, OOPD)</span></strong>
                     </div>
                 </div>
             </div>
@@ -116,23 +142,27 @@
         <div class="slide-bg bg-electric"></div>
         <div class="slide-content">
             <p class="animate-in section-label" style="--delay: 0">The Challenge</p>
-            <h2 class="animate-in slide-heading" style="--delay: 1">Manual formatting is <span class="gradient-text-electric">broken.</span></h2>
-            
+            <h2 class="animate-in slide-heading" style="--delay: 1">Manual formatting is <span
+                    class="gradient-text-electric">broken.</span></h2>
+
             <div class="three-columns animate-in" style="--delay: 2; margin-top: 40px;">
                 <div class="level-card glass-card" style="border-top: 4px solid var(--pink);">
                     <div class="level-icon">⏳</div>
                     <h3>Time-Consuming</h3>
-                    <p style="font-size: clamp(14px, 1.5vw, 18px); color: rgba(255,255,255,0.7); line-height: 1.6;">Hours spent manually adjusting headings, spacing, and fonts across long documents.</p>
+                    <p style="font-size: clamp(14px, 1.5vw, 18px); color: rgba(255,255,255,0.7); line-height: 1.6;">
+                        Hours spent manually adjusting headings, spacing, and fonts across long documents.</p>
                 </div>
                 <div class="level-card glass-card" style="border-top: 4px solid var(--orange);">
                     <div class="level-icon">🔀</div>
                     <h3>Inconsistent</h3>
-                    <p style="font-size: clamp(14px, 1.5vw, 18px); color: rgba(255,255,255,0.7); line-height: 1.6;">Different heading levels, font sizes, and spacing create unprofessional results.</p>
+                    <p style="font-size: clamp(14px, 1.5vw, 18px); color: rgba(255,255,255,0.7); line-height: 1.6;">
+                        Different heading levels, font sizes, and spacing create unprofessional results.</p>
                 </div>
                 <div class="level-card glass-card" style="border-top: 4px solid var(--rose);">
                     <div class="level-icon">🚫</div>
                     <h3>No Browser Solution</h3>
-                    <p style="font-size: clamp(14px, 1.5vw, 18px); color: rgba(255,255,255,0.7); line-height: 1.6;">No lightweight, browser-based tool auto-detects document structure and applies formatting.</p>
+                    <p style="font-size: clamp(14px, 1.5vw, 18px); color: rgba(255,255,255,0.7); line-height: 1.6;">No
+                        lightweight, browser-based tool auto-detects document structure and applies formatting.</p>
                 </div>
             </div>
         </div>
@@ -144,18 +174,27 @@
         <div class="slide-content perma-slide" style="align-items: center;">
             <div class="perma-content" style="text-align: center; width: 100%;">
                 <p class="animate-in section-label" style="--delay: 0">The Solution</p>
-                <h2 class="animate-in slide-heading" style="--delay: 1">Smart Text <span class="gradient-text-gold">Formatter</span></h2>
-                <p class="animate-in slide-body" style="--delay: 2; margin: 0 auto 40px auto; max-width: 900px; text-align: justify; text-justify: inter-word; font-size: clamp(16px, 1.8vw, 22px); line-height: 1.6;">
-                    A web-based application that <strong>intelligently reads, understands, and formats</strong> unstructured text documents — powered by AI and pure Object-Oriented Design.
+                <h2 class="animate-in slide-heading" style="--delay: 1">Smart Text <span
+                        class="gradient-text-gold">Formatter</span></h2>
+                <p class="animate-in slide-body"
+                    style="--delay: 2; margin: 0 auto 40px auto; max-width: 900px; text-align: justify; text-justify: inter-word; font-size: clamp(16px, 1.8vw, 22px); line-height: 1.6;">
+                    A web-based application that <strong>intelligently reads, understands, and formats</strong>
+                    unstructured text documents — powered by AI and pure Object-Oriented Design.
                 </p>
-                
+
                 <div class="leader-behaviors animate-in" style="--delay: 3">
-                    <span class="behavior-pill" style="border-color: rgba(90, 200, 250, 0.3); color: var(--teal);">🔍 Auto Structure Detection</span>
-                    <span class="behavior-pill" style="border-color: rgba(48, 209, 88, 0.3); color: var(--green);">⚡ Real-Time Preview</span>
-                    <span class="behavior-pill" style="border-color: rgba(191, 90, 242, 0.3); color: var(--purple);">🎨 Custom Rules Engine</span>
-                    <span class="behavior-pill" style="border-color: rgba(255, 107, 138, 0.3); color: var(--pink);">🤖 Gemini AI Integration</span>
-                    <span class="behavior-pill" style="border-color: rgba(255, 159, 10, 0.3); color: var(--orange);">📄 PDF & Word Export</span>
-                    <span class="behavior-pill" style="border-color: rgba(41, 151, 255, 0.3); color: var(--blue);">🌐 100% Browser-Based</span>
+                    <span class="behavior-pill" style="border-color: rgba(90, 200, 250, 0.3); color: var(--teal);">🔍
+                        Auto Structure Detection</span>
+                    <span class="behavior-pill" style="border-color: rgba(48, 209, 88, 0.3); color: var(--green);">⚡
+                        Real-Time Preview</span>
+                    <span class="behavior-pill" style="border-color: rgba(191, 90, 242, 0.3); color: var(--purple);">🎨
+                        Custom Rules Engine</span>
+                    <span class="behavior-pill" style="border-color: rgba(255, 107, 138, 0.3); color: var(--pink);">🤖
+                        Gemini AI Integration</span>
+                    <span class="behavior-pill" style="border-color: rgba(255, 159, 10, 0.3); color: var(--orange);">📄
+                        PDF & Word Export</span>
+                    <span class="behavior-pill" style="border-color: rgba(41, 151, 255, 0.3); color: var(--blue);">🌐
+                        100% Browser-Based</span>
                 </div>
             </div>
         </div>
@@ -166,35 +205,45 @@
         <div class="slide-bg bg-warm"></div>
         <div class="slide-content">
             <p class="animate-in section-label" style="--delay: 0">Design Philosophy</p>
-            <h2 class="animate-in slide-heading" style="--delay: 1">Why <span class="gradient-text-warm">Object-Oriented</span> Design?</h2>
-            
-            <div class="three-columns animate-in" style="--delay: 2; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-top: 30px;">
+            <h2 class="animate-in slide-heading" style="--delay: 1">Why <span
+                    class="gradient-text-warm">Object-Oriented</span> Design?</h2>
+
+            <div class="three-columns animate-in"
+                style="--delay: 2; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-top: 30px;">
                 <div class="level-card glass-card" style="display:flex; gap:20px; text-align:left;">
                     <div style="font-size: 48px; color:rgba(255,255,255,0.2); font-weight:800; line-height:1;">01</div>
                     <div>
                         <h3 style="margin-bottom: 8px;">Modularity</h3>
-                        <p style="font-size:clamp(12px, 1.4vw, 16px); color:rgba(255,255,255,0.7); line-height:1.6;">Each processing stage is a self-contained class with clear boundaries and single responsibility.</p>
+                        <p style="font-size:clamp(12px, 1.4vw, 16px); color:rgba(255,255,255,0.7); line-height:1.6;">
+                            Each processing stage is a self-contained class with clear boundaries and single
+                            responsibility.</p>
                     </div>
                 </div>
                 <div class="level-card glass-card" style="display:flex; gap:20px; text-align:left;">
                     <div style="font-size: 48px; color:rgba(255,255,255,0.2); font-weight:800; line-height:1;">02</div>
                     <div>
                         <h3 style="margin-bottom: 8px;">Reusability</h3>
-                        <p style="font-size:clamp(12px, 1.4vw, 16px); color:rgba(255,255,255,0.7); line-height:1.6;">Classes can be instantiated with different configurations — custom rules, different AI models, export formats.</p>
+                        <p style="font-size:clamp(12px, 1.4vw, 16px); color:rgba(255,255,255,0.7); line-height:1.6;">
+                            Classes can be instantiated with different configurations — custom rules, different AI
+                            models, export formats.</p>
                     </div>
                 </div>
                 <div class="level-card glass-card" style="display:flex; gap:20px; text-align:left;">
                     <div style="font-size: 48px; color:rgba(255,255,255,0.2); font-weight:800; line-height:1;">03</div>
                     <div>
                         <h3 style="margin-bottom: 8px;">Maintainability</h3>
-                        <p style="font-size:clamp(12px, 1.4vw, 16px); color:rgba(255,255,255,0.7); line-height:1.6;">Change one module without breaking others. Fix the RuleEngine without touching the StructureDetector.</p>
+                        <p style="font-size:clamp(12px, 1.4vw, 16px); color:rgba(255,255,255,0.7); line-height:1.6;">
+                            Change one module without breaking others. Fix the RuleEngine without touching the
+                            StructureDetector.</p>
                     </div>
                 </div>
                 <div class="level-card glass-card" style="display:flex; gap:20px; text-align:left;">
                     <div style="font-size: 48px; color:rgba(255,255,255,0.2); font-weight:800; line-height:1;">04</div>
                     <div>
                         <h3 style="margin-bottom: 8px;">Testability</h3>
-                        <p style="font-size:clamp(12px, 1.4vw, 16px); color:rgba(255,255,255,0.7); line-height:1.6;">Each class can be unit-tested in isolation — mock inputs, verify outputs, measure performance.</p>
+                        <p style="font-size:clamp(12px, 1.4vw, 16px); color:rgba(255,255,255,0.7); line-height:1.6;">
+                            Each class can be unit-tested in isolation — mock inputs, verify outputs, measure
+                            performance.</p>
                     </div>
                 </div>
             </div>
@@ -207,23 +256,40 @@
         <div class="slide-content perma-slide" style="flex-direction: column; align-items:center;">
             <div class="perma-content" style="text-align: center; width: 100%;">
                 <p class="animate-in section-label" style="--delay: 0">System Architecture</p>
-                <h2 class="animate-in slide-heading" style="--delay: 1">The <span class="gradient-text">4-Stage Pipeline</span></h2>
+                <h2 class="animate-in slide-heading" style="--delay: 1">The <span class="gradient-text">4-Stage
+                        Pipeline</span></h2>
             </div>
-            <div class="flow-visual animate-in" style="--delay: 2; width: 100%; display: flex; flex-direction: column; align-items: center; margin-top:40px;">
+            <div class="flow-visual animate-in"
+                style="--delay: 2; width: 100%; display: flex; flex-direction: column; align-items: center; margin-top:40px;">
                 <div class="journey-path">
-                    <div class="journey-step"><div class="journey-icon">📝</div><span>1. TextProcessor</span><span style="font-size: 10px; color:rgba(255,255,255,0.4)">Tokenize</span></div>
+                    <div class="journey-step">
+                        <div class="journey-icon">📝</div><span>1. TextProcessor</span><span
+                            style="font-size: 10px; color:rgba(255,255,255,0.4)">Tokenize</span>
+                    </div>
                     <div class="journey-connector"></div>
-                    <div class="journey-step"><div class="journey-icon">🔎</div><span>2. StructureDetector</span><span style="font-size: 10px; color:rgba(255,255,255,0.4)">Classify</span></div>
+                    <div class="journey-step">
+                        <div class="journey-icon">🔎</div><span>2. StructureDetector</span><span
+                            style="font-size: 10px; color:rgba(255,255,255,0.4)">Classify</span>
+                    </div>
                     <div class="journey-connector"></div>
-                    <div class="journey-step"><div class="journey-icon">⚙️</div><span>3. RuleEngine</span><span style="font-size: 10px; color:rgba(255,255,255,0.4)">Style</span></div>
+                    <div class="journey-step">
+                        <div class="journey-icon">⚙️</div><span>3. RuleEngine</span><span
+                            style="font-size: 10px; color:rgba(255,255,255,0.4)">Style</span>
+                    </div>
                     <div class="journey-connector"></div>
-                    <div class="journey-step"><div class="journey-icon">✨</div><span>4. OutputGenerator</span><span style="font-size: 10px; color:rgba(255,255,255,0.4)">Render</span></div>
+                    <div class="journey-step">
+                        <div class="journey-icon">✨</div><span>4. OutputGenerator</span><span
+                            style="font-size: 10px; color:rgba(255,255,255,0.4)">Render</span>
+                    </div>
                 </div>
-                <div class="corporate-apps animate-in" style="--delay: 3; margin-top: 40px; border-top: 1px solid rgba(255,255,255,0.1); padding-top:20px; width: 100%; max-width:800px;">
+                <div class="corporate-apps animate-in"
+                    style="--delay: 3; margin-top: 40px; border-top: 1px solid rgba(255,255,255,0.1); padding-top:20px; width: 100%; max-width:800px;">
                     <h3 style="color:var(--text-secondary); margin-bottom:16px;">Extensions & Modules</h3>
                     <div class="app-items" style="grid-template-columns: repeat(2, 1fr);">
-                        <div class="app-item" style="justify-content:center;">🤖 AIFormatter <small style="margin-left:8px; opacity:0.5;">(Gemini API)</small></div>
-                        <div class="app-item" style="justify-content:center;">📦 DocxExporter <small style="margin-left:8px; opacity:0.5;">(OpenXML)</small></div>
+                        <div class="app-item" style="justify-content:center;">🤖 AIFormatter <small
+                                style="margin-left:8px; opacity:0.5;">(Gemini API)</small></div>
+                        <div class="app-item" style="justify-content:center;">📦 DocxExporter <small
+                                style="margin-left:8px; opacity:0.5;">(OpenXML)</small></div>
                     </div>
                 </div>
             </div>
@@ -233,13 +299,19 @@
     <!-- ======================== SLIDE 7: INPUT PIPELINE ======================== -->
     <section class="slide" id="slide-7" role="region">
         <div class="slide-bg bg-warm-connect"></div>
-        <div class="slide-content perma-slide" style="flex-direction: column; align-items:center; justify-content:center;">
-            <div class="perma-content animate-in" style="--delay: 0; text-align: center; width: 100%; max-width: 1000px; margin-bottom: 40px;">
+        <div class="slide-content perma-slide"
+            style="flex-direction: column; align-items:center; justify-content:center;">
+            <div class="perma-content animate-in"
+                style="--delay: 0; text-align: center; width: 100%; max-width: 1000px; margin-bottom: 40px;">
                 <p class="section-label">OOPD Deep Dive</p>
                 <h2 class="slide-heading"><span class="gradient-text-rose">Input Pipeline</span> Classes</h2>
-                <p class="slide-body" style="margin-top: 20px; font-size: clamp(14px, 1.6vw, 20px); text-align: justify; text-justify: inter-word; color: rgba(255,255,255,0.85); line-height: 1.6;">Click any Code Module below to securely proxy its simulated execution pipeline logic and state output.</p>
+                <p class="slide-body"
+                    style="margin-top: 20px; font-size: clamp(14px, 1.6vw, 20px); text-align: justify; text-justify: inter-word; color: rgba(255,255,255,0.85); line-height: 1.6;">
+                    Click any Code Module below to securely proxy its simulated execution pipeline logic and state
+                    output.</p>
             </div>
-            <div class="two-columns animate-in" style="--delay: 1; width: 100%; max-width: 1300px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; text-align:left;">
+            <div class="two-columns animate-in"
+                style="--delay: 1; width: 100%; max-width: 1300px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; text-align:left;">
                 <div class="code-preview-window" onclick="openOOPDModal('TextProcessor')">
                     <div class="window-header">
                         <div class="window-controls">
@@ -259,8 +331,11 @@
   }
 }</code></pre>
                         <div class="window-overlay-blur">
-                            <span class="run-btn" style="color:var(--pink); border-color:var(--pink); background:rgba(255, 45, 85, 0.15);">
-                                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> 
+                            <span class="run-btn"
+                                style="color:var(--pink); border-color:var(--pink); background:rgba(255, 45, 85, 0.15);">
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                                    <path d="M8 5v14l11-7z" />
+                                </svg>
                                 Execute Pipeline
                             </span>
                         </div>
@@ -287,8 +362,11 @@
   }
 }</code></pre>
                         <div class="window-overlay-blur">
-                            <span class="run-btn" style="color:var(--teal); border-color:var(--teal); background:rgba(90, 200, 250, 0.15);">
-                                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> 
+                            <span class="run-btn"
+                                style="color:var(--teal); border-color:var(--teal); background:rgba(90, 200, 250, 0.15);">
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                                    <path d="M8 5v14l11-7z" />
+                                </svg>
                                 Execute Pipeline
                             </span>
                         </div>
@@ -301,13 +379,19 @@
     <!-- ======================== SLIDE 8: PROCESSING PIPELINE ======================== -->
     <section class="slide" id="slide-8" role="region">
         <div class="slide-bg bg-electric"></div>
-        <div class="slide-content perma-slide" style="flex-direction: column; align-items:center; justify-content:center;">
-            <div class="perma-content animate-in" style="--delay: 0; text-align: center; width: 100%; max-width: 1000px; margin-bottom: 40px;">
+        <div class="slide-content perma-slide"
+            style="flex-direction: column; align-items:center; justify-content:center;">
+            <div class="perma-content animate-in"
+                style="--delay: 0; text-align: center; width: 100%; max-width: 1000px; margin-bottom: 40px;">
                 <p class="section-label">OOPD Deep Dive</p>
                 <h2 class="slide-heading"><span class="gradient-text-electric">Processing</span> Classes</h2>
-                <p class="slide-body" style="margin-top: 20px; font-size: clamp(14px, 1.6vw, 20px); text-align: justify; text-justify: inter-word; color: rgba(255,255,255,0.85); line-height: 1.6;">Click any Code Module below to securely proxy its simulated execution pipeline logic and state output.</p>
+                <p class="slide-body"
+                    style="margin-top: 20px; font-size: clamp(14px, 1.6vw, 20px); text-align: justify; text-justify: inter-word; color: rgba(255,255,255,0.85); line-height: 1.6;">
+                    Click any Code Module below to securely proxy its simulated execution pipeline logic and state
+                    output.</p>
             </div>
-            <div class="two-columns animate-in" style="--delay: 1; width: 100%; max-width: 1300px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; text-align:left;">
+            <div class="two-columns animate-in"
+                style="--delay: 1; width: 100%; max-width: 1300px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; text-align:left;">
                 <div class="code-preview-window" onclick="openOOPDModal('RuleEngine')">
                     <div class="window-header">
                         <div class="window-controls">
@@ -329,8 +413,11 @@
   }
 }</code></pre>
                         <div class="window-overlay-blur">
-                            <span class="run-btn" style="color:var(--purple); border-color:var(--purple); background:rgba(191, 90, 242, 0.15);">
-                                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> 
+                            <span class="run-btn"
+                                style="color:var(--purple); border-color:var(--purple); background:rgba(191, 90, 242, 0.15);">
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                                    <path d="M8 5v14l11-7z" />
+                                </svg>
                                 Execute Pipeline
                             </span>
                         </div>
@@ -357,8 +444,11 @@
   }
 }</code></pre>
                         <div class="window-overlay-blur">
-                            <span class="run-btn" style="color:var(--gold); border-color:var(--gold); background:rgba(255, 214, 10, 0.15);">
-                                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> 
+                            <span class="run-btn"
+                                style="color:var(--gold); border-color:var(--gold); background:rgba(255, 214, 10, 0.15);">
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                                    <path d="M8 5v14l11-7z" />
+                                </svg>
                                 Execute Pipeline
                             </span>
                         </div>
@@ -371,20 +461,27 @@
     <!-- ======================== SLIDE 9: AI & EXPORT ======================== -->
     <section class="slide" id="slide-9" role="region">
         <div class="slide-bg bg-leader"></div>
-        <div class="slide-content perma-slide" style="flex-direction: column; align-items:center; justify-content:center;">
-            <div class="perma-content animate-in" style="--delay: 0; text-align: center; width: 100%; max-width: 1000px; margin-bottom: 40px;">
+        <div class="slide-content perma-slide"
+            style="flex-direction: column; align-items:center; justify-content:center;">
+            <div class="perma-content animate-in"
+                style="--delay: 0; text-align: center; width: 100%; max-width: 1000px; margin-bottom: 40px;">
                 <p class="section-label">OOPD Deep Dive</p>
                 <h2 class="slide-heading"><span class="gradient-text-green">AI & Export</span> Classes</h2>
-                <p class="slide-body" style="margin-top: 20px; font-size: clamp(14px, 1.6vw, 20px); text-align: justify; text-justify: inter-word; color: rgba(255,255,255,0.85); line-height: 1.6;">Click any Code Module below to securely proxy its simulated execution pipeline logic and state output.</p>
+                <p class="slide-body"
+                    style="margin-top: 20px; font-size: clamp(14px, 1.6vw, 20px); text-align: justify; text-justify: inter-word; color: rgba(255,255,255,0.85); line-height: 1.6;">
+                    Click any Code Module below to securely proxy its simulated execution pipeline logic and state
+                    output.</p>
             </div>
-            <div class="two-columns animate-in" style="--delay: 1; width: 100%; max-width: 1300px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; text-align:left;">
+            <div class="two-columns animate-in"
+                style="--delay: 1; width: 100%; max-width: 1300px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; text-align:left;">
                 <div class="code-preview-window" onclick="openOOPDModal('AIFormatter')">
                     <div class="window-header">
                         <div class="window-controls">
                             <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
                         </div>
                         <div class="window-title" style="color:var(--blue)">aiFormatter.js</div>
-                        <div class="window-tag" style="background:rgba(41, 151, 255, 0.2); color:var(--blue);">EXTENSION</div>
+                        <div class="window-tag" style="background:rgba(41, 151, 255, 0.2); color:var(--blue);">EXTENSION
+                        </div>
                     </div>
                     <div class="window-body">
                         <pre><code>class AIFormatter {
@@ -395,8 +492,11 @@
   }
 }</code></pre>
                         <div class="window-overlay-blur">
-                            <span class="run-btn" style="color:var(--blue); border-color:var(--blue); background:rgba(41, 151, 255, 0.15);">
-                                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> 
+                            <span class="run-btn"
+                                style="color:var(--blue); border-color:var(--blue); background:rgba(41, 151, 255, 0.15);">
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                                    <path d="M8 5v14l11-7z" />
+                                </svg>
                                 Execute Pipeline
                             </span>
                         </div>
@@ -409,7 +509,8 @@
                             <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
                         </div>
                         <div class="window-title" style="color:var(--rose)">docxExporter.js</div>
-                        <div class="window-tag" style="background:rgba(255, 55, 95, 0.2); color:var(--rose);">EXTENSION</div>
+                        <div class="window-tag" style="background:rgba(255, 55, 95, 0.2); color:var(--rose);">EXTENSION
+                        </div>
                     </div>
                     <div class="window-body">
                         <pre><code>const DocxExporter = (() => {
@@ -422,8 +523,11 @@
   return { generate };
 })();</code></pre>
                         <div class="window-overlay-blur">
-                            <span class="run-btn" style="color:var(--rose); border-color:var(--rose); background:rgba(255, 55, 95, 0.15);">
-                                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> 
+                            <span class="run-btn"
+                                style="color:var(--rose); border-color:var(--rose); background:rgba(255, 55, 95, 0.15);">
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                                    <path d="M8 5v14l11-7z" />
+                                </svg>
                                 Execute Pipeline
                             </span>
                         </div>
@@ -438,28 +542,42 @@
         <div class="slide-bg bg-corporate"></div>
         <div class="slide-content">
             <p class="animate-in section-label" style="--delay: 0">Core Concepts</p>
-            <h2 class="animate-in slide-heading" style="--delay: 1">OOP Principles <span class="gradient-text">in Action</span></h2>
-            
-            <div class="three-columns animate-in" style="--delay: 2; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-top: 30px;">
+            <h2 class="animate-in slide-heading" style="--delay: 1">OOP Principles <span class="gradient-text">in
+                    Action</span></h2>
+
+            <div class="three-columns animate-in"
+                style="--delay: 2; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-top: 30px;">
                 <div class="level-card glass-card">
                     <div class="level-icon">🔒</div>
                     <h3 style="color:var(--pink)">Encapsulation</h3>
-                    <p style="font-size:clamp(12px, 1.4vw, 16px); color:rgba(255,255,255,0.7); line-height:1.6;">Each class hides its internal data. <code>TextProcessor</code> privately manages <code>rawText</code>; <code>RuleEngine</code> encapsulates <code>defaultRules</code>.</p>
+                    <p style="font-size:clamp(12px, 1.4vw, 16px); color:rgba(255,255,255,0.7); line-height:1.6;">Each
+                        class hides its internal data. <code>TextProcessor</code> privately manages
+                        <code>rawText</code>; <code>RuleEngine</code> encapsulates <code>defaultRules</code>.
+                    </p>
                 </div>
                 <div class="level-card glass-card">
                     <div class="level-icon">🎭</div>
                     <h3 style="color:var(--blue)">Abstraction</h3>
-                    <p style="font-size:clamp(12px, 1.4vw, 16px); color:rgba(255,255,255,0.7); line-height:1.6;"><code>app.js</code> calls <code>formatText()</code> without knowing if it uses AI or heuristic engine. Complexity is hidden.</p>
+                    <p style="font-size:clamp(12px, 1.4vw, 16px); color:rgba(255,255,255,0.7); line-height:1.6;">
+                        <code>app.js</code> calls <code>formatText()</code> without knowing if it uses AI or heuristic
+                        engine. Complexity is hidden.
+                    </p>
                 </div>
                 <div class="level-card glass-card">
                     <div class="level-icon">🧬</div>
                     <h3 style="color:var(--green)">Inheritance Ready</h3>
-                    <p style="font-size:clamp(12px, 1.4vw, 16px); color:rgba(255,255,255,0.7); line-height:1.6;">Architecture supports extension — a <code>MarkdownDetector</code> could extend <code>StructureDetector</code>.</p>
+                    <p style="font-size:clamp(12px, 1.4vw, 16px); color:rgba(255,255,255,0.7); line-height:1.6;">
+                        Architecture supports extension — a <code>MarkdownDetector</code> could extend
+                        <code>StructureDetector</code>.
+                    </p>
                 </div>
                 <div class="level-card glass-card">
                     <div class="level-icon">🔄</div>
                     <h3 style="color:var(--gold)">Polymorphism</h3>
-                    <p style="font-size:clamp(12px, 1.4vw, 16px); color:rgba(255,255,255,0.7); line-height:1.6;">Both <code>AIFormatter</code> and the heuristic pipeline process input similarly — the controller doesn't care which runs.</p>
+                    <p style="font-size:clamp(12px, 1.4vw, 16px); color:rgba(255,255,255,0.7); line-height:1.6;">Both
+                        <code>AIFormatter</code> and the heuristic pipeline process input similarly — the controller
+                        doesn't care which runs.
+                    </p>
                 </div>
             </div>
         </div>
@@ -470,9 +588,11 @@
         <div class="slide-bg bg-subtle-geo"></div>
         <div class="slide-content" style="align-items: center;">
             <p class="animate-in section-label" style="--delay: 0">Under the Hood</p>
-            <h2 class="animate-in slide-heading" style="--delay: 1"><span class="gradient-text">Tech Stack</span> & Deployment</h2>
-            
-            <div class="guide-grid animate-in" style="--delay: 2; grid-template-columns: repeat(3, 1fr); max-width: 900px; margin-top:30px;">
+            <h2 class="animate-in slide-heading" style="--delay: 1"><span class="gradient-text">Tech Stack</span> &
+                Deployment</h2>
+
+            <div class="guide-grid animate-in"
+                style="--delay: 2; grid-template-columns: repeat(3, 1fr); max-width: 900px; margin-top:30px;">
                 <div class="guide-card glass-card" style="text-align:center;">
                     <h3 style="font-size: 24px;">HTML5 & CSS3</h3>
                     <p style="margin-top:10px; font-size:14px; opacity:0.6">Pure geometry, semantic views.</p>
@@ -507,16 +627,28 @@
         <div class="slide-content perma-slide" style="flex-direction: column; align-items:center;">
             <div class="perma-content" style="text-align: center; width: 100%;">
                 <p class="animate-in section-label" style="--delay: 0">In Action</p>
-                <h2 class="animate-in slide-heading" style="--delay: 1"><span class="gradient-text-gold">Live Demo</span></h2>
+                <h2 class="animate-in slide-heading" style="--delay: 1"><span class="gradient-text-gold">Live
+                        Demo</span></h2>
             </div>
-            
-            <div class="flow-visual animate-in" style="--delay: 2; width: 100%; display: flex; flex-direction: column; align-items: center; margin-top:40px;">
+
+            <div class="flow-visual animate-in"
+                style="--delay: 2; width: 100%; display: flex; flex-direction: column; align-items: center; margin-top:40px;">
                 <div class="journey-path">
-                    <div class="journey-step" style="background:rgba(255,255,255,0.05); padding: 20px;"><div class="journey-icon">📝</div><span style="font-size:16px;">Unformatted Blob</span></div>
+                    <div class="journey-step" style="background:rgba(255,255,255,0.05); padding: 20px;">
+                        <div class="journey-icon">📝</div><span style="font-size:16px;">Unformatted Blob</span>
+                    </div>
                     <div class="journey-connector"></div>
-                    <div class="journey-step" style="background:rgba(48, 209, 88, 0.1); padding: 20px; border-color:var(--green)"><div class="journey-icon">🔄</div><span style="font-size:16px; color:var(--green)">OOP Pipeline</span></div>
+                    <div class="journey-step"
+                        style="background:rgba(48, 209, 88, 0.1); padding: 20px; border-color:var(--green)">
+                        <div class="journey-icon">🔄</div><span style="font-size:16px; color:var(--green)">OOP
+                            Pipeline</span>
+                    </div>
                     <div class="journey-connector"></div>
-                    <div class="journey-step" style="background:rgba(41, 151, 255, 0.1); padding: 20px; border-color:var(--blue)"><div class="journey-icon">✨</div><span style="font-size:16px; color:var(--blue)">Semantic Output</span></div>
+                    <div class="journey-step"
+                        style="background:rgba(41, 151, 255, 0.1); padding: 20px; border-color:var(--blue)">
+                        <div class="journey-icon">✨</div><span style="font-size:16px; color:var(--blue)">Semantic
+                            Output</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -532,18 +664,27 @@
                 Thank <span class="gradient-text-sunrise">You.</span>
             </h2>
             <p class="animate-in subtitle" style="--delay: 1">Smart Text Formatter — OOPD Project Showcase</p>
-            
-            <div class="cta-section animate-in" style="--delay: 2; margin-top: 40px; display: flex; gap: 20px; justify-content: center;">
-                <a href="https://github.com/ayankhan964825-lab/Smart-Text-Formatter" target="_blank" class="cta-item" style="text-decoration: none; display:flex; gap:10px; align-items:center; background: rgba(255,255,255,0.1); padding: 12px 24px; border-radius: 100px; color: white; backdrop-filter: blur(8px); transition: all 0.3s; font-family: var(--font-sans); font-weight: 600;">
-                    <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+
+            <div class="cta-section animate-in"
+                style="--delay: 2; margin-top: 40px; display: flex; gap: 20px; justify-content: center;">
+                <a href="https://github.com/ayankhan964825-lab/Smart-Text-Formatter" target="_blank" class="cta-item"
+                    style="text-decoration: none; display:flex; gap:10px; align-items:center; background: rgba(255,255,255,0.1); padding: 12px 24px; border-radius: 100px; color: white; backdrop-filter: blur(8px); transition: all 0.3s; font-family: var(--font-sans); font-weight: 600;">
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                        <path
+                            d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
+                    </svg>
                     View Source Code
                 </a>
-                <a href="/" class="cta-item" style="text-decoration: none; display:flex; gap:10px; align-items:center; background: var(--blue); padding: 12px 24px; border-radius: 100px; color: white; box-shadow: 0 4px 20px rgba(41, 151, 255, 0.4); transition: all 0.3s; font-family: var(--font-sans); font-weight: 600;">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+                <a href="/" class="cta-item"
+                    style="text-decoration: none; display:flex; gap:10px; align-items:center; background: var(--blue); padding: 12px 24px; border-radius: 100px; color: white; box-shadow: 0 4px 20px rgba(41, 151, 255, 0.4); transition: all 0.3s; font-family: var(--font-sans); font-weight: 600;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" width="20" height="20">
+                        <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" />
+                    </svg>
                     Live Demo App
                 </a>
             </div>
-            
+
             <div class="final-statement animate-in" style="--delay: 3; margin-top: 40px;">
                 <p class="glow-text">Questions & Answers</p>
             </div>
@@ -553,12 +694,23 @@
     <script src="script.js"></script>
 
     <!-- Overlay for Export -->
-    <div id="export-overlay" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.8); backdrop-filter:blur(10px); color:white; flex-direction:column; align-items:center; justify-content:center;">
-        <div class="spinner" style="width:40px; height:40px; border:4px solid rgba(255,255,255,0.2); border-top-color:var(--blue); border-radius:50%; animation:spin 1s linear infinite;"></div>
-        <p style="margin-top:20px; font-family:var(--font-mono); letter-spacing:1px;">Building editable PPTX... <span id="export-pct"></span></p>
+    <div id="export-overlay"
+        style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.8); backdrop-filter:blur(10px); color:white; flex-direction:column; align-items:center; justify-content:center;">
+        <div class="spinner"
+            style="width:40px; height:40px; border:4px solid rgba(255,255,255,0.2); border-top-color:var(--blue); border-radius:50%; animation:spin 1s linear infinite;">
+        </div>
+        <p style="margin-top:20px; font-family:var(--font-mono); letter-spacing:1px;">Building native .pptx... <span
+                id="export-pct"></span></p>
     </div>
-    <style>@keyframes spin {100%{transform:rotate(360deg)}}</style>
+    <style>
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg)
+            }
+        }
+    </style>
 
     <script src="exportPptx.js"></script>
 </body>
+
 </html>

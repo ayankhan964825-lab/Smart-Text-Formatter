@@ -26,12 +26,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Colors
                 const FONT = 'Segoe UI';
                 const FONT_MATH = 'Cambria Math';
+                const FONT_MONO = 'Consolas';
                 const W = 'FFFFFF';
                 const W80 = 'CCCCCC';
+                const W75 = 'BFBFBF';
                 const W70 = 'B3B3B3';
+                const W60 = '999999';
                 const W50 = '808080';
                 const W40 = '666666';
                 const W30 = '4D4D4D';
+                const W20 = '333333';
                 const BLUE = '2997FF';
                 const PURPLE = 'BF5AF2';
                 const PINK = 'FF375F';
@@ -151,14 +155,20 @@ document.addEventListener('DOMContentLoaded', () => {
                     addLabel(s, 'Presented By', { x: 4.5, y: 0.8, w: 5.0, align: 'left', color: BLUE });
                     s.addText([ { text: 'Our ', options: { fontSize: 36, fontFace: FONT, bold: true, color: W } }, { text: 'Group', options: { fontSize: 36, fontFace: FONT, bold: true, color: BLUE } } ], { x: 4.5, y: 1.1, w: 5.0, h: 0.65, align: 'left', valign: 'middle' });
                     
-                    const members = [ { n: 'Member 1', id: 'RA24XXXXXXXXXX' }, { n: 'Member 2', id: 'RA24XXXXXXXXXX' }, { n: 'Member 3', id: 'RA24XXXXXXXXXX' }, { n: 'Member 4', id: 'RA24XXXXXXXXXX' } ];
+                    const members = [ 
+                        { n: 'Mohd Ayan Khan', id: 'RA2511003030020' }, 
+                        { n: 'Yashasvi Sharma', id: 'RA2511003030003' }, 
+                        { n: 'Shreyansh Singh', id: 'RA2511003030008' }, 
+                        { n: 'Tapish Ganesh Ingle', id: 'RA2511003030044' },
+                        { n: 'Atharv Pratap Singh', id: 'RA2511003030050' } 
+                    ];
                     members.forEach((m, i) => {
                         const col = i % 2, row = Math.floor(i / 2);
-                        const mx = 4.5 + col * 2.5, my = 2.0 + row * 1.0;
-                        s.addText(m.n, { x: mx, y: my, w: 2.4, h: 0.35, fontSize: 15, fontFace: FONT, color: W80, align: 'left' });
-                        s.addText(m.id, { x: mx, y: my + 0.32, w: 2.4, h: 0.28, fontSize: 10, fontFace: FONT, color: W30, align: 'left' });
+                        const mx = 4.5 + col * 2.5, my = 1.9 + row * 0.7;
+                        s.addText(m.n, { x: mx, y: my, w: 2.4, h: 0.35, fontSize: 14, fontFace: FONT, color: W80, align: 'left' });
+                        s.addText(m.id, { x: mx, y: my + 0.30, w: 2.4, h: 0.28, fontSize: 10, fontFace: FONT, color: W30, align: 'left' });
                     });
-                    s.addText([ { text: 'Under the guidance of ', options: { fontSize: 13, fontFace: FONT, color: W50 } }, { text: 'Dr. [Guide Name]', options: { fontSize: 13, fontFace: FONT, color: W, bold: true } }, { text: '\n(Professor, Mathematics Department)', options: { fontSize: 11, fontFace: FONT, color: W50 } } ], { x: 4.5, y: 4.1, w: 5.0, h: 0.8, align: 'left', valign: 'top' });
+                    s.addText([ { text: 'Under the guidance of ', options: { fontSize: 13, fontFace: FONT, color: W50 } }, { text: 'Dr. Semma Agrawal', options: { fontSize: 13, fontFace: FONT, color: W, bold: true } }, { text: '\n(Assistant Professor, Mathematics)', options: { fontSize: 11, fontFace: FONT, color: W50 } } ], { x: 4.5, y: 4.1, w: 5.0, h: 0.8, align: 'left', valign: 'top' });
                 }
 
                 // ── SLIDE 3: Intro ──

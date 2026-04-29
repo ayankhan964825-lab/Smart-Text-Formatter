@@ -86,8 +86,8 @@
                 style="opacity: 0.5; cursor: not-allowed;">Export to PDF</button>
             <button id="export-word" class="btn primary btn-small" disabled
                 style="opacity: 0.5; cursor: not-allowed;">Export to Word</button>
-            <button id="add-page-numbers-btn" class="btn primary btn-small"
-                title="Upload a PDF and add page numbers">📄 Add Page Numbers</button>
+            <button id="add-page-numbers-btn" class="btn primary btn-small" title="Upload a PDF and add page numbers">📄
+                Add Page Numbers</button>
         </div>
         <!-- Hidden file input for PDF page number injection -->
         <input type="file" id="pdf-upload-input" accept=".pdf" style="display:none;">
@@ -265,7 +265,8 @@
                     <button class="icon-btn rtf-btn" data-command="insertUnorderedList" title="Bullet">•</button>
                     <button class="icon-btn rtf-btn" data-command="insertOrderedList" title="Number">1.</button>
                 </div>
-                <select class="rtf-select" id="page-break-select" title="Page Break Options" style="font-size: 11px; font-weight: 500; min-width: 90px; padding-left: 4px; padding-right: 18px;">
+                <select class="rtf-select" id="page-break-select" title="Page Break Options"
+                    style="font-size: 11px; font-weight: 500; min-width: 90px; padding-left: 4px; padding-right: 18px;">
                     <option value="" disabled selected>📄 Break...</option>
                     <option value="current">Current Selection (Toggle)</option>
                     <option value="all-h2">All Headings (H2)</option>
@@ -294,9 +295,11 @@
             <p>You have manually edited the output. How would you like to add the new formatted text?</p>
             <div class="modal-actions">
                 <button id="modal-overwrite-btn" class="btn danger">Overwrite (Clear previous)</button>
-                <button id="modal-append-btn" class="btn primary" title="Inserts at cursor or end">Append (Keep previous)</button>
+                <button id="modal-append-btn" class="btn primary" title="Inserts at cursor or end">Append (Keep
+                    previous)</button>
             </div>
-            <button id="modal-cancel-btn" class="btn-small secondary" style="margin-top:20px; width: 100%;">Cancel</button>
+            <button id="modal-cancel-btn" class="btn-small secondary"
+                style="margin-top:20px; width: 100%;">Cancel</button>
         </div>
     </div>
 

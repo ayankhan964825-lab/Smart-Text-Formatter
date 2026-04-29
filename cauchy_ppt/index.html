@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cauchy Integral Theorem — Presentation</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .justified-text { text-align: justify; text-justify: inter-word; line-height: 1.6; margin: 0 auto 30px auto; max-width: 800px; color: rgba(255,255,255,0.85); font-size: clamp(14px,1.8vw,22px); }
+        .formula-box { background: rgba(41,151,255,0.08); border: 1px solid rgba(41,151,255,0.25); border-radius: 16px; padding: clamp(16px,2vh,32px) clamp(20px,3vw,40px); margin: 20px auto; max-width: 700px; text-align: center; font-size: clamp(18px,2.5vw,32px); font-weight: 700; color: var(--teal); font-family: 'Cambria Math','Times New Roman',serif; letter-spacing: 0.02em; }
+        .def-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 900px; margin: 20px auto; }
+        .def-card { padding: 24px 20px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; text-align: left; }
+        .def-card h4 { color: var(--teal); font-size: clamp(14px,1.5vw,20px); margin-bottom: 8px; }
+        .def-card p { color: rgba(255,255,255,0.7); font-size: clamp(12px,1.2vw,16px); line-height: 1.5; }
+        .proof-steps { max-width: 800px; margin: 20px auto; text-align: left; }
+        .proof-step { padding: 12px 20px; margin-bottom: 10px; background: rgba(255,255,255,0.03); border-left: 3px solid var(--purple); border-radius: 0 12px 12px 0; color: rgba(255,255,255,0.8); font-size: clamp(13px,1.4vw,18px); line-height: 1.6; }
+        .example-row { display: flex; align-items: center; gap: 16px; max-width: 800px; margin: 12px auto; padding: 16px 20px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; }
+        .example-label { color: var(--pink); font-weight: 700; font-size: clamp(13px,1.3vw,17px); min-width: 80px; }
+        .example-formula { color: var(--teal); font-family: 'Cambria Math',serif; font-weight: 700; font-size: clamp(14px,1.5vw,20px); min-width: 160px; }
+        .example-result { color: rgba(255,255,255,0.7); font-size: clamp(12px,1.2vw,16px); flex: 1; }
+        .app-items { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+        .app-item { flex: 1 1 calc(50% - 20px); min-width: 200px; }
+        .cond-list { max-width: 700px; margin: 20px auto; text-align: left; }
+        .cond-item { padding: 10px 16px; margin-bottom: 8px; color: rgba(255,255,255,0.8); font-size: clamp(13px,1.3vw,17px); display: flex; align-items: center; gap: 12px; }
+        .cond-check { color: var(--green); font-size: 20px; }
+        .mint { color: var(--teal); }
+    </style>
+    <!-- PptxGenJS & HTML2Canvas for Exporting -->
+    <script src="https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs@3.12.0/libs/jszip.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs@3.12.0/dist/pptxgen.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+</head>
+<body>
+    <div class="progress-bar" id="progress-bar"></div>
+    <button class="export-pptx-btn" id="export-pptx-btn" aria-label="Export to PowerPoint"
+        style="position: fixed; top: 20px; right: 80px; z-index: 1000; width: 44px; height: 44px; border-radius: 50%; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255,255,255,0.2); backdrop-filter: blur(10px); color: white; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" />
+        </svg>
+    </button>
+    <button class="nav-arrow nav-prev" id="nav-prev" aria-label="Previous slide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
+    <button class="nav-arrow nav-next" id="nav-next" aria-label="Next slide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 6 15 12 9 18"></polyline></svg></button>
+    <div class="slide-counter" id="slide-counter">1 / 13</div>
+    <div class="slide-dots" id="slide-dots"></div>
+    <button class="fullscreen-btn" id="fullscreen-btn" aria-label="Toggle fullscreen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3" /></svg></button>
+
+        <!-- SLIDE 1 - Title -->
+    <section class="slide active" id="slide-1" role="region" aria-label="Title">
+        <div class="slide-bg title-bg"><canvas id="particles-canvas"></canvas></div>
+        <div class="slide-content title-slide">
+            <div class="animate-in" style="--delay:0"><div class="perma-badge">Complex Analysis Presentation</div></div>
+            <h1 class="animate-in hero-title" style="--delay:1">Cauchy Integral<br><span class="gradient-text-hero">Theorem</span></h1>
+            <p class="animate-in subtitle" style="--delay:2"><em>Understanding Analytic Functions & Contour Integration</em></p>
+            <div class="animate-in meta-row" style="--delay:3">
+                <span class="tag">B.Tech Mathematics</span>
+                <span class="divider">&middot;</span>
+                <span>SRM Institute of Science and Technology</span>
+            </div>
+        </div>
+    </section>
+    <!-- SLIDE 3 - Team -->
+    <section class="slide" id="slide-2" role="region" aria-label="Team">
+        <div class="slide-bg bg-subtle-geo"></div>
+        <div class="slide-content" style="text-align:center;">
+            <div class="animate-in" style="--delay:0;display:flex;align-items:center;justify-content:center;gap:60px;flex-wrap:wrap;">
+                <div style="position:relative;width:220px;height:220px;flex-shrink:0;">
+                    <svg viewBox="0 0 220 220" style="position:absolute;inset:0;width:100%;height:100%;">
+                        <line x1="110" y1="110" x2="110" y2="30" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+                        <line x1="110" y1="110" x2="185" y2="70" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+                        <line x1="110" y1="110" x2="185" y2="160" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+                        <line x1="110" y1="110" x2="35" y2="160" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+                        <line x1="110" y1="110" x2="35" y2="70" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+                    </svg>
+                    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#2997FF,#BF5AF2);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;box-shadow:0 0 40px rgba(41,151,255,0.4);">TEAM</div>
+                    <div style="position:absolute;top:5px;left:50%;transform:translateX(-50%);width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;">M</div>
+                    <div style="position:absolute;top:45px;right:10px;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;">T</div>
+                    <div style="position:absolute;bottom:35px;right:10px;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;">S</div>
+                    <div style="position:absolute;bottom:35px;left:10px;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;">Y</div>
+                    <div style="position:absolute;top:45px;left:10px;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;">K</div>
+                </div>
+                <div style="text-align:left;">
+                    <p style="color:#2997FF;font-size:13px;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:8px;" class="animate-in" data-delay="0">Presented By</p>
+                    <h2 style="font-size:48px;font-weight:800;margin-bottom:30px;" class="animate-in" data-delay="1">Our <span style="color:#2997FF;">Group</span></h2>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px 40px;margin-bottom:30px;" class="animate-in" data-delay="2">
+                        <div><div style="font-weight:600;font-size:18px;">Member 1</div><div style="color:rgba(255,255,255,0.4);font-size:12px;font-family:monospace;">RA24XXXXXXXXXX</div></div>
+                        <div><div style="font-weight:600;font-size:18px;">Member 2</div><div style="color:rgba(255,255,255,0.4);font-size:12px;font-family:monospace;">RA24XXXXXXXXXX</div></div>
+                        <div><div style="font-weight:600;font-size:18px;">Member 3</div><div style="color:rgba(255,255,255,0.4);font-size:12px;font-family:monospace;">RA24XXXXXXXXXX</div></div>
+                        <div><div style="font-weight:600;font-size:18px;">Member 4</div><div style="color:rgba(255,255,255,0.4);font-size:12px;font-family:monospace;">RA24XXXXXXXXXX</div></div>
+                    </div>
+                    <div class="animate-in" data-delay="3" style="color:rgba(255,255,255,0.6);font-size:15px;">Under the guidance of <strong style="color:white;">Dr. [Guide Name]</strong><br><span style="font-size:13px;">(Professor, Mathematics Department)</span></div>
+                </div>
+            </div>
+        </div>
+    </section><!-- SLIDE 3 — Introduction -->
+    <section class="slide" id="slide-3" role="region" aria-label="Introduction">
+        <div class="slide-bg bg-subtle-geo"></div>
+        <div class="slide-content" style="text-align:center;">
+            <p class="animate-in section-label" style="--delay:0">Foundation</p>
+            <h2 class="animate-in slide-heading" style="--delay:1">Introduction to <span class="gradient-text-warm">Complex Analysis</span></h2>
+            <p class="animate-in slide-body" style="--delay:2">Complex analysis studies functions of complex variables z = x + iy, where i = &radic;-1.</p>
+            <div class="two-problems-grid animate-in" style="--delay:3">
+                <div class="guide-card glass-card problem-card">
+                    <div style="font-size:50px;margin-bottom:20px;">&#x222E;</div>
+                    <h3 style="font-size:24px;margin-bottom:15px;color:var(--gold);">Analytic Functions</h3>
+                    <p style="font-size:16px;line-height:1.6;text-align:left;color:rgba(255,255,255,0.85);">Functions differentiable w.r.t. complex variables. They have remarkable properties: infinite differentiability and power series representation.</p>
+                </div>
+                <div class="guide-card glass-card problem-card">
+                    <div style="font-size:50px;margin-bottom:20px;">&#x222B;</div>
+                    <h3 style="font-size:24px;margin-bottom:15px;color:var(--rose);">Contour Integration</h3>
+                    <p style="font-size:16px;line-height:1.6;text-align:left;color:rgba(255,255,255,0.85);">Integration along paths in the complex plane. This leads to powerful results that simplify many difficult real integrals.</p>
+                </div>
+            </div>
+            <style>
+                #slide-2 .two-problems-grid { display:grid; grid-template-columns:1fr 1fr; gap:30px; max-width:900px; margin:0 auto; }
+                #slide-2 .problem-card { padding:40px 30px; display:flex; flex-direction:column; align-items:center; border:1px solid rgba(255,55,95,0.25); background:rgba(255,107,138,0.05); }
+            </style>
+        </div>
+    </section>
+
+    <!-- SLIDE 4 — Why Complex Integration -->
+    <section class="slide" id="slide-4" role="region" aria-label="Why Complex Integration">
+        <div class="slide-bg bg-electric"></div>
+        <div class="slide-content perma-slide" style="flex-direction:column;">
+            <div class="perma-content" style="text-align:center;max-width:900px;margin:0 auto;">
+                <p class="animate-in section-label" style="--delay:0">The Power</p>
+                <h2 class="animate-in slide-heading" style="--delay:1">Why Complex Integration is <span class="gradient-text-electric">Powerful</span></h2>
+                <p class="animate-in slide-body" style="--delay:2">In real calculus, evaluating certain integrals can be extremely difficult. By extending into the complex plane, many become simple.</p>
+                <div class="emotions-grid animate-in" style="--delay:3;justify-content:center;">
+                    <span class="emotion-chip" style="background:rgba(255,55,95,0.2);">Path Independence</span>
+                    <span class="emotion-chip" style="background:rgba(48,209,88,0.2);">Evaluate Real Integrals</span>
+                    <span class="emotion-chip" style="background:rgba(41,151,255,0.2);">Residue Theorem</span>
+                    <span class="emotion-chip" style="background:rgba(191,90,242,0.2);">Laurent Series</span>
+                </div>
+                <div class="formula-box animate-in" style="--delay:4">&oint;<sub>C</sub> f(z) dz = 0</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 5 — Basic Definitions -->
+    <section class="slide" id="slide-5" role="region" aria-label="Definitions">
+        <div class="slide-bg bg-corporate"></div>
+        <div class="slide-content" style="text-align:center;">
+            <p class="animate-in section-label" style="--delay:0">Prerequisites</p>
+            <h2 class="animate-in slide-heading" style="--delay:1">Basic <span class="gradient-text">Definitions</span></h2>
+            <div class="def-grid animate-in" style="--delay:2">
+                <div class="def-card"><h4>Complex Function</h4><p>f(z) = u(x,y) + iv(x,y) where z = x + iy. u = real part, v = imaginary part.</p></div>
+                <div class="def-card"><h4>Analytic Function</h4><p>Differentiable at every point in a region. Also called holomorphic. Examples: z&sup2;, e<sup>z</sup>, sin(z).</p></div>
+                <div class="def-card"><h4>Contour</h4><p>A smooth curve/path in the complex plane along which integration is performed. Can be a line, circle, or curve.</p></div>
+                <div class="def-card"><h4>Closed Contour</h4><p>A path whose start and end points are the same. Example: circle, closed loop. Critical for Cauchy's theorem.</p></div>
+                <div class="def-card"><h4>Simply Connected</h4><p>A region where any closed contour can be shrunk to a point without leaving the region. No holes allowed.</p></div>
+                <div class="def-card"><h4>Derivative</h4><p>f'(z) = lim<sub>&Delta;z&rarr;0</sub> [f(z+&Delta;z) &minus; f(z)] / &Delta;z. If this limit exists, the function is differentiable.</p></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 6 — Theorem Statement -->
+    <section class="slide" id="slide-6" role="region" aria-label="Theorem Statement">
+        <div class="slide-bg bg-warm-connect"></div>
+        <div class="slide-content perma-slide" style="flex-direction:column;">
+            <div class="perma-content" style="text-align:center;max-width:900px;margin:0 auto;">
+                <h2 class="animate-in slide-heading" style="--delay:0">Cauchy Integral <span class="gradient-text-rose">Theorem</span></h2>
+                <p class="animate-in slide-body" style="--delay:1">If f(z) is analytic everywhere inside and on a closed contour C in a simply connected region, then:</p>
+                <div class="formula-box animate-in" style="--delay:2;font-size:clamp(24px,3.5vw,42px);">&oint;<sub>C</sub> f(z) dz = 0</div>
+                <div class="corporate-apps animate-in" style="--delay:3">
+                    <h3>Key Insights</h3>
+                    <div class="app-items">
+                        <div class="app-item" style="text-align:left;">The integral depends only on analyticity &mdash; NOT the contour shape.</div>
+                        <div class="app-item" style="text-align:left;">No singularities inside C means the integral is always zero.</div>
+                        <div class="app-item" style="text-align:left;">Analogous to conservative vector fields in real calculus.</div>
+                        <div class="app-item" style="text-align:left;">Discovered by Augustin-Louis Cauchy (1825).</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 7 — Conditions -->
+    <section class="slide" id="slide-7" role="region" aria-label="Conditions">
+        <div class="slide-bg bg-leader"></div>
+        <div class="slide-content perma-slide">
+            <div class="perma-letter-block animate-in" style="--delay:0"><span class="big-letter letter-e" style="color:var(--mint);">&oint;</span></div>
+            <div class="perma-content">
+                <h2 class="animate-in slide-heading" style="--delay:1">Conditions of the <span style="color:var(--mint);">Theorem</span></h2>
+                <p class="animate-in slide-body" style="--delay:2">For the Cauchy Integral Theorem to hold, ALL of the following must be satisfied:</p>
+                <div class="cond-list animate-in" style="--delay:3">
+                    <div class="cond-item"><span class="cond-check">&check;</span> f(z) must be analytic inside the region</div>
+                    <div class="cond-item"><span class="cond-check">&check;</span> f(z) must be analytic on the boundary (contour C)</div>
+                    <div class="cond-item"><span class="cond-check">&check;</span> The contour C must be closed</div>
+                    <div class="cond-item"><span class="cond-check">&check;</span> The region must be simply connected (no holes)</div>
+                    <div class="cond-item"><span class="cond-check">&check;</span> No singularities inside the contour</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 8 — Proof -->
+    <section class="slide" id="slide-8" role="region" aria-label="Proof">
+        <div class="slide-bg bg-warm"></div>
+        <div class="slide-content perma-slide" style="flex-direction:column;">
+            <div class="perma-content" style="text-align:center;max-width:900px;">
+                <h2 class="animate-in slide-heading" style="--delay:0">Proof <span class="gradient-text-warm">Outline</span></h2>
+                <div class="proof-steps animate-in" style="--delay:1">
+                    <div class="proof-step"><strong>Step 1:</strong> Write f(z) = u(x,y) + iv(x,y) and dz = dx + idy</div>
+                    <div class="proof-step"><strong>Step 2:</strong> Expand &oint;<sub>C</sub> f(z)dz = &oint;<sub>C</sub>(u dx &minus; v dy) + i&oint;<sub>C</sub>(v dx + u dy)</div>
+                    <div class="proof-step"><strong>Step 3:</strong> Apply Green's Theorem &rarr; convert line integrals to double integrals over R</div>
+                    <div class="proof-step"><strong>Step 4:</strong> Use Cauchy&ndash;Riemann equations: &part;u/&part;x = &part;v/&part;y and &part;u/&part;y = &minus;&part;v/&part;x</div>
+                    <div class="proof-step"><strong>Step 5:</strong> Both double integrals = 0 &rArr; &oint;<sub>C</sub> f(z) dz = 0 &check;</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 9 — Cauchy Integral Formula -->
+    <section class="slide" id="slide-9" role="region" aria-label="Formula">
+        <div class="slide-bg bg-deep"></div>
+        <div class="slide-content perma-slide">
+            <div class="perma-letter-block animate-in" style="--delay:0"><span class="big-letter letter-m">f</span></div>
+            <div class="perma-content">
+                <h2 class="animate-in slide-heading" style="--delay:1">Cauchy Integral <span class="gradient-text-gold">Formula</span></h2>
+                <p class="animate-in slide-body" style="--delay:2">If f(z) is analytic inside and on C, and 'a' is any point inside C:</p>
+                <div class="formula-box animate-in" style="--delay:3">f(a) = (1/2&pi;i) &oint;<sub>C</sub> f(z)/(z&minus;a) dz</div>
+                <div class="corporate-apps animate-in" style="--delay:4">
+                    <h3>Why It Matters</h3>
+                    <div class="app-items">
+                        <div class="app-item">Value at any interior point determined by boundary values</div>
+                        <div class="app-item">Analytic functions are infinitely differentiable</div>
+                        <div class="app-item">Leads to Taylor series expansions</div>
+                        <div class="app-item">Foundation for the Residue Theorem</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SLIDE 10 — Applications -->
+    <section class="slide" id="slide-10" role="region" aria-label="Applications">
+        <div class="slide-bg bg-electric"></div>
+        <div class="slide-content" style="text-align:center;">
+            <p class="animate-in section-label" style="--delay:0">Real-World Impact</p>
+            <h2 class="animate-in slide-heading" style="--delay:1">Applications of <span class="gradient-text-electric">Cauchy's Theorem</span></h2>
+            <div class="three-columns animate-in" style="--delay:2;max-width:1000px;margin:30px auto;">
+                <div class="level-card glass-card"><div class="level-icon">&#x1F30A;</div><h3>Fluid Dynamics</h3><ul><li>Flow analysis around airfoils and obstacles using complex potentials.</li></ul></div>
+                <div class="level-card glass-card"><div class="level-icon">&#x26A1;</div><h3>Electromagnetic Theory</h3><ul><li>Solving Maxwell's equations in 2D using conformal mapping.</li></ul></div>
+                <div class="level-card glass-card"><div class="level-icon">&#x1F9EA;</div><h3>Quantum Physics</h3><ul><li>Path integrals and residue calculus in quantum field theory.</li></ul></div>
+            </div>
+            <style>
+                #slide-9 .three-columns { display:grid!important; grid-template-columns:repeat(3,1fr)!important; max-width:1000px; gap:30px; }
+                #slide-9 .glass-card { padding:40px 30px; display:flex; flex-direction:column; align-items:center; }
+                #slide-9 .level-icon { font-size:60px; margin-bottom:10px; }
+                #slide-9 .glass-card h3 { font-size:22px; margin-bottom:20px; }
+            </style>
+        </div>
+    </section>
+
+    <!-- SLIDE 11 — Worked Examples -->
+    <section class="slide" id="slide-11" role="region" aria-label="Examples">
+        <div class="slide-bg bg-subtle-geo"></div>
+        <div class="slide-content perma-slide" style="flex-direction:column;">
+            <div class="perma-content" style="text-align:center;margin:0 auto;max-width:900px;">
+                <h2 class="animate-in slide-heading" style="--delay:0">Worked <span class="gradient-text-rose">Examples</span></h2>
+                <p class="animate-in slide-body" style="--delay:1">Applying the theorem to evaluate contour integrals of analytic functions:</p>
+                <div class="animate-in" style="--delay:2">
+                    <div class="example-row"><span class="example-label">Ex 1</span><span class="example-formula">&oint;<sub>C</sub> z&sup2; dz</span><span class="example-result">f(z)=z&sup2; is a polynomial &mdash; analytic everywhere &rarr; <strong style="color:var(--green);">= 0</strong></span></div>
+                    <div class="example-row"><span class="example-label">Ex 2</span><span class="example-formula">&oint;<sub>C</sub> (3z+2) dz</span><span class="example-result">f(z)=3z+2 is linear &mdash; analytic everywhere &rarr; <strong style="color:var(--green);">= 0</strong></span></div>
+                    <div class="example-row"><span class="example-label">Ex 3</span><span class="example-formula">&oint;<sub>C</sub> e<sup>z</sup> dz</span><span class="example-result">f(z)=e<sup>z</sup> is exponential &mdash; analytic everywhere &rarr; <strong style="color:var(--green);">= 0</strong></span></div>
+                </div>
+                <div class="flow-visual animate-in" style="--delay:3;margin:30px auto;background:rgba(0,0,0,0.5);padding:20px;border-radius:10px;">
+                    <code style="color:var(--pink);font-family:monospace;text-align:left;display:block;white-space:pre-wrap;">All polynomial, exponential, and trigonometric functions
+are analytic everywhere in the complex plane.
+By Cauchy's Theorem: their closed contour integrals = 0.</code>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    
+    <!-- SLIDE 11 - Simple Summary -->
+    <section class="slide" id="slide-12" role="region" aria-label="Summary">
+        <div class="slide-bg bg-warm-connect"></div>
+        <div class="slide-content perma-slide" style="flex-direction:column;">
+            <div class="perma-content" style="text-align:center;max-width:900px;margin:0 auto;">
+                <h2 class="animate-in slide-heading" style="--delay:0">What We <span class="gradient-text-warm">Learned</span></h2>
+                <div class="animate-in" style="--delay:1; margin: 30px auto; max-width: 800px; display: flex; flex-direction: column; gap: 15px;">
+                    <div style="background:rgba(41,151,255,0.1); border: 1px solid rgba(41,151,255,0.2); padding: 15px 20px; border-radius: 12px; text-align: left; font-size: clamp(14px, 1.6vw, 20px); color: rgba(255,255,255,0.9);">
+                        <strong style="color:var(--blue);">1. Integral is Zero:</strong> If a function has no breaks or sharp points inside a closed path, its integral is zero.
+                    </div>
+                    <div style="background:rgba(191,90,242,0.1); border: 1px solid rgba(191,90,242,0.2); padding: 15px 20px; border-radius: 12px; text-align: left; font-size: clamp(14px, 1.6vw, 20px); color: rgba(255,255,255,0.9);">
+                        <strong style="color:var(--purple);">2. Inside Value:</strong> We can find the value of a function at any inside point using only its boundary values.
+                    </div>
+                    <div style="background:rgba(48,209,88,0.1); border: 1px solid rgba(48,209,88,0.2); padding: 15px 20px; border-radius: 12px; text-align: left; font-size: clamp(14px, 1.6vw, 20px); color: rgba(255,255,255,0.9);">
+                        <strong style="color:var(--green);">3. Path Independence:</strong> The path you take does not matter &mdash; only the function matters.
+                    </div>
+                    <div style="background:rgba(255,159,10,0.1); border: 1px solid rgba(255,159,10,0.2); padding: 15px 20px; border-radius: 12px; text-align: left; font-size: clamp(14px, 1.6vw, 20px); color: rgba(255,255,255,0.9);">
+                        <strong style="color:var(--orange);">4. Real-World Use:</strong> This helps solve very hard math problems easily in Physics, Engineering, Signal Processing &amp; Quantum Mechanics.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- SLIDE 12 - Conclusion & References -->
+    <section class="slide" id="slide-13" role="region" aria-label="Conclusion">
+        <div class="slide-bg bg-deep"></div>
+        <div class="slide-content" style="text-align:center;">
+            <p class="animate-in section-label" style="--delay:0">Wrapping Up</p>
+            <h2 class="animate-in slide-heading" style="--delay:1"><span class="gradient-text-gold">Conclusion</span> & References</h2>
+            <div class="animate-in" style="--delay:2;max-width:800px;margin:0 auto;">
+                <p style="text-align:justify;line-height:1.7;color:rgba(255,255,255,0.8);font-size:clamp(14px,1.5vw,19px);margin-bottom:30px;">The Cauchy Integral Theorem is a cornerstone of complex analysis. It shows that analytic functions have very special behavior &mdash; their integrals over closed paths are always zero. This one result leads to the Cauchy Integral Formula, Residue Theorem, Taylor Series, and Laurent Series. It is used across mathematics, physics, and engineering to solve problems that would otherwise be extremely difficult.</p>
+            </div>
+            <div class="corporate-apps animate-in" style="--delay:3;max-width:700px;margin:0 auto;">
+                <h3>References</h3>
+                <div style="text-align:left;padding:10px 0;">
+                    <p style="color:rgba(255,255,255,0.7);font-size:15px;margin-bottom:8px;">1. Kreyszig, E. &mdash; <em>Advanced Engineering Mathematics</em> (10th Ed.)</p>
+                    <p style="color:rgba(255,255,255,0.7);font-size:15px;margin-bottom:8px;">2. Churchill, R.V. &amp; Brown, J.W. &mdash; <em>Complex Variables and Applications</em></p>
+                    <p style="color:rgba(255,255,255,0.7);font-size:15px;">3. Class lecture notes on Complex Analysis</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- SLIDE 13 - Thank You -->
+    <section class="slide" id="slide-14" role="region" aria-label="Thank You">
+        <div class="slide-bg bg-sunrise"><canvas id="confetti-canvas"></canvas></div>
+        <div class="slide-content title-slide">
+            <h2 class="animate-in hero-title conclusion-title" style="--delay:1">Thank You</h2>
+            <div class="animate-in" style="--delay:2">
+                <p style="text-align:center;line-height:1.6;margin:0 auto 40px auto;max-width:700px;color:rgba(255,255,255,0.85);font-size:clamp(16px,1.8vw,24px);">
+                    <span style="color:var(--gold);font-size:110%;">Questions &amp; Discussion Welcome</span>
+                </p>
+            </div>
+            <div class="animate-in credits-block conclusion-credits" style="--delay:4">
+                <div class="credits-row">
+                    <div class="credit-item"><span class="credit-name">Complex Analysis</span><span class="credit-id">SRM Institute of Science and Technology</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script src="script.js"></script>
+
+    <!-- Overlay for Export -->
+    <div id="export-overlay"
+        style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.8); backdrop-filter:blur(10px); color:white; flex-direction:column; align-items:center; justify-content:center;">
+        <div class="spinner"
+            style="width:40px; height:40px; border:4px solid rgba(255,255,255,0.2); border-top-color:var(--blue); border-radius:50%; animation:spin 1s linear infinite;">
+        </div>
+        <p style="margin-top:20px; font-family:var(--font-mono); letter-spacing:1px;">Building native .pptx... <span
+                id="export-pct"></span></p>
+    </div>
+    <style>
+        @keyframes spin { 100% { transform: rotate(360deg) } }
+    </style>
+
+    <script src="exportPptx.js"></script>
+</body>
+</html>

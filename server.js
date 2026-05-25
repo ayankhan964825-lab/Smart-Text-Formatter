@@ -30,6 +30,7 @@ if (fs.existsSync(envPath)) {
 
 const PORT = 3000;
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const RAW_API_KEYS = GEMINI_API_KEY ? GEMINI_API_KEY.split(',').map(k => k.trim()).filter(k => k) : [];
 
 // MIME types for static files
 const MIME_TYPES = {

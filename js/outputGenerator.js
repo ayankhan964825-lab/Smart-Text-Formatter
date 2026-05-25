@@ -58,20 +58,36 @@ class OutputGenerator {
             }
 
             // Normal elements (Headings, Paragraphs)
-            let content = this._cleanMarkdown(this._escapeHTML(element.content || ''));
+            let content;
+            if (tag === 'code') {
+                // Do NOT clean markdown or strip spaces/newlines for code blocks!
+                content = this._escapeHTML(element.content || '');
+            } else {
+                content = this._cleanMarkdown(this._escapeHTML(element.content || ''));
+                
+                if (tag === 'p') {
+                    content = content.replace(/-\n/g, '').replace(/\n/g, ' ');
+                }
 
-            if (tag === 'p') {
-                content = content.replace(/-\n/g, '').replace(/\n/g, ' ');
+                // Clean markdown from headings too
+                if (tag === 'h1' || tag === 'h2' || tag === 'h3' || tag === 'sub-subheading') {
+                    content = content.replace(/<\/?b>/g, '').replace(/<\/?i>/g, '');
+                }
             }
 
-            // Clean markdown from headings too
-            if (tag === 'h1' || tag === 'h2' || tag === 'h3' || tag === 'sub-subheading') {
-                content = content.replace(/<\/?b>/g, '').replace(/<\/?i>/g, '');
-            }
-
-            // Custom tag rendering for sub-subheadings
+            // Custom tag rendering for sub-subheadings and code blocks
             let thisHtml;
-            if (tag === 'sub-subheading') {
+            if (tag === 'code') {
+                thisHtml = `
+                    <div class="code-block-wrapper">
+                        <div class="code-block-header no-export">
+                            <span>Code Snippet</span>
+                            <button class="copy-code-btn" onclick="copyCodeToClipboard(this)">📋 Copy</button>
+                        </div>
+                        <pre><code${styleAttr}>${content}</code></pre>
+                    </div>
+                `;
+            } else if (tag === 'sub-subheading') {
                 thisHtml = `<div${styleAttr}>${content}</div>`;
             } else {
                 thisHtml = `<${tag}${styleAttr}>${content}</${tag}>`;

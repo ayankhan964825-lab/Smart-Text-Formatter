@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (menuOverlay) menuOverlay.addEventListener('click', closeMenu);
 
     // --- Toast Notification Logic ---
-    function showToast(message, isError = false) {
+    function showToast(message, type = 'info') {
         const toast = document.getElementById('toast-message');
         if (!toast) return;
 
@@ -64,18 +64,29 @@ document.addEventListener('DOMContentLoaded', () => {
         toast.className = 'toast-message';
         toast.innerHTML = message;
         
-        if (isError) {
+        // Reset custom styles in case it was a warning previously
+        toast.style.color = '';
+        toast.style.border = '';
+        toast.style.fontWeight = '';
+        
+        if (type === 'error' || type === true) {
             toast.style.background = 'rgba(229, 62, 62, 0.95)'; // Red
+        } else if (type === 'warning') {
+            toast.style.background = '#fffbeb'; // Bright Yellow/Orange
+            toast.style.color = '#d97706';
+            toast.style.border = '2px solid #fde68a';
+            toast.style.fontWeight = 'bold';
         } else {
             toast.style.background = 'rgba(56, 161, 105, 0.95)'; // Green
         }
 
         toast.classList.add('show');
 
-        // Hide after 3 seconds
+        // Hide after 3 seconds (6 for warning)
+        const duration = type === 'warning' ? 6000 : 3000;
         setTimeout(() => {
             toast.classList.remove('show');
-        }, 3000);
+        }, duration);
     }
 
     // --- API Key Connection Flow ---
@@ -1112,10 +1123,71 @@ document.addEventListener('DOMContentLoaded', () => {
                 try {
                     const aiFormatter = new window.AIFormatter();
 
-                    // --- Text Chunking Logic ---
-                    // Only chunk for truly large documents. Gemini 2.5 Flash can handle large inputs,
-                    // so we use a generous limit to minimize chunks and preserve document context.
+                    // --- Bulletproof Text Chunking Logic ---
                     const CHUNK_SIZE_LIMIT = 15000; // ~15K chars per chunk (approx 3000-4000 words)
+                    const MAX_RETRIES = 3; // Max retry attempts per chunk
+                    const RETRY_DELAY_MS = 2000; // Wait 2 seconds between retries
+
+                    // === Helper: Split a giant paragraph using Fallback Hierarchy ===
+                    // Priority: . → ? ! → ; : → , → space → force
+                    function splitGiantParagraph(text, limit) {
+                        const result = [];
+                        let remaining = text;
+
+                        while (remaining.length > limit) {
+                            let splitPos = -1;
+                            const searchZone = remaining.substring(0, limit);
+
+                            // Priority 1: Full stop followed by space or end
+                            splitPos = searchZone.lastIndexOf('. ');
+                            if (splitPos === -1) splitPos = searchZone.lastIndexOf('.\n');
+
+                            // Priority 2: Question mark or exclamation
+                            if (splitPos === -1) splitPos = searchZone.lastIndexOf('? ');
+                            if (splitPos === -1) splitPos = searchZone.lastIndexOf('! ');
+
+                            // Priority 3: Semicolon or colon
+                            if (splitPos === -1) splitPos = searchZone.lastIndexOf('; ');
+                            if (splitPos === -1) splitPos = searchZone.lastIndexOf(': ');
+
+                            // Priority 4: Comma
+                            if (splitPos === -1) splitPos = searchZone.lastIndexOf(', ');
+
+                            // Priority 5: Any space (word boundary)
+                            if (splitPos === -1) splitPos = searchZone.lastIndexOf(' ');
+
+                            // Priority 6 (Last Resort): Force split at limit
+                            if (splitPos === -1) splitPos = limit;
+
+                            // Include the punctuation character in the first part
+                            const cutAt = splitPos + 1;
+                            result.push(remaining.substring(0, cutAt).trim());
+                            remaining = remaining.substring(cutAt).trim();
+                        }
+
+                        if (remaining.trim().length > 0) {
+                            result.push(remaining.trim());
+                        }
+                        return result;
+                    }
+
+                    // === Helper: Heuristic fallback for a single chunk ===
+                    function heuristicFallbackForChunk(chunkText) {
+                        try {
+                            const processor = new window.TextProcessor(chunkText);
+                            const textBlocks = processor.tokenize();
+                            const detector = new window.StructureDetector();
+                            return detector.classifyBlocks(textBlocks, []);
+                        } catch (e) {
+                            // Ultimate fallback: wrap in paragraphs
+                            return chunkText.split(/\n\s*\n/).filter(b => b.trim()).map(block => ({
+                                type: 'p',
+                                content: block.trim()
+                            }));
+                        }
+                    }
+
+                    // === Step 1: Build chunks with giant paragraph splitting ===
                     const chunks = [];
 
                     if (cleanedText.length <= CHUNK_SIZE_LIMIT) {
@@ -1127,6 +1199,22 @@ document.addEventListener('DOMContentLoaded', () => {
                         let currentChunk = "";
 
                         for (const para of paragraphs) {
+                            // If this single paragraph exceeds the limit, split it smartly
+                            if (para.length > CHUNK_SIZE_LIMIT) {
+                                // First, finalize whatever we have in currentChunk
+                                if (currentChunk.trim().length > 0) {
+                                    chunks.push(currentChunk.trim());
+                                    currentChunk = "";
+                                }
+                                // Split the giant paragraph using fallback hierarchy
+                                const subParts = splitGiantParagraph(para, CHUNK_SIZE_LIMIT);
+                                console.log(`[Chunking] Giant paragraph (${para.length} chars) split into ${subParts.length} sub-parts via fallback hierarchy.`);
+                                for (const subPart of subParts) {
+                                    chunks.push(subPart);
+                                }
+                                continue;
+                            }
+
                             // If adding this paragraph would exceed the limit, finalize the current chunk
                             if (currentChunk.length + para.length > CHUNK_SIZE_LIMIT && currentChunk.length > 0) {
                                 chunks.push(currentChunk.trim());
@@ -1146,12 +1234,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     console.log(`[Chunking] Document split into ${chunks.length} chunk(s). Total chars: ${cleanedText.length}`);
 
-                    // Process each chunk sequentially
+                    // === Step 2: Process each chunk with per-chunk retry ===
+                    // Get progress bar elements
+                    const chunkProgressContainer = document.getElementById('chunk-progress-container');
+                    const chunkProgressBar = document.getElementById('chunk-progress-bar');
+                    const chunkProgressPercent = document.getElementById('chunk-progress-percent');
+                    const chunkProgressLabel = document.getElementById('chunk-progress-label');
+
+                    // Show progress bar only for multi-chunk documents
+                    if (chunks.length > 1 && chunkProgressContainer) {
+                        chunkProgressContainer.style.display = 'block';
+                        chunkProgressBar.style.width = '0%';
+                        chunkProgressPercent.textContent = '0%';
+                        chunkProgressLabel.textContent = `Part 0 of ${chunks.length}`;
+                    }
+                    
+                    const failedParts = []; // Track which parts failed to show in toast
+
                     for (let i = 0; i < chunks.length; i++) {
-                        if (loadingTitle && loadingProgress && chunks.length > 1) {
-                            const percent = Math.round((i / chunks.length) * 100);
-                            loadingTitle.textContent = `Processing Large Document... ${percent}%`;
+                        // --- Update progress bar & text ---
+                        const percent = Math.round(((i) / chunks.length) * 100);
+                        if (loadingTitle && chunks.length > 1) {
+                            loadingTitle.textContent = `Processing Large Document...`;
+                        }
+                        if (loadingProgress && chunks.length > 1) {
                             loadingProgress.textContent = `Formatting Part ${i + 1} of ${chunks.length} — Analyzing context...`;
+                        }
+                        if (chunkProgressBar && chunks.length > 1) {
+                            chunkProgressBar.style.width = `${percent}%`;
+                            chunkProgressPercent.textContent = `${percent}%`;
+                            chunkProgressLabel.textContent = `Part ${i + 1} of ${chunks.length}`;
                         }
 
                         // Add context prefix for multi-chunk documents so Gemini preserves structure
@@ -1166,26 +1278,81 @@ document.addEventListener('DOMContentLoaded', () => {
                             await new Promise(r => setTimeout(r, 50));
                         }
 
-                        // Wait for formatting of this chunk
-                        const chunkElements = await aiFormatter.formatText(chunkText);
+                        // --- Per-Chunk Retry Logic ---
+                        let chunkSuccess = false;
+                        let retries = 0;
 
-                        // Concatenate the structured JSON objects
-                        if (Array.isArray(chunkElements)) {
-                            elements = elements.concat(chunkElements);
+                        while (!chunkSuccess && retries < MAX_RETRIES) {
+                            try {
+                                // Update progress with retry info
+                                if (retries > 0 && loadingProgress && chunks.length > 1) {
+                                    loadingProgress.textContent = `Formatting Part ${i + 1} of ${chunks.length} — Retry ${retries}/${MAX_RETRIES}...`;
+                                    if (chunkProgressLabel) chunkProgressLabel.textContent = `Part ${i + 1} of ${chunks.length} (Retry ${retries})`;
+                                    await new Promise(r => setTimeout(r, 50));
+                                }
+
+                                // Wait for formatting of this chunk
+                                const chunkElements = await aiFormatter.formatText(chunkText);
+
+                                // Concatenate the structured JSON objects
+                                if (Array.isArray(chunkElements)) {
+                                    elements = elements.concat(chunkElements);
+                                }
+                                chunkSuccess = true; // ✅ Move to next chunk
+
+                            } catch (chunkError) {
+                                retries++;
+                                const errMsg = chunkError.message || String(chunkError);
+                                console.warn(`[Chunk ${i + 1}/${chunks.length}] Attempt ${retries} failed: ${errMsg}`);
+
+                                if (retries < MAX_RETRIES) {
+                                    // Wait before retry — backend will auto-rotate to next API key
+                                    console.log(`[Chunk ${i + 1}] Waiting ${RETRY_DELAY_MS}ms before retry...`);
+                                    await new Promise(r => setTimeout(r, RETRY_DELAY_MS));
+                                }
+                            }
+                        }
+
+                        // If all retries exhausted for this chunk, use heuristic for ONLY this chunk
+                        if (!chunkSuccess) {
+                            console.warn(`[Chunk ${i + 1}/${chunks.length}] All ${MAX_RETRIES} retries exhausted. Using local heuristic for this chunk only.`);
+                            failedParts.push(i + 1); // Record the failed part number
+
+                            const fallbackElements = heuristicFallbackForChunk(chunks[i]);
+                            if (Array.isArray(fallbackElements)) {
+                                elements = elements.concat(fallbackElements);
+                            }
+                            // Continue to next chunk — DO NOT break the loop!
+                        }
+
+                        // --- Update progress after chunk completion ---
+                        const completedPercent = Math.round(((i + 1) / chunks.length) * 100);
+                        if (chunkProgressBar && chunks.length > 1) {
+                            chunkProgressBar.style.width = `${completedPercent}%`;
+                            chunkProgressPercent.textContent = `${completedPercent}%`;
+                        }
+                        if (loadingTitle && chunks.length > 1) {
+                            loadingTitle.textContent = `Processing Large Document...`;
                         }
                     }
 
-                } catch (aiError) {
-                    console.warn("AI formatting failed, falling back (if applicable)", aiError);
-
-                    const aiErrorMsg = aiError.message || String(aiError);
-                    // If the error is a rate limit or API key issue, abort immediately
-                    // so the user sees the real error instead of bad heuristic output.
-                    if (aiErrorMsg.includes('429') || aiErrorMsg.includes('RESOURCE_EXHAUSTED') || aiErrorMsg.includes('quota') || aiErrorMsg.includes('API key')) {
-                        throw aiError; // Let the outer catch block show the error UI to the user
+                    // Hide progress bar after completion
+                    if (chunkProgressContainer) {
+                        chunkProgressContainer.style.display = 'none';
+                    }
+                    
+                    // Show a toast notification if any parts failed
+                    if (failedParts.length > 0) {
+                        const partsStr = failedParts.join(", ");
+                        setTimeout(() => {
+                            showToast(`⚠️ Note: Part(s) ${partsStr} formatted locally due to server limits.`, 'warning');
+                        }, 500); // Delay slightly so it shows up after loading overlay hides
                     }
 
-                    // Fallback to local heuristic engine
+                } catch (aiError) {
+                    console.warn("AI formatting critically failed (initialization error)", aiError);
+
+                    // Fallback to local heuristic engine for entire document
                     try {
                         const processor = new window.TextProcessor(cleanedText);
                         const textBlocks = processor.tokenize();
@@ -1793,6 +1960,10 @@ document.addEventListener('DOMContentLoaded', () => {
             // Deep clone the preview container
             const clonedPreview = previewContainer.cloneNode(true);
 
+            // Remove any elements marked with 'no-export' (like heuristic warnings)
+            const noExportEls = clonedPreview.querySelectorAll('.no-export');
+            noExportEls.forEach(el => el.remove());
+
             // Convert Mermaid containers on the cloned DOM
             await convertSvgsToImages(clonedPreview);
 
@@ -2119,5 +2290,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
         document.body.removeChild(measureWrapper);
     }
+    
+    // --- Global Utility Functions ---
+    window.copyCodeToClipboard = function(btn) {
+        const wrapper = btn.closest('.code-block-wrapper');
+        if (!wrapper) return;
+        const codeEl = wrapper.querySelector('code');
+        if (!codeEl) return;
+        
+        const textToCopy = codeEl.innerText || codeEl.textContent;
+        
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '✅ Copied!';
+            btn.style.color = '#4ade80';
+            btn.style.borderColor = '#4ade80';
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.style.color = '#e2e8f0';
+                btn.style.borderColor = '#718096';
+            }, 2000);
+        }).catch(err => {
+            console.error('Failed to copy code: ', err);
+            btn.innerHTML = '❌ Error';
+        });
+    };
 
 });

@@ -1,4 +1,4 @@
-/* =========================================
+﻿/* =========================================
    Smart Text Formatting - Core Styles
 ========================================= */
 
@@ -1320,7 +1320,7 @@ body {
    Rules: Times New Roman, 12pt body, 14pt H1, 1in margins, justify, 1.6 line-height
    ========================================================================== */
 
-/* @page rule for window.print() based PDF — 1 inch margins */
+/* @page rule for window.print() based PDF â€” 1 inch margins */
 @page {
     size: A4;
     margin: 2.54cm; /* 1 inch (Actual Shiv Prakash implementation) */
@@ -1508,7 +1508,7 @@ body {
 }
 
 [contenteditable="true"] .page-break-before::before {
-    content: '📄 Page Break';
+    content: 'ðŸ“„ Page Break';
     display: block;
     width: calc(100% + 64px);
     margin-left: -32px;
@@ -1531,4 +1531,19 @@ body {
 [data-theme="dark"] [contenteditable="true"] .page-break-before::before {
     color: #4a5568;
     background-image: linear-gradient(to right, transparent, #2d3748 10%, #2d3748 90%, transparent);
-}
+}@ m e d i a   p r i n t   {   . n o - e x p o r t   {   d i s p l a y :   n o n e   ! i m p o r t a n t ;   }   }  
+ 
+@media print { .no-export { display: none !important; } }
+.toast-container { left: 24px !important; transform: none !important; bottom: 32px !important; }
+
+
+/* --- Code Block UI --- */
+.code-block-wrapper { margin: 16px 0; border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0; background: #f8f9fa; }
+.code-block-header { display: flex; justify-content: space-between; align-items: center; background: #e9ecef; padding: 8px 16px; border-bottom: 1px solid #dee2e6; }
+.code-block-header span { color: #495057; font-family: 'Fira Code', monospace; font-size: 12px; font-weight: 500; }
+.copy-code-btn { background: #ffffff; border: 1px solid #ced4da; color: #495057; border-radius: 4px; padding: 4px 8px; cursor: pointer; font-size: 12px; transition: all 0.2s ease; }
+.copy-code-btn:hover { background: #e9ecef; }
+.code-block-wrapper pre { margin: 0; padding: 16px; overflow-x: auto; background: transparent; }
+.code-block-wrapper code { color: #212529; font-family: 'Fira Code', monospace; font-size: 14px; }
+@media print { .code-block-wrapper { background: #ffffff !important; border: 1px solid #ccc !important; page-break-inside: avoid; } .code-block-wrapper pre, .code-block-wrapper code { color: #000 !important; white-space: pre-wrap !important; word-wrap: break-word !important; } }
+

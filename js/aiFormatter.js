@@ -109,7 +109,7 @@ D. TYPOS: Do not fix general spelling mistakes or grammar. Only fix the citation
                 if (proxyResponse.ok) {
                     console.log('[AIFormatter] ✅ Server proxy succeeded!');
                     const data = await proxyResponse.json();
-                    return this._parseResponse(data);
+                    return await this._parseResponse(data);
                 } else {
                     const errText = await proxyResponse.text();
                     console.error('[AIFormatter] ❌ Server proxy error:', proxyResponse.status, errText);
@@ -159,7 +159,7 @@ D. TYPOS: Do not fix general spelling mistakes or grammar. Only fix the citation
 
                 console.log('[AIFormatter] ✅ Direct Gemini API succeeded!');
                 const data = await response.json();
-                return this._parseResponse(data);
+                return await this._parseResponse(data);
             } catch (e) {
                 // If it was a network error or API error (not caught by the quota check), optionally fallback
                 if (e.message.includes('exhausted') || e.message.includes('proxy')) throw e;
@@ -246,15 +246,88 @@ CRITICAL RULES:
     }
 
     /**
+     * Specialized method to auto-heal broken JSON syntax using Gemini
+     * @param {string} brokenJson The invalid JSON string
+     * @param {string} errorMessage The error thrown by JSON.parse
+     * @returns {Promise<string>} The corrected raw JSON string
+     */
+    async fixJsonSyntax(brokenJson, errorMessage) {
+        const activeLocalApiKey = window.GEMINI_API_KEY_LOCAL || localStorage.getItem('gemini_api_key') || '';
+        
+        const systemInstruction = `You are an expert JSON syntax validator and healer.
+The following JSON string threw a SyntaxError during parsing:
+Error thrown: "${errorMessage}"
+
+Your job is to find the syntax error in the JSON and fix it.
+CRITICAL RULES:
+1. Return ONLY the raw, perfectly valid JSON array.
+2. DO NOT return markdown blocks like \`\`\`json or \`\`\`. 
+3. DO NOT output any conversational text like "Here is the fixed JSON:".
+4. Make the minimal necessary changes (e.g. add missing commas, escape unescaped quotes, close brackets) to make it valid.`;
+
+        // PATH 1: Direct to Google
+        if (activeLocalApiKey) {
+            console.log('[AIFormatter] Auto-Healing JSON directly via Gemini API...');
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${activeLocalApiKey}`;
+
+            const requestBody = {
+                system_instruction: { parts: [{ text: systemInstruction }] },
+                contents: [{ parts: [{ text: brokenJson }] }],
+                generationConfig: { temperature: 0.1, responseMimeType: "application/json" }
+            };
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(requestBody)
+            });
+
+            if (!response.ok) throw new Error("Auto-Heal JSON direct API failed.");
+            
+            const data = await response.json();
+            const fixedJson = data.candidates[0].content.parts[0].text.trim();
+            return fixedJson.replace(/^```[a-z]*\s*/i, '').replace(/\s*```$/, '').trim();
+        }
+
+        // PATH 2: Server Proxy
+        console.log('[AIFormatter] Auto-Healing JSON via server proxy...');
+        const proxyResponse = await fetch('/api/format', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                rawText: brokenJson, 
+                systemInstruction,
+                isMermaidFix: true // Reuse this flag to skip proxy-side schema parsing logic
+            })
+        });
+
+        if (proxyResponse.ok) {
+            const data = await proxyResponse.json();
+            let fixedJson = data.fixedCode || data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+            fixedJson = fixedJson.trim();
+            return fixedJson.replace(/^```[a-z]*\s*/i, '').replace(/\s*```$/, '').trim();
+        } else {
+            throw new Error("Auto-Heal JSON proxy API failed.");
+        }
+    }
+
+    /**
      * Parses the raw Gemini HTML/JSON classification response into a clean UI JSON array
      */
-    _parseResponse(data) {
+    async _parseResponse(data) {
         const outputText = data.candidates[0].content.parts[0].text;
         let cleanJson = outputText.trim();
         if (cleanJson.startsWith('```json')) {
             cleanJson = cleanJson.replace(/^```json\s*/, '').replace(/\s*```$/, '');
         }
-        return JSON.parse(cleanJson);
+        
+        try {
+            return JSON.parse(cleanJson);
+        } catch (err) {
+            console.warn("[AIFormatter] JSON parse failed! Triggering self-correction loop...", err);
+            const fixedJsonStr = await this.fixJsonSyntax(cleanJson, err.message);
+            return JSON.parse(fixedJsonStr);
+        }
     }
 }
 

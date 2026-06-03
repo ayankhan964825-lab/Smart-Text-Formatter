@@ -22,18 +22,32 @@ export default async function handler(req, res) {
     }
 
     try {
-        const { rawText, systemInstruction, isMermaidFix } = req.body;
+        const { rawText, systemInstruction, isMermaidFix, images } = req.body;
 
         if (!rawText) {
             return res.status(400).json({ error: 'rawText is required.' });
         }
+
+        const parts = [];
+        if (images && images.length > 0) {
+            images.forEach((img, idx) => {
+                parts.push({ text: `[Image ${idx}]` });
+                parts.push({
+                    inlineData: {
+                        mimeType: img.mimeType,
+                        data: img.base64
+                    }
+                });
+            });
+        }
+        parts.push({ text: rawText });
 
         const requestBody = {
             system_instruction: {
                 parts: [{ text: systemInstruction }]
             },
             contents: [{
-                parts: [{ text: rawText }]
+                parts: parts
             }],
             generationConfig: {
                 temperature: 0.1,

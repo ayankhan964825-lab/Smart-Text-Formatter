@@ -249,6 +249,30 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // Manual Image Insert
+    const manualImageBtn = document.getElementById('manual-image-btn');
+    const manualImageInsert = document.getElementById('manual-image-insert');
+    if (manualImageBtn && manualImageInsert) {
+        manualImageBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            restoreSelection();
+            manualImageInsert.click();
+        });
+        
+        manualImageInsert.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                restoreSelection();
+                const imgHTML = `<div class="ai-image-wrapper" contenteditable="false"><img src="${ev.target.result}" /></div><p><br/></p>`;
+                document.execCommand('insertHTML', false, imgHTML);
+                document.getElementById('formatted-preview').focus();
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
     const rtfSelects = document.querySelectorAll('.rtf-select');
     rtfSelects.forEach(select => {
         select.addEventListener('change', () => {
@@ -334,8 +358,174 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalOverwriteBtn = document.getElementById('modal-overwrite-btn');
     const modalAppendBtn = document.getElementById('modal-append-btn');
     const modalCancelBtn = document.getElementById('modal-cancel-btn');
+    let pendingFormattedHtml = "";
 
-    let pendingFormattedHtml = '';
+    window.appUploadedImages = [];
+    const imageUploadInput = document.getElementById('image-upload-input');
+    const imagePreviewStrip = document.getElementById('image-preview-strip');
+
+    // --- Image Step Modal Logic ---
+    const imageStepModal = document.getElementById('image-step-modal');
+    const modalAddImagesBtn = document.getElementById('modal-add-images-btn');
+    const modalFormatWithImagesBtn = document.getElementById('modal-format-with-images-btn');
+    const modalSkipImagesBtn = document.getElementById('modal-skip-images-btn');
+    const captionOptions = document.getElementById('caption-options');
+    const modalImagePreview = document.getElementById('modal-image-preview');
+
+    // When user clicks "Choose Images" inside the modal
+    if (modalAddImagesBtn && imageUploadInput) {
+        modalAddImagesBtn.addEventListener('click', () => {
+            imageUploadInput.click();
+        });
+
+        imageUploadInput.addEventListener('change', async (e) => {
+            const files = e.target.files;
+            if (!files || files.length === 0) return;
+            
+            modalAddImagesBtn.innerHTML = '⏳ Processing...';
+            modalAddImagesBtn.disabled = true;
+            
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                if (!file.type.startsWith('image/')) continue;
+                
+                const base64DataUrl = await compressImage(file, 1024, 0.7);
+                const imageId = window.appUploadedImages.length;
+                
+                window.appUploadedImages.push({
+                    id: imageId,
+                    mimeType: file.type,
+                    dataUrl: base64DataUrl,
+                    base64: base64DataUrl.split(',')[1]
+                });
+            }
+            
+            modalAddImagesBtn.innerHTML = '🖼️ Add More Images';
+            modalAddImagesBtn.disabled = false;
+            imageUploadInput.value = '';
+            
+            // Update the modal UI to show thumbnails and caption/format options
+            renderModalImagePreview();
+            if (window.appUploadedImages.length > 0) {
+                captionOptions.style.display = 'block';
+                modalFormatWithImagesBtn.style.display = 'block';
+            }
+        });
+    }
+
+    // Render thumbnails inside the modal
+    function renderModalImagePreview() {
+        if (!modalImagePreview) return;
+        modalImagePreview.innerHTML = '';
+        window.appUploadedImages.forEach((img, index) => {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'image-thumb-wrapper';
+            
+            const thumb = document.createElement('img');
+            thumb.className = 'image-thumb';
+            thumb.src = img.dataUrl;
+            
+            const removeBtn = document.createElement('button');
+            removeBtn.className = 'image-thumb-remove';
+            removeBtn.innerHTML = '✖';
+            removeBtn.onclick = () => {
+                window.appUploadedImages.splice(index, 1);
+                window.appUploadedImages.forEach((m, idx) => m.id = idx);
+                renderModalImagePreview();
+                // Hide caption/format options if no images remain
+                if (window.appUploadedImages.length === 0) {
+                    captionOptions.style.display = 'none';
+                    modalFormatWithImagesBtn.style.display = 'none';
+                    modalAddImagesBtn.innerHTML = '🖼️ Choose Images';
+                }
+            };
+            
+            wrapper.appendChild(thumb);
+            wrapper.appendChild(removeBtn);
+            modalImagePreview.appendChild(wrapper);
+        });
+        // Also sync to the main strip (for later use)
+        renderImagePreview();
+    }
+
+    // "Format with Images" button in modal
+    if (modalFormatWithImagesBtn) {
+        modalFormatWithImagesBtn.addEventListener('click', () => {
+            // Store caption preference
+            const captionChoice = document.querySelector('input[name="caption-choice"]:checked')?.value || 'with';
+            window.appImageCaptionEnabled = (captionChoice === 'with');
+            imageStepModal.style.display = 'none';
+            proceedWithFormatting();
+        });
+    }
+
+    // "Skip" button in modal
+    if (modalSkipImagesBtn) {
+        modalSkipImagesBtn.addEventListener('click', () => {
+            window.appUploadedImages = []; // Clear any images
+            window.appImageCaptionEnabled = false;
+            imageStepModal.style.display = 'none';
+            proceedWithFormatting();
+        });
+    }
+
+    
+    function renderImagePreview() {
+        if (!imagePreviewStrip) return;
+        imagePreviewStrip.innerHTML = '';
+        window.appUploadedImages.forEach((img, index) => {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'image-thumb-wrapper';
+            
+            const thumb = document.createElement('img');
+            thumb.className = 'image-thumb';
+            thumb.src = img.dataUrl;
+            
+            const removeBtn = document.createElement('button');
+            removeBtn.className = 'image-thumb-remove';
+            removeBtn.innerHTML = '✖';
+            removeBtn.onclick = () => {
+                window.appUploadedImages.splice(index, 1);
+                // Re-index remaining images
+                window.appUploadedImages.forEach((m, idx) => m.id = idx);
+                renderImagePreview();
+            };
+            
+            wrapper.appendChild(thumb);
+            wrapper.appendChild(removeBtn);
+            imagePreviewStrip.appendChild(wrapper);
+        });
+    }
+
+    function compressImage(file, maxWidth, quality) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = event => {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = () => {
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > maxWidth) {
+                        height = Math.round((height * maxWidth) / width);
+                        width = maxWidth;
+                    }
+
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    resolve(canvas.toDataURL(file.type === 'image/png' ? 'image/png' : 'image/jpeg', quality));
+                };
+                img.onerror = error => reject(error);
+            };
+            reader.onerror = error => reject(error);
+        });
+    }
 
     function insertHtmlAtCursor(html) {
         const previewContainer = document.getElementById('formatted-preview');
@@ -402,8 +592,32 @@ document.addEventListener('DOMContentLoaded', () => {
         statusText.textContent = "Format Cancelled";
     });
 
-    // Handle Format Button Click
+    // Handle Format Button Click — Show Image Step Modal first
     formatBtn.addEventListener('click', async () => {
+        const rawText = rawInput.value.trim();
+        if (!rawText) {
+            statusText.textContent = 'Please enter some text to format.';
+            return;
+        }
+
+        // Reset image state for this new format session
+        window.appUploadedImages = [];
+        window.appImageCaptionEnabled = false;
+        
+        // Reset modal UI
+        if (modalImagePreview) modalImagePreview.innerHTML = '';
+        if (captionOptions) captionOptions.style.display = 'none';
+        if (modalFormatWithImagesBtn) modalFormatWithImagesBtn.style.display = 'none';
+        if (modalAddImagesBtn) modalAddImagesBtn.innerHTML = '🖼️ Choose Images';
+        
+        // Show the Image Step Modal
+        if (imageStepModal) {
+            imageStepModal.style.display = 'flex';
+        }
+    });
+
+    // The actual formatting logic (called after Image Step Modal decision)
+    async function proceedWithFormatting() {
         statusText.textContent = "Analyzing structure with AI...";
         hasFormattedOnce = true;
 
@@ -411,11 +625,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const ribbonControls = document.querySelectorAll('.formatting-ribbon select, .formatting-ribbon input');
         ribbonControls.forEach(control => {
             control.disabled = true;
-            // Add a visual cue that it is disabled
             control.style.opacity = '0.6';
             control.style.cursor = 'not-allowed';
 
-            // Also fade the label if it's a checkbox
             if (control.type === 'checkbox' && control.parentElement) {
                 control.parentElement.style.opacity = '0.6';
                 control.parentElement.style.cursor = 'not-allowed';
@@ -423,7 +635,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         await processTextUpdate(false); // Allow append modal for manual formats
-    });
+    }
 
 
 
@@ -1292,7 +1504,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 }
 
                                 // Wait for formatting of this chunk
-                                const chunkElements = await aiFormatter.formatText(chunkText);
+                                const chunkElements = await aiFormatter.formatText(chunkText, window.appUploadedImages);
 
                                 // Concatenate the structured JSON objects
                                 if (Array.isArray(chunkElements)) {

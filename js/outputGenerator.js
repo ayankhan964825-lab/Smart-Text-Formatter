@@ -57,6 +57,23 @@ class OutputGenerator {
                 continue;
             }
 
+            // Handle injected Multimodal Images
+            if (tag === 'image') {
+                const imgIndex = parseInt(element.content, 10);
+                if (!isNaN(imgIndex) && window.appUploadedImages && window.appUploadedImages[imgIndex]) {
+                    const imgData = window.appUploadedImages[imgIndex].dataUrl;
+                    const autoCaption = window.appImageCaptionEnabled ? `<p style="text-align: center; color: #666; font-size: 10pt; margin-top: 5px;"><i>Figure ${imgIndex + 1}</i></p>` : '';
+                    htmlParts.push(`
+                        <div class="ai-image-wrapper" contenteditable="false" style="page-break-inside: avoid; text-align: center; margin: 20px 0;">
+                            <img src="${imgData}" style="max-height: 85vh; width: auto; max-width: 100%; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);" />
+                            ${autoCaption}
+                        </div>
+                    `);
+                }
+                i++;
+                continue;
+            }
+
             // Normal elements (Headings, Paragraphs)
             let content;
             if (tag === 'code') {

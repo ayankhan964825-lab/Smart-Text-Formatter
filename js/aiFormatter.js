@@ -11,9 +11,10 @@ class AIFormatter {
     /**
      * Sends raw text to Gemini to classify it into ElementObjects
      * @param {string} rawText 
+     * @param {Array<Object>} images Array of uploaded images
      * @returns {Promise<Array<Object>>} JSON array of classified text blocks
      */
-    async formatText(rawText) {
+    async formatText(rawText, images = []) {
 
         // Fetch the freshest key from localStorage right before API call
         const activeLocalApiKey = window.GEMINI_API_KEY_LOCAL || localStorage.getItem('gemini_api_key') || '';
@@ -25,14 +26,21 @@ For each logical block, determine its semantic type.
 Rules:
 1. You MUST return a valid JSON array of objects.
 2. Each object MUST have precisely two keys: "type" and "content".
-3. "type" MUST be exactly one of: "h1", "h2", "sub-subheading", "p", "ul", "ol", "code".
+3. "type" MUST be exactly one of: "h1", "h2", "sub-subheading", "p", "ul", "ol", "code", "image".
    - Use "h1" for the single main title of the document.
    - Use "h2" for main section headings (like "1. Introduction", "Abstract", "Methodology", "2. Literature Review").
    - Use "sub-subheading" for nested numerical/alphabetical subheadings (like "1.1. Approach", "A. Dataset", "2.3. Results").
    - Use "p" for regular body text ONLY. If a sentence has been split into multiple lines, combine it into one single content string.
-4. For heading and paragraph types ("h1", "h2", "sub-subheading", "p", "code"), your object MUST have a "content" string.
+   - Use "image" ONLY when placing a multimodal image provided in the prompt.
+4. For heading and paragraph types ("h1", "h2", "sub-subheading", "p", "code", "image"), your object MUST have a "content" string.
    For list types ("ul", "ol"), your object MUST NOT have "content". Instead, it MUST have an "items" array of strings, where each string is a single bullet point or numbered item.
 5. "content" (or "items" strings) MUST contain the exact text, EXCEPT for the specific OCR/PDF cleanup rules defined below.
+
+--- MULTIMODAL IMAGE RULE ---
+The user may provide inline images alongside the text. Each image will be preceded by a label like "[Image 0]", "[Image 1]", etc. 
+If you determine that an image should be inserted at a specific logical location in the structured output to best illustrate the context, output an object with:
+{"type": "image", "content": "0"} (where "0" is the integer index of the image).
+Do NOT output the raw base64 or long descriptions in the content, ONLY the exact index of the image.
 
 --- CRITICAL SEPARATION RULE ---
 HEADINGS AND BODY TEXT MUST ALWAYS BE SEPARATE OBJECTS.
@@ -96,14 +104,13 @@ D. TYPOS: Do not fix general spelling mistakes or grammar. Only fix the citation
 
 6. Do NOT return markdown formatting like \\\`\\\`\\\`json. Return only raw JSON data.`;
 
-        // Helper to call server proxy
         const callServerProxy = async () => {
             try {
                 console.log('[AIFormatter] Trying server proxy /api/format ...');
                 const proxyResponse = await fetch('/api/format', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ rawText, systemInstruction })
+                    body: JSON.stringify({ rawText, systemInstruction, images })
                 });
 
                 if (proxyResponse.ok) {
@@ -129,9 +136,23 @@ D. TYPOS: Do not fix general spelling mistakes or grammar. Only fix the citation
             console.log('[AIFormatter] Custom API key found — calling Gemini DIRECTLY (bypassing proxy)...');
             const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${activeLocalApiKey}`;
 
+            const parts = [];
+            if (images && images.length > 0) {
+                images.forEach((img, idx) => {
+                    parts.push({ text: `[Image ${idx}]` });
+                    parts.push({
+                        inlineData: {
+                            mimeType: img.mimeType,
+                            data: img.base64
+                        }
+                    });
+                });
+            }
+            parts.push({ text: rawText });
+
             const requestBody = {
                 system_instruction: { parts: [{ text: systemInstruction }] },
-                contents: [{ parts: [{ text: rawText }] }],
+                contents: [{ parts: parts }],
                 generationConfig: { temperature: 0.1, responseMimeType: "application/json" }
             };
 

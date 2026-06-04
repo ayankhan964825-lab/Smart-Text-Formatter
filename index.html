@@ -23,7 +23,7 @@
     <div id="menu-overlay" class="menu-overlay"></div>
     <div id="settings-menu" class="settings-panel">
         <div class="settings-header">
-            <h2>Settings</h2>
+            <h2>Menu</h2>
             <button id="close-menu-btn" class="icon-btn" title="Close Settings">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                     stroke-linecap="round" stroke-linejoin="round">
@@ -33,6 +33,18 @@
             </button>
         </div>
         <div class="settings-content">
+            <!-- Documents Section -->
+            <div class="setting-group" style="padding-bottom: 0; border-bottom: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <label class="setting-label" style="margin: 0;">My Documents</label>
+                    <button id="new-doc-btn" class="btn primary btn-small" style="padding: 4px 8px; font-size: 12px;">➕ New</button>
+                </div>
+                <div id="document-list" class="document-list">
+                    <!-- Document items will be injected here via JS -->
+                </div>
+            </div>
+
+            <!-- API Key Section -->
             <div class="setting-group">
                 <label for="custom-api-key" class="setting-label">Gemini API Key</label>
                 <p class="setting-desc">Use your own free API key to avoid rate limits and queue times.</p>
@@ -63,7 +75,7 @@
     <!-- Header / Top Bar -->
     <header class="top-bar">
         <div class="logo">
-            <button id="hamburger-btn" class="icon-btn hamburger-btn" title="Open Settings">
+            <button id="hamburger-btn" class="icon-btn hamburger-btn" title="Open Menu">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                     stroke-linecap="round" stroke-linejoin="round">
                     <line x1="3" y1="12" x2="21" y2="12"></line>
@@ -71,15 +83,8 @@
                     <line x1="3" y1="18" x2="21" y2="18"></line>
                 </svg>
             </button>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                <polyline points="14 2 14 8 20 8"></polyline>
-                <line x1="16" y1="13" x2="8" y2="13"></line>
-                <line x1="16" y1="17" x2="8" y2="17"></line>
-                <polyline points="10 9 9 9 8 9"></polyline>
-            </svg>
-            <h1>Smart Text Formatter</h1>
+            <input type="text" id="document-title" class="document-title-input" value="Untitled Document" placeholder="Document Title" title="Click to rename document">
+            <span id="save-status" class="save-status"></span>
         </div>
         <div class="top-controls desktop-export-container" style="display: flex; gap: 8px;">
             <button id="export-pdf" class="btn primary btn-small" disabled
@@ -358,6 +363,7 @@
     <script src="js/structureDetector.js?v=600"></script>
     <!-- Local dev API key (gitignored, won't exist on Vercel - that's OK) -->
     <script src="js/config.local.js?v=600" onerror="console.log('No local config found, using server proxy.')"></script>
+    <script src="js/db.js"></script>
     <script src="js/aiFormatter.js?v=600"></script>
     <script src="js/ruleEngine.js?v=600"></script>
     <script src="js/outputGenerator.js?v=700"></script>

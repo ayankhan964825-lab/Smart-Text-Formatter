@@ -12,6 +12,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- State Management ---
     let hasFormattedOnce = false; // Only allow ribbon auto-updates after first manual format
+    
+    // Auto-Save State
+    let currentDocumentId = Date.now().toString();
+    let autoSaveTimer = null;
+    let isInitialLoad = true;
 
     // Force Light Theme
     htmlElement.setAttribute('data-theme', 'light');
@@ -1870,6 +1875,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if (rawInput) {
                 rawInput.disabled = true;
             }
+            
+            if (typeof debouncedAutoSave === 'function') {
+                debouncedAutoSave();
+            }
 
         } catch (error) {
             console.error("Formatting Error Details:", error);
@@ -2527,5 +2536,200 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.innerHTML = '❌ Error';
         });
     };
+
+
+    // ==========================================================================
+    // Auto-Save & Document Library Logic
+    // ==========================================================================
+
+    const documentTitleInput = document.getElementById("document-title");
+    const saveStatus = document.getElementById("save-status");
+    const newDocBtn = document.getElementById("new-doc-btn");
+    const documentList = document.getElementById("document-list");
+    const formattedPreview = document.getElementById("formatted-preview");
+
+    rawInput.addEventListener("input", debouncedAutoSave);
+    formattedPreview.addEventListener("input", debouncedAutoSave);
+    if(documentTitleInput) documentTitleInput.addEventListener("input", debouncedAutoSave);
+
+    if (newDocBtn) {
+        newDocBtn.addEventListener("click", () => {
+            createNewDocument();
+            closeMenuBtn && closeMenuBtn.click();
+        });
+    }
+
+    function debouncedAutoSave() {
+        if (isInitialLoad) return;
+        if (saveStatus) {
+            saveStatus.textContent = "Saving...";
+            saveStatus.classList.add("visible");
+        }
+        clearTimeout(autoSaveTimer);
+        autoSaveTimer = setTimeout(performSave, 1500);
+    }
+
+    async function performSave() {
+        if (!window.appDB) return;
+        const rawText = rawInput.value;
+        const formattedHtml = formattedPreview.innerHTML;
+        let title = documentTitleInput ? documentTitleInput.value.trim() : "";
+        
+        if ((!title || title === "Untitled Document") && rawText.trim().length > 0) {
+            const firstLine = rawText.trim().split("\n")[0];
+            if (firstLine.length > 0) {
+                title = firstLine.substring(0, 30);
+                if (firstLine.length > 30) title += "...";
+                if(documentTitleInput) documentTitleInput.value = title;
+            } else {
+                title = "Untitled Document";
+            }
+        } else if (!title) {
+            title = "Untitled Document";
+            if(documentTitleInput) documentTitleInput.value = title;
+        }
+
+        const doc = {
+            id: currentDocumentId,
+            title: title,
+            rawText: rawText,
+            formattedHtml: formattedHtml,
+            images: window.appUploadedImages || [],
+            captionEnabled: window.appImageCaptionEnabled || false,
+            updatedAt: Date.now()
+        };
+
+        try {
+            await window.appDB.saveDocument(doc);
+            if (saveStatus) {
+                saveStatus.textContent = "Saved to device";
+                setTimeout(() => {
+                    if (saveStatus.textContent === "Saved to device") {
+                        saveStatus.classList.remove("visible");
+                    }
+                }, 3000);
+            }
+            renderDocumentList();
+        } catch (e) {
+            console.error("Save failed:", e);
+            if (saveStatus) {
+                saveStatus.textContent = "Save failed";
+                saveStatus.style.color = "#e53e3e";
+            }
+        }
+    }
+
+    function createNewDocument() {
+        currentDocumentId = Date.now().toString();
+        rawInput.value = "";
+        formattedPreview.innerHTML = "";
+        if(documentTitleInput) documentTitleInput.value = "Untitled Document";
+        window.appUploadedImages = [];
+        window.appImageCaptionEnabled = false;
+        hasFormattedOnce = false;
+        
+        const ribbonControls = document.querySelectorAll(".formatting-ribbon select, .formatting-ribbon input");
+        ribbonControls.forEach(control => {
+            control.disabled = false;
+            control.style.opacity = "1";
+            control.style.cursor = "default";
+            if (control.type === "checkbox" && control.parentElement) {
+                control.parentElement.style.opacity = "1";
+                control.parentElement.style.cursor = "pointer";
+            }
+        });
+        
+        if (saveStatus) saveStatus.classList.remove("visible");
+    }
+
+    async function renderDocumentList() {
+        if (!window.appDB || !documentList) return;
+        try {
+            const docs = await window.appDB.getAllDocuments();
+            documentList.innerHTML = "";
+            if (docs.length === 0) {
+                documentList.innerHTML = `<p style="font-size:12px; color:var(--text-muted); text-align:center; padding: 20px 0;">No saved documents.</p>`;
+                return;
+            }
+            docs.forEach(doc => {
+                const dateStr = new Date(doc.updatedAt).toLocaleString();
+                const item = document.createElement("div");
+                item.className = "doc-item";
+                if (doc.id === currentDocumentId) {
+                    item.style.borderColor = "var(--primary-color)";
+                    item.style.background = "#ebf8ff";
+                }
+                const info = document.createElement("div");
+                info.className = "doc-info";
+                info.innerHTML = `
+                    <div class="doc-title">${doc.title || "Untitled Document"}</div>
+                    <div class="doc-date">${dateStr}</div>
+                    <div class="doc-snippet">${doc.snippet}</div>
+                `;
+                info.onclick = () => loadDocument(doc.id);
+                
+                const delBtn = document.createElement("button");
+                delBtn.className = "doc-delete-btn";
+                delBtn.title = "Delete Document";
+                delBtn.innerHTML = `
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                `;
+                delBtn.onclick = async (e) => {
+                    e.stopPropagation();
+                    if (confirm(`Are you sure you want to delete "${doc.title}"?`)) {
+                        await window.appDB.deleteDocument(doc.id);
+                        if (doc.id === currentDocumentId) createNewDocument();
+                        else renderDocumentList();
+                    }
+                };
+                item.appendChild(info);
+                item.appendChild(delBtn);
+                documentList.appendChild(item);
+            });
+        } catch (e) {
+            console.error("Error loading document list:", e);
+        }
+    }
+
+    async function loadDocument(id) {
+        if (!window.appDB) return;
+        try {
+            const doc = await window.appDB.getDocument(id);
+            if (doc) {
+                isInitialLoad = true;
+                currentDocumentId = doc.id;
+                rawInput.value = doc.rawText || "";
+                formattedPreview.innerHTML = doc.formattedHtml || "";
+                if(documentTitleInput) documentTitleInput.value = doc.title || "Untitled Document";
+                window.appUploadedImages = doc.images || [];
+                window.appImageCaptionEnabled = doc.captionEnabled || false;
+                hasFormattedOnce = !!(doc.formattedHtml && doc.formattedHtml.length > 0);
+                isInitialLoad = false;
+                
+                if (saveStatus) {
+                    saveStatus.textContent = "Loaded";
+                    saveStatus.classList.add("visible");
+                    setTimeout(() => saveStatus.classList.remove("visible"), 2000);
+                }
+                renderDocumentList();
+                closeMenuBtn && closeMenuBtn.click();
+            }
+        } catch (e) {
+            console.error("Error loading document:", e);
+            showToast("Error loading document.", "error");
+        }
+    }
+
+    setTimeout(async () => {
+        if (window.appDB) {
+            await renderDocumentList();
+            // Start with a fresh document on refresh
+            createNewDocument();
+            isInitialLoad = false;
+        }
+    }, 500);
 
 });

@@ -304,6 +304,107 @@
     </div>
 
     <!-- Image Step Modal (appears after Format Now, before actual formatting) -->
+    <!-- Template Selection Modal -->
+    <div id="template-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content template-modal-content">
+            <h3>📋 Choose Document Type</h3>
+            <p class="modal-subtitle">Select the type of document you're formatting. This helps the AI understand your content structure and apply the right formatting rules.</p>
+            
+            <div id="template-grid" class="template-grid">
+                <!-- Template cards are injected here by JS -->
+            </div>
+
+            <!-- Template Customization Section -->
+            <div id="template-customization" class="template-customization" style="display: none;">
+                <h4 style="margin-bottom: 12px; font-size: 14px; border-bottom: 1px solid var(--border-color); padding-bottom: 6px;">Adjust Formatting</h4>
+                
+                <div class="customization-row">
+                    <label>Title (H1)</label>
+                    <select id="modal-h1-font" class="modal-select">
+                        <option value="Arial, sans-serif">Arial</option>
+                        <option value="'Times New Roman', serif">Times New Roman</option>
+                        <option value="'Courier New', monospace">Courier New</option>
+                        <option value="Georgia, serif">Georgia</option>
+                        <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
+                        <option value="'Verdana', sans-serif">Verdana</option>
+                    </select>
+                    <input type="number" id="modal-h1-size" class="modal-input" min="10" max="72">
+                </div>
+                
+                <div class="customization-row">
+                    <label>Heading (H2)</label>
+                    <select id="modal-h2-font" class="modal-select">
+                        <option value="Arial, sans-serif">Arial</option>
+                        <option value="'Times New Roman', serif">Times New Roman</option>
+                        <option value="'Courier New', monospace">Courier New</option>
+                        <option value="Georgia, serif">Georgia</option>
+                        <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
+                        <option value="'Verdana', sans-serif">Verdana</option>
+                    </select>
+                    <input type="number" id="modal-h2-size" class="modal-input" min="10" max="72">
+                </div>
+
+                <div class="customization-row">
+                    <label>Subheading (H3)</label>
+                    <select id="modal-h3-font" class="modal-select">
+                        <option value="Arial, sans-serif">Arial</option>
+                        <option value="'Times New Roman', serif">Times New Roman</option>
+                        <option value="'Courier New', monospace">Courier New</option>
+                        <option value="Georgia, serif">Georgia</option>
+                        <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
+                        <option value="'Verdana', sans-serif">Verdana</option>
+                    </select>
+                    <input type="number" id="modal-h3-size" class="modal-input" min="10" max="72">
+                </div>
+
+                <div class="customization-row">
+                    <label>Body Text</label>
+                    <select id="modal-body-font" class="modal-select">
+                        <option value="Arial, sans-serif">Arial</option>
+                        <option value="'Times New Roman', serif">Times New Roman</option>
+                        <option value="'Courier New', monospace">Courier New</option>
+                        <option value="Georgia, serif">Georgia</option>
+                        <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
+                        <option value="'Verdana', sans-serif">Verdana</option>
+                    </select>
+                    <input type="number" id="modal-body-size" class="modal-input" min="10" max="72">
+                </div>
+
+                <div class="customization-row">
+                    <label>Alignment</label>
+                    <select id="modal-alignment" class="modal-select" style="width: 100%;">
+                        <option value="left">Left Align</option>
+                        <option value="center">Center Align</option>
+                        <option value="right">Right Align</option>
+                        <option value="justify">Justify</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Reference PDF Section -->
+            <div class="reference-section">
+                <div class="reference-header">
+                    <span class="reference-icon">📎</span>
+                    <div>
+                        <strong>Upload Reference Document</strong>
+                        <p class="reference-desc">Optional: Upload a PDF (max 10MB) whose layout and structure you want to replicate. Native Gemini Vision will analyze its exact structure.</p>
+                    </div>
+                </div>
+                <div class="reference-upload-area" id="reference-upload-area">
+                    <input type="file" id="reference-pdf-input" accept=".pdf" style="display: none;">
+                    <button id="reference-upload-btn" class="btn secondary btn-small">📄 Choose PDF</button>
+                    <span id="reference-file-name" class="reference-file-name">No file selected</span>
+                    <button id="reference-remove-btn" class="btn-small danger" style="display: none;">✖ Remove</button>
+                </div>
+            </div>
+
+            <div class="modal-actions template-modal-actions">
+                <button id="template-continue-btn" class="btn primary" disabled>Continue →</button>
+                <button id="template-skip-btn" class="btn secondary btn-small">Skip (Use General)</button>
+            </div>
+        </div>
+    </div>
+
     <div id="image-step-modal" class="modal-overlay" style="display: none;">
         <div class="modal-content" style="max-width: 420px; text-align: center;">
             <h3 style="margin-bottom: 6px;">📷 Add Images to Your Document?</h3>
@@ -364,6 +465,8 @@
     <!-- Local dev API key (gitignored, won't exist on Vercel - that's OK) -->
     <script src="js/config.local.js?v=600" onerror="console.log('No local config found, using server proxy.')"></script>
     <script src="js/db.js"></script>
+    <script src="js/templateEngine.js"></script>
+    <script src="js/referenceHandler.js"></script>
     <script src="js/aiFormatter.js?v=600"></script>
     <script src="js/ruleEngine.js?v=600"></script>
     <script src="js/outputGenerator.js?v=700"></script>

@@ -597,7 +597,204 @@ document.addEventListener('DOMContentLoaded', () => {
         statusText.textContent = "Format Cancelled";
     });
 
-    // Handle Format Button Click — Show Image Step Modal first
+    function populateModalCustomization(defaults) {
+        if (!defaults) return;
+        
+        const setFont = (modalId, fontValue) => {
+            const el = document.getElementById(modalId);
+            if (!el || !fontValue) return;
+            const cleanFont = fontValue.replace(/['"]/g, '');
+            for (let i = 0; i < el.options.length; i++) {
+                if (cleanFont.includes(el.options[i].value.replace(/['"]/g, ''))) {
+                    el.value = el.options[i].value;
+                    break;
+                }
+            }
+        };
+
+        const setSize = (modalId, sizeValue) => {
+            const el = document.getElementById(modalId);
+            if (el && sizeValue) el.value = sizeValue.replace(/[^0-9]/g, '');
+        };
+
+        // Populate Fonts
+        setFont('modal-h1-font', defaults.h1?.fontFamily);
+        setFont('modal-h2-font', defaults.h2?.fontFamily);
+        setFont('modal-h3-font', defaults.h3?.fontFamily);
+        setFont('modal-body-font', defaults.body?.fontFamily);
+
+        // Populate Sizes
+        setSize('modal-h1-size', defaults.h1?.fontSize);
+        setSize('modal-h2-size', defaults.h2?.fontSize);
+        setSize('modal-h3-size', defaults.h3?.fontSize);
+        setSize('modal-body-size', defaults.body?.fontSize);
+
+        // Populate Alignment
+        if (defaults.alignment) {
+            const alignEl = document.getElementById('modal-alignment');
+            if (alignEl) alignEl.value = defaults.alignment;
+        }
+    }
+
+    // Render templates inside the modal
+    function renderTemplateGrid() {
+        const grid = document.getElementById('template-grid');
+        const customPanel = document.getElementById('template-customization');
+        if (!grid || !window.templateEngine) return;
+        
+        const templates = window.templateEngine.getAllTemplates();
+        grid.innerHTML = '';
+        
+        templates.forEach(t => {
+            const isSelected = window.templateEngine.selectedTemplateId === t.id;
+            const card = document.createElement('div');
+            card.className = `template-card ${isSelected ? 'selected' : ''}`;
+            card.innerHTML = `
+                <div class="template-icon">${t.icon}</div>
+                <div class="template-name">${t.name}</div>
+                <div class="template-desc">${t.description}</div>
+            `;
+            
+            card.addEventListener('click', () => {
+                window.templateEngine.selectTemplate(t.id);
+                document.querySelectorAll('.template-card').forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+                document.getElementById('template-continue-btn').disabled = false;
+                
+                // Show Customization Panel
+                if (customPanel) {
+                    customPanel.style.display = 'block';
+                    populateModalCustomization(window.templateEngine.getRibbonDefaults());
+                }
+            });
+            grid.appendChild(card);
+        });
+
+        // If something is already selected, show customization panel
+        if (customPanel && window.templateEngine.selectedTemplateId) {
+            customPanel.style.display = 'block';
+            populateModalCustomization(window.templateEngine.getRibbonDefaults());
+        }
+    }
+
+    function applyTemplateToRibbon() {
+        // Read directly from modal instead of defaults
+        
+        // Font assignments map (modalId -> ribbonId)
+        const fontMap = {
+            'modal-h1-font': 'heading1-font',
+            'modal-h2-font': 'heading2-font',
+            'modal-h3-font': 'sub-subheading-font',
+            'modal-body-font': 'body-font'
+        };
+        for (const [modalId, elementId] of Object.entries(fontMap)) {
+            const ribbonEl = document.getElementById(elementId);
+            const modalEl = document.getElementById(modalId);
+            if (ribbonEl && modalEl && modalEl.value) {
+                // Remove quotes to match options easily
+                const fontVal = modalEl.value.replace(/['"]/g, '');
+                for (let i = 0; i < ribbonEl.options.length; i++) {
+                    if (fontVal.includes(ribbonEl.options[i].value)) {
+                        ribbonEl.value = ribbonEl.options[i].value;
+                        break;
+                    }
+                }
+            }
+        }
+        
+        // Size assignments map
+        const sizeMap = {
+            'modal-h1-size': 'heading1-size',
+            'modal-h2-size': 'heading2-size',
+            'modal-h3-size': 'sub-subheading-size',
+            'modal-body-size': 'body-size'
+        };
+        for (const [modalId, elementId] of Object.entries(sizeMap)) {
+            const ribbonEl = document.getElementById(elementId);
+            const modalEl = document.getElementById(modalId);
+            if (ribbonEl && modalEl && modalEl.value) {
+                ribbonEl.value = modalEl.value;
+            }
+        }
+        
+        // Alignment
+        const modalAlign = document.getElementById('modal-alignment');
+        const ribbonAlign = document.getElementById('global-alignment');
+        if (modalAlign && ribbonAlign && modalAlign.value) {
+            ribbonAlign.value = modalAlign.value;
+        }
+    }
+
+    // Reference PDF Upload Handling
+    const refUploadBtn = document.getElementById('reference-upload-btn');
+    const refInput = document.getElementById('reference-pdf-input');
+    const refFileName = document.getElementById('reference-file-name');
+    const refRemoveBtn = document.getElementById('reference-remove-btn');
+
+    if (refUploadBtn && refInput) {
+        refUploadBtn.addEventListener('click', () => refInput.click());
+
+        refInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            if (!file.type.includes('pdf')) {
+                showToast('Please upload a PDF file.', 'error');
+                return;
+            }
+
+            if (file.size > 10 * 1024 * 1024) { // 10MB limit
+                showToast('PDF too large. Maximum 10MB allowed.', 'error');
+                return;
+            }
+
+            refUploadBtn.textContent = '⏳ Analyzing...';
+            refUploadBtn.disabled = true;
+
+            try {
+                await window.referenceHandler.processPDF(file);
+                
+                refFileName.textContent = `${file.name}`;
+                refRemoveBtn.style.display = 'inline-block';
+                showToast('✅ Reference PDF uploaded successfully!');
+            } catch (err) {
+                console.error('Reference PDF error:', err);
+                showToast('Failed to process PDF.', 'error');
+            } finally {
+                refUploadBtn.textContent = '📄 Choose PDF';
+                refUploadBtn.disabled = false;
+            }
+        });
+    }
+
+    if (refRemoveBtn) {
+        refRemoveBtn.addEventListener('click', () => {
+            window.referenceHandler.clear();
+            refFileName.textContent = 'No file selected';
+            refRemoveBtn.style.display = 'none';
+            refInput.value = '';
+        });
+    }
+
+    // Template Modal Buttons
+    document.getElementById('template-continue-btn')?.addEventListener('click', () => {
+        document.getElementById('template-modal').style.display = 'none';
+        applyTemplateToRibbon();
+        
+        // Show Image Step Modal
+        const imageStepModal = document.getElementById('image-step-modal');
+        if (imageStepModal) imageStepModal.style.display = 'flex';
+    });
+
+    document.getElementById('template-skip-btn')?.addEventListener('click', () => {
+        if(window.templateEngine) window.templateEngine.selectTemplate('general');
+        document.getElementById('template-modal').style.display = 'none';
+        
+        const imageStepModal = document.getElementById('image-step-modal');
+        if (imageStepModal) imageStepModal.style.display = 'flex';
+    });
+
+    // Handle Format Button Click — Show TEMPLATE modal first
     formatBtn.addEventListener('click', async () => {
         const rawText = rawInput.value.trim();
         if (!rawText) {
@@ -609,15 +806,23 @@ document.addEventListener('DOMContentLoaded', () => {
         window.appUploadedImages = [];
         window.appImageCaptionEnabled = false;
         
-        // Reset modal UI
+        // Reset image modal UI
         if (modalImagePreview) modalImagePreview.innerHTML = '';
         if (captionOptions) captionOptions.style.display = 'none';
         if (modalFormatWithImagesBtn) modalFormatWithImagesBtn.style.display = 'none';
         if (modalAddImagesBtn) modalAddImagesBtn.innerHTML = '🖼️ Choose Images';
         
-        // Show the Image Step Modal
-        if (imageStepModal) {
-            imageStepModal.style.display = 'flex';
+        // Show Template Modal FIRST
+        const templateModal = document.getElementById('template-modal');
+        if (templateModal) {
+            renderTemplateGrid();
+            // Pre-select general
+            if(window.templateEngine) window.templateEngine.selectTemplate('general');
+            templateModal.style.display = 'flex';
+        } else {
+            // Fallback if modal missing
+            const imageStepModal = document.getElementById('image-step-modal');
+            if (imageStepModal) imageStepModal.style.display = 'flex';
         }
     });
 
@@ -2596,6 +2801,7 @@ document.addEventListener('DOMContentLoaded', () => {
             formattedHtml: formattedHtml,
             images: window.appUploadedImages || [],
             captionEnabled: window.appImageCaptionEnabled || false,
+            templateId: window.templateEngine?.selectedTemplateId || 'general',
             updatedAt: Date.now()
         };
 
@@ -2626,6 +2832,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if(documentTitleInput) documentTitleInput.value = "Untitled Document";
         window.appUploadedImages = [];
         window.appImageCaptionEnabled = false;
+        if(window.templateEngine) window.templateEngine.selectTemplate('general');
+        if(window.referenceHandler) window.referenceHandler.clear();
         hasFormattedOnce = false;
         
         const ribbonControls = document.querySelectorAll(".formatting-ribbon select, .formatting-ribbon input");
@@ -2706,6 +2914,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 if(documentTitleInput) documentTitleInput.value = doc.title || "Untitled Document";
                 window.appUploadedImages = doc.images || [];
                 window.appImageCaptionEnabled = doc.captionEnabled || false;
+                if(doc.templateId && window.templateEngine) {
+                    window.templateEngine.selectTemplate(doc.templateId);
+                } else if(window.templateEngine) {
+                    window.templateEngine.selectTemplate('general');
+                }
                 hasFormattedOnce = !!(doc.formattedHtml && doc.formattedHtml.length > 0);
                 isInitialLoad = false;
                 

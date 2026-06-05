@@ -1739,3 +1739,179 @@ body {
     background: rgba(229, 62, 62, 0.2);
 }
 
+
+/* Template Selection Modal Styles */
+.template-modal-content {
+    max-width: 600px !important;
+    max-height: 90vh;
+    overflow-y: auto;
+    width: 95%;
+    padding: 20px !important;
+}
+
+.template-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 10px;
+    margin: 16px 0;
+}
+
+.template-card {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 16px 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: var(--bg-primary);
+}
+
+.template-card:hover {
+    border-color: var(--primary-color);
+    background: var(--bg-secondary);
+}
+
+.template-card.selected {
+    border-color: var(--primary-color);
+    background: rgba(37, 99, 235, 0.1);
+    box-shadow: 0 0 0 2px var(--primary-color);
+}
+
+.template-icon {
+    font-size: 28px;
+    margin-bottom: 8px;
+}
+
+.template-name {
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.template-desc {
+    font-size: 11px;
+    color: var(--text-secondary);
+    line-height: 1.3;
+}
+
+/* Reference PDF Section */
+.reference-section {
+    margin-top: 24px;
+    padding: 16px;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    border: 1px dashed var(--border-color);
+    text-align: left;
+}
+
+.reference-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.reference-icon {
+    font-size: 24px;
+}
+
+.reference-desc {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin: 4px 0 0 0;
+    line-height: 1.4;
+}
+
+.reference-upload-area {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.reference-file-name {
+    font-size: 13px;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+}
+
+.template-modal-actions {
+    margin-top: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+
+/* Template Customization Panel */
+.template-customization {
+    margin-top: 20px;
+    padding: 16px;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    text-align: left;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.customization-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+}
+
+.customization-row:last-child {
+    margin-bottom: 0;
+}
+
+.customization-row label {
+    flex: 1 1 100px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.modal-select {
+    flex: 2 1 150px;
+    padding: 6px 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-size: 13px;
+    max-width: 100%;
+}
+
+.modal-input {
+    flex: 0 1 70px;
+    width: 70px;
+    padding: 6px 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-size: 13px;
+    text-align: center;
+}
+
+.template-card {
+    background: linear-gradient(145deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+}
+
+.template-icon {
+    font-size: 32px;
+    margin-bottom: 12px;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}
+

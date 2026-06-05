@@ -22,7 +22,7 @@ export default async function handler(req, res) {
     }
 
     try {
-        const { rawText, systemInstruction, isMermaidFix, images } = req.body;
+        const { rawText, systemInstruction, isMermaidFix, images, referencePdf } = req.body;
 
         if (!rawText) {
             return res.status(400).json({ error: 'rawText is required.' });
@@ -38,6 +38,11 @@ export default async function handler(req, res) {
                         data: img.base64
                     }
                 });
+            });
+        }
+        if (referencePdf) {
+            parts.push({
+                inlineData: referencePdf
             });
         }
         parts.push({ text: rawText });

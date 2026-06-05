@@ -102,7 +102,14 @@ C. AI BOILERPLATE & CONVERSATIONAL FILLER: Users often paste text containing ins
    - Only return the actual factual content of the document being formatted. If a paragraph is just the AI talking to the user or explaining a test case, drop it entirely!
 D. TYPOS: Do not fix general spelling mistakes or grammar. Only fix the citations as requested above.
 
-6. Do NOT return markdown formatting like \\\`\\\`\\\`json. Return only raw JSON data.`;
+6. Do NOT return markdown formatting like \`\`\`json. Return only raw JSON data.
+
+${window.templateEngine ? window.templateEngine.getPromptContext() : ''}
+${window.referenceHandler ? window.referenceHandler.getPromptContext() : ''}`;
+
+        const referencePdf = window.referenceHandler && window.referenceHandler.hasReference() 
+            ? window.referenceHandler.getInlineData() 
+            : null;
 
         const callServerProxy = async () => {
             try {
@@ -110,7 +117,7 @@ D. TYPOS: Do not fix general spelling mistakes or grammar. Only fix the citation
                 const proxyResponse = await fetch('/api/format', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ rawText, systemInstruction, images })
+                    body: JSON.stringify({ rawText, systemInstruction, images, referencePdf })
                 });
 
                 if (proxyResponse.ok) {
@@ -146,6 +153,12 @@ D. TYPOS: Do not fix general spelling mistakes or grammar. Only fix the citation
                             data: img.base64
                         }
                     });
+                });
+            }
+
+            if (referencePdf) {
+                parts.push({
+                    inlineData: referencePdf
                 });
             }
             parts.push({ text: rawText });

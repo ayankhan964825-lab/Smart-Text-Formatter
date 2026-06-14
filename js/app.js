@@ -2620,20 +2620,20 @@ document.addEventListener('DOMContentLoaded', () => {
                                     loadingTitle.textContent = "Auto-Healing Diagram...";
                                     loadingProgress.textContent = "Mermaid threw a syntax error. Instructing Gemini to fix it...";
                                 }
-                                    
+
                                 try {
                                     const healer = new window.AIFormatter();
                                     currentCode = await healer.fixMermaid(currentCode, lastError.message || String(lastError));
                                     console.log("Received healed Mermaid code:", currentCode);
                                 } catch (healErr) {
                                     console.error("Mermaid Auto-Heal strictly failed.", healErr);
-                                    break; // Stop retrying if the healer itself fails
+                                    break;
                                 } finally {
                                     if (loadingTitle && loadingProgress) {
                                         loadingTitle.textContent = originalTitle;
                                         loadingProgress.textContent = originalProgress;
                                     }
-                                    if (loadingOverlay) loadingOverlay.style.display = 'none'; // Re-hide as format phase finished
+                                    if (loadingOverlay) loadingOverlay.style.display = 'none';
                                 }
                             }
                         }
@@ -2642,7 +2642,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (finalSvg) {
                         el.innerHTML = finalSvg;
                     } else {
-                        // Ultimate fallback after healing fails or crashes
                         el.innerHTML = `<pre style="background:#fff3cd; padding:12px; border:1px solid #ffc107; border-radius:6px; white-space:pre-wrap; font-family:monospace; font-size:0.85rem; color:#856404;">⚠️ Diagram could not be rendered, even after auto-healing.\n\nError: ${lastError?.message || "Syntax Error"}\n\n${currentCode}</pre>`;
                     }
                 }
@@ -2653,6 +2652,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Calculate accurate TOC page numbers now that all content/diagram heights are settled
         await calculateAccurateTOC(container);
+
+        // Run A4 Pagination Engine — split content into discrete A4 pages
+        if (typeof window.paginatePreview === 'function') {
+            setTimeout(() => window.paginatePreview(), 120);
+        }
     }
 
     async function calculateAccurateTOC(container) {
@@ -2944,5 +2948,157 @@ document.addEventListener('DOMContentLoaded', () => {
             isInitialLoad = false;
         }
     }, 500);
+
+    // ==========================================================================
+    // A4 Pagination Engine — Idea 1 + Idea 2 Combined
+    // Splits formatted content into real discrete A4 pages in the preview.
+    // ==========================================================================
+
+    // Height of one A4 page content area in pixels (297mm - 2 × 25.4mm padding = 246.2mm)
+    // We measure this at runtime from a real .a4-page element for accuracy.
+    let _a4ContentHeightPx = null;
+
+    function getA4ContentHeightPx() {
+        if (_a4ContentHeightPx) return _a4ContentHeightPx;
+        // Create a temporary page to measure actual browser rendering of 297mm - 2*25.4mm
+        const probe = document.createElement('div');
+        probe.className = 'a4-page';
+        probe.style.position = 'absolute';
+        probe.style.visibility = 'hidden';
+        probe.style.top = '-9999px';
+        document.body.appendChild(probe);
+        const totalH = probe.offsetHeight;           // full page height in px
+        const style = window.getComputedStyle(probe);
+        const padTop = parseFloat(style.paddingTop) || 0;
+        const padBot = parseFloat(style.paddingBottom) || 0;
+        document.body.removeChild(probe);
+        _a4ContentHeightPx = totalH - padTop - padBot;
+        return _a4ContentHeightPx;
+    }
+
+    /**
+     * paginatePreview()
+     * Reads all block children of #formatted-preview, packs them into
+     * .a4-page divs (one per printed page), and re-inserts the pages
+     * back into the preview container. Adds a page-number badge per page.
+     *
+     * Idea 2 (Overflow Detector): After filling each page, the function
+     * checks if the last added element caused overflow and rolls it back
+     * to the next page if so.
+     */
+    function paginatePreview() {
+        const container = document.getElementById('formatted-preview');
+        if (!container) return;
+
+        // Collect all real block children (skip .a4-page wrappers from a previous pass)
+        const allChildren = [];
+        container.querySelectorAll('.a4-page').forEach(page => {
+            page.childNodes.forEach(child => {
+                if (child.nodeType === 1 && child.classList.contains('page-number-badge')) return;
+                allChildren.push(child.cloneNode(true));
+            });
+        });
+
+        // If nothing has been paginated yet, pull direct children
+        if (allChildren.length === 0) {
+            container.childNodes.forEach(child => {
+                if (child.nodeType === 1 || (child.nodeType === 3 && child.textContent.trim())) {
+                    allChildren.push(child.cloneNode(true));
+                }
+            });
+        }
+
+        if (allChildren.length === 0) return; // Nothing to paginate
+
+        const maxH = getA4ContentHeightPx();
+        container.innerHTML = ''; // Clear
+
+        let pageNum = 1;
+        let currentPage = createNewA4Page(pageNum);
+        container.appendChild(currentPage);
+
+        for (let i = 0; i < allChildren.length; i++) {
+            const child = allChildren[i];
+            currentPage.appendChild(child);
+
+            // IDEA 2 — Overflow Detector: did this element push the page over the limit?
+            const overflow = currentPage.scrollHeight - currentPage.clientHeight;
+            if (overflow > 2) { // 2px tolerance
+                // Roll it back — move the element to a new page
+                currentPage.removeChild(child);
+
+                // Add page separator + new page
+                const label = document.createElement('div');
+                label.className = 'page-break-label';
+                label.textContent = `— Page ${pageNum + 1} —`;
+                container.appendChild(label);
+
+                pageNum++;
+                currentPage = createNewA4Page(pageNum);
+                container.appendChild(currentPage);
+                currentPage.appendChild(child);
+            }
+        }
+
+        // Attach input listeners to each page for Idea 1 (debounced re-pagination on edit)
+        attachPageEditListeners(container);
+    }
+
+    function createNewA4Page(num) {
+        const page = document.createElement('div');
+        page.className = 'a4-page';
+        // Page number badge
+        const badge = document.createElement('span');
+        badge.className = 'page-number-badge';
+        badge.textContent = `Page ${num}`;
+        page.appendChild(badge);
+        return page;
+    }
+
+    // IDEA 1 — Re-Paginate on Every Input (debounced 400ms)
+    let _repaginateTimer = null;
+    function debouncedRepaginate() {
+        clearTimeout(_repaginateTimer);
+        _repaginateTimer = setTimeout(() => {
+            // Collect current content from all pages before re-paginating
+            const container = document.getElementById('formatted-preview');
+            if (!container) return;
+            paginatePreview();
+        }, 400);
+    }
+
+    function attachPageEditListeners(container) {
+        container.querySelectorAll('.a4-page').forEach(page => {
+            // Remove old listener before re-attaching (prevent duplicates)
+            page.removeEventListener('input', debouncedRepaginate);
+            page.addEventListener('input', debouncedRepaginate);
+        });
+    }
+
+    // Hook paginatePreview into the existing customization toggle
+    // When "Edit" is enabled, pages become editable; when "Done", re-paginate
+    const _origCustomizeBtnHandler = customizeBtn.onclick;
+    customizeBtn.addEventListener('click', () => {
+        const isActive = window.isCustomizationActive;
+        const container = document.getElementById('formatted-preview');
+        if (!container) return;
+        const pages = container.querySelectorAll('.a4-page');
+
+        if (isActive) {
+            // Just turned ON editing — make pages editable
+            pages.forEach(p => p.setAttribute('contenteditable', 'true'));
+            // Re-attach listeners
+            attachPageEditListeners(container);
+        } else {
+            // Just turned OFF editing — make pages read-only and re-paginate
+            pages.forEach(p => {
+                p.setAttribute('contenteditable', 'false');
+            });
+            paginatePreview(); // Refresh pagination after edits
+        }
+    });
+
+    // Expose globally so finalizeRendering can call it after AI formatting
+    window.paginatePreview = paginatePreview;
 
 });

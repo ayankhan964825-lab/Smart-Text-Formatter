@@ -5,7 +5,7 @@
  */
 const DocxExporter = (() => {
     const EMU_PER_PX = 9525;
-    const MAX_IMG_WIDTH_EMU = 5733288; // ~6.27 inches content width on A4
+    const MAX_IMG_WIDTH_EMU = 3439972; // ~3.6 inches (60% of content width on A4) for academic/standard look
 
     function esc(s) {
         return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');

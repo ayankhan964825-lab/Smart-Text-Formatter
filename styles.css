@@ -556,11 +556,91 @@ body {
     background-color: rgba(156, 163, 175, 0.6);
 }
 
+/* The preview-container is now a transparent host for .a4-page children */
 .output-panel .preview-container {
-    flex: 1;
-    padding: 20px 32px;
-    overflow-y: auto;
     background-color: transparent;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0;
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+    outline: none;
+}
+
+/* Each discrete A4 page */
+.a4-page {
+    background-color: #ffffff;
+    width: 210mm;
+    min-height: 297mm;
+    max-height: 297mm;  /* Fixed height — overflow goes to next page */
+    max-width: 100%;
+    margin: 0 auto 20px auto;
+    padding: 25.4mm;    /* 1-inch margin, exact match to Word/PDF export */
+    box-sizing: border-box;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    border: 1px solid #d1d5db;
+    border-radius: 2px;
+    position: relative;
+    overflow: hidden;  /* Overflow gets redistributed to next page by JS */
+}
+
+/* Page number badge at bottom of each page */
+.a4-page .page-number-badge {
+    position: absolute;
+    bottom: 10mm;
+    right: 12mm;
+    font-size: 9pt;
+    color: #9ca3af;
+    font-family: 'Times New Roman', serif;
+    user-select: none;
+    pointer-events: none;
+}
+
+/* Page separator label */
+.page-break-label {
+    text-align: center;
+    font-size: 11px;
+    font-family: sans-serif;
+    color: #6b7280;
+    letter-spacing: 0.5px;
+    margin: 6px auto 6px auto;
+    width: 210mm;
+    max-width: 100%;
+    user-select: none;
+}
+
+/* When in edit mode, show a visual focus on the active page */
+.a4-page[contenteditable="true"]:focus-within {
+    outline: 2px solid rgba(49, 130, 206, 0.5);
+    box-shadow: 0 4px 20px rgba(49, 130, 206, 0.15);
+}
+
+@media print {
+    .a4-page {
+        box-shadow: none;
+        border: none;
+        margin: 0;
+        max-height: none;
+        overflow: visible;
+        page-break-after: always;
+    }
+    .page-break-label {
+        display: none;
+    }
+    .page-number-badge {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .a4-page {
+        padding: 15px;
+        width: 100%;
+    }
+    .page-break-label {
+        width: 100%;
+    }
 }
 
 .placeholder-text {
@@ -632,14 +712,18 @@ body {
 
 /* AI Inserted Image Wrapper (Output) */
 .ai-image-wrapper {
-    display: inline-block;
-    margin: 20px auto;
+    display: block;
+    margin: 24px auto;
     text-align: center;
-    min-height: 100px;
-    padding-bottom: 5px; /* For resize handle space */
+    width: 60%;
+    max-width: 450px;
+    min-width: 150px;
+    padding: 8px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background: #f8fafc;
     resize: both;
     overflow: hidden;
-    max-width: 100%;
 }
 .ai-image-wrapper img {
     max-width: 100%;

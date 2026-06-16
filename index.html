@@ -235,17 +235,6 @@
                 </div>
             </div>
 
-            <!-- Floating Full Screen Controls (Hidden by default) -->
-            <div id="fullscreen-controls" style="display: none; position: fixed; top: 16px; right: 20px; z-index: 10000; display: none; gap: 8px; align-items: center;">
-                <button id="fs-edit-btn" class="btn-small secondary" style="background: rgba(255,255,255,0.9); box-shadow: 0 4px 12px rgba(0,0,0,0.2); height: 40px; border-radius: 20px; padding: 0 16px; display: flex; align-items: center; gap: 6px; font-weight: bold;">
-                    ✏️ Edit
-                </button>
-                <button id="exit-fullscreen-btn" class="icon-btn" title="Exit Full Screen" 
-                    style="background: #ef4444; color: white; border-radius: 50%; width: 40px; height: 40px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); font-size: 18px; line-height: 40px; text-align: center; display: flex; justify-content: center; align-items: center;">
-                    ✖
-                </button>
-            </div>
-
             <!-- Mini Rich Text Toolbar (Sticky on mobile) -->
             <div class="mini-toolbar" id="mini-rtf-toolbar" style="display: none;">
                 <!-- Fonts & Blocks -->
@@ -464,6 +453,17 @@
             <button id="modal-cancel-btn" class="btn-small secondary"
                 style="margin-top:20px; width: 100%;">Cancel</button>
         </div>
+    </div>
+
+    <!-- Floating Full Screen Controls (Hidden by default) -->
+    <div id="fullscreen-controls" style="display: none; position: fixed; top: 16px; right: 20px; z-index: 2147483647; gap: 8px; align-items: center;">
+        <button id="fs-edit-btn" class="btn-small secondary" style="background: rgba(255,255,255,0.9); box-shadow: 0 4px 12px rgba(0,0,0,0.2); height: 40px; border-radius: 20px; padding: 0 16px; display: flex; align-items: center; gap: 6px; font-weight: bold; cursor: pointer;">
+            ✏️ Edit
+        </button>
+        <button id="exit-fullscreen-btn" class="icon-btn" title="Exit Full Screen" 
+            style="background: #ef4444; color: white; border-radius: 50%; width: 40px; height: 40px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); font-size: 18px; line-height: 40px; text-align: center; display: flex; justify-content: center; align-items: center; cursor: pointer;">
+            ✖
+        </button>
     </div>
 
     <!-- Scripts -->

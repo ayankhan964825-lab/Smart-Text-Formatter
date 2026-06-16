@@ -1507,7 +1507,7 @@ body.fullscreen-active {
     top: 70px;
     left: 50%;
     transform: translateX(-50%);
-    z-index: 10001;
+    z-index: 2147483647 !important;
     box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important;
     border-radius: 12px !important;
     border: 1px solid rgba(0,0,0,0.1) !important;

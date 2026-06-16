@@ -573,7 +573,7 @@ body {
     background-color: #ffffff;
     width: 210mm;
     min-height: 297mm;
-    max-height: 297mm;  /* Fixed height — overflow goes to next page */
+    max-height: 297mm;  /* Fixed height â€” overflow goes to next page */
     max-width: 100%;
     margin: 0 auto 20px auto;
     padding: 25.4mm;    /* 1-inch margin, exact match to Word/PDF export */
@@ -654,20 +654,42 @@ body {
 }
 
 
-/* Output Typography formatting defaults (will be overridden by JS rules) */
+/* Output Typography â€” MUST match Word/PDF export rules exactly */
 .preview-container {
     font-family: 'Times New Roman', Times, serif;
-    /* default formal format, can be changed via rules */
-    color: var(--text-main);
+    font-size: 12pt;
+    line-height: 1.6;
+    text-align: justify;
+    color: #000;
 }
 
 .preview-container h1 {
-    margin-bottom: 16px;
+    font-size: 14pt;
+    font-weight: bold;
+    text-align: center;
+    text-transform: uppercase;
+    margin-top: 18pt;
+    margin-bottom: 12pt;
 }
 
 .preview-container h2 {
-    margin-top: 24px;
-    margin-bottom: 12px;
+    font-size: 12pt;
+    font-weight: bold;
+    text-align: left;
+    text-transform: uppercase;
+    margin-top: 18pt;
+    margin-bottom: 8pt;
+}
+
+.preview-container h3,
+.preview-container h4,
+.preview-container h5,
+.preview-container h6 {
+    font-size: 12pt;
+    font-weight: bold;
+    text-align: left;
+    margin-top: 14pt;
+    margin-bottom: 8pt;
 }
 
 .preview-container p {
@@ -728,11 +750,11 @@ body {
 .ai-image-wrapper img {
     max-width: 100%;
     width: 100%;
-    height: 100%;
+    height: auto;
     object-fit: contain;
-    max-height: 85vh; /* Smart pagination limit */
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    max-height: 200mm; /* Fits within A4 content area (246mm available) */
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
 }
 .ai-image-caption {
     font-size: 0.85em;
@@ -1463,14 +1485,12 @@ body {
    Rules: Times New Roman, 12pt body, 14pt H1, 1in margins, justify, 1.6 line-height
    ========================================================================== */
 
-/* @page rule for window.print() based PDF â€” 1 inch margins */
 @page {
     size: A4;
-    margin: 2.54cm; /* 1 inch (Actual Shiv Prakash implementation) */
+    margin: 2.54cm;
 }
 
 @media print {
-    /* Base settings for A4 print */
     body {
         margin: 0;
         padding: 0;
@@ -1482,16 +1502,20 @@ body {
         color: #000;
     }
 
-    /* Hide non-printable UI elements */
     .top-bar, .formatting-ribbon, .input-panel, .settings-panel, .menu-overlay,
-    .mobile-export-container, .loading-overlay, 
-    .mini-toolbar, .modal-overlay, .no-print, .panel-header {
+    .mobile-export-container, .loading-overlay,
+    .mini-toolbar, .modal-overlay, .no-print, .panel-header,
+    .page-break-label, .page-number-badge {
         display: none !important;
     }
 
-    /* Force-hide any Vercel injected toolbars, browser extensions, or floating widgets */
     body > *:not(.workspace) {
         display: none !important;
+    }
+
+    .preview-scroll-wrapper {
+        background-color: #ffffff !important;
+        padding: 0 !important;
     }
 
     .workspace, .output-panel, .preview-container {
@@ -1527,9 +1551,9 @@ body {
     }
 }
 
-/* 
+/*
   These classes apply when html2pdf renders the cloned wrapper.
-  They enforce strict pagination rules to prevent "line cutting" across page boundaries.
+  They enforce strict pagination rules to prevent line cutting across page boundaries.
   Updated to Research Paper Format: 12pt body, 1.6 line-height, justify
 */
 .pdf-export-wrapper {
@@ -1540,17 +1564,15 @@ body {
     color: #000 !important;
 }
 
-/* Prevent paragraphs and list items from splitting wildly across pages */
-.pdf-export-wrapper p, 
+.pdf-export-wrapper p,
 .pdf-export-wrapper li,
 .pdf-export-wrapper td,
 .pdf-export-wrapper th {
-    page-break-inside: auto; /* Allow normal breaks if paragraph is very long */
+    page-break-inside: auto;
     orphans: 3;
     widows: 3;
 }
 
-/* Never break INSIDE a small block (like a diagram wrapper or code block) */
 .pdf-export-wrapper .mermaid-container,
 .pdf-export-wrapper pre,
 .pdf-export-wrapper code,
@@ -1558,7 +1580,6 @@ body {
     page-break-inside: avoid !important;
 }
 
-/* Keep headings attached to their following paragraph (avoid stranded headings) */
 .pdf-export-wrapper h1 {
     font-size: 14pt !important;
     font-weight: bold !important;
@@ -1577,9 +1598,9 @@ body {
     page-break-inside: avoid !important;
 }
 
-.pdf-export-wrapper h3, 
-.pdf-export-wrapper h4, 
-.pdf-export-wrapper h5, 
+.pdf-export-wrapper h3,
+.pdf-export-wrapper h4,
+.pdf-export-wrapper h5,
 .pdf-export-wrapper h6 {
     font-size: 12pt !important;
     font-weight: bold !important;
@@ -1588,13 +1609,11 @@ body {
     page-break-inside: avoid !important;
 }
 
-/* Usually start major sections (H1) on a new page, UNLESS it's the very first element */
 .pdf-export-wrapper > h1:not(:first-child) {
     page-break-before: always !important;
     margin-top: 0 !important;
 }
 
-/* Give SVGs converted to PNGs enough breathing room */
 .pdf-export-wrapper img {
     page-break-inside: avoid !important;
     margin: 10px auto;
@@ -1604,6 +1623,7 @@ body {
    Toast Notification
    ========================================================================== */
 
+.toast-container {
     position: fixed;
     bottom: max(32px, env(safe-area-inset-bottom));
     left: 50%;
@@ -1612,7 +1632,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    pointer-events: none; /* Let clicks pass through to UI below */
+    pointer-events: none;
 }
 
 .toast-message {
@@ -1651,7 +1671,7 @@ body {
 }
 
 [contenteditable="true"] .page-break-before::before {
-    content: 'ðŸ“„ Page Break';
+    content: 'Ã°Å¸â€œâ€ž Page Break';
     display: block;
     width: calc(100% + 64px);
     margin-left: -32px;

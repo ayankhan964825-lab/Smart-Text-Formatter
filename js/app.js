@@ -2390,6 +2390,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const noExportEls = clonedPreview.querySelectorAll('.no-export');
             noExportEls.forEach(el => el.remove());
 
+            // Remove pagination artifacts (page badges, break labels) from export
+            clonedPreview.querySelectorAll('.page-number-badge, .page-break-label').forEach(el => el.remove());
+            // Unwrap .a4-page divs so export sees flat content
+            clonedPreview.querySelectorAll('.a4-page').forEach(page => {
+                while (page.firstChild) {
+                    page.parentNode.insertBefore(page.firstChild, page);
+                }
+                page.remove();
+            });
+
             // Convert Mermaid containers on the cloned DOM
             await convertSvgsToImages(clonedPreview);
 

@@ -187,8 +187,23 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Rich Text Editing Toolbar & Customization Toggle ---
     window.isCustomizationActive = false;
     const customizeBtn = document.getElementById('toggle-customization-btn');
+    const fullScreenBtn = document.getElementById('toggle-fullscreen-btn');
     const miniToolbar = document.getElementById('mini-rtf-toolbar');
     const previewContainerEl = document.getElementById('formatted-preview');
+
+    if (fullScreenBtn) {
+        fullScreenBtn.addEventListener('click', () => {
+            const outputPanel = document.querySelector('.output-panel');
+            outputPanel.classList.toggle('fullscreen-mode');
+            document.body.classList.toggle('fullscreen-active');
+            
+            if (outputPanel.classList.contains('fullscreen-mode')) {
+                fullScreenBtn.innerHTML = '⮌ Exit Full Screen';
+            } else {
+                fullScreenBtn.innerHTML = '⛶ Full Screen';
+            }
+        });
+    }
 
     // Selection caching to prevent loss of focus when clicking toolbar inputs (like font size)
     let savedSelectionRange = null;

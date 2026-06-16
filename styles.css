@@ -692,7 +692,8 @@ body {
 }
 
 .preview-container p {
-    margin-bottom: 16px;
+    margin-top: 0;
+    margin-bottom: 10pt; /* Matches 200 twips in Word */
     line-height: 1.6;
 }
 
@@ -1477,6 +1478,26 @@ body {
     max-width: 100%;
     width: 100% !important;
     height: auto !important;
+}
+
+/* ==========================================================================
+   Fullscreen Mode for Output Panel
+   ========================================================================== */
+body.fullscreen-active {
+    overflow: hidden;
+}
+
+.output-panel.fullscreen-mode {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999;
+    border-radius: 0;
+    border: none;
+    margin: 0;
+    box-shadow: none;
 }
 
 /* ==========================================================================

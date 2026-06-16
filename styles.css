@@ -1536,6 +1536,7 @@ body.fullscreen-active {
     .preview-scroll-wrapper {
         background-color: #ffffff !important;
         padding: 0 !important;
+        overflow: visible !important;
     }
 
     .workspace, .output-panel, .preview-container {
@@ -1558,6 +1559,7 @@ body.fullscreen-active {
         padding: 0 !important;
         border: none !important;
         box-shadow: none !important;
+        overflow: visible !important;
         page-break-after: always;
     }
     .a4-page:last-child {

@@ -188,21 +188,30 @@ document.addEventListener('DOMContentLoaded', () => {
     window.isCustomizationActive = false;
     const customizeBtn = document.getElementById('toggle-customization-btn');
     const fullScreenBtn = document.getElementById('toggle-fullscreen-btn');
+    const exitFullScreenBtn = document.getElementById('exit-fullscreen-btn');
     const miniToolbar = document.getElementById('mini-rtf-toolbar');
     const previewContainerEl = document.getElementById('formatted-preview');
 
+    const toggleFullScreenMode = () => {
+        const outputPanel = document.querySelector('.output-panel');
+        outputPanel.classList.toggle('fullscreen-mode');
+        document.body.classList.toggle('fullscreen-active');
+        
+        if (outputPanel.classList.contains('fullscreen-mode')) {
+            fullScreenBtn.innerHTML = '⮌ Exit Full Screen';
+            if (exitFullScreenBtn) exitFullScreenBtn.style.display = 'flex';
+        } else {
+            fullScreenBtn.innerHTML = '⛶ Full Screen';
+            if (exitFullScreenBtn) exitFullScreenBtn.style.display = 'none';
+        }
+    };
+
     if (fullScreenBtn) {
-        fullScreenBtn.addEventListener('click', () => {
-            const outputPanel = document.querySelector('.output-panel');
-            outputPanel.classList.toggle('fullscreen-mode');
-            document.body.classList.toggle('fullscreen-active');
-            
-            if (outputPanel.classList.contains('fullscreen-mode')) {
-                fullScreenBtn.innerHTML = '⮌ Exit Full Screen';
-            } else {
-                fullScreenBtn.innerHTML = '⛶ Full Screen';
-            }
-        });
+        fullScreenBtn.addEventListener('click', toggleFullScreenMode);
+    }
+    
+    if (exitFullScreenBtn) {
+        exitFullScreenBtn.addEventListener('click', toggleFullScreenMode);
     }
 
     // Selection caching to prevent loss of focus when clicking toolbar inputs (like font size)

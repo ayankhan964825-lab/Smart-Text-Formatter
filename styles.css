@@ -1498,6 +1498,24 @@ body.fullscreen-active {
     border: none;
     margin: 0;
     box-shadow: none;
+    background: #f3f4f6; /* ensure background is solid */
+}
+
+/* Floating toolbar in full screen mode */
+.output-panel.fullscreen-mode .mini-toolbar {
+    position: fixed !important;
+    top: 70px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10001;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important;
+    border-radius: 12px !important;
+    border: 1px solid rgba(0,0,0,0.1) !important;
+}
+
+/* Hide normal header in full screen since we have floating controls */
+.output-panel.fullscreen-mode .panel-header {
+    display: none !important;
 }
 
 /* ==========================================================================

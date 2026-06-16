@@ -189,6 +189,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const customizeBtn = document.getElementById('toggle-customization-btn');
     const fullScreenBtn = document.getElementById('toggle-fullscreen-btn');
     const exitFullScreenBtn = document.getElementById('exit-fullscreen-btn');
+    const fsControls = document.getElementById('fullscreen-controls');
     const miniToolbar = document.getElementById('mini-rtf-toolbar');
     const previewContainerEl = document.getElementById('formatted-preview');
 
@@ -199,10 +200,10 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (outputPanel.classList.contains('fullscreen-mode')) {
             fullScreenBtn.innerHTML = '⮌ Exit Full Screen';
-            if (exitFullScreenBtn) exitFullScreenBtn.style.display = 'flex';
+            if (fsControls) fsControls.style.display = 'flex';
         } else {
             fullScreenBtn.innerHTML = '⛶ Full Screen';
-            if (exitFullScreenBtn) exitFullScreenBtn.style.display = 'none';
+            if (fsControls) fsControls.style.display = 'none';
         }
     };
 
@@ -248,13 +249,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    customizeBtn.addEventListener('click', () => {
+    const fsEditBtn = document.getElementById('fs-edit-btn');
+
+    const toggleCustomizationMode = () => {
         window.isCustomizationActive = !window.isCustomizationActive;
 
         if (window.isCustomizationActive) {
             customizeBtn.innerHTML = '✅ Editing';
             customizeBtn.classList.add('primary');
             customizeBtn.classList.remove('secondary');
+            if (fsEditBtn) {
+                fsEditBtn.innerHTML = '✅ Editing';
+                fsEditBtn.classList.add('primary');
+                fsEditBtn.classList.remove('secondary');
+            }
             miniToolbar.style.display = 'flex';
             previewContainerEl.setAttribute('contenteditable', 'true');
             previewContainerEl.focus();
@@ -262,10 +270,20 @@ document.addEventListener('DOMContentLoaded', () => {
             customizeBtn.innerHTML = '✏️ Edit';
             customizeBtn.classList.add('secondary');
             customizeBtn.classList.remove('primary');
+            if (fsEditBtn) {
+                fsEditBtn.innerHTML = '✏️ Edit';
+                fsEditBtn.classList.add('secondary');
+                fsEditBtn.classList.remove('primary');
+            }
             miniToolbar.style.display = 'none';
             previewContainerEl.setAttribute('contenteditable', 'false');
         }
-    });
+    };
+
+    customizeBtn.addEventListener('click', toggleCustomizationMode);
+    if (fsEditBtn) {
+        fsEditBtn.addEventListener('click', toggleCustomizationMode);
+    }
 
     const rtfBtns = document.querySelectorAll('.rtf-btn');
     rtfBtns.forEach(btn => {

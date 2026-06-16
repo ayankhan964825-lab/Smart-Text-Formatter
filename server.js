@@ -28,7 +28,7 @@ if (fs.existsSync(envPath)) {
     });
 }
 
-const PORT = 3000;
+const PORT = 3001;
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 const RAW_API_KEYS = GEMINI_API_KEY ? GEMINI_API_KEY.split(',').map(k => k.trim()).filter(k => k) : [];
 
@@ -172,7 +172,12 @@ function serveStaticFile(req, res) {
                 res.writeHead(500);
                 return res.end('Server Error');
             }
-            res.writeHead(200, { 'Content-Type': contentType });
+            res.writeHead(200, { 
+                'Content-Type': contentType,
+                'Cache-Control': 'no-cache, no-store, must-revalidate',
+                'Pragma': 'no-cache',
+                'Expires': '0'
+            });
             res.end(content);
         });
     });

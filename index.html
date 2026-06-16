@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=702">
+    <link rel="stylesheet" href="styles.css?v=703">
 
     <!-- Dependencies for Exporting -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -185,6 +185,17 @@
                 </label>
             </div>
         </div>
+
+        <!-- View / Edit Options -->
+        <div class="ribbon-group" style="border-left: 1px solid var(--border-color); border-right: none; margin-left: auto; padding-left: 16px;">
+            <span class="ribbon-label">View</span>
+            <div class="ribbon-controls" style="display: flex; align-items: center; height: 100%; gap: 6px;">
+                <button id="toggle-customization-btn" class="btn-small secondary"
+                    style="white-space: nowrap; opacity: 0.5; cursor: not-allowed;" disabled>✏️ Edit</button>
+                <button id="toggle-fullscreen-btn" class="btn-small secondary"
+                    style="white-space: nowrap;">⛶ Full Screen</button>
+            </div>
+        </div>
     </nav>
 
     <!-- Main Workspace -->
@@ -227,11 +238,6 @@
             <div class="panel-header" style="flex-wrap: nowrap; gap: 12px; padding: 4px 12px;">
                 <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
                     <h2>Output</h2>
-                    <button id="toggle-customization-btn" class="btn-small secondary"
-                        style="white-space: nowrap; margin-left: 4px; opacity: 0.5; cursor: not-allowed;" disabled>✏️
-                        Edit</button>
-                    <button id="toggle-fullscreen-btn" class="btn-small secondary"
-                        style="white-space: nowrap; margin-left: 4px;">⛶ Full Screen</button>
                 </div>
             </div>
 
@@ -487,7 +493,7 @@
     <script src="js/outputGenerator.js?v=700"></script>
     <script src="js/docxExporter.js?v=700"></script>
     <!-- Core Application Logic -->
-    <script src="js/app.js?v=702"></script>
+    <script src="js/app.js?v=703"></script>
 
     <!-- Attractive Loading Overlay -->
     <div id="loading-overlay" class="loading-overlay" style="display: none;">

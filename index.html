@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=703">
+    <link rel="stylesheet" href="styles.css?v=704">
 
     <!-- Dependencies for Exporting -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -183,17 +183,6 @@
                     <span class="toc-text-desktop">Include Table of Contents</span>
                     <span class="toc-text-mobile" style="display: none;">Include TOC</span>
                 </label>
-            </div>
-        </div>
-
-        <!-- View / Edit Options -->
-        <div class="ribbon-group" style="border-left: 1px solid var(--border-color); border-right: none; margin-left: auto; padding-left: 16px;">
-            <span class="ribbon-label">View</span>
-            <div class="ribbon-controls" style="display: flex; align-items: center; height: 100%; gap: 6px;">
-                <button id="toggle-customization-btn" class="btn-small secondary"
-                    style="white-space: nowrap; opacity: 0.5; cursor: not-allowed;" disabled>✏️ Edit</button>
-                <button id="toggle-fullscreen-btn" class="btn-small secondary"
-                    style="white-space: nowrap;">⛶ Full Screen</button>
             </div>
         </div>
     </nav>
@@ -461,14 +450,14 @@
         </div>
     </div>
 
-    <!-- Floating Full Screen Controls (Hidden by default) -->
-    <div id="fullscreen-controls" style="display: none; position: fixed; top: 16px; right: 20px; z-index: 2147483647; gap: 8px; align-items: center;">
+    <!-- Floating Full Screen Controls (Always visible, positioned below ribbon) -->
+    <div id="fullscreen-controls" style="display: flex; position: fixed; top: 110px; right: 20px; z-index: 2147483647; gap: 8px; align-items: center;">
         <button id="fs-edit-btn" class="btn-small secondary" style="background: rgba(255,255,255,0.9); box-shadow: 0 4px 12px rgba(0,0,0,0.2); height: 40px; border-radius: 20px; padding: 0 16px; display: flex; align-items: center; gap: 6px; font-weight: bold; cursor: pointer;">
             ✏️ Edit
         </button>
-        <button id="exit-fullscreen-btn" class="icon-btn" title="Exit Full Screen" 
-            style="background: #ef4444; color: white; border-radius: 50%; width: 40px; height: 40px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); font-size: 18px; line-height: 40px; text-align: center; display: flex; justify-content: center; align-items: center; cursor: pointer;">
-            ✖
+        <button id="exit-fullscreen-btn" class="icon-btn" title="Toggle Full Screen" 
+            style="background: #3b82f6; color: white; border-radius: 50%; width: 40px; height: 40px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); font-size: 18px; line-height: 40px; text-align: center; display: flex; justify-content: center; align-items: center; cursor: pointer;">
+            ⛶
         </button>
     </div>
 
@@ -493,7 +482,7 @@
     <script src="js/outputGenerator.js?v=700"></script>
     <script src="js/docxExporter.js?v=700"></script>
     <!-- Core Application Logic -->
-    <script src="js/app.js?v=703"></script>
+    <script src="js/app.js?v=704"></script>
 
     <!-- Attractive Loading Overlay -->
     <div id="loading-overlay" class="loading-overlay" style="display: none;">

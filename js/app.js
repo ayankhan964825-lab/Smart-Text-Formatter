@@ -199,11 +199,14 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.classList.toggle('fullscreen-active');
         
         if (outputPanel.classList.contains('fullscreen-mode')) {
-            fullScreenBtn.innerHTML = '⮌ Exit Full Screen';
+            if (fullScreenBtn) fullScreenBtn.innerHTML = '⮌ Exit Full Screen';
             if (fsControls) fsControls.style.display = 'flex';
+            if (exitFullScreenBtn) exitFullScreenBtn.innerHTML = '✖';
         } else {
-            fullScreenBtn.innerHTML = '⛶ Full Screen';
-            if (fsControls) fsControls.style.display = 'none';
+            if (fullScreenBtn) fullScreenBtn.innerHTML = '⛶ Full Screen';
+            // KEEP it flex so the floating controls are always available
+            if (fsControls) fsControls.style.display = 'flex';
+            if (exitFullScreenBtn) exitFullScreenBtn.innerHTML = '⛶';
         }
     };
 
@@ -255,9 +258,11 @@ document.addEventListener('DOMContentLoaded', () => {
         window.isCustomizationActive = !window.isCustomizationActive;
 
         if (window.isCustomizationActive) {
-            customizeBtn.innerHTML = '✅ Editing';
-            customizeBtn.classList.add('primary');
-            customizeBtn.classList.remove('secondary');
+            if (customizeBtn) {
+                customizeBtn.innerHTML = '✅ Editing';
+                customizeBtn.classList.add('primary');
+                customizeBtn.classList.remove('secondary');
+            }
             if (fsEditBtn) {
                 fsEditBtn.innerHTML = '✅ Editing';
                 fsEditBtn.classList.add('primary');
@@ -267,9 +272,11 @@ document.addEventListener('DOMContentLoaded', () => {
             previewContainerEl.setAttribute('contenteditable', 'true');
             previewContainerEl.focus();
         } else {
-            customizeBtn.innerHTML = '✏️ Edit';
-            customizeBtn.classList.add('secondary');
-            customizeBtn.classList.remove('primary');
+            if (customizeBtn) {
+                customizeBtn.innerHTML = '✏️ Edit';
+                customizeBtn.classList.add('secondary');
+                customizeBtn.classList.remove('primary');
+            }
             if (fsEditBtn) {
                 fsEditBtn.innerHTML = '✏️ Edit';
                 fsEditBtn.classList.add('secondary');
@@ -280,7 +287,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    customizeBtn.addEventListener('click', toggleCustomizationMode);
+    if (customizeBtn) {
+        customizeBtn.addEventListener('click', toggleCustomizationMode);
+    }
     if (fsEditBtn) {
         fsEditBtn.addEventListener('click', toggleCustomizationMode);
     }

@@ -574,7 +574,6 @@ body {
     width: 210mm;
     min-height: 297mm;
     max-height: 297mm;  /* Fixed height â€” overflow goes to next page */
-    max-width: 100%;
     margin: 0 auto 20px auto;
     padding: 25.4mm;    /* 1-inch margin, exact match to Word/PDF export */
     box-sizing: border-box;
@@ -1527,6 +1526,21 @@ body {
         border: none !important;
         box-shadow: none !important;
         overflow: visible !important;
+    }
+
+    /* Flatten pagination wrappers for print */
+    .a4-page {
+        width: 100% !important;
+        min-height: auto !important;
+        max-height: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+        page-break-after: always;
+    }
+    .a4-page:last-child {
+        page-break-after: auto;
     }
 
     .preview-container h1 {

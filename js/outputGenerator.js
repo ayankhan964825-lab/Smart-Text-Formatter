@@ -21,6 +21,89 @@ class OutputGenerator {
             const tag = element.type;
             const styleAttr = element.styleString ? ` style="${element.styleString}"` : '';
 
+            // ── NEW: heading type with depth ──
+            if (tag === 'heading') {
+                const depth = parseInt(element.depth, 10) || 1;
+                const hTag = depth === 1 ? 'h1' : depth === 2 ? 'h2' : 'h3';
+                let content = this._cleanMarkdown(this._escapeHTML(element.content || ''));
+                content = content.replace(/<\/?b>/g, '').replace(/<\/?i>/g, '');
+                htmlParts.push(`<${hTag}${styleAttr}>${content}</${hTag}>`);
+                i++;
+                continue;
+            }
+
+            // ── NEW: table type ──
+            if (tag === 'table') {
+                const caption = element.caption ? `<caption style="caption-side:top;text-align:left;font-style:italic;font-size:0.9em;margin-bottom:6px;color:#555;">${this._escapeHTML(element.caption)}</caption>` : '';
+                const headers = Array.isArray(element.headers) ? element.headers : [];
+                const rows = Array.isArray(element.rows) ? element.rows : [];
+                const theadHtml = headers.length > 0
+                    ? `<thead><tr>${headers.map(h => `<th style="border:1px solid #ccc;padding:8px 12px;background:#f0f4f8;font-weight:bold;text-align:left;">${this._escapeHTML(String(h))}</th>`).join('')}</tr></thead>`
+                    : '';
+                const tbodyHtml = rows.length > 0
+                    ? `<tbody>${rows.map(row => `<tr>${(Array.isArray(row) ? row : []).map((cell, ci) => `<td style="border:1px solid #ccc;padding:8px 12px;${ci === 0 ? 'font-weight:500;' : ''}">${this._escapeHTML(String(cell))}</td>`).join('')}</tr>`).join('')}</tbody>`
+                    : '';
+                htmlParts.push(`<table class="formatted-table" style="border-collapse:collapse;width:100%;margin:14px 0;">${caption}${theadHtml}${tbodyHtml}</table>`);
+                i++;
+                continue;
+            }
+
+            // ── NEW: equation type ──
+            if (tag === 'equation') {
+                const eqContent = element.content || '';
+                // Render with KaTeX if available, otherwise fallback to code block
+                if (window.katex) {
+                    try {
+                        const rendered = window.katex.renderToString(eqContent, { throwOnError: false, displayMode: true });
+                        htmlParts.push(`<div class="equation-block" style="text-align:center;margin:16px 0;padding:12px;background:#f9f9fc;border-left:3px solid #7c6af7;border-radius:4px;overflow-x:auto;">${rendered}</div>`);
+                    } catch(e) {
+                        htmlParts.push(`<pre class="equation-block" style="text-align:center;margin:16px 0;padding:12px;background:#f9f9fc;border-left:3px solid #7c6af7;border-radius:4px;font-family:monospace;">${this._escapeHTML(eqContent)}</pre>`);
+                    }
+                } else {
+                    htmlParts.push(`<pre class="equation-block" style="text-align:center;margin:16px 0;padding:12px;background:#f9f9fc;border-left:3px solid #7c6af7;border-radius:4px;font-family:monospace;">${this._escapeHTML(eqContent)}</pre>`);
+                }
+                i++;
+                continue;
+            }
+
+            // ── NEW: blockquote type ──
+            if (tag === 'blockquote') {
+                const bqContent = this._cleanMarkdown(this._escapeHTML(element.content || ''));
+                const attribution = element.attribution ? `<footer style="margin-top:8px;font-size:0.9em;color:#666;">— ${this._escapeHTML(element.attribution)}</footer>` : '';
+                htmlParts.push(`<blockquote style="border-left:4px solid #7c6af7;margin:16px 0;padding:12px 20px;background:#f9f9fc;border-radius:0 4px 4px 0;font-style:italic;color:#444;">${bqContent}${attribution}</blockquote>`);
+                i++;
+                continue;
+            }
+
+            // ── NEW: references type ──
+            if (tag === 'references') {
+                const refItems = Array.isArray(element.items) ? element.items : [];
+                const refHtml = refItems.map(ref => {
+                    const id = this._escapeHTML(String(ref.id || ''));
+                    const text = this._cleanMarkdown(this._escapeHTML(String(ref.text || '')));
+                    return `<li style="margin-bottom:6px;"><span style="font-weight:bold;">[${id}]</span> ${text}</li>`;
+                }).join('');
+                htmlParts.push(`<div class="references-block"><ol style="list-style:none;padding-left:0;margin:8px 0;">${refHtml}</ol></div>`);
+                i++;
+                continue;
+            }
+
+            // ── NEW: warning type ──
+            if (tag === 'warning') {
+                const warnContent = this._escapeHTML(element.content || '');
+                htmlParts.push(`<div class="doc-warning" style="background:#fff3cd;border:1px solid #ffc107;border-left:4px solid #ff9800;border-radius:4px;padding:12px 16px;margin:14px 0;color:#856404;">⚠️ ${warnContent}</div>`);
+                i++;
+                continue;
+            }
+
+            // ── NEW: info type ──
+            if (tag === 'info') {
+                const infoContent = this._escapeHTML(element.content || '');
+                htmlParts.push(`<div class="doc-info" style="background:#e8f4fd;border:1px solid #90caf9;border-left:4px solid #2196f3;border-radius:4px;padding:12px 16px;margin:14px 0;color:#0d47a1;">ℹ️ ${infoContent}</div>`);
+                i++;
+                continue;
+            }
+
             // Handle lists differently because they contain sub-items
             if (tag === 'ul' || tag === 'ol') {
                 let listItems = [];
@@ -86,7 +169,7 @@ class OutputGenerator {
                     content = content.replace(/-\n/g, '').replace(/\n/g, ' ');
                 }
 
-                // Clean markdown from headings too
+                // Clean markdown from headings too (backward-compat for old types)
                 if (tag === 'h1' || tag === 'h2' || tag === 'h3' || tag === 'sub-subheading') {
                     content = content.replace(/<\/?b>/g, '').replace(/<\/?i>/g, '');
                 }
@@ -115,8 +198,9 @@ class OutputGenerator {
             // wrap both inside a container with `page-break-inside: avoid` so they stay on the same page.
             const isHeadingOrLabel = 
                 (tag.match(/^h[1-6]$/) !== null) || 
+                (tag === 'heading') ||
                 (tag === 'sub-subheading') || 
-                (tag === 'p' && content.length < 150);
+                (tag === 'p' && content && content.length < 150);
             
             const nextEl = i + 1 < styledElements.length ? styledElements[i + 1] : null;
             const nextIsDiagram = nextEl && (nextEl.type === 'mermaid' || nextEl.type === 'html');

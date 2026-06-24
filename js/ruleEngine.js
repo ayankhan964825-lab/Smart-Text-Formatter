@@ -8,6 +8,30 @@ class RuleEngine {
     constructor(customRibbonRules = null) {
         // Default rules mapped directly to CSS inline styles
         this.defaultRules = {
+            // ── New unified heading type (replaces h1/h2/sub-subheading) ──
+            'heading-1': {
+                'font-family': "'Times New Roman', serif",
+                'font-size': '16pt',
+                'font-weight': '700',
+                'margin-bottom': '1rem',
+                'border-bottom': '2px solid #DEE2E6',
+                'padding-bottom': '0.5rem'
+            },
+            'heading-2': {
+                'font-family': "'Times New Roman', serif",
+                'font-size': '14pt',
+                'font-weight': '600',
+                'margin-bottom': '0.75rem',
+                'margin-top': '1.5rem'
+            },
+            'heading-3': {
+                'font-family': "'Times New Roman', serif",
+                'font-size': '12pt',
+                'font-weight': '600',
+                'margin-bottom': '0.5rem',
+                'margin-top': '1rem'
+            },
+            // ── Backward-compat old types ──
             h1: {
                 'font-family': "'Times New Roman', serif",
                 'font-size': '16pt',
@@ -91,7 +115,14 @@ class RuleEngine {
         if (!elements || elements.length === 0) return [];
 
         return elements.map(element => {
-            const rules = this.currentRules[element.type] || {};
+            // For the new 'heading' type, look up rules by depth
+            let ruleKey = element.type;
+            if (element.type === 'heading') {
+                const depth = parseInt(element.depth, 10) || 1;
+                ruleKey = `heading-${depth}`;
+            }
+
+            const rules = this.currentRules[ruleKey] || {};
 
             // Merge specific tag rules with global text alignment rules
             const combinedRules = { ...rules, ...this.globalRules };

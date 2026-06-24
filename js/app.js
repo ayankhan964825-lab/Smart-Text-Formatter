@@ -685,10 +685,287 @@ document.addEventListener('DOMContentLoaded', () => {
             const alignEl = document.getElementById('modal-alignment');
             if (alignEl) alignEl.value = defaults.alignment;
         }
+
+        // Wire up icon alignment buttons to sync with hidden select
+        const alignBtns = document.querySelectorAll('.tmpl-align-btn');
+        const alignSelect = document.getElementById('modal-alignment');
+        if (alignBtns.length && alignSelect) {
+            // Set active state from default
+            alignBtns.forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.align === alignSelect.value);
+                btn.onclick = () => {
+                    alignSelect.value = btn.dataset.align;
+                    alignBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                };
+            });
+        }
+    }
+
+    // ══════════════════════════════════════════════════
+    // Editable Skeleton Editor (shown inside template modal)
+    // ══════════════════════════════════════════════════
+    function renderSkeletonEditor(template) {
+        let panel = document.getElementById('skeleton-preview-panel');
+        if (!panel) {
+            panel = document.createElement('div');
+            panel.id = 'skeleton-preview-panel';
+            const gridEl = document.getElementById('template-grid');
+            gridEl.parentNode.insertBefore(panel, gridEl.nextSibling);
+        }
+
+        // Work on a live reference to the template's skeleton so edits persist
+        const skeleton = template.skeleton;
+
+        let dragSrcIdx = null; // tracks which chip is being dragged
+
+        function rebuildChips() {
+            const chipsContainer = document.getElementById('skeleton-chips');
+            if (!chipsContainer) return;
+            chipsContainer.innerHTML = '';
+
+            if (!skeleton || skeleton.length === 0) {
+                chipsContainer.innerHTML = `<span style="color:#94a3b8;font-size:12px;font-style:italic;">No sections yet. Add one below.</span>`;
+                return;
+            }
+
+            skeleton.forEach((s, idx) => {
+                // ── Row wrapper (the draggable unit) ──
+                const row = document.createElement('div');
+                row.draggable = true;
+                row.dataset.idx = idx;
+                row.style.cssText = `
+                    display:flex; align-items:center; gap:7px;
+                    padding:6px 8px; margin-bottom:4px;
+                    background:${s.required ? 'linear-gradient(135deg,#ede9fe,#e8e3fd)' : '#f8fafc'};
+                    border:1px solid ${s.required ? '#c4b5fd' : '#e2e8f0'};
+                    border-radius:10px; transition:box-shadow 0.15s, opacity 0.15s;
+                    cursor:grab; user-select:none;
+                `;
+
+                // Drag events
+                row.addEventListener('dragstart', (e) => {
+                    dragSrcIdx = idx;
+                    e.dataTransfer.effectAllowed = 'move';
+                    setTimeout(() => row.style.opacity = '0.4', 0);
+                });
+                row.addEventListener('dragend', () => {
+                    row.style.opacity = '1';
+                    // Remove all drop highlights
+                    chipsContainer.querySelectorAll('[data-idx]').forEach(r => {
+                        r.style.borderTop = '';
+                        r.style.borderBottom = '';
+                    });
+                });
+                row.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'move';
+                    // Visual indicator: show border on drop target
+                    chipsContainer.querySelectorAll('[data-idx]').forEach(r => {
+                        r.style.borderTop = '';
+                        r.style.borderBottom = '';
+                    });
+                    const targetIdx = parseInt(row.dataset.idx);
+                    if (dragSrcIdx !== targetIdx) {
+                        if (dragSrcIdx > targetIdx) {
+                            row.style.borderTop = '2px solid #7c3aed';
+                        } else {
+                            row.style.borderBottom = '2px solid #7c3aed';
+                        }
+                    }
+                });
+                row.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    const targetIdx = parseInt(row.dataset.idx);
+                    if (dragSrcIdx === null || dragSrcIdx === targetIdx) return;
+                    // Move item in array
+                    const [moved] = skeleton.splice(dragSrcIdx, 1);
+                    skeleton.splice(targetIdx, 0, moved);
+                    dragSrcIdx = null;
+                    rebuildChips();
+                    syncSkeletonToEngine(template);
+                });
+
+                // ── Drag handle ──
+                const dragHandle = document.createElement('span');
+                dragHandle.textContent = '⠿';
+                dragHandle.title = 'Drag to reorder';
+                dragHandle.style.cssText = `color:#a78bfa;font-size:14px;cursor:grab;flex-shrink:0;line-height:1;`;
+
+                // ── Number badge ──
+                const num = document.createElement('span');
+                num.style.cssText = `background:#7c3aed;color:#fff;border-radius:50%;min-width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0;`;
+                num.textContent = idx + 1;
+
+                // ── Label (click to edit) ──
+                const label = document.createElement('span');
+                label.style.cssText = `font-weight:600;color:#3b0764;flex:1;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:text;`;
+                label.textContent = s.label;
+                label.title = s.aliases && s.aliases.length ? `Aliases: ${s.aliases.join(', ')}` : 'Click to edit';
+                label.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    row.draggable = false; // disable drag while editing
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.value = s.label;
+                    input.style.cssText = `flex:1;font-size:12px;font-weight:600;border:none;border-bottom:2px solid #7c3aed;outline:none;background:transparent;color:#3b0764;padding:0;min-width:60px;`;
+                    row.replaceChild(input, label);
+                    input.focus();
+                    input.select();
+                    const done = () => {
+                        const newVal = input.value.trim();
+                        if (newVal) {
+                            s.label = newVal;
+                            s.id = newVal.toLowerCase().replace(/\s+/g, '_');
+                        }
+                        row.draggable = true;
+                        rebuildChips();
+                        syncSkeletonToEngine(template);
+                    };
+                    input.addEventListener('blur', done);
+                    input.addEventListener('keydown', (e) => { if (e.key === 'Enter') input.blur(); if (e.key === 'Escape') { row.draggable = true; rebuildChips(); } });
+                });
+
+                // ── Up / Down arrows ──
+                const upBtn = document.createElement('button');
+                upBtn.textContent = '↑';
+                upBtn.title = 'Move up';
+                upBtn.style.cssText = `background:none;border:none;cursor:${idx === 0 ? 'default' : 'pointer'};font-size:12px;padding:0;color:${idx === 0 ? '#d1d5db' : '#7c3aed'};line-height:1;flex-shrink:0;`;
+                upBtn.disabled = idx === 0;
+                upBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (idx === 0) return;
+                    [skeleton[idx - 1], skeleton[idx]] = [skeleton[idx], skeleton[idx - 1]];
+                    rebuildChips();
+                    syncSkeletonToEngine(template);
+                });
+
+                const downBtn = document.createElement('button');
+                downBtn.textContent = '↓';
+                downBtn.title = 'Move down';
+                downBtn.style.cssText = `background:none;border:none;cursor:${idx === skeleton.length - 1 ? 'default' : 'pointer'};font-size:12px;padding:0;color:${idx === skeleton.length - 1 ? '#d1d5db' : '#7c3aed'};line-height:1;flex-shrink:0;`;
+                downBtn.disabled = idx === skeleton.length - 1;
+                downBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (idx === skeleton.length - 1) return;
+                    [skeleton[idx], skeleton[idx + 1]] = [skeleton[idx + 1], skeleton[idx]];
+                    rebuildChips();
+                    syncSkeletonToEngine(template);
+                });
+
+                // ── Required toggle ──
+                const reqBtn = document.createElement('button');
+                reqBtn.style.cssText = `background:none;border:none;cursor:pointer;font-size:11px;padding:0;line-height:1;flex-shrink:0;`;
+                reqBtn.textContent = s.required ? '🟢' : '⚪';
+                reqBtn.title = s.required ? 'Required — click for Optional' : 'Optional — click for Required';
+                reqBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    s.required = !s.required;
+                    rebuildChips();
+                    syncSkeletonToEngine(template);
+                });
+
+                // ── Delete button ──
+                const delBtn = document.createElement('button');
+                delBtn.style.cssText = `background:none;border:none;cursor:pointer;font-size:12px;padding:0;line-height:1;color:#ef4444;opacity:0;transition:opacity 0.15s;flex-shrink:0;`;
+                delBtn.textContent = '✕';
+                delBtn.title = 'Remove section';
+                row.addEventListener('mouseenter', () => delBtn.style.opacity = '1');
+                row.addEventListener('mouseleave', () => delBtn.style.opacity = '0');
+                delBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    skeleton.splice(idx, 1);
+                    rebuildChips();
+                    syncSkeletonToEngine(template);
+                });
+
+                row.appendChild(dragHandle);
+                row.appendChild(num);
+                row.appendChild(label);
+                row.appendChild(upBtn);
+                row.appendChild(downBtn);
+                row.appendChild(reqBtn);
+                row.appendChild(delBtn);
+                chipsContainer.appendChild(row);
+            });
+
+        }
+
+        function syncSkeletonToEngine(tmpl) {
+            // Update the live template skeleton so AI uses it
+            if (window.templateEngine && window.templateEngine.templates[tmpl.id]) {
+                window.templateEngine.templates[tmpl.id].skeleton = skeleton;
+            }
+        }
+
+        if (!skeleton || skeleton.length === 0) {
+            panel.innerHTML = `
+                <div id="skeleton-editor-box" style="background:linear-gradient(135deg,#faf5ff,#f5f3ff);border:1px solid #ddd6fe;border-radius:12px;padding:12px 14px;margin:10px 0;">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+                        <span style="font-size:12px;font-weight:700;color:#6d28d9;letter-spacing:0.3px;">🏗️ SKELETON</span>
+                        <span style="font-size:11px;color:#94a3b8;">AI formats freely — no structure</span>
+                    </div>
+                    <p style="font-size:11px;color:#94a3b8;margin:0;">General template has no predefined sections. Add sections below to guide the AI.</p>
+                    <div id="skeleton-add-row" style="display:flex;gap:6px;margin-top:10px;align-items:center;">
+                        <input id="skeleton-new-label" type="text" placeholder="Section name..." style="flex:1;font-size:12px;padding:6px 10px;border:1px solid #ddd6fe;border-radius:8px;outline:none;background:#fff;color:#3b0764;">
+                        <select id="skeleton-new-req" style="font-size:11px;padding:6px 8px;border:1px solid #ddd6fe;border-radius:8px;background:#fff;color:#6d28d9;cursor:pointer;">
+                            <option value="true">🟢 Required</option>
+                            <option value="false">⚪ Optional</option>
+                        </select>
+                        <button id="skeleton-add-btn" style="background:#7c3aed;color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;">+ Add</button>
+                    </div>
+                </div>`;
+        } else {
+            panel.innerHTML = `
+                <div id="skeleton-editor-box" style="background:linear-gradient(135deg,#faf5ff,#f5f3ff);border:1px solid #ddd6fe;border-radius:12px;padding:12px 14px;margin:10px 0;">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+                        <span style="font-size:12px;font-weight:700;color:#6d28d9;letter-spacing:0.3px;">🏗️ SKELETON — ${template.name}</span>
+                        <span style="font-size:10px;color:#a78bfa;cursor:default;" title="⠿ Drag to reorder · ↑↓ Move · Click label to edit · 🟢/⚪ toggle · ✕ delete">⠿ Drag to reorder</span>
+                    </div>
+                    <div id="skeleton-chips" style="display:flex;flex-direction:column;gap:0;margin-bottom:8px;min-height:28px;"></div>
+                    <div id="skeleton-add-row" style="display:flex;gap:6px;margin-top:6px;align-items:center;padding-top:8px;border-top:1px solid #ede9fe;">
+                        <input id="skeleton-new-label" type="text" placeholder="Add section..." style="flex:1;font-size:12px;padding:5px 10px;border:1px solid #ddd6fe;border-radius:8px;outline:none;background:#fff;color:#3b0764;">
+                        <select id="skeleton-new-req" style="font-size:11px;padding:5px 8px;border:1px solid #ddd6fe;border-radius:8px;background:#fff;color:#6d28d9;cursor:pointer;">
+                            <option value="true">🟢 Required</option>
+                            <option value="false">⚪ Optional</option>
+                        </select>
+                        <button id="skeleton-add-btn" style="background:#7c3aed;color:#fff;border:none;border-radius:8px;padding:5px 12px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;">+ Add</button>
+                    </div>
+                </div>`;
+
+            rebuildChips();
+        }
+
+        // Wire up "Add" button
+        const addBtn = document.getElementById('skeleton-add-btn');
+        const newLabelInput = document.getElementById('skeleton-new-label');
+        const newReqSelect = document.getElementById('skeleton-new-req');
+
+        if (addBtn && newLabelInput) {
+            const doAdd = () => {
+                const labelVal = newLabelInput.value.trim();
+                if (!labelVal) { newLabelInput.focus(); return; }
+                skeleton.push({
+                    id: labelVal.toLowerCase().replace(/\s+/g, '_'),
+                    label: labelVal,
+                    required: newReqSelect.value === 'true',
+                    aliases: []
+                });
+                newLabelInput.value = '';
+                newLabelInput.focus();
+
+                // Re-render fully to show chips if was empty before
+                renderSkeletonEditor(template);
+                syncSkeletonToEngine(template);
+            };
+            addBtn.addEventListener('click', doAdd);
+            newLabelInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') doAdd(); });
+        }
     }
 
     // Render templates inside the modal
     function renderTemplateGrid() {
+
         const grid = document.getElementById('template-grid');
         const customPanel = document.getElementById('template-customization');
         if (!grid || !window.templateEngine) return;
@@ -711,7 +988,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.querySelectorAll('.template-card').forEach(c => c.classList.remove('selected'));
                 card.classList.add('selected');
                 document.getElementById('template-continue-btn').disabled = false;
-                
+
+                // ── Render Editable Skeleton Panel ──
+                renderSkeletonEditor(t);
+
                 // Show Customization Panel
                 if (customPanel) {
                     customPanel.style.display = 'block';
@@ -1742,7 +2022,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         // Add context prefix for multi-chunk documents so Gemini preserves structure
                         let chunkText = chunks[i];
                         if (chunks.length > 1) {
-                            const contextNote = `[CONTEXT: This is part ${i + 1} of ${chunks.length} of a larger document. Classify each text block's structure (h1, h2, sub-subheading, p, ul, ol, code) accurately based on its content. Maintain consistent heading hierarchy throughout.]\n\n`;
+                            const contextNote = `[CONTEXT: This is part ${i + 1} of ${chunks.length} of a larger document. Classify each text block using one of: heading (with depth 1/2/3), p, ul, ol, code, table, equation, blockquote, references, image. Maintain consistent heading hierarchy throughout.]\n\n`;
                             chunkText = contextNote + chunkText;
                         }
 

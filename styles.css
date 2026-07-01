@@ -2028,58 +2028,6 @@ body.fullscreen-active {
     line-height: 1.35;
 }
 
-/* ── Section Headers (inside panels) ── */
-.tmpl-section-header {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 14px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid #ede9fe;
-    font-size: 13px;
-    font-weight: 600;
-    color: #6d28d9;
-    letter-spacing: 0.2px;
-}
-
-.tmpl-section-header svg {
-    color: #7c3aed;
-}
-
-/* ── Customization Panel ── */
-.template-customization {
-    margin: 0;
-    padding: 16px 24px;
-    background: #faf9fe;
-    border-top: 1px solid #ede9fe;
-    border-bottom: 1px solid #ede9fe;
-    text-align: left;
-    animation: slideDown 0.3s ease-out;
-}
-
-@keyframes slideDown {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.customization-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 10px;
-    flex-wrap: wrap;
-}
-
-.customization-row:last-child {
-    margin-bottom: 0;
-}
-
-.customization-row label {
-    flex: 1 1 90px;
-    font-size: 12.5px;
-    font-weight: 500;
-    color: #6b7280;
-}
 
 .modal-select {
     flex: 2 1 140px;

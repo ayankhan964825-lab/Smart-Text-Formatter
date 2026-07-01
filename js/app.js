@@ -1001,8 +1001,9 @@ document.addEventListener('DOMContentLoaded', () => {
             grid.appendChild(card);
         });
 
-        // If something is already selected, show customization panel
-        if (customPanel && window.templateEngine.selectedTemplateId) {
+        // If a non-general template was already selected (e.g. re-opening modal), show customization
+        const hasSelection = document.querySelector('.template-card.selected');
+        if (customPanel && hasSelection && window.templateEngine.selectedTemplateId !== 'general') {
             customPanel.style.display = 'block';
             populateModalCustomization(window.templateEngine.getRibbonDefaults());
         }
@@ -1056,54 +1057,91 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Reference PDF Upload Handling
-    const refUploadBtn = document.getElementById('reference-upload-btn');
+    // Reference PDF Upload Handling (works with new dropzone UI)
     const refInput = document.getElementById('reference-pdf-input');
     const refFileName = document.getElementById('reference-file-name');
     const refRemoveBtn = document.getElementById('reference-remove-btn');
+    const refDropzone = document.querySelector('.tmpl-ref-dropzone');
+    const refFileBar = document.getElementById('reference-file-bar');
 
-    if (refUploadBtn && refInput) {
-        refUploadBtn.addEventListener('click', () => refInput.click());
+    async function handleReferencePDF(file) {
+        if (!file) return;
 
-        refInput.addEventListener('change', async (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
+        if (!file.type.includes('pdf')) {
+            showToast('Please upload a PDF file.', 'error');
+            return;
+        }
 
-            if (!file.type.includes('pdf')) {
-                showToast('Please upload a PDF file.', 'error');
-                return;
+        if (file.size > 10 * 1024 * 1024) {
+            showToast('PDF too large. Maximum 10MB allowed.', 'error');
+            return;
+        }
+
+        // Show loading state on dropzone
+        if (refDropzone) {
+            refDropzone.style.opacity = '0.6';
+            refDropzone.style.pointerEvents = 'none';
+        }
+
+        try {
+            await window.referenceHandler.processPDF(file);
+
+            // Show file bar, hide dropzone
+            if (refFileName) refFileName.textContent = file.name;
+            if (refRemoveBtn) refRemoveBtn.style.display = 'flex';
+            if (refFileBar) refFileBar.style.display = 'flex';
+            if (refDropzone) refDropzone.style.display = 'none';
+
+            showToast('✅ Reference PDF uploaded successfully!');
+        } catch (err) {
+            console.error('Reference PDF error:', err);
+            showToast('Failed to process PDF.', 'error');
+        } finally {
+            if (refDropzone) {
+                refDropzone.style.opacity = '1';
+                refDropzone.style.pointerEvents = 'auto';
             }
+        }
+    }
 
-            if (file.size > 10 * 1024 * 1024) { // 10MB limit
-                showToast('PDF too large. Maximum 10MB allowed.', 'error');
-                return;
-            }
-
-            refUploadBtn.textContent = '⏳ Analyzing...';
-            refUploadBtn.disabled = true;
-
-            try {
-                await window.referenceHandler.processPDF(file);
-                
-                refFileName.textContent = `${file.name}`;
-                refRemoveBtn.style.display = 'inline-block';
-                showToast('✅ Reference PDF uploaded successfully!');
-            } catch (err) {
-                console.error('Reference PDF error:', err);
-                showToast('Failed to process PDF.', 'error');
-            } finally {
-                refUploadBtn.textContent = '📄 Choose PDF';
-                refUploadBtn.disabled = false;
-            }
+    // File input change handler
+    if (refInput) {
+        refInput.addEventListener('change', (e) => {
+            handleReferencePDF(e.target.files[0]);
         });
     }
 
+    // Drag & drop support on dropzone
+    if (refDropzone) {
+        refDropzone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            refDropzone.classList.add('dragover');
+        });
+        refDropzone.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            refDropzone.classList.remove('dragover');
+        });
+        refDropzone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            refDropzone.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file) handleReferencePDF(file);
+        });
+    }
+
+    // Remove button handler
     if (refRemoveBtn) {
-        refRemoveBtn.addEventListener('click', () => {
+        refRemoveBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
             window.referenceHandler.clear();
-            refFileName.textContent = 'No file selected';
-            refRemoveBtn.style.display = 'none';
-            refInput.value = '';
+            if (refFileName) refFileName.textContent = 'No file selected';
+            if (refRemoveBtn) refRemoveBtn.style.display = 'none';
+            if (refFileBar) refFileBar.style.display = 'none';
+            if (refDropzone) refDropzone.style.display = 'flex';
+            if (refInput) refInput.value = '';
         });
     }
 

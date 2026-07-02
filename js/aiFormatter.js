@@ -23,8 +23,15 @@ class AIFormatter {
 
 CORE DIRECTIVES (STRICTLY FOLLOW THESE):
 
-1. STRICT OUTPUT SCHEMA (JSON ONLY)
-You must output ONLY a valid JSON array. Do not wrap it in markdown blockquotes or add conversational text. Every object in the array must strictly follow this format: {"type": "[allowed_tag]", "content": "[your_text]"}. 
+1. STRICT OUTPUT SCHEMA
+You must output ONLY a valid JSON OBJECT with exactly two keys:
+{
+  "ai_thoughts": "Your step-by-step reasoning here...",
+  "final_document": [ ...document blocks array... ]
+}
+Do not wrap it in markdown blockquotes or add any text outside the JSON object.
+
+The "final_document" array contains block objects. Each block MUST have a "type" key.
 Allowed Types:
 - "heading": For titles and sections. MUST include a "depth" integer.
 - "p": For regular body text ONLY. Combine split sentences.
@@ -57,14 +64,22 @@ Priority 2: The formatting rules of the 'Selected Template' (e.g., specific ques
 Priority 3 (Lowest): The style of the 'Reference PDF'.
 
 5. TONE MATCHING VS. FACTUAL INTEGRITY
-Analyze the 'Reference PDF' (if provided) SOLELY to understand its TONE (e.g., formal, academic, persuasive). 
+Analyze the 'Reference PDF' (if provided) SOLELY to understand its TONE (e.g., formal, academic, persuasive).
 You may restructure and rewrite the User's Raw Text to match this professional tone.
 HOWEVER, you MUST NOT hallucinate, invent, or add any external data, names, dates, or metrics. Your content must be 100% derived from the 'User Raw Text'.
+
+--- EXECUTION STRATEGY (Chain of Thought) ---
+Before writing the final_document, you MUST think step-by-step inside the "ai_thoughts" key:
+Step 1: STYLE EXTRACTION — Analyze the Reference PDF (if provided). Note down the tone (formal/casual), heading capitalization, and structure patterns.
+Step 2: CONTENT MAPPING — Read the User Raw Text. Map each paragraph to the appropriate Skeleton section.
+Step 3: IMAGE CONTEXTUALIZATION — For each attached image, determine its subject. Plan to insert it after the most relevant paragraph.
+Step 4: BLOCK ASSEMBLY — Describe how you will assemble the final blocks array.
+Write all 4 steps as a single string in "ai_thoughts". Then write the actual blocks in "final_document".
 
 --- OCR & AI CLEANUP RULES ---
 - CITATIONS: Fix broken OCR citations to standard brackets: "[1] [2]". Keep them inside the "p" block. DO NOT use comma-separated groups like "[1, 2]".
 - FLOATING NOISE: IGNORE stray PDF page numbers (e.g. "12", "Page 4").
-- AI BOILERPLATE: REMOVE all conversational filler like "Here is the output:". Only return the JSON array.
+- AI BOILERPLATE: REMOVE all conversational filler. Only return the JSON object.
 
 ${window.templateEngine ? window.templateEngine.getPromptContext() : ''}
 ${window.referenceHandler ? window.referenceHandler.getPromptContext() : ''}`;
@@ -256,8 +271,8 @@ Error thrown: "${errorMessage}"
 
 Your job is to find the syntax error in the JSON and fix it.
 CRITICAL RULES:
-1. Return ONLY the raw, perfectly valid JSON array.
-2. DO NOT return markdown blocks like \`\`\`json or \`\`\`. 
+1. Return ONLY the raw, perfectly valid JSON. It may be a JSON object (with keys like "ai_thoughts" and "final_document") or a flat JSON array — preserve the original structure.
+2. DO NOT return markdown blocks like \`\`\`json or \`\`\`.
 3. DO NOT output any conversational text like "Here is the fixed JSON:".
 4. Make the minimal necessary changes (e.g. add missing commas, escape unescaped quotes, close brackets) to make it valid.`;
 
@@ -313,30 +328,49 @@ CRITICAL RULES:
     async _parseResponse(data) {
         const outputText = data.candidates[0].content.parts[0].text;
         let cleanJson = outputText.trim();
-        
-        // Auto-fix: Regex extraction to ignore conversational filler
-        const match = cleanJson.match(/\[[\s\S]*\]/);
-        if (match) {
-            cleanJson = match[0];
-        }
 
-        // Auto-fix: Remove trailing commas
+        // Remove markdown wrappers if present
+        cleanJson = cleanJson.replace(/^```[a-z]*\s*/i, '').replace(/\s*```$/, '').trim();
+
+        // Remove trailing commas
         cleanJson = cleanJson.replace(/,\s*([\]}])/g, '$1');
-        
+
         try {
-            const parsedArray = JSON.parse(cleanJson);
-            if (!Array.isArray(parsedArray)) {
-                throw new Error("Output is not a JSON array.");
+            const parsed = JSON.parse(cleanJson);
+
+            // NEW: Handle CoT JSON Object format { ai_thoughts, final_document }
+            if (parsed && typeof parsed === 'object' && !Array.isArray(parsed) && parsed.final_document) {
+                // Store AI thoughts globally so UI can display them
+                window._lastAiThoughts = parsed.ai_thoughts || '';
+                console.log('[AIFormatter] 🧠 AI Thoughts:', parsed.ai_thoughts || '(none)');
+                const blocks = parsed.final_document;
+                if (!Array.isArray(blocks)) throw new Error("final_document is not an array.");
+                return blocks;
             }
-            return parsedArray;
+
+            // FALLBACK: Handle legacy flat array format
+            if (Array.isArray(parsed)) {
+                window._lastAiThoughts = '';
+                console.log('[AIFormatter] ℹ️ Received legacy flat array (no CoT).');
+                return parsed;
+            }
+
+            throw new Error("Output is neither a CoT object nor a JSON array.");
         } catch (err) {
-            console.warn("[AIFormatter] JSON parse failed! Triggering self-correction loop...", err);
+            console.warn("[AIFormatter] JSON parse failed! Triggering self-correction...", err);
             const fixedJsonStr = await this.fixJsonSyntax(cleanJson, err.message);
-            const parsedArray = JSON.parse(fixedJsonStr);
-            if (!Array.isArray(parsedArray)) {
-                throw new Error("Fixed output is not a JSON array.");
+            const fixedParsed = JSON.parse(fixedJsonStr);
+
+            // After auto-heal, check both formats
+            if (fixedParsed && typeof fixedParsed === 'object' && !Array.isArray(fixedParsed) && fixedParsed.final_document) {
+                window._lastAiThoughts = fixedParsed.ai_thoughts || '';
+                return Array.isArray(fixedParsed.final_document) ? fixedParsed.final_document : [];
             }
-            return parsedArray;
+            if (Array.isArray(fixedParsed)) {
+                window._lastAiThoughts = '';
+                return fixedParsed;
+            }
+            throw new Error("Auto-healed output is not valid.");
         }
     }
 }

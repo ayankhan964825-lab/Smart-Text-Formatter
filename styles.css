@@ -2451,3 +2451,139 @@ body.fullscreen-active {
     border-bottom-color: #3730a3;
 }
 
+/* ══════════════════════════════════════════
+   AI Reasoning Panel (Chain of Thought)
+   ══════════════════════════════════════════ */
+.ai-thoughts-panel {
+    margin: 0;
+    border-bottom: 1px solid #e5e7eb;
+    background: linear-gradient(135deg, #fefce8 0%, #fef9c3 100%);
+    flex-shrink: 0;
+}
+
+.ai-thoughts-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 10px 20px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.ai-thoughts-toggle:hover {
+    background: rgba(250, 204, 21, 0.15);
+}
+
+.ai-thoughts-toggle-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #92400e;
+}
+
+.ai-thoughts-toggle-left svg {
+    color: #f59e0b;
+}
+
+.ai-thoughts-chevron {
+    color: #d97706;
+    transition: transform 0.25s cubic-bezier(.4,0,.2,1);
+}
+
+.ai-thoughts-panel.open .ai-thoughts-chevron {
+    transform: rotate(180deg);
+}
+
+.ai-thoughts-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s cubic-bezier(.4,0,.2,1), padding 0.35s;
+    padding: 0 20px;
+}
+
+.ai-thoughts-panel.open .ai-thoughts-body {
+    max-height: 500px;
+    padding: 0 20px 14px;
+    overflow-y: auto;
+}
+
+.ai-thoughts-content {
+    font-size: 12.5px;
+    line-height: 1.7;
+    color: #78350f;
+    white-space: pre-wrap;
+    word-break: break-word;
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid #fde68a;
+    border-radius: 10px;
+    padding: 12px 16px;
+    backdrop-filter: blur(4px);
+}
+
+/* Step highlights inside the AI thoughts */
+.ai-thought-step {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+    padding: 8px 12px;
+    background: rgba(251, 191, 36, 0.08);
+    border-left: 3px solid #f59e0b;
+    border-radius: 0 8px 8px 0;
+}
+
+.ai-thought-step-num {
+    font-weight: 700;
+    color: #d97706;
+    white-space: nowrap;
+    flex-shrink: 0;
+    font-size: 11px;
+    text-transform: uppercase;
+}
+
+.ai-thought-step-text {
+    color: #78350f;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+/* Dark mode */
+[data-theme="dark"] .ai-thoughts-panel {
+    background: linear-gradient(135deg, #1c1917 0%, #292524 100%);
+    border-bottom-color: #44403c;
+}
+
+[data-theme="dark"] .ai-thoughts-toggle:hover {
+    background: rgba(245, 158, 11, 0.1);
+}
+
+[data-theme="dark"] .ai-thoughts-toggle-left {
+    color: #fbbf24;
+}
+
+[data-theme="dark"] .ai-thoughts-chevron {
+    color: #f59e0b;
+}
+
+[data-theme="dark"] .ai-thoughts-content {
+    color: #fde68a;
+    background: rgba(0, 0, 0, 0.3);
+    border-color: #44403c;
+}
+
+[data-theme="dark"] .ai-thought-step {
+    background: rgba(245, 158, 11, 0.06);
+    border-left-color: #f59e0b;
+}
+
+[data-theme="dark"] .ai-thought-step-num {
+    color: #fbbf24;
+}
+
+[data-theme="dark"] .ai-thought-step-text {
+    color: #fde68a;
+}

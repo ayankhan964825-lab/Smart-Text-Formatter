@@ -2439,6 +2439,35 @@ document.addEventListener('DOMContentLoaded', () => {
                 editBtn.style.cursor = 'pointer';
             }
 
+            // ── Populate AI Reasoning Panel ──
+            const thoughtsPanel = document.getElementById('ai-thoughts-panel');
+            const thoughtsContent = document.getElementById('ai-thoughts-content');
+            if (thoughtsPanel && thoughtsContent && window._lastAiThoughts) {
+                const raw = window._lastAiThoughts;
+                // Parse step-by-step reasoning into styled cards
+                const stepRegex = /Step\s*(\d)[:\s—\-]*(.*?)(?=Step\s*\d|$)/gis;
+                let stepsHtml = '';
+                let match;
+                while ((match = stepRegex.exec(raw)) !== null) {
+                    const stepLabels = ['STYLE', 'MAPPING', 'IMAGES', 'ASSEMBLY'];
+                    const stepNum = parseInt(match[1]);
+                    const label = stepLabels[stepNum - 1] || `STEP ${stepNum}`;
+                    const text = match[2].trim();
+                    stepsHtml += `<div class="ai-thought-step">
+                        <span class="ai-thought-step-num">Step ${stepNum}: ${label}</span>
+                        <span class="ai-thought-step-text">${text.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</span>
+                    </div>`;
+                }
+                // If regex didn't match steps, show raw text
+                if (!stepsHtml) {
+                    stepsHtml = `<div style="white-space:pre-wrap;font-size:12px;color:#78350f;">${raw.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>`;
+                }
+                thoughtsContent.innerHTML = stepsHtml;
+                thoughtsPanel.style.display = 'block';
+            } else if (thoughtsPanel) {
+                thoughtsPanel.style.display = 'none';
+            }
+
             // Disable Format Now button & Text Input so they can't reformat without refresh
             if (formatBtn) {
                 formatBtn.disabled = true;
@@ -3112,7 +3141,7 @@ document.addEventListener('DOMContentLoaded', () => {
         navigator.clipboard.writeText(textToCopy).then(() => {
             const originalText = btn.innerHTML;
             btn.innerHTML = '✅ Copied!';
-            btn.style.color = '#4ade80';
+            btn.style.color = '#46de7eff';
             btn.style.borderColor = '#4ade80';
             setTimeout(() => {
                 btn.innerHTML = originalText;

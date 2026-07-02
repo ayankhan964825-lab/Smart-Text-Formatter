@@ -288,6 +288,20 @@
                 </select>
             </div>
 
+            <!-- AI Reasoning Panel (CoT) -->
+            <div id="ai-thoughts-panel" class="ai-thoughts-panel" style="display:none;">
+                <button class="ai-thoughts-toggle" onclick="this.parentElement.classList.toggle('open')">
+                    <span class="ai-thoughts-toggle-left">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a8 8 0 0 0-8 8c0 3.4 2.1 6.3 5 7.4V20a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-2.6c2.9-1.1 5-4 5-7.4a8 8 0 0 0-8-8z"/><line x1="10" y1="22" x2="14" y2="22"/></svg>
+                        AI Reasoning (Chain of Thought)
+                    </span>
+                    <svg class="ai-thoughts-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                </button>
+                <div class="ai-thoughts-body">
+                    <div id="ai-thoughts-content" class="ai-thoughts-content">No reasoning data available yet.</div>
+                </div>
+            </div>
+
             <div class="preview-scroll-wrapper" style="flex: 1; overflow: auto; background-color: #e5e7eb; padding: 30px 15px;">
                 <div id="formatted-preview" class="preview-container" contenteditable="false">
                     <div class="placeholder-text">Live preview will appear here...</div>

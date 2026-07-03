@@ -49,9 +49,8 @@ const DOCUMENT_TEMPLATES = {
 - You MUST use the 'heading' type with depth values: depth:1 for the document title, depth:2 for main sections (Abstract, Introduction, etc.), depth:3 for sub-sections (1.1, 2.1, etc.).
 - DO NOT use old types like h1, h2, or sub-subheading. ONLY use 'heading' with the correct depth.
 - If the user's text contains content that belongs to skeleton sections but has no explicit heading, YOU MUST create the appropriate heading block and place the content under it.
-- Abstract should be a single concise paragraph summarizing the entire paper.
+- PRESERVE the user's original text EXACTLY. Do NOT rewrite, rephrase, or summarize any paragraph. Only fix OCR typos.
 - References section must use the 'references' type with an items array, NOT a plain paragraph.
-- Use formal academic tone throughout. Do NOT add casual language.
 - Heading numbering: Use "1. Introduction", "2. Literature Review" etc. for depth:2 headings.
 - Sub-sections: Use "2.1 Topic", "2.2 Topic" for depth:3 headings.`
   },
@@ -81,8 +80,8 @@ const DOCUMENT_TEMPLATES = {
 - Detect question numbers (Q1, Q.1, Question 1, 1., etc.) and format them as heading blocks with depth:2.
 - Answer text goes under each question as body paragraphs.
 - If sub-questions exist (a), b), i., ii.), format them as heading blocks with depth:3.
-- Preserve any code snippets, formulas, or diagrams exactly as provided.
-- Keep the tone semi-formal and educational.`
+- PRESERVE the user's original answers EXACTLY. Do NOT rewrite, rephrase, or improve any answer text.
+- Preserve any code snippets, formulas, or diagrams exactly as provided.`
   },
 
   "project-report": {
@@ -114,7 +113,7 @@ const DOCUMENT_TEMPLATES = {
 - Objectives must be formatted as an ordered list (ol type) — clear, measurable goals.
 - Scope section defines boundaries of the project.
 - Methodology section explains how the project was or will be conducted.
-- Keep the tone formal, factual, and persuasive.`
+- PRESERVE the user's original text EXACTLY. Do NOT rewrite, rephrase, or add new content.`
   }
 };
 

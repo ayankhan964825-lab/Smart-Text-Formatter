@@ -41,6 +41,7 @@ Allowed Types:
 - "warning" / "info": For callouts or missing section notices.
 - "ul" / "ol": For lists. MUST NOT have "content". MUST have an "items" array of strings.
 - "image": ONLY when instructed to place an uploaded image. Format: {"type": "image", "src": "[image_name]", "caption": "[relevant_caption]"}.
+- "mermaid": For flowcharts, graphs, or bar diagrams. MUST include "content" with raw mermaid syntax.
 - "references": For citations. MUST include "items" array with "id" and "text".
 
 2. HEADING DEPTH LOGIC

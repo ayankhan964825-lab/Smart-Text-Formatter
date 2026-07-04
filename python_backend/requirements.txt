@@ -1,4 +1,3 @@
 fastapi
 uvicorn
-docx2pdf
 python-multipart

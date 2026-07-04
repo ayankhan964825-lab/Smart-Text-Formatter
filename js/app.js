@@ -2739,7 +2739,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 2. Export PDF (Using browser Print Layout - per Shiv Prakash format)
     // 2. Export PDF (Using Python Backend for 100% Identical Output)
-    const handleExportPdf = async () => {
+    const handleExportPdf = async (e) => {
+        if (e) e.preventDefault();
         try {
             const previewContainer = document.getElementById('formatted-preview');
             if (previewContainer.querySelector('.placeholder-text')) {
@@ -2772,8 +2773,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const formData = new FormData();
             formData.append("file", docxBlob, "document.docx");
 
+            // Change this URL to your live Render URL once deployed (e.g., https://my-backend.onrender.com/api/convert-docx-to-pdf)
+            const BACKEND_URL = "http://127.0.0.1:8000/api/convert-docx-to-pdf";
+
             // Call Python Backend
-            const response = await fetch("http://127.0.0.1:8000/api/convert-docx-to-pdf", {
+            const response = await fetch(BACKEND_URL, {
                 method: "POST",
                 body: formData
             });
@@ -2814,7 +2818,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (mobileExportPdfBtn) mobileExportPdfBtn.addEventListener('click', handleExportPdf);
 
     // 3. Export Word (.doc)
-    const handleExportWord = async () => {
+    const handleExportWord = async (e) => {
+        if (e) e.preventDefault();
         try {
             const previewContainer = document.getElementById('formatted-preview');
             if (previewContainer.querySelector('.placeholder-text')) {

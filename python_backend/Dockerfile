@@ -7,7 +7,8 @@ ENV PORT=8000
 
 # Install LibreOffice and required fonts for PDF conversion, including MS Fonts for perfect matching
 RUN apt-get update && \
-    echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | debconf-set-selections && \
+    apt-get install -y --no-install-recommends debconf-utils && \
+    echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" | debconf-set-selections && \
     apt-get install -y --no-install-recommends \
     libreoffice \
     libreoffice-writer \

@@ -2773,8 +2773,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const formData = new FormData();
             formData.append("file", docxBlob, "document.docx");
 
-            // Change this URL to your live Render URL once deployed (e.g., https://my-backend.onrender.com/api/convert-docx-to-pdf)
-            const BACKEND_URL = "http://127.0.0.1:8000/api/convert-docx-to-pdf";
+            // Live Render Backend URL
+            const BACKEND_URL = "https://smart-text-formatter.onrender.com/api/convert-docx-to-pdf";
 
             // Call Python Backend
             const response = await fetch(BACKEND_URL, {

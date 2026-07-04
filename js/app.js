@@ -2738,29 +2738,72 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // 2. Export PDF (Using browser Print Layout - per Shiv Prakash format)
-    // 2. Export PDF (Using browser Print Layout - per Shiv Prakash format)
-    const handleExportPdf = () => {
-        const previewContainer = document.getElementById('formatted-preview');
-        if (previewContainer.querySelector('.placeholder-text')) {
-            alert("No content to export. Please format some text first.");
-            return;
-        }
+    // 2. Export PDF (Using Python Backend for 100% Identical Output)
+    const handleExportPdf = async () => {
+        try {
+            const previewContainer = document.getElementById('formatted-preview');
+            if (previewContainer.querySelector('.placeholder-text')) {
+                alert("No content to export. Please format some text first.");
+                return;
+            }
 
-        statusText.textContent = "Opening Print Layout...";
+            statusText.textContent = "Preparing Document for PDF Conversion...";
 
-        // Temporarily change document title so the default Save As PDF filename is nice
-        const originalTitle = document.title;
-        document.title = "Research_Paper_Formatted";
+            // Deep clone the preview container
+            const clonedPreview = previewContainer.cloneNode(true);
 
-        // Delay slightly so UI can update the status text before blocking main thread
-        setTimeout(() => {
-            // Native browser print dialog
-            window.print();
+            // Clean up UI artifacts
+            const noExportEls = clonedPreview.querySelectorAll('.no-export');
+            noExportEls.forEach(el => el.remove());
+            clonedPreview.querySelectorAll('.page-number-badge, .page-break-label').forEach(el => el.remove());
+            clonedPreview.querySelectorAll('.a4-page').forEach(page => {
+                while (page.firstChild) page.parentNode.insertBefore(page.firstChild, page);
+                page.remove();
+            });
+
+            // Convert SVGs
+            await convertSvgsToImages(clonedPreview);
+
+            statusText.textContent = "Generating Source DOCX...";
+            // Generate the exact same .docx file used for Word export
+            const docxBlob = await DocxExporter.generate(clonedPreview);
+
+            statusText.textContent = "Converting to PDF via Backend...";
+            const formData = new FormData();
+            formData.append("file", docxBlob, "document.docx");
+
+            // Call Python Backend
+            const response = await fetch("http://127.0.0.1:8000/api/convert-docx-to-pdf", {
+                method: "POST",
+                body: formData
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Server returned ${response.status}: ${errorText}`);
+            }
+
+            const pdfBlob = await response.blob();
             
-            // Restore original document title
-            document.title = originalTitle;
-            statusText.textContent = "Print dialog completed ✨";
-        }, 100);
+            // Download the PDF
+            const url = URL.createObjectURL(pdfBlob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'formatted_document.pdf';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            statusText.textContent = "PDF Exported Successfully ✨";
+        } catch (error) {
+            console.error("Critical PDF Export Error:", error);
+            statusText.textContent = "Export Failed: " + (error.message || String(error));
+            // Fallback to print layout if backend is down
+            alert("Backend conversion failed. Falling back to Browser Print Layout.");
+            window.print();
+            statusText.textContent = "Fell back to Print Layout ✨";
+        }
     };
 
     // Fetch mobile buttons since they were missing declarations in the global scope

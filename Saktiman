@@ -1,0 +1,83 @@
+# Smart Text Formatter — Future Ideas Roadmap
+
+> Saved on: 2026-07-04 | All ideas discussed in chat, preserved for future implementation.
+
+---
+
+## 🏆 Idea 1: iLovePDF-Style Backend (PDF/Word Same Output)
+**Priority:** #1 (Highest)
+**Status:** Not Started
+**Description:** Create a server-side document generation engine that produces pixel-perfect identical PDF and Word exports from the same HTML source. Currently, client-side libraries (`html2pdf.js`, `html-docx-js`) give different-looking outputs.
+**Technical Options:** Puppeteer (headless Chrome), `docx` npm library, or unified template engine.
+**Key Concern:** PDF must remain editable/selectable text — not a screenshot.
+
+---
+
+## 🌐 Idea 2: Multi-Language Support
+**Priority:** #2
+**Status:** Not Started
+**Description:** Support Hindi, Urdu, Arabic, mixed-language (Hinglish) text formatting. Gemini 2.5 Flash already supports multilingual — needs prompt rules + RTL layout support + Unicode font handling in exports.
+
+---
+
+## 📱 Idea 3: Mobile-First Responsive Redesign
+**Priority:** #3
+**Status:** Not Started
+**Description:** Make the entire UI work smoothly on mobile phones. 60%+ users are on mobile. Need responsive layout, touch-friendly inputs, and mobile preview.
+
+---
+
+## 🔐 Idea 4: User Accounts + History (Dashboard)
+**Priority:** #4
+**Status:** Not Started
+**Description:** Google Sign-In via Firebase. Save formatting history. Re-open old documents. Save custom templates. User retention feature.
+
+---
+
+## 📊 Idea 5: Batch Processing (Multiple Files)
+**Priority:** #5
+**Status:** Not Started
+**Description:** Upload multiple PDFs/images at once. Format all in a queue. Download as zip. Useful for students formatting multiple assignments.
+
+---
+
+## 🎨 Idea 6: Custom Theme Builder
+**Priority:** #6
+**Status:** Not Started
+**Description:** Let users create their own templates — custom fonts, colors, spacing, logo/watermark. Save and reuse templates.
+
+---
+
+## 🧩 Idea 7: Browser Extension / Chrome Plugin
+**Priority:** #7
+**Status:** Not Started
+**Description:** Chrome extension where user selects text on any webpage → "Format with Smart Text Formatter" → opens in app pre-filled. Viral growth potential.
+
+---
+
+## 💰 Idea 8: Freemium Model (Monetization)
+**Priority:** #8
+**Status:** Not Started
+**Description:** Free tier (5 formats/day, basic templates) + Pro tier (unlimited, custom templates, batch, no watermark). Razorpay/Stripe integration.
+
+---
+
+## 🧠 Previously Implemented Ideas (Done ✅)
+
+| Feature | Status | Date |
+|---------|--------|------|
+| Skeleton Editor (drag-drop, add/edit/delete sections) | ✅ Done | June 2026 |
+| Template Selection Modal (Research Paper, Assignment, etc.) | ✅ Done | June 2026 |
+| Master System Prompt (5 Core Directives) | ✅ Done | July 2026 |
+| Chain-of-Thought Reasoning (AI Thoughts Panel) | ✅ Done | July 2026 |
+| Content Preservation (Stop AI from rewriting) | ✅ Done | July 2026 |
+| Reference PDF Upload (Drag & Drop) | ✅ Done | June 2026 |
+| New Block Types (Table, Equation, Blockquote, etc.) | ✅ Done | June 2026 |
+| Collapsible Formatting Accordion | ✅ Done | June 2026 |
+
+---
+
+## 💬 Other Discussed Ideas (Not Prioritized)
+
+- **Alternative JSON Schema** (paragraph/bullet_list style) — Rejected because it breaks existing 12-type architecture.
+- **Execution Strategy Prompt** (4-step CoT) — Implemented and merged into main prompt.

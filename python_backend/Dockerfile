@@ -5,14 +5,11 @@ FROM python:3.9-slim
 ENV PYTHONUNBUFFERED=1
 ENV PORT=8000
 
-# Install LibreOffice and required fonts for PDF conversion, including MS Fonts for perfect matching
+# Install LibreOffice and required fonts for PDF conversion
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends debconf-utils && \
-    echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" | debconf-set-selections && \
     apt-get install -y --no-install-recommends \
     libreoffice \
     libreoffice-writer \
-    ttf-mscorefonts-installer \
     fonts-liberation \
     fonts-noto \
     fonts-noto-cjk \

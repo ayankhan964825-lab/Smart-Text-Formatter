@@ -20,6 +20,10 @@ app.add_middleware(
 TEMP_DIR = "/tmp/conversions" if os.name != 'nt' else "temp_conversions"
 os.makedirs(TEMP_DIR, exist_ok=True)
 
+@app.get("/ping")
+async def ping():
+    return {"status": "awake", "message": "Server is awake and ready!"}
+
 @app.post("/api/convert-docx-to-pdf")
 async def convert_docx_to_pdf(file: UploadFile = File(...)):
     if not file.filename.endswith('.docx'):

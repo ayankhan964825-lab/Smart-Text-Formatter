@@ -8,9 +8,10 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code&display=swap"
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500;600;700&family=Fira+Code&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="styles.css?v=706">
+    <link rel="stylesheet" href="editor-refine.css?v=2">
     <!-- KaTeX for Math/Equation rendering -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
 
@@ -75,16 +76,23 @@
     </div>
 
     <!-- Header / Top Bar -->
-    <header class="top-bar">
+    <header class="top-bar refined">
         <div class="logo">
             <button id="hamburger-btn" class="icon-btn hamburger-btn" title="Open Menu">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                     stroke-linecap="round" stroke-linejoin="round">
                     <line x1="3" y1="12" x2="21" y2="12"></line>
                     <line x1="3" y1="6" x2="21" y2="6"></line>
                     <line x1="3" y1="18" x2="21" y2="18"></line>
                 </svg>
             </button>
+            <a href="index.html" class="editor-brand" title="Back to home" data-testid="editor-brand">
+                <span class="editor-brand-mark">
+                    <svg viewBox="0 0 40 40" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h18l6 6v22a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2Z"/><path d="M26 6v6h6"/><path d="M12 20l3 3 8-8"/><path d="M12 28h16"/></svg>
+                </span>
+                <span class="editor-brand-word"><b>Smart</b><i>Formatter</i></span>
+            </a>
+            <span class="editor-brand-sep">/</span>
             <input type="text" id="document-title" class="document-title-input" value="Untitled Document" placeholder="Document Title" title="Click to rename document">
             <span id="save-status" class="save-status"></span>
         </div>
@@ -304,7 +312,25 @@
 
             <div class="preview-scroll-wrapper" style="flex: 1; overflow: auto; background-color: #e5e7eb; padding: 30px 15px;">
                 <div id="formatted-preview" class="preview-container" contenteditable="false">
-                    <div class="placeholder-text">Live preview will appear here...</div>
+                    <div class="placeholder-text">
+                        <div class="placeholder-illustration">
+                            <svg width="64" height="64" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="10" y="6" width="38" height="52" rx="3"/>
+                                <path d="M16 16h26M16 24h20M16 32h26M16 40h18"/>
+                                <circle cx="46" cy="46" r="10" fill="rgba(229,87,61,.12)" stroke="none"/>
+                                <path d="M42 46l3 3 6-6" stroke="#E5573D"/>
+                            </svg>
+                        </div>
+                        <h4 class="placeholder-title">Your formatted document appears here</h4>
+                        <p class="placeholder-sub">Paste raw text on the left, hit <b>Format Now</b>, and watch the AI structure it in seconds.</p>
+                        <div class="placeholder-tags">
+                            <span>H1 / H2 detection</span>
+                            <span>Lists</span>
+                            <span>Tables</span>
+                            <span>Math</span>
+                            <span>Diagrams</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -573,5 +599,4 @@
         </div>
     </div>
 </body>
-
 </html>

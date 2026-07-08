@@ -1,0 +1,295 @@
+/* ==========================================================================
+   Editor Refinement — layered on top of legacy styles.css
+   Modernizes top-bar, brand, empty-state, ribbon polish
+   ========================================================================== */
+
+:root {
+  --sf-ink:        #0F1A2E;
+  --sf-ink-soft:   #26324A;
+  --sf-ink-mute:   #5B6779;
+  --sf-paper:      #F7F1E5;
+  --sf-paper-2:    #EFE7D6;
+  --sf-line:       #D8CBA9;
+  --sf-coral:      #E5573D;
+  --sf-sage:       #4C7A6B;
+  --sf-shadow-sm:  0 1px 2px rgba(15,26,46,.06), 0 2px 6px rgba(15,26,46,.04);
+  --sf-font-display: 'Fraunces', ui-serif, Georgia, serif;
+  --sf-font-sans:    'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --sf-font-script:  'Instrument Serif', ui-serif, Georgia, serif;
+}
+
+body { font-family: var(--sf-font-sans) !important; background: var(--sf-paper) !important; color: var(--sf-ink) !important; }
+
+/* ---- Top Bar refinement ---- */
+.top-bar.refined {
+  background: rgba(247, 241, 229, 0.85) !important;
+  backdrop-filter: blur(16px) saturate(1.4);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  border-bottom: 1px solid rgba(216, 203, 169, 0.55) !important;
+  padding: 10px 20px !important;
+  box-shadow: none !important;
+  position: sticky; top: 0; z-index: 90;
+}
+.top-bar.refined .logo { display: flex; align-items: center; gap: 10px; }
+.top-bar.refined .hamburger-btn {
+  width: 34px; height: 34px; border-radius: 8px;
+  background: transparent !important; color: var(--sf-ink-soft) !important;
+  transition: background .2s ease;
+}
+.top-bar.refined .hamburger-btn:hover { background: var(--sf-paper-2) !important; }
+
+.editor-brand {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--sf-font-display); color: var(--sf-ink);
+  text-decoration: none; transition: opacity .2s ease;
+  padding: 4px 8px; border-radius: 8px;
+}
+.editor-brand:hover { background: var(--sf-paper-2); }
+.editor-brand-mark {
+  width: 30px; height: 30px; border-radius: 8px;
+  background: var(--sf-ink); color: var(--sf-paper);
+  display: grid; place-items: center;
+  transform: rotate(-3deg);
+  transition: transform .3s cubic-bezier(.34,1.56,.64,1);
+}
+.editor-brand:hover .editor-brand-mark { transform: rotate(3deg) scale(1.06); }
+.editor-brand-word { font-size: 16px; font-weight: 600; letter-spacing: -.01em; }
+.editor-brand-word b { font-weight: 700; }
+.editor-brand-word i {
+  font-family: var(--sf-font-script);
+  font-style: italic; font-weight: 400;
+  color: var(--sf-coral); margin-left: 2px;
+}
+.editor-brand-sep { color: var(--sf-ink-mute); font-size: 18px; font-weight: 300; padding: 0 2px; }
+
+.top-bar.refined .document-title-input {
+  font-family: var(--sf-font-sans) !important;
+  font-size: 15px !important; font-weight: 500 !important;
+  color: var(--sf-ink) !important;
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  border-radius: 6px !important;
+  padding: 6px 10px !important;
+  min-width: 200px;
+  transition: background .2s ease, border-color .2s ease;
+}
+.top-bar.refined .document-title-input:hover { background: var(--sf-paper-2) !important; }
+.top-bar.refined .document-title-input:focus { border-color: var(--sf-coral) !important; background: #fff !important; outline: none !important; }
+
+.save-status {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  color: var(--sf-sage); letter-spacing: .05em;
+}
+
+/* Export buttons in top bar */
+.top-bar.refined .btn.primary {
+  background: var(--sf-ink) !important;
+  color: var(--sf-paper) !important;
+  border-radius: 999px !important;
+  font-family: var(--sf-font-sans) !important;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+  padding: 8px 16px !important;
+  box-shadow: var(--sf-shadow-sm) !important;
+  border: none !important;
+  transition: transform .2s ease, background .2s ease !important;
+}
+.top-bar.refined .btn.primary:hover:not(:disabled) {
+  background: var(--sf-coral) !important;
+  transform: translateY(-1px);
+}
+.top-bar.refined .btn.primary:disabled { opacity: 0.4 !important; }
+
+/* ---- Formatting ribbon polish ---- */
+.formatting-ribbon {
+  background: rgba(239, 231, 214, 0.6) !important;
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(216, 203, 169, 0.55) !important;
+  padding: 10px 20px !important;
+  gap: 4px !important;
+}
+.ribbon-group {
+  padding: 4px 14px !important;
+  border-right: 1px solid rgba(216, 203, 169, 0.55) !important;
+}
+.ribbon-label {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 9.5px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.12em !important;
+  text-transform: uppercase !important;
+  color: var(--sf-ink-mute) !important;
+}
+.toolbar-select, .toolbar-input {
+  background: #fff !important;
+  border: 1px solid var(--sf-line) !important;
+  border-radius: 6px !important;
+  font-family: var(--sf-font-sans) !important;
+  font-size: 12px !important;
+  color: var(--sf-ink) !important;
+  padding: 4px 8px !important;
+  transition: border-color .2s ease;
+}
+.toolbar-select:focus, .toolbar-input:focus { border-color: var(--sf-coral) !important; outline: none !important; }
+
+/* ---- Workspace ---- */
+.workspace { background: var(--sf-paper) !important; }
+.panel { background: transparent !important; }
+.panel-header {
+  background: transparent !important;
+  border-bottom: 1px solid rgba(216, 203, 169, 0.4) !important;
+  padding: 12px 20px !important;
+}
+.panel-header h2 {
+  font-family: var(--sf-font-display) !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  color: var(--sf-ink) !important;
+  letter-spacing: -.01em !important;
+  text-transform: none !important;
+}
+
+/* Format Now button — the star */
+.format-action-btn {
+  background: var(--sf-coral) !important;
+  color: #fff !important;
+  border-radius: 999px !important;
+  font-family: var(--sf-font-sans) !important;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+  padding: 9px 18px !important;
+  box-shadow: 0 4px 14px rgba(229, 87, 61, 0.35) !important;
+  border: none !important;
+  transition: transform .2s ease, box-shadow .2s ease !important;
+}
+.format-action-btn:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 6px 18px rgba(229, 87, 61, 0.5) !important;
+}
+
+/* Input textarea */
+#raw-input {
+  background: transparent !important;
+  border: none !important;
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 14px !important;
+  line-height: 1.7 !important;
+  color: var(--sf-ink-soft) !important;
+  padding: 20px !important;
+}
+#raw-input::placeholder { color: var(--sf-ink-mute) !important; opacity: 0.6; }
+
+/* Preview area — paper feel */
+.preview-scroll-wrapper {
+  background: linear-gradient(180deg, var(--sf-paper-2) 0%, #E4D9C2 100%) !important;
+  padding: 40px 20px !important;
+}
+.preview-container {
+  border-radius: 8px !important;
+  box-shadow: 0 4px 24px rgba(15, 26, 46, 0.08), 0 1px 3px rgba(15, 26, 46, 0.04) !important;
+  background: #fff !important;
+}
+
+/* Rich empty state */
+.placeholder-text {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  min-height: 400px; text-align: center; padding: 40px 20px;
+  color: var(--sf-ink-mute);
+}
+.placeholder-illustration {
+  color: var(--sf-ink-mute); opacity: 0.5;
+  margin-bottom: 20px;
+  animation: floaty 4s ease-in-out infinite;
+}
+@keyframes floaty { 0%,100%{transform: translateY(0);} 50%{transform: translateY(-6px);} }
+.placeholder-title {
+  font-family: var(--sf-font-display) !important;
+  font-size: 22px; font-weight: 600;
+  color: var(--sf-ink); margin-bottom: 8px;
+  letter-spacing: -.01em;
+}
+.placeholder-sub {
+  font-size: 14.5px; color: var(--sf-ink-mute);
+  max-width: 380px; margin: 0 auto 20px; line-height: 1.6;
+}
+.placeholder-sub b { color: var(--sf-coral); font-weight: 600; }
+.placeholder-tags {
+  display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
+  max-width: 360px;
+}
+.placeholder-tags span {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px; font-weight: 500;
+  padding: 4px 10px; border-radius: 999px;
+  background: rgba(229, 87, 61, 0.08);
+  color: var(--sf-coral);
+  border: 1px solid rgba(229, 87, 61, 0.2);
+  letter-spacing: 0.05em;
+}
+
+/* Settings panel refinement */
+.settings-panel {
+  background: var(--sf-paper) !important;
+  border-right: 1px solid var(--sf-line) !important;
+}
+.settings-header h2 {
+  font-family: var(--sf-font-display) !important;
+  font-weight: 600 !important;
+  color: var(--sf-ink) !important;
+}
+.setting-label {
+  font-family: var(--sf-font-sans) !important;
+  font-weight: 600 !important;
+  color: var(--sf-ink) !important;
+}
+.setting-input {
+  border: 1px solid var(--sf-line) !important;
+  border-radius: 8px !important;
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 12px !important;
+  background: #fff !important;
+}
+.setting-input:focus { border-color: var(--sf-coral) !important; outline: none !important; }
+
+/* Icon buttons — subtle */
+.icon-btn {
+  color: var(--sf-ink-soft) !important;
+  transition: background .2s ease, color .2s ease !important;
+  border-radius: 6px !important;
+}
+.icon-btn:hover:not(:disabled) {
+  background: var(--sf-paper-2) !important;
+  color: var(--sf-ink) !important;
+}
+
+/* Toast refinement */
+.toast-message {
+  background: var(--sf-ink) !important;
+  color: var(--sf-paper) !important;
+  font-family: var(--sf-font-sans) !important;
+  font-weight: 500 !important;
+  border-radius: 10px !important;
+  box-shadow: 0 12px 40px rgba(15,26,46,0.2) !important;
+}
+
+/* Mobile export bar */
+.mobile-export-container {
+  background: rgba(247, 241, 229, 0.95) !important;
+  backdrop-filter: blur(16px);
+  border-top: 1px solid rgba(216, 203, 169, 0.55) !important;
+}
+.mobile-export-btn.primary {
+  background: var(--sf-ink) !important;
+  color: var(--sf-paper) !important;
+  border-radius: 999px !important;
+  font-family: var(--sf-font-sans) !important;
+  font-weight: 600 !important;
+  font-size: 12px !important;
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  .editor-brand-word { display: none; }
+  .editor-brand-sep { display: none; }
+  .top-bar.refined .document-title-input { min-width: 120px; font-size: 13px !important; }
+}

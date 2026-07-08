@@ -287,7 +287,11 @@ body { font-family: var(--sf-font-sans) !important; background: var(--sf-paper) 
   font-size: 12px !important;
 }
 
-/* Responsive tweaks */
+/* ==========================================================================
+   RESPONSIVE — MOBILE OPTIMIZATION
+   ========================================================================== */
+
+/* Tablets (up to 1024px) */
 @media (max-width: 1024px) {
   .workspace {
     flex-direction: column !important;
@@ -297,39 +301,60 @@ body { font-family: var(--sf-font-sans) !important; background: var(--sf-paper) 
   }
 }
 
+/* Mobile (up to 768px) */
 @media (max-width: 768px) {
+  /* --- Brand: Show compact name "SF" instead of full name --- */
   .editor-brand-word { display: none; }
   .editor-brand-sep { display: none; }
-  .top-bar.refined .document-title-input { min-width: 120px; font-size: 13px !important; }
   
-  /* Ribbon scrolling */
-  .formatting-ribbon { padding: 8px 12px !important; gap: 8px !important; flex-wrap: nowrap !important; overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; justify-content: flex-start !important; }
-  .ribbon-group { flex: 0 0 auto !important; border-right: 1px solid rgba(216, 203, 169, 0.55) !important; padding-right: 14px !important; }
+  /* Show a compact "SF" label after the logo mark on mobile */
+  .editor-brand::after {
+    content: "SF";
+    font-family: var(--sf-font-display);
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--sf-ink);
+    letter-spacing: -0.02em;
+  }
   
-  /* Hide desktop buttons */
+  .top-bar.refined .document-title-input { min-width: 110px; font-size: 13px !important; }
+  
+  /* --- Hide ENTIRE formatting ribbon on mobile --- */
+  /* Templates handle font/size, mini-toolbar in output handles alignment */
+  .formatting-ribbon {
+    display: none !important;
+  }
+  
+  /* --- Hide desktop export buttons --- */
   .desktop-export-container { display: none !important; }
   .top-bar.refined { justify-content: space-between !important; }
   
-  /* Maximize space */
-  .preview-scroll-wrapper { padding: 20px 10px !important; }
-  .placeholder-text { min-height: 250px !important; padding: 20px 10px !important; }
-  #raw-input { padding: 12px !important; }
+  /* --- Maximize workspace space --- */
+  .preview-scroll-wrapper { padding: 16px 8px !important; }
+  .placeholder-text { min-height: 200px !important; padding: 20px 10px !important; }
+  #raw-input { padding: 12px !important; font-size: 13px !important; }
   
-  /* Ensure export bar doesn't overlap workspace content */
-  .workspace { padding-bottom: 70px !important; }
+  /* Input panel should be roomy for typing */
+  .input-panel { min-height: 60vh !important; }
+  
+  /* Ensure floating export bar doesn't overlap workspace content */
+  .workspace { padding-bottom: 75px !important; }
+  
+  /* Compact panel headers */
+  .panel-header { padding: 8px 12px !important; }
+  .panel-header h2 { font-size: 14px !important; }
 }
 
+/* Small Phones (up to 480px) */
 @media (max-width: 480px) {
-  .top-bar.refined { padding: 8px 12px !important; }
+  .top-bar.refined { padding: 6px 10px !important; }
   .editor-brand-mark { width: 26px !important; height: 26px !important; }
-  .top-bar.refined .document-title-input { min-width: 100px; font-size: 12px !important; padding: 4px 6px !important; }
+  .top-bar.refined .document-title-input { min-width: 90px; font-size: 12px !important; padding: 3px 6px !important; }
   
-  /* Smaller ribbon inputs */
-  .ribbon-label { font-size: 8.5px !important; }
-  .toolbar-select, .toolbar-input { font-size: 11px !important; padding: 2px 6px !important; }
-  
-  /* Stack panel headers for bigger buttons */
-  .panel-header { flex-direction: column !important; align-items: stretch !important; gap: 10px !important; }
+  /* Stack panel headers for bigger touch targets */
+  .panel-header { flex-direction: column !important; align-items: stretch !important; gap: 8px !important; }
   .panel-actions { width: 100% !important; display: flex !important; justify-content: space-between !important; }
   .format-action-btn { flex: 1 !important; text-align: center !important; justify-content: center !important; margin-right: 8px !important; }
 }
+
+

@@ -288,8 +288,48 @@ body { font-family: var(--sf-font-sans) !important; background: var(--sf-paper) 
 }
 
 /* Responsive tweaks */
+@media (max-width: 1024px) {
+  .workspace {
+    flex-direction: column !important;
+  }
+  .panel {
+    min-height: 50vh !important;
+  }
+}
+
 @media (max-width: 768px) {
   .editor-brand-word { display: none; }
   .editor-brand-sep { display: none; }
   .top-bar.refined .document-title-input { min-width: 120px; font-size: 13px !important; }
+  
+  /* Ribbon scrolling */
+  .formatting-ribbon { padding: 8px 12px !important; gap: 8px !important; flex-wrap: nowrap !important; overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; justify-content: flex-start !important; }
+  .ribbon-group { flex: 0 0 auto !important; border-right: 1px solid rgba(216, 203, 169, 0.55) !important; padding-right: 14px !important; }
+  
+  /* Hide desktop buttons */
+  .desktop-export-container { display: none !important; }
+  .top-bar.refined { justify-content: space-between !important; }
+  
+  /* Maximize space */
+  .preview-scroll-wrapper { padding: 20px 10px !important; }
+  .placeholder-text { min-height: 250px !important; padding: 20px 10px !important; }
+  #raw-input { padding: 12px !important; }
+  
+  /* Ensure export bar doesn't overlap workspace content */
+  .workspace { padding-bottom: 70px !important; }
+}
+
+@media (max-width: 480px) {
+  .top-bar.refined { padding: 8px 12px !important; }
+  .editor-brand-mark { width: 26px !important; height: 26px !important; }
+  .top-bar.refined .document-title-input { min-width: 100px; font-size: 12px !important; padding: 4px 6px !important; }
+  
+  /* Smaller ribbon inputs */
+  .ribbon-label { font-size: 8.5px !important; }
+  .toolbar-select, .toolbar-input { font-size: 11px !important; padding: 2px 6px !important; }
+  
+  /* Stack panel headers for bigger buttons */
+  .panel-header { flex-direction: column !important; align-items: stretch !important; gap: 10px !important; }
+  .panel-actions { width: 100% !important; display: flex !important; justify-content: space-between !important; }
+  .format-action-btn { flex: 1 !important; text-align: center !important; justify-content: center !important; margin-right: 8px !important; }
 }

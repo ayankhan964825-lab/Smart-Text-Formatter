@@ -179,9 +179,9 @@ body { font-family: var(--sf-font-sans) !important; background: var(--sf-paper) 
 }
 #raw-input::placeholder { color: var(--sf-ink-mute) !important; opacity: 0.6; }
 
-/* Preview area — paper feel */
+/* Preview area — Canvas background for distinct A4 pages */
 .preview-scroll-wrapper {
-  background: linear-gradient(180deg, var(--sf-paper-2) 0%, #E4D9C2 100%) !important;
+  background: #e5e7eb !important; /* distinct gray to make white pages pop */
   padding: 40px 20px !important;
 }
 

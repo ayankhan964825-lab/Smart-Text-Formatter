@@ -184,8 +184,15 @@ body { font-family: var(--sf-font-sans) !important; background: var(--sf-paper) 
   background: linear-gradient(180deg, var(--sf-paper-2) 0%, #E4D9C2 100%) !important;
   padding: 40px 20px !important;
 }
+
 .preview-container {
-  border-radius: 8px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+
+.a4-page {
+  border-radius: 4px !important;
   box-shadow: 0 4px 24px rgba(15, 26, 46, 0.08), 0 1px 3px rgba(15, 26, 46, 0.04) !important;
   background: #fff !important;
 }

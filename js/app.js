@@ -2741,6 +2741,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // 2. Export PDF (Using Python Backend for 100% Identical Output)
     const handleExportPdf = async (e) => {
         if (e) e.preventDefault();
+        
+        const exportOverlay = document.getElementById('export-loading-overlay');
+        
         try {
             const previewContainer = document.getElementById('formatted-preview');
             if (previewContainer.querySelector('.placeholder-text')) {
@@ -2748,6 +2751,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
+            if (exportOverlay) exportOverlay.style.display = 'flex';
             statusText.textContent = "Preparing Document for PDF Conversion...";
 
             // Deep clone the preview container
@@ -2807,6 +2811,8 @@ document.addEventListener('DOMContentLoaded', () => {
             alert("Backend conversion failed. Falling back to Browser Print Layout.");
             window.print();
             statusText.textContent = "Fell back to Print Layout ✨";
+        } finally {
+            if (exportOverlay) exportOverlay.style.display = 'none';
         }
     };
 
@@ -3446,6 +3452,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const container = document.getElementById('formatted-preview');
         if (!container) return;
 
+        // --- SAVE CARET POSITION ---
+        const sel = window.getSelection();
+        let savedCaret = false;
+        if (sel.rangeCount > 0 && container.contains(sel.anchorNode)) {
+            const range = sel.getRangeAt(0);
+            const marker = document.createElement('span');
+            marker.id = 'sf-caret-marker';
+            marker.style.position = 'absolute';
+            marker.style.opacity = '0';
+            
+            const r = range.cloneRange();
+            r.collapse(false);
+            r.insertNode(marker);
+            savedCaret = true;
+        }
+
         // Collect all real block children (skip .a4-page wrappers from a previous pass)
         const allChildren = [];
         container.querySelectorAll('.a4-page').forEach(page => {
@@ -3477,11 +3499,49 @@ document.addEventListener('DOMContentLoaded', () => {
             const child = allChildren[i];
             currentPage.appendChild(child);
 
-            // IDEA 2 — Overflow Detector: did this element push the page over the limit?
-            const overflow = currentPage.scrollHeight - currentPage.clientHeight;
-            if (overflow > 2) { // 2px tolerance
+            // IDEA 2 — Precise Geometric Overflow Detector (Bypasses Chrome padding bug)
+            let measureEl = child;
+            if (child.nodeType !== 1) { // If it's a text node or comment
+                if (child.nodeType === 3 && !child.textContent.trim()) {
+                    continue; // Skip empty text nodes from triggering overflow
+                }
+                const wrapper = document.createElement('span');
+                currentPage.replaceChild(wrapper, child);
+                wrapper.appendChild(child);
+                measureEl = wrapper;
+            }
+
+            const childStyle = window.getComputedStyle(measureEl);
+            const marginBottom = parseFloat(childStyle.marginBottom) || 0;
+            const childTotalBottom = measureEl.offsetTop + measureEl.offsetHeight + marginBottom;
+            
+            const pageStyle = window.getComputedStyle(currentPage);
+            const padTop = parseFloat(pageStyle.paddingTop) || 0;
+            const safeBottomLimit = padTop + maxH;
+
+            const overflow = childTotalBottom - safeBottomLimit;
+            
+            // Check if there are other content elements on this page.
+            // currentPage always has 1 child initially (the page-number-badge).
+            // So if childNodes.length <= 2, this is the FIRST content element.
+            const isFirstContentElement = currentPage.childNodes.length <= 2;
+
+            if (overflow > 2 && !isFirstContentElement) { // 2px tolerance
                 // Roll it back — move the element to a new page
                 currentPage.removeChild(child);
+
+                // --- KEEP WITH NEXT (Orphan Heading Prevention) ---
+                const elementsToMove = [child];
+                let prev = currentPage.lastElementChild;
+                let attempts = 0;
+                // If the last element on the page is a heading, pull it to the next page too!
+                // But NEVER pull it if it's the ONLY content element left on the page (prevent empty pages)
+                while (prev && prev.tagName && prev.tagName.match(/^H[1-6]$/i) && attempts < 3 && currentPage.childNodes.length > 2) {
+                    currentPage.removeChild(prev);
+                    elementsToMove.unshift(prev);
+                    prev = currentPage.lastElementChild;
+                    attempts++;
+                }
 
                 // Add page separator + new page
                 const label = document.createElement('div');
@@ -3492,17 +3552,41 @@ document.addEventListener('DOMContentLoaded', () => {
                 pageNum++;
                 currentPage = createNewA4Page(pageNum);
                 container.appendChild(currentPage);
-                currentPage.appendChild(child);
+                
+                // Append all moved elements to the new page
+                elementsToMove.forEach(el => currentPage.appendChild(el));
             }
         }
 
         // Attach input listeners to each page for Idea 1 (debounced re-pagination on edit)
         attachPageEditListeners(container);
+
+        // --- RESTORE CARET POSITION ---
+        if (savedCaret) {
+            const marker = document.getElementById('sf-caret-marker');
+            if (marker) {
+                const newSel = window.getSelection();
+                const newRange = document.createRange();
+                newRange.setStartBefore(marker);
+                newRange.collapse(true);
+                newSel.removeAllRanges();
+                newSel.addRange(newRange);
+                marker.parentNode.removeChild(marker);
+                
+                // Ensure the cursor is visible
+                if (marker.scrollIntoViewIfNeeded) {
+                    marker.scrollIntoViewIfNeeded();
+                }
+            }
+        }
     }
 
     function createNewA4Page(num) {
         const page = document.createElement('div');
         page.className = 'a4-page';
+        if (window.isCustomizationActive) {
+            page.setAttribute('contenteditable', 'true');
+        }
         // Page number badge
         const badge = document.createElement('span');
         badge.className = 'page-number-badge';
@@ -3533,26 +3617,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Hook paginatePreview into the existing customization toggle
     // When "Edit" is enabled, pages become editable; when "Done", re-paginate
-    const _origCustomizeBtnHandler = customizeBtn.onclick;
-    customizeBtn.addEventListener('click', () => {
-        const isActive = window.isCustomizationActive;
-        const container = document.getElementById('formatted-preview');
-        if (!container) return;
-        const pages = container.querySelectorAll('.a4-page');
+    if (customizeBtn) {
+        const _origCustomizeBtnHandler = customizeBtn.onclick;
+        customizeBtn.addEventListener('click', () => {
+            const isActive = window.isCustomizationActive;
+            const container = document.getElementById('formatted-preview');
+            if (!container) return;
+            const pages = container.querySelectorAll('.a4-page');
 
-        if (isActive) {
-            // Just turned ON editing — make pages editable
-            pages.forEach(p => p.setAttribute('contenteditable', 'true'));
-            // Re-attach listeners
-            attachPageEditListeners(container);
-        } else {
-            // Just turned OFF editing — make pages read-only and re-paginate
-            pages.forEach(p => {
-                p.setAttribute('contenteditable', 'false');
-            });
-            paginatePreview(); // Refresh pagination after edits
-        }
-    });
+            if (isActive) {
+                // Just turned ON editing — make pages editable
+                pages.forEach(p => p.setAttribute('contenteditable', 'true'));
+                // Re-attach listeners
+                attachPageEditListeners(container);
+            } else {
+                // Just turned OFF editing — make pages read-only and re-paginate
+                pages.forEach(p => {
+                    p.setAttribute('contenteditable', 'false');
+                });
+                paginatePreview(); // Refresh pagination after edits
+            }
+        });
+    }
 
     // Expose globally so finalizeRendering can call it after AI formatting
     window.paginatePreview = paginatePreview;

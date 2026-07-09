@@ -179,23 +179,11 @@ body { font-family: var(--sf-font-sans) !important; background: var(--sf-paper) 
 }
 #raw-input::placeholder { color: var(--sf-ink-mute) !important; opacity: 0.6; }
 
-/* Preview area — Canvas background for distinct A4 pages */
-.preview-scroll-wrapper {
-  background: #e5e7eb !important; /* distinct gray to make white pages pop */
-  padding: 40px 20px !important;
-}
+/* Preview area — no overrides; let styles.css A4 pagination handle it */
+/* .preview-scroll-wrapper uses inline style bg #e5e7eb from editor.html */
+/* .preview-container is transparent host from styles.css */
+/* .a4-page gets white bg, shadow, 210mm width, 297mm height from styles.css */
 
-.preview-container {
-  background: transparent !important;
-  box-shadow: none !important;
-  border-radius: 0 !important;
-}
-
-.a4-page {
-  border-radius: 4px !important;
-  box-shadow: 0 4px 24px rgba(15, 26, 46, 0.08), 0 1px 3px rgba(15, 26, 46, 0.04) !important;
-  background: #fff !important;
-}
 
 /* Rich empty state */
 .placeholder-text {

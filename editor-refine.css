@@ -179,8 +179,14 @@ body { font-family: var(--sf-font-sans) !important; background: var(--sf-paper) 
 }
 #raw-input::placeholder { color: var(--sf-ink-mute) !important; opacity: 0.6; }
 
-/* Preview area — no overrides; let styles.css A4 pagination handle it */
-/* .preview-scroll-wrapper uses inline style bg #e5e7eb from editor.html */
+/* Preview area styling for dynamic background toggle */
+.preview-scroll-wrapper {
+    background-color: #e5e7eb;
+    transition: background-color 0.3s ease;
+}
+.preview-scroll-wrapper.empty-state {
+    background-color: transparent !important; /* Matches input panel background */
+}
 /* .preview-container is transparent host from styles.css */
 /* .a4-page gets white bg, shadow, 210mm width, 297mm height from styles.css */
 

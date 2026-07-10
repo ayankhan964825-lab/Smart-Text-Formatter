@@ -18,6 +18,18 @@ document.addEventListener('DOMContentLoaded', () => {
     let autoSaveTimer = null;
     let isInitialLoad = true;
 
+    // Helper to toggle preview wrapper background
+    function updatePreviewWrapperState(isEmpty) {
+        const wrapper = document.getElementById('preview-scroll-wrapper');
+        if (wrapper) {
+            if (isEmpty) {
+                wrapper.classList.add('empty-state');
+            } else {
+                wrapper.classList.remove('empty-state');
+            }
+        }
+    }
+
     // Force Light Theme
     htmlElement.setAttribute('data-theme', 'light');
     localStorage.setItem('theme', 'light');
@@ -627,6 +639,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const previewContainer = document.getElementById('formatted-preview');
         previewContainer.innerHTML = pendingFormattedHtml;
         appendModal.style.display = 'none';
+        updatePreviewWrapperState(false);
         
         statusText.textContent = "Finalizing Rendering...";
         await finalizeRendering(previewContainer);
@@ -639,6 +652,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         statusText.textContent = "Finalizing Rendering...";
         const previewContainer = document.getElementById('formatted-preview');
+        updatePreviewWrapperState(false);
         await finalizeRendering(previewContainer);
         statusText.textContent = "Appended Successfully ✨";
     });
@@ -1287,6 +1301,7 @@ document.addEventListener('DOMContentLoaded', () => {
             previewContainer.innerHTML = '<div class="placeholder-text">Live preview will appear here...</div>';
             statusText.textContent = "Waiting for input";
             hasFormattedOnce = false;
+            updatePreviewWrapperState(true);
 
             // Re-enable formatting ribbon controls since input is empty
             const ribbonControls = document.querySelectorAll('.formatting-ribbon select, .formatting-ribbon input');
@@ -1376,7 +1391,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const finalizeFlowchart = (parts) => {
                         let nodes = [];
                         let arrows = [];
-                        const arrowValidator = /^(↓|→|->|=>|v|V|\^|<|>)$/i;
+                        const arrowValidator = /^(↓|→|->|=>)$/i;
 
                         for (let part of parts) {
                             if (arrowValidator.test(part)) arrows.push(part);
@@ -2405,7 +2420,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (forceOverwrite || !window.isCustomizationActive || !currentPreviewHtml || isPlaceholder) {
                 previewContainer.innerHTML = finalHtml;
                 statusText.textContent = "Formatted Successfully ✨";
-                // Now run post-rendering strictly on the injected DOM
+                updatePreviewWrapperState(false);
                 await finalizeRendering(previewContainer);
             } else {
                 // Text exists! The user might have manual edits they don't want to lose. Show the modal.
@@ -3294,7 +3309,21 @@ document.addEventListener('DOMContentLoaded', () => {
     function createNewDocument() {
         currentDocumentId = Date.now().toString();
         rawInput.value = "";
-        formattedPreview.innerHTML = "";
+        formattedPreview.innerHTML = `
+            <div class="placeholder-text">
+                <div class="placeholder-illustration">
+                    <svg width="64" height="64" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="10" y="6" width="38" height="52" rx="3"/>
+                        <path d="M16 16h26M16 24h20M16 32h26M16 40h18"/>
+                        <circle cx="46" cy="46" r="10" fill="rgba(229,87,61,.12)" stroke="none"/>
+                        <path d="M42 46l3 3 6-6" stroke="#E5573D"/>
+                    </svg>
+                </div>
+                <h4 class="placeholder-title">Your formatted document appears here</h4>
+                <p class="placeholder-sub">Paste raw text on the left, hit <b>Format Now</b>, and watch the AI structure it in seconds.</p>
+            </div>
+        `;
+        updatePreviewWrapperState(true);
         if(documentTitleInput) documentTitleInput.value = "Untitled Document";
         window.appUploadedImages = [];
         window.appImageCaptionEnabled = false;
@@ -3377,6 +3406,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 currentDocumentId = doc.id;
                 rawInput.value = doc.rawText || "";
                 formattedPreview.innerHTML = doc.formattedHtml || "";
+                if (!doc.formattedHtml || doc.formattedHtml.trim() === '') {
+                    formattedPreview.innerHTML = `
+                        <div class="placeholder-text">
+                            <div class="placeholder-illustration">
+                                <svg width="64" height="64" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="10" y="6" width="38" height="52" rx="3"/>
+                                    <path d="M16 16h26M16 24h20M16 32h26M16 40h18"/>
+                                    <circle cx="46" cy="46" r="10" fill="rgba(229,87,61,.12)" stroke="none"/>
+                                    <path d="M42 46l3 3 6-6" stroke="#E5573D"/>
+                                </svg>
+                            </div>
+                            <h4 class="placeholder-title">Your formatted document appears here</h4>
+                            <p class="placeholder-sub">Paste raw text on the left, hit <b>Format Now</b>, and watch the AI structure it in seconds.</p>
+                        </div>
+                    `;
+                    updatePreviewWrapperState(true);
+                } else {
+                    updatePreviewWrapperState(false);
+                }
                 if(documentTitleInput) documentTitleInput.value = doc.title || "Untitled Document";
                 window.appUploadedImages = doc.images || [];
                 window.appImageCaptionEnabled = doc.captionEnabled || false;

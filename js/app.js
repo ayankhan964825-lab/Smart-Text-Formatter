@@ -3499,7 +3499,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const child = allChildren[i];
             currentPage.appendChild(child);
 
-            // IDEA 2 — Precise Geometric Overflow Detector (Bypasses Chrome padding bug)
+            // IDEA 2 — Bulletproof Geometric Overflow Detector using getBoundingClientRect
             let measureEl = child;
             if (child.nodeType !== 1) { // If it's a text node or comment
                 if (child.nodeType === 3 && !child.textContent.trim()) {
@@ -3511,19 +3511,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 measureEl = wrapper;
             }
 
-            const childStyle = window.getComputedStyle(measureEl);
-            const marginBottom = parseFloat(childStyle.marginBottom) || 0;
-            const childTotalBottom = measureEl.offsetTop + measureEl.offsetHeight + marginBottom;
-            
             const pageStyle = window.getComputedStyle(currentPage);
-            const padTop = parseFloat(pageStyle.paddingTop) || 0;
+            const padTop = parseFloat(pageStyle.paddingTop) || 96; // Fallback to 25.4mm
             const safeBottomLimit = padTop + maxH;
 
-            const overflow = childTotalBottom - safeBottomLimit;
+            // Get absolute screen coordinates
+            const pageRect = currentPage.getBoundingClientRect();
+            const childRect = measureEl.getBoundingClientRect();
+            
+            // Calculate child's bottom relative to the page's top
+            const childRelativeBottom = (childRect.bottom - pageRect.top);
+            
+            const overflow = childRelativeBottom - safeBottomLimit;
             
             // Check if there are other content elements on this page.
-            // currentPage always has 1 child initially (the page-number-badge).
-            // So if childNodes.length <= 2, this is the FIRST content element.
             const isFirstContentElement = currentPage.childNodes.length <= 2;
 
             if (overflow > 2 && !isFirstContentElement) { // 2px tolerance

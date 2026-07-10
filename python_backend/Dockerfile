@@ -7,9 +7,9 @@ ENV PORT=8000
 
 # Install WeasyPrint system dependencies + fonts
 # WeasyPrint needs: pango, cairo, gdk-pixbuf, libffi
+# Liberation Serif is metrically identical to Times New Roman
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-    # WeasyPrint rendering engine dependencies
     libpango-1.0-0 \
     libpangocairo-1.0-0 \
     libpangoft2-1.0-0 \
@@ -18,7 +18,6 @@ RUN apt-get update && \
     libffi-dev \
     libglib2.0-0 \
     shared-mime-info \
-    # Fonts — Liberation Serif is metrically identical to Times New Roman
     fonts-liberation \
     fonts-freefont-ttf \
     fonts-noto \

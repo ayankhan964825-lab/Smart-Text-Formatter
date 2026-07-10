@@ -2752,7 +2752,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 2. Export PDF (Using Python Backend — Playwright Headless Chrome for identical output to Word)
+    // 2. Export PDF (Using Python Backend with ConvertAPI for 1000% identical DOCX to PDF match)
     const handleExportPdf = async (e) => {
         if (e) e.preventDefault();
         
@@ -2780,33 +2780,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 page.remove();
             });
 
-            // Convert SVGs to images for clean PDF rendering
+            // Convert SVGs to images for clean rendering
             await convertSvgsToImages(clonedPreview);
 
-            // Extract HTML content (same logic as Word export)
-            const tocEl = clonedPreview.querySelector('.toc-container');
-            let tocHtml = '', contentHtml = '';
-            if (tocEl) {
-                tocHtml = tocEl.outerHTML;
-                const contentAfterToc = clonedPreview.querySelector('.content-after-toc');
-                contentHtml = contentAfterToc ? contentAfterToc.innerHTML : clonedPreview.innerHTML.replace(tocEl.outerHTML, '');
-            } else {
-                contentHtml = clonedPreview.innerHTML;
-            }
+            statusText.textContent = "Generating Source DOCX...";
+            // Generate the exact same .docx file used for Word export
+            const docxBlob = await DocxExporter.generate(clonedPreview);
 
-            // Build the final HTML body (TOC with page break + content)
-            let htmlBody = '';
-            if (tocHtml) {
-                htmlBody += `<div>${tocHtml}</div><div style="page-break-before: always;"></div>`;
-            }
-            htmlBody += contentHtml;
-
-            statusText.textContent = "Converting to PDF via Backend...";
+            statusText.textContent = "Converting to PDF via Backend (ConvertAPI)...";
             const formData = new FormData();
-            formData.append("html", htmlBody);
+            formData.append("file", docxBlob, "document.docx");
 
-            // Live Render Backend URL — new HTML-to-PDF endpoint
-            const BACKEND_URL = "https://smart-text-formatter.onrender.com/api/html-to-pdf";
+            // Live Render Backend URL — DOCX to PDF endpoint
+            const BACKEND_URL = "https://smart-text-formatter.onrender.com/api/convert-docx-to-pdf";
 
             // Call Python Backend
             const response = await fetch(BACKEND_URL, {
@@ -2883,67 +2869,11 @@ document.addEventListener('DOMContentLoaded', () => {
             // Convert Mermaid containers on the cloned DOM
             await convertSvgsToImages(clonedPreview);
 
-            // Detect platform: Mobile/Mac get true .docx, Desktop Windows gets HTML .doc
-            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            const isMac = /Mac/.test(navigator.userAgent) && !/Windows/.test(navigator.userAgent);
-
-            let finalBlob, fileName;
-
-            if (isMobile || isMac) {
-                // ★ TRUE DOCX PATH — Uses DocxExporter + JSZip to generate a real OpenXML .docx
-                // This creates a valid ZIP-based DOCX that Google Docs, WPS Office, and MS Word Mobile all accept.
-                statusText.textContent = "Building DOCX file...";
-                finalBlob = await DocxExporter.generate(clonedPreview);
-                fileName = 'formatted_document.docx';
-            } else {
-                // ★ WINDOWS DESKTOP PATH — Uses MS Word HTML format as .doc
-                // Desktop MS Word natively understands this format with full @page, mso-* CSS support.
-                const tocEl = clonedPreview.querySelector('.toc-container');
-                let tocHtml = '', contentHtml = '';
-                if (tocEl) {
-                    tocHtml = tocEl.outerHTML;
-                    const contentAfterToc = clonedPreview.querySelector('.content-after-toc');
-                    contentHtml = contentAfterToc ? contentAfterToc.innerHTML : clonedPreview.innerHTML.replace(tocEl.outerHTML, '');
-                } else {
-                    contentHtml = clonedPreview.innerHTML;
-                }
-
-                const msWordDocHtml = `
-                    <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-                    <head>
-                        <meta charset='utf-8'>
-                        <title>Exported Document</title>
-                        <!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom><w:DoNotOptimizeForBrowser/></w:WordDocument></xml><![endif]-->
-                        <style>
-                            @page { mso-page-orientation: portrait; size: A4; margin: 2.54cm; mso-header-margin: 1.27cm; mso-footer-margin: 1.27cm; }
-                            @page TocSection { mso-footer: none; }
-                            div.TocSection { page: TocSection; }
-                            @page ContentSection { mso-footer: f1; mso-page-numbers-start: 1; }
-                            div.ContentSection { page: ContentSection; }
-                            body { font-family: 'Times New Roman', serif; font-size: 12pt; line-height: 1.15; text-align: justify; }
-                            h1 { font-size: 14pt; text-align: center; text-transform: uppercase; page-break-after: avoid; margin-top: 18pt; margin-bottom: 12pt; }
-                            h2 { font-size: 12pt; text-align: left; text-transform: uppercase; page-break-after: avoid; margin-top: 18pt; margin-bottom: 8pt; }
-                            h3,h4,h5,h6 { font-size: 12pt; text-align: left; page-break-after: avoid; margin-top: 14pt; margin-bottom: 8pt; }
-                            p,ul,ol,table { margin-top: 0; margin-bottom: 12pt; }
-                            .keep-together, .mermaid-container, img { page-break-inside: avoid; }
-                            .toc-table { width: 100%; border-collapse: collapse; }
-                            .toc-table th, .toc-table td { border: 1px solid #000; padding: 6px 10px; }
-                        </style>
-                    </head>
-                    <body>
-                        ${tocHtml ? `<div class="TocSection">${tocHtml}<br clear=all style='mso-special-character:line-break;page-break-before:always'></div>` : ''}
-                        <div class="ContentSection">${contentHtml}</div>
-                        <div style="mso-element: footer;" id="f1">
-                            <p style="text-align: center; font-size: 10pt; color: #666;">
-                                <!--[if supportFields]><span style="mso-element:field-begin"></span>PAGE<span style="mso-element:field-end"></span><![endif]-->
-                            </p>
-                        </div>
-                    </body>
-                    </html>
-                `;
-                finalBlob = new Blob(['\ufeff', msWordDocHtml], { type: 'application/msword' });
-                fileName = 'formatted_document.doc';
-            }
+            // ★ TRUE DOCX PATH — Uses DocxExporter + JSZip to generate a real OpenXML .docx
+            // This creates a valid ZIP-based DOCX that MS Word natively understands perfectly.
+            statusText.textContent = "Building DOCX file...";
+            const finalBlob = await DocxExporter.generate(clonedPreview);
+            const fileName = 'formatted_document.docx';
 
             const url = URL.createObjectURL(finalBlob);
             const a = document.createElement('a');

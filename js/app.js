@@ -2752,8 +2752,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 2. Export PDF (Using browser Print Layout - per Shiv Prakash format)
-    // 2. Export PDF (Using Python Backend for 100% Identical Output)
+    // 2. Export PDF (Using Python Backend — Playwright Headless Chrome for identical output to Word)
     const handleExportPdf = async (e) => {
         if (e) e.preventDefault();
         
@@ -2767,12 +2766,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (exportOverlay) exportOverlay.style.display = 'flex';
-            statusText.textContent = "Preparing Document for PDF Conversion...";
+            statusText.textContent = "Preparing Document for PDF...";
 
             // Deep clone the preview container
             const clonedPreview = previewContainer.cloneNode(true);
 
-            // Clean up UI artifacts
+            // Clean up UI artifacts (same cleanup as Word export)
             const noExportEls = clonedPreview.querySelectorAll('.no-export');
             noExportEls.forEach(el => el.remove());
             clonedPreview.querySelectorAll('.page-number-badge, .page-break-label').forEach(el => el.remove());
@@ -2781,19 +2780,33 @@ document.addEventListener('DOMContentLoaded', () => {
                 page.remove();
             });
 
-            // Convert SVGs
+            // Convert SVGs to images for clean PDF rendering
             await convertSvgsToImages(clonedPreview);
 
-            statusText.textContent = "Generating Source DOCX...";
-            // Generate the exact same .docx file used for Word export
-            const docxBlob = await DocxExporter.generate(clonedPreview);
+            // Extract HTML content (same logic as Word export)
+            const tocEl = clonedPreview.querySelector('.toc-container');
+            let tocHtml = '', contentHtml = '';
+            if (tocEl) {
+                tocHtml = tocEl.outerHTML;
+                const contentAfterToc = clonedPreview.querySelector('.content-after-toc');
+                contentHtml = contentAfterToc ? contentAfterToc.innerHTML : clonedPreview.innerHTML.replace(tocEl.outerHTML, '');
+            } else {
+                contentHtml = clonedPreview.innerHTML;
+            }
+
+            // Build the final HTML body (TOC with page break + content)
+            let htmlBody = '';
+            if (tocHtml) {
+                htmlBody += `<div>${tocHtml}</div><div style="page-break-before: always;"></div>`;
+            }
+            htmlBody += contentHtml;
 
             statusText.textContent = "Converting to PDF via Backend...";
             const formData = new FormData();
-            formData.append("file", docxBlob, "document.docx");
+            formData.append("html", htmlBody);
 
-            // Live Render Backend URL
-            const BACKEND_URL = "https://smart-text-formatter.onrender.com/api/convert-docx-to-pdf";
+            // Live Render Backend URL — new HTML-to-PDF endpoint
+            const BACKEND_URL = "https://smart-text-formatter.onrender.com/api/html-to-pdf";
 
             // Call Python Backend
             const response = await fetch(BACKEND_URL, {

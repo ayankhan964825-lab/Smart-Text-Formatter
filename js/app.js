@@ -2920,7 +2920,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             div.TocSection { page: TocSection; }
                             @page ContentSection { mso-footer: f1; mso-page-numbers-start: 1; }
                             div.ContentSection { page: ContentSection; }
-                            body { font-family: 'Times New Roman', serif; font-size: 12pt; line-height: 1.6; text-align: justify; }
+                            body { font-family: 'Times New Roman', serif; font-size: 12pt; line-height: 1.15; text-align: justify; }
                             h1 { font-size: 14pt; text-align: center; text-transform: uppercase; page-break-after: avoid; margin-top: 18pt; margin-bottom: 12pt; }
                             h2 { font-size: 12pt; text-align: left; text-transform: uppercase; page-break-after: avoid; margin-top: 18pt; margin-bottom: 8pt; }
                             h3,h4,h5,h6 { font-size: 12pt; text-align: left; page-break-after: avoid; margin-top: 14pt; margin-bottom: 8pt; }

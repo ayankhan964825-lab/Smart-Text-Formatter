@@ -53,7 +53,7 @@ async def html_to_pdf(html: str = Form(...)):
         body {{
             font-family: 'Times New Roman', 'Liberation Serif', serif;
             font-size: 12pt;
-            line-height: 1.6;
+            line-height: 1.15;
             text-align: justify;
             color: #000;
             margin: 0;
@@ -85,11 +85,8 @@ async def html_to_pdf(html: str = Form(...)):
             margin-bottom: 8pt;
             page-break-after: avoid;
         }}
-        p {{
+        p, ul, ol, table {{
             margin-top: 0;
-            margin-bottom: 10pt;
-        }}
-        ul, ol {{
             margin-bottom: 12pt;
         }}
         li {{
@@ -98,7 +95,6 @@ async def html_to_pdf(html: str = Form(...)):
         table {{
             border-collapse: collapse;
             width: 100%;
-            margin-bottom: 12pt;
         }}
         th, td {{
             border: 1px solid #000;

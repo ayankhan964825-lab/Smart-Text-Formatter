@@ -1,10 +1,11 @@
 import os
 import shutil
 import uuid
+import glob
+import requests
 from fastapi import FastAPI, HTTPException, UploadFile, File
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
-from pylovepdf.tools.officepdf import OfficeToPdf
 
 app = FastAPI(title="Document Converter API (Render)")
 
@@ -28,6 +29,8 @@ API_KEYS = [k.strip() for k in ILOVEPDF_KEYS_ENV.split(",") if k.strip()]
 # Global state to keep track of which key to use
 current_key_index = 0
 
+ILOVEPDF_API_BASE = "https://api.ilovepdf.com/v1"
+
 @app.get("/ping")
 async def ping():
     return {"status": "awake", "message": "Server is awake and ready!", "keys_configured": len(API_KEYS)}
@@ -43,10 +46,79 @@ def rotate_to_next_key():
         current_key_index = (current_key_index + 1) % len(API_KEYS)
         print(f"Rotated to next iLovePDF key (Index: {current_key_index})")
 
+
+def ilovepdf_auth(public_key: str) -> str:
+    """Get JWT token from iLovePDF using public key."""
+    resp = requests.post(
+        f"{ILOVEPDF_API_BASE}/auth",
+        json={"public_key": public_key}
+    )
+    resp.raise_for_status()
+    return resp.json()["token"]
+
+
+def ilovepdf_start_task(token: str) -> dict:
+    """Start a new officepdf task. Returns server and task id."""
+    resp = requests.get(
+        f"{ILOVEPDF_API_BASE}/start/officepdf",
+        headers={"Authorization": f"Bearer {token}"}
+    )
+    resp.raise_for_status()
+    data = resp.json()
+    return {"server": data["server"], "task": data["task"]}
+
+
+def ilovepdf_upload(server: str, task: str, token: str, filepath: str, filename: str) -> str:
+    """Upload a file to iLovePDF. Returns server_filename."""
+    with open(filepath, "rb") as f:
+        resp = requests.post(
+            f"https://{server}/v1/upload",
+            headers={"Authorization": f"Bearer {token}"},
+            data={"task": task},
+            files={"file": (filename, f, "application/vnd.openxmlformats-officedocument.wordprocessingml.document")}
+        )
+    resp.raise_for_status()
+    return resp.json()["server_filename"]
+
+
+def ilovepdf_process(server: str, task: str, token: str, server_filename: str, original_filename: str) -> str:
+    """Process the task. Returns download filename."""
+    resp = requests.post(
+        f"https://{server}/v1/process",
+        headers={"Authorization": f"Bearer {token}"},
+        json={
+            "task": task,
+            "tool": "officepdf",
+            "files": [
+                {
+                    "server_filename": server_filename,
+                    "filename": original_filename
+                }
+            ]
+        }
+    )
+    resp.raise_for_status()
+    data = resp.json()
+    return data.get("download_filename", "output.pdf")
+
+
+def ilovepdf_download(server: str, task: str, token: str, output_path: str):
+    """Download the processed file."""
+    resp = requests.get(
+        f"https://{server}/v1/download/{task}",
+        headers={"Authorization": f"Bearer {token}"},
+        stream=True
+    )
+    resp.raise_for_status()
+    with open(output_path, "wb") as f:
+        for chunk in resp.iter_content(chunk_size=8192):
+            f.write(chunk)
+
+
 @app.post("/api/convert-docx-to-pdf")
 async def convert_docx_to_pdf(file: UploadFile = File(...)):
     """
-    Accepts a .docx file and converts it to a pixel-perfect PDF using iLovePDF API.
+    Accepts a .docx file and converts it to a pixel-perfect PDF using iLovePDF REST API.
     Implements API key rotation to maximize monthly free tier usage.
     """
     if not file.filename.endswith('.docx'):
@@ -57,10 +129,7 @@ async def convert_docx_to_pdf(file: UploadFile = File(...)):
 
     job_id = str(uuid.uuid4())
     input_path = os.path.join(TEMP_DIR, f"{job_id}.docx")
-    
-    # pylovepdf downloads the file with its original name but with a .pdf extension
-    # So if we upload 'job_id.docx', it downloads 'job_id.pdf' into the output folder
-    expected_output_path = os.path.join(TEMP_DIR, f"{job_id}.pdf")
+    output_path = os.path.join(TEMP_DIR, f"{job_id}.pdf")
 
     try:
         # Save the uploaded docx file
@@ -74,61 +143,69 @@ async def convert_docx_to_pdf(file: UploadFile = File(...)):
 
         while attempts < max_attempts:
             public_key = get_next_available_key()
-            print(f"Attempting iLovePDF conversion for {job_id} using key index {current_key_index}...")
+            print(f"[{job_id}] Attempting iLovePDF conversion using key index {current_key_index}...")
 
             try:
-                # Initialize iLovePDF OfficeToPdf Task directly to bypass library reflection bug
-                task = OfficeToPdf(public_key=public_key, verify_ssl=True, proxies=None)
-                
-                # Add the DOCX file
-                task.add_file(input_path)
-                
-                # Set output folder
-                task.set_output_folder(TEMP_DIR)
-                
-                # Execute conversion
-                task.execute()
-                
-                # Download the generated PDF
-                task.download()
-                
-                # Clean up task on iLovePDF servers
-                try:
-                    task.delete_current_task()
-                except:
-                    pass
+                # Step 1: Authenticate
+                print(f"[{job_id}] Authenticating...")
+                token = ilovepdf_auth(public_key)
+                print(f"[{job_id}] Auth OK")
+
+                # Step 2: Start task
+                print(f"[{job_id}] Starting task...")
+                task_info = ilovepdf_start_task(token)
+                server = task_info["server"]
+                task_id = task_info["task"]
+                print(f"[{job_id}] Task started on server: {server}")
+
+                # Step 3: Upload file
+                print(f"[{job_id}] Uploading file...")
+                server_filename = ilovepdf_upload(server, task_id, token, input_path, f"{job_id}.docx")
+                print(f"[{job_id}] Upload OK, server_filename: {server_filename}")
+
+                # Step 4: Process
+                print(f"[{job_id}] Processing...")
+                download_filename = ilovepdf_process(server, task_id, token, server_filename, f"{job_id}.docx")
+                print(f"[{job_id}] Process OK, download_filename: {download_filename}")
+
+                # Step 5: Download
+                print(f"[{job_id}] Downloading PDF...")
+                ilovepdf_download(server, task_id, token, output_path)
+                print(f"[{job_id}] Download OK, saved to: {output_path}")
 
                 success = True
-                print(f"PDF generated successfully for {job_id}")
                 break
-                
-            except Exception as api_err:
-                error_str = str(api_err).lower()
-                print(f"Key at index {current_key_index} failed. Error: {api_err}")
-                
-                # If error implies authentication or quota issue, rotate key
-                if "401" in error_str or "unauthorized" in error_str or "quota" in error_str or "limit" in error_str:
-                    print("Quota depleted or key invalid. Rotating...")
+
+            except requests.exceptions.HTTPError as http_err:
+                status_code = http_err.response.status_code if http_err.response else 0
+                error_text = http_err.response.text if http_err.response else str(http_err)
+                print(f"[{job_id}] HTTP Error {status_code}: {error_text}")
+
+                if status_code in [401, 402, 403, 429]:
+                    print(f"[{job_id}] Quota/Auth issue. Rotating key...")
                     rotate_to_next_key()
                     attempts += 1
                 else:
-                    # Generic error, we still rotate just in case the key is locked
-                    rotate_to_next_key()
-                    attempts += 1
+                    raise
+
+            except Exception as api_err:
+                print(f"[{job_id}] Unexpected error: {api_err}")
+                rotate_to_next_key()
+                attempts += 1
 
         if not success:
             raise Exception("All iLovePDF keys are depleted or failed.")
 
-        if not os.path.exists(expected_output_path):
-            raise Exception("PDF generation failed, output file not found in TEMP_DIR")
+        if not os.path.exists(output_path):
+            raise Exception("PDF generation failed, output file not found")
 
         return FileResponse(
-            expected_output_path, 
-            media_type="application/pdf", 
+            output_path,
+            media_type="application/pdf",
             filename="formatted_document.pdf"
         )
     except Exception as e:
-        print(f"Critical Conversion Error: {e}")
+        print(f"[{job_id}] Critical Conversion Error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         # Clean up DOCX file

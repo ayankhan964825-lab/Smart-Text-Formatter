@@ -4,7 +4,7 @@ import uuid
 from fastapi import FastAPI, HTTPException, UploadFile, File
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
-from pylovepdf.ilovepdf import ILovePdf
+from pylovepdf.tools.officepdf import OfficeToPdf
 
 app = FastAPI(title="Document Converter API (Render)")
 
@@ -77,11 +77,8 @@ async def convert_docx_to_pdf(file: UploadFile = File(...)):
             print(f"Attempting iLovePDF conversion for {job_id} using key index {current_key_index}...")
 
             try:
-                # Initialize iLovePDF
-                ilovepdf = ILovePdf(public_key, verify_ssl=True)
-                
-                # Create a new office to pdf task
-                task = ilovepdf.new_task('officepdf')
+                # Initialize iLovePDF OfficeToPdf Task directly to bypass library reflection bug
+                task = OfficeToPdf(public_key=public_key, verify_ssl=True, proxies=None)
                 
                 # Add the DOCX file
                 task.add_file(input_path)

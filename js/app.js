@@ -640,6 +640,7 @@ document.addEventListener('DOMContentLoaded', () => {
         previewContainer.innerHTML = pendingFormattedHtml;
         appendModal.style.display = 'none';
         updatePreviewWrapperState(false);
+        if (window.switchToPreviewTabOnMobile) window.switchToPreviewTabOnMobile();
         
         statusText.textContent = "Finalizing Rendering...";
         await finalizeRendering(previewContainer);
@@ -650,9 +651,11 @@ document.addEventListener('DOMContentLoaded', () => {
         insertHtmlAtCursor(pendingFormattedHtml);
         appendModal.style.display = 'none';
         
-        statusText.textContent = "Finalizing Rendering...";
         const previewContainer = document.getElementById('formatted-preview');
         updatePreviewWrapperState(false);
+        if (window.switchToPreviewTabOnMobile) window.switchToPreviewTabOnMobile();
+        
+        statusText.textContent = "Finalizing Rendering...";
         await finalizeRendering(previewContainer);
         statusText.textContent = "Appended Successfully ✨";
     });
@@ -2421,7 +2424,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 previewContainer.innerHTML = finalHtml;
                 statusText.textContent = "Formatted Successfully ✨";
                 updatePreviewWrapperState(false);
+                if (window.switchToPreviewTabOnMobile) window.switchToPreviewTabOnMobile();
                 await finalizeRendering(previewContainer);
+                
+                // Enable Edit Customization Button
+                const editBtn = document.getElementById('toggle-customization-btn');
+                const fsEditBtn = document.getElementById('fs-edit-btn');
+                if (editBtn) editBtn.disabled = false;
+                if (fsEditBtn) {
+                    fsEditBtn.disabled = false;
+                    fsEditBtn.style.opacity = '1';
+                }
             } else {
                 // Text exists! The user might have manual edits they don't want to lose. Show the modal.
                 pendingFormattedHtml = finalHtml;
@@ -3506,12 +3519,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const padTop = parseFloat(pageStyle.paddingTop) || 96; // Fallback to 25.4mm
             const safeBottomLimit = padTop + maxH;
 
-            // Get absolute screen coordinates
-            const pageRect = currentPage.getBoundingClientRect();
-            const childRect = measureEl.getBoundingClientRect();
+            // Use offsetTop and offsetHeight which are immune to CSS zoom and transform scaling
+            let currentEl = measureEl;
+            let offsetTop = 0;
+            while (currentEl && currentEl !== currentPage) {
+                offsetTop += currentEl.offsetTop || 0;
+                currentEl = currentEl.offsetParent;
+            }
             
-            // Calculate child's bottom relative to the page's top
-            const childRelativeBottom = (childRect.bottom - pageRect.top);
+            // Calculate child's bottom relative to the page's top (unscaled logical pixels)
+            const childRelativeBottom = offsetTop + measureEl.offsetHeight;
             
             const overflow = childRelativeBottom - safeBottomLimit;
             
@@ -3634,5 +3651,75 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Expose globally so finalizeRendering can call it after AI formatting
     window.paginatePreview = paginatePreview;
+
+    // ==========================================
+    // --- Mobile-First Responsive Redesign ---
+    // ==========================================
+
+    const mobileTabs = document.querySelectorAll('.mobile-tab');
+    const inputPanel = document.querySelector('.input-panel');
+    const outputPanel = document.querySelector('.output-panel');
+    const mobileFabFormat = document.getElementById('mobile-fab-format');
+
+    // Function to switch tabs on mobile
+    function switchMobileTab(tabId) {
+        // Update active tab buttons
+        mobileTabs.forEach(tab => {
+            if (tab.dataset.tab === tabId) {
+                tab.classList.add('active');
+            } else {
+                tab.classList.remove('active');
+            }
+        });
+
+        // Update active panels
+        const fsEditBtn = document.getElementById('fs-edit-btn');
+        const mobileExportBar = document.getElementById('mobile-export-bar');
+        
+        if (tabId === 'input') {
+            inputPanel.classList.add('active-tab-panel');
+            outputPanel.classList.remove('active-tab-panel');
+            if (mobileFabFormat) mobileFabFormat.style.display = 'flex';
+            if (fsEditBtn) fsEditBtn.style.display = 'none';
+            if (mobileExportBar) mobileExportBar.style.display = 'none';
+        } else if (tabId === 'preview') {
+            outputPanel.classList.add('active-tab-panel');
+            inputPanel.classList.remove('active-tab-panel');
+            if (mobileFabFormat) mobileFabFormat.style.display = 'none';
+            if (fsEditBtn) fsEditBtn.style.display = 'flex';
+            if (mobileExportBar) mobileExportBar.style.display = 'flex';
+        }
+    }
+
+    // Attach click listeners to tabs
+    mobileTabs.forEach(tab => {
+        tab.addEventListener('click', (e) => {
+            switchMobileTab(e.target.dataset.tab);
+        });
+    });
+
+    // Make the FAB trigger the main format button
+    if (mobileFabFormat && formatBtn) {
+        mobileFabFormat.addEventListener('click', (e) => {
+            // Trigger the desktop format button programmatically
+            formatBtn.click();
+            // We don't auto-switch immediately here because we want the user to see the "Formatting..." status
+            // The auto-switch happens below after the format is complete.
+        });
+    }
+
+    // Wrap the existing finishFormatting logic to auto-switch tabs
+    // We do this by observing changes to the status text or intercepting the finalization
+    // Since we don't want to heavily modify the core algorithm logic here, we'll expose a global function
+    window.switchToPreviewTabOnMobile = function() {
+        if (window.innerWidth <= 768) {
+            switchMobileTab('preview');
+        }
+    };
+
+    // Initialize mobile tab state on load
+    if (window.innerWidth <= 768) {
+        switchMobileTab('input');
+    }
 
 });

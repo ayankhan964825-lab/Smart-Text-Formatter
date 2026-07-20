@@ -569,14 +569,81 @@
     <!-- Attractive Loading Overlay -->
     <div id="loading-overlay" class="loading-overlay" style="display: none;">
         <div class="loading-content">
-            <div class="spinner-container">
-                <div class="spinner-ring"></div>
-                <div class="spinner-ring inner"></div>
-                <svg class="ai-sparkle" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path
-                        d="M12 3v3M12 18v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M3 12h3M18 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12" />
+            <div class="loader">
+              <div class="book-wrapper">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="currentColor"
+                  viewBox="0 0 126 75"
+                  class="book"
+                >
+                  <rect
+                    stroke-width="5"
+                    stroke="#e05452"
+                    rx="7.5"
+                    height="70"
+                    width="121"
+                    y="2.5"
+                    x="2.5"
+                  ></rect>
+                  <line
+                    stroke-width="5"
+                    stroke="#e05452"
+                    y2="75"
+                    x2="63.5"
+                    x1="63.5"
+                  ></line>
+                  <path
+                    stroke-linecap="round"
+                    stroke-width="4"
+                    stroke="#c18949"
+                    d="M25 20H50"
+                  ></path>
+                  <path
+                    stroke-linecap="round"
+                    stroke-width="4"
+                    stroke="#c18949"
+                    d="M101 20H76"
+                  ></path>
+                  <path
+                    stroke-linecap="round"
+                    stroke-width="4"
+                    stroke="#c18949"
+                    d="M16 30L50 30"
+                  ></path>
+                  <path
+                    stroke-linecap="round"
+                    stroke-width="4"
+                    stroke="#c18949"
+                    d="M110 30L76 30"
+                  ></path>
                 </svg>
+            
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="#ffffff74"
+                  viewBox="0 0 65 75"
+                  class="book-page"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-width="4"
+                    stroke="#c18949"
+                    d="M40 20H15"
+                  ></path>
+                  <path
+                    stroke-linecap="round"
+                    stroke-width="4"
+                    stroke="#c18949"
+                    d="M49 30L15 30"
+                  ></path>
+                  <path
+                    stroke-width="5"
+                    stroke="#e05452"
+                    d="M2.5 2.5H55C59.1421 2.5 62.5 5.85786 62.5 10V65C62.5 69.1421 59.1421 72.5 55 72.5H2.5V2.5Z"
+                  ></path>
+                </svg>
+              </div>
             </div>
             <h3 class="loading-title" id="loading-title-text">Analyzing & Formatting...</h3>
             <div class="chunk-progress-container" id="chunk-progress-container" style="display: none; width: 100%; max-width: 320px; margin: 12px auto;">

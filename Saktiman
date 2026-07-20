@@ -81,3 +81,17 @@
 
 - **Alternative JSON Schema** (paragraph/bullet_list style) — Rejected because it breaks existing 12-type architecture.
 - **Execution Strategy Prompt** (4-step CoT) — Implemented and merged into main prompt.
+
+---
+
+## 🎯 100% Output Accuracy Masterplan
+**Status:** Brainstorming Phase (Added: 2026-07-13)
+**Description:** 5-step strategy to completely eliminate AI hallucinations, formatting errors, and layout breaking.
+
+1. **JSON Structured Output:** Force Gemini API to return strict JSON arrays (`response_mime_type: "application/json"`) instead of raw Markdown/HTML. Map the JSON to perfect HTML templates in JS.
+2. **Multi-Agent / Two-Pass Architecture:** 
+   - *Pass 1 (Extractor):* Categorize messy text.
+   - *Pass 2 (Verifier):* Verify output length and keywords against original input to ensure 0% Data Loss.
+3. **Template-Specific Few-Shot Prompting:** Dynamically inject 2-3 perfect examples into the system prompt based on the template the user selected.
+4. **DOM Auto-Corrector (Post-Processing):** A sanity checker script that runs after AI generation to fix illegal HTML structures (e.g., heading inside a paragraph).
+5. **Semantic Chunking:** Split large documents at semantic boundaries (like headings or double newlines) instead of arbitrary character limits.

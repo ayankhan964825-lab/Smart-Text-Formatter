@@ -1335,6 +1335,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
             loadingOverlay.style.display = 'flex';
             
+            // --- Fake Progress Counter ---
+            const chunkProgressContainer = document.getElementById('chunk-progress-container');
+            const chunkProgressBar = document.getElementById('chunk-progress-bar');
+            const chunkProgressPercent = document.getElementById('chunk-progress-percent');
+            const chunkProgressLabel = document.getElementById('chunk-progress-label');
+
+            if (chunkProgressContainer) {
+                chunkProgressContainer.style.display = 'block';
+                if (chunkProgressBar) chunkProgressBar.style.width = '0%';
+                if (chunkProgressPercent) chunkProgressPercent.textContent = '0%';
+                if (chunkProgressLabel) chunkProgressLabel.textContent = 'Formatting Document...';
+                
+                if (window.loadingInterval) clearInterval(window.loadingInterval);
+                window.loadingPercent = 0;
+                
+                window.loadingInterval = setInterval(() => {
+                    // Only run if we aren't hijacked by the multi-chunk logic
+                    if (!window.isMultiChunking && window.loadingPercent < 98) {
+                        const increment = window.loadingPercent < 80 ? Math.floor(Math.random() * 6) + 1 : 1;
+                        window.loadingPercent += increment;
+                        if (window.loadingPercent > 98) window.loadingPercent = 98;
+                        
+                        if (chunkProgressBar) chunkProgressBar.style.width = window.loadingPercent + '%';
+                        if (chunkProgressPercent) chunkProgressPercent.textContent = window.loadingPercent + '%';
+                    }
+                }, 180);
+            }
+
             // Force browser to paint the loading UI before executing heavy synchronous parsing
             await new Promise(resolve => setTimeout(resolve, 50));
         }
@@ -2052,6 +2080,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     // Show progress bar only for multi-chunk documents
                     if (chunks.length > 1 && chunkProgressContainer) {
+                        window.isMultiChunking = true;
                         chunkProgressContainer.style.display = 'block';
                         chunkProgressBar.style.width = '0%';
                         chunkProgressPercent.textContent = '0%';
@@ -2562,6 +2591,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 alignmentSelect.style.cursor = 'default';
             }
 
+            if (window.loadingInterval) {
+                clearInterval(window.loadingInterval);
+            }
+            window.isMultiChunking = false;
+            
+            const chunkProgressBar = document.getElementById('chunk-progress-bar');
+            const chunkProgressPercent = document.getElementById('chunk-progress-percent');
+            if (chunkProgressBar) chunkProgressBar.style.width = '100%';
+            if (chunkProgressPercent) chunkProgressPercent.textContent = '100%';
+            
             const loadingOverlay = document.getElementById('loading-overlay');
             if (loadingOverlay) loadingOverlay.style.display = 'none';
         }
@@ -3040,6 +3079,12 @@ document.addEventListener('DOMContentLoaded', () => {
                         } catch (singleErr) {
                             lastError = singleErr;
                             console.warn(`Mermaid render failed (Attempt ${attempt}/2):`, singleErr);
+                            
+                            // CLEANUP LEAKED MERMAID BOMBS
+                            const leaked1 = document.getElementById('d' + id);
+                            if (leaked1) leaked1.remove();
+                            const leaked2 = document.getElementById(id);
+                            if (leaked2) leaked2.remove();
                             
                             // Auto-Healing Phase: Try to fix it on the first failure via Gemini AI
                             if (attempt === 1) {

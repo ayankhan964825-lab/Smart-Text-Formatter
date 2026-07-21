@@ -8,7 +8,8 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500;600;700&family=Fira+Code&display=swap"
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500;600;700&family=Fira+Code&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="styles.css?v=706">
     <link rel="stylesheet" href="editor-refine.css?v=2">
@@ -40,7 +41,8 @@
             <div class="setting-group" style="padding-bottom: 0; border-bottom: none;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                     <label class="setting-label" style="margin: 0;">My Documents</label>
-                    <button id="new-doc-btn" class="btn primary btn-small" style="padding: 4px 8px; font-size: 12px;">➕ New</button>
+                    <button id="new-doc-btn" class="btn primary btn-small" style="padding: 4px 8px; font-size: 12px;">➕
+                        New</button>
                 </div>
                 <div id="document-list" class="document-list">
                     <!-- Document items will be injected here via JS -->
@@ -88,12 +90,19 @@
             </button>
             <a href="index.html" class="editor-brand" title="Back to home" data-testid="editor-brand">
                 <span class="editor-brand-mark">
-                    <svg viewBox="0 0 40 40" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h18l6 6v22a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2Z"/><path d="M26 6v6h6"/><path d="M12 20l3 3 8-8"/><path d="M12 28h16"/></svg>
+                    <svg viewBox="0 0 40 40" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M8 6h18l6 6v22a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2Z" />
+                        <path d="M26 6v6h6" />
+                        <path d="M12 20l3 3 8-8" />
+                        <path d="M12 28h16" />
+                    </svg>
                 </span>
                 <span class="editor-brand-word"><b>Smart</b><i>Formatter</i></span>
             </a>
             <span class="editor-brand-sep">/</span>
-            <input type="text" id="document-title" class="document-title-input" value="Untitled Document" placeholder="Document Title" title="Click to rename document">
+            <input type="text" id="document-title" class="document-title-input" value="Untitled Document"
+                placeholder="Document Title" title="Click to rename document">
             <span id="save-status" class="save-status"></span>
         </div>
         <div class="top-controls desktop-export-container" style="display: flex; gap: 8px;">
@@ -144,39 +153,43 @@
                         </svg></button>
                 </div>
             </div>
-            
-            <div id="image-preview-strip" style="display: flex; gap: 8px; flex-wrap: wrap; padding: 8px 16px; min-height: 0;"></div>
-            
+
+            <div id="image-preview-strip"
+                style="display: flex; gap: 8px; flex-wrap: wrap; padding: 8px 16px; min-height: 0;"></div>
+
             <textarea id="raw-input"
                 placeholder="Type or paste your unstructured raw text here...&#10;&#10;Use # for H1&#10;Use ## for H2&#10;Use - or * for lists&#10;Paragraphs are separated by blank lines."></textarea>
         </section>
 
         <!-- Right Panel: Output Preview -->
         <section class="panel output-panel">
-            <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center; padding: 4px 12px; gap: 12px; width: 100%;">
+            <div class="panel-header"
+                style="display: flex; justify-content: space-between; align-items: center; padding: 4px 12px; gap: 12px; width: 100%;">
                 <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
                     <h2>Output</h2>
                 </div>
-                
+
                 <!-- Compact Global Formatting Controls -->
-                <div class="global-settings-controls" style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: flex-end;">
+                <div class="global-settings-controls"
+                    style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: flex-end;">
                     <!-- Alignment -->
-                    <select id="global-alignment" class="toolbar-select" title="Text Alignment" style="padding: 4px 8px; font-size: 13px; height: 28px; border-radius: 4px; border: 1px solid var(--border-color); background: var(--bg-main); width: auto;">
+                    <select id="global-alignment" class="toolbar-select" title="Text Alignment"
+                        style="padding: 4px 8px; font-size: 13px; height: 28px; border-radius: 4px; border: 1px solid var(--border-color); background: var(--bg-main); width: auto;">
                         <option value="left" selected>Left</option>
                         <option value="center">Center</option>
                         <option value="right">Right</option>
                         <option value="justify">Justify</option>
                     </select>
 
-                    <!-- TOC Toggle -->
-                    <label style="font-size: 13px; color: var(--text-main); display: flex; align-items: center; gap: 4px; cursor: pointer; white-space: nowrap;">
-                        <input type="checkbox" id="include-toc" style="margin: 0; width: 14px; height: 14px;">
-                        <span class="toc-text-desktop">Include TOC</span>
-                    </label>
 
                     <!-- Customize Typography Button -->
-                    <button id="btn-customize-typography" class="btn secondary btn-small" title="Advanced Font Settings" style="height: 28px; padding: 0 10px; display: flex; align-items: center; gap: 4px; font-size: 12px;">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                    <button id="btn-customize-typography" class="btn secondary btn-small" title="Advanced Font Settings"
+                        style="height: 28px; padding: 0 10px; display: flex; align-items: center; gap: 4px; font-size: 12px;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 20h9" />
+                            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                        </svg>
                         <span class="toc-text-desktop">Typography</span>
                     </button>
                 </div>
@@ -244,29 +257,40 @@
             <div id="ai-thoughts-panel" class="ai-thoughts-panel" style="display:none;">
                 <button class="ai-thoughts-toggle" onclick="this.parentElement.classList.toggle('open')">
                     <span class="ai-thoughts-toggle-left">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a8 8 0 0 0-8 8c0 3.4 2.1 6.3 5 7.4V20a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-2.6c2.9-1.1 5-4 5-7.4a8 8 0 0 0-8-8z"/><line x1="10" y1="22" x2="14" y2="22"/></svg>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path
+                                d="M12 2a8 8 0 0 0-8 8c0 3.4 2.1 6.3 5 7.4V20a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-2.6c2.9-1.1 5-4 5-7.4a8 8 0 0 0-8-8z" />
+                            <line x1="10" y1="22" x2="14" y2="22" />
+                        </svg>
                         AI Reasoning (Chain of Thought)
                     </span>
-                    <svg class="ai-thoughts-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                    <svg class="ai-thoughts-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9" />
+                    </svg>
                 </button>
                 <div class="ai-thoughts-body">
                     <div id="ai-thoughts-content" class="ai-thoughts-content">No reasoning data available yet.</div>
                 </div>
             </div>
 
-            <div id="preview-scroll-wrapper" class="preview-scroll-wrapper empty-state" style="flex: 1; overflow: auto; padding: 30px 15px;">
+            <div id="preview-scroll-wrapper" class="preview-scroll-wrapper empty-state"
+                style="flex: 1; overflow: auto; padding: 30px 15px;">
                 <div id="formatted-preview" class="preview-container" contenteditable="false">
                     <div class="placeholder-text">
                         <div class="placeholder-illustration">
-                            <svg width="64" height="64" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="10" y="6" width="38" height="52" rx="3"/>
-                                <path d="M16 16h26M16 24h20M16 32h26M16 40h18"/>
-                                <circle cx="46" cy="46" r="10" fill="rgba(229,87,61,.12)" stroke="none"/>
-                                <path d="M42 46l3 3 6-6" stroke="#E5573D"/>
+                            <svg width="64" height="64" viewBox="0 0 64 64" fill="none" stroke="currentColor"
+                                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="10" y="6" width="38" height="52" rx="3" />
+                                <path d="M16 16h26M16 24h20M16 32h26M16 40h18" />
+                                <circle cx="46" cy="46" r="10" fill="rgba(229,87,61,.12)" stroke="none" />
+                                <path d="M42 46l3 3 6-6" stroke="#E5573D" />
                             </svg>
                         </div>
                         <h4 class="placeholder-title">Your formatted document appears here</h4>
-                        <p class="placeholder-sub">Paste raw text on the left, hit <b>Format Now</b>, and watch the AI structure it in seconds.</p>
+                        <p class="placeholder-sub">Paste raw text on the left, hit <b>Format Now</b>, and watch the AI
+                            structure it in seconds.</p>
                         <div class="placeholder-tags">
                             <span>H1 / H2 detection</span>
                             <span>Lists</span>
@@ -295,7 +319,14 @@
             <!-- Header -->
             <div class="tmpl-header">
                 <div class="tmpl-header-icon">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                        <polyline points="14 2 14 8 20 8" />
+                        <line x1="16" y1="13" x2="8" y2="13" />
+                        <line x1="16" y1="17" x2="8" y2="17" />
+                        <polyline points="10 9 9 9 8 9" />
+                    </svg>
                 </div>
                 <div>
                     <h3 class="tmpl-title">Choose Document Type</h3>
@@ -310,12 +341,21 @@
 
             <!-- Template Customization Section — Collapsible Accordion -->
             <div id="template-customization" class="tmpl-customize-wrap" style="display: none;">
-                <button type="button" class="tmpl-accordion-toggle" onclick="this.parentElement.classList.toggle('open')">
+                <button type="button" class="tmpl-accordion-toggle"
+                    onclick="this.parentElement.classList.toggle('open')">
                     <div class="tmpl-accordion-left">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="3" />
+                            <path
+                                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                        </svg>
                         <span>Adjust Formatting</span>
                     </div>
-                    <svg class="tmpl-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                    <svg class="tmpl-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9" />
+                    </svg>
                 </button>
                 <div class="tmpl-accordion-body">
                     <div class="tmpl-fmt-grid">
@@ -329,7 +369,8 @@
                                 <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
                                 <option value="'Verdana', sans-serif">Verdana</option>
                             </select>
-                            <input type="number" id="modal-h1-size" class="modal-input" min="10" max="72" placeholder="pt">
+                            <input type="number" id="modal-h1-size" class="modal-input" min="10" max="72"
+                                placeholder="pt">
                         </div>
                         <div class="tmpl-fmt-cell">
                             <label>Heading (H2)</label>
@@ -341,7 +382,8 @@
                                 <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
                                 <option value="'Verdana', sans-serif">Verdana</option>
                             </select>
-                            <input type="number" id="modal-h2-size" class="modal-input" min="10" max="72" placeholder="pt">
+                            <input type="number" id="modal-h2-size" class="modal-input" min="10" max="72"
+                                placeholder="pt">
                         </div>
                         <div class="tmpl-fmt-cell">
                             <label>Subheading (H3)</label>
@@ -353,7 +395,8 @@
                                 <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
                                 <option value="'Verdana', sans-serif">Verdana</option>
                             </select>
-                            <input type="number" id="modal-h3-size" class="modal-input" min="10" max="72" placeholder="pt">
+                            <input type="number" id="modal-h3-size" class="modal-input" min="10" max="72"
+                                placeholder="pt">
                         </div>
                         <div class="tmpl-fmt-cell">
                             <label>Body Text</label>
@@ -365,16 +408,44 @@
                                 <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
                                 <option value="'Verdana', sans-serif">Verdana</option>
                             </select>
-                            <input type="number" id="modal-body-size" class="modal-input" min="10" max="72" placeholder="pt">
+                            <input type="number" id="modal-body-size" class="modal-input" min="10" max="72"
+                                placeholder="pt">
                         </div>
                     </div>
                     <div class="tmpl-fmt-cell" style="margin-top:6px;">
                         <label>Alignment</label>
                         <div class="tmpl-align-group">
-                            <button type="button" class="tmpl-align-btn" data-align="left" title="Left"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg></button>
-                            <button type="button" class="tmpl-align-btn" data-align="center" title="Center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="10" x2="6" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="18" y1="18" x2="6" y2="18"/></svg></button>
-                            <button type="button" class="tmpl-align-btn" data-align="right" title="Right"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="21" y1="10" x2="7" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="21" y1="18" x2="7" y2="18"/></svg></button>
-                            <button type="button" class="tmpl-align-btn" data-align="justify" title="Justify"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="21" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="21" y1="18" x2="3" y2="18"/></svg></button>
+                            <button type="button" class="tmpl-align-btn" data-align="left" title="Left"><svg width="14"
+                                    height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="17" y1="10" x2="3" y2="10" />
+                                    <line x1="21" y1="6" x2="3" y2="6" />
+                                    <line x1="21" y1="14" x2="3" y2="14" />
+                                    <line x1="17" y1="18" x2="3" y2="18" />
+                                </svg></button>
+                            <button type="button" class="tmpl-align-btn" data-align="center" title="Center"><svg
+                                    width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <line x1="18" y1="10" x2="6" y2="10" />
+                                    <line x1="21" y1="6" x2="3" y2="6" />
+                                    <line x1="21" y1="14" x2="3" y2="14" />
+                                    <line x1="18" y1="18" x2="6" y2="18" />
+                                </svg></button>
+                            <button type="button" class="tmpl-align-btn" data-align="right" title="Right"><svg
+                                    width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <line x1="21" y1="10" x2="7" y2="10" />
+                                    <line x1="21" y1="6" x2="3" y2="6" />
+                                    <line x1="21" y1="14" x2="3" y2="14" />
+                                    <line x1="21" y1="18" x2="7" y2="18" />
+                                </svg></button>
+                            <button type="button" class="tmpl-align-btn" data-align="justify" title="Justify"><svg
+                                    width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <line x1="21" y1="10" x2="3" y2="10" />
+                                    <line x1="21" y1="6" x2="3" y2="6" />
+                                    <line x1="21" y1="14" x2="3" y2="14" />
+                                    <line x1="21" y1="18" x2="3" y2="18" />
+                                </svg></button>
                         </div>
                         <!-- Hidden select for JS compatibility -->
                         <select id="modal-alignment" class="modal-select" style="display:none;">
@@ -390,9 +461,15 @@
             <!-- Reference PDF Section — Drag & Drop Card -->
             <div class="reference-section">
                 <input type="file" id="reference-pdf-input" accept=".pdf" style="display: none;">
-                <div class="tmpl-ref-dropzone" id="reference-upload-area" onclick="document.getElementById('reference-pdf-input').click()">
+                <div class="tmpl-ref-dropzone" id="reference-upload-area"
+                    onclick="document.getElementById('reference-pdf-input').click()">
                     <div class="tmpl-ref-icon-wrap">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                            <polyline points="17 8 12 3 7 8" />
+                            <line x1="12" y1="3" x2="12" y2="15" />
+                        </svg>
                     </div>
                     <div class="tmpl-ref-text">
                         <strong>Reference Document</strong>
@@ -401,10 +478,17 @@
                     </div>
                 </div>
                 <div class="tmpl-ref-file-bar" id="reference-file-bar" style="display:none;">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                        <polyline points="14 2 14 8 20 8" />
+                    </svg>
                     <span id="reference-file-name" class="reference-file-name">No file selected</span>
                     <button id="reference-remove-btn" class="tmpl-ref-remove" title="Remove file" style="display:none;">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18" />
+                            <line x1="6" y1="6" x2="18" y2="18" />
+                        </svg>
                     </button>
                 </div>
             </div>
@@ -413,7 +497,11 @@
             <div class="modal-actions template-modal-actions">
                 <button id="template-continue-btn" class="btn primary tmpl-continue-btn" disabled>
                     <span>Continue</span>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                        <polyline points="12 5 19 12 12 19" />
+                    </svg>
                 </button>
                 <button id="template-skip-btn" class="btn secondary btn-small tmpl-skip-btn">Skip (Use General)</button>
             </div>
@@ -423,30 +511,39 @@
     <div id="image-step-modal" class="modal-overlay" style="display: none;">
         <div class="modal-content" style="max-width: 420px; text-align: center;">
             <h3 style="margin-bottom: 6px;">📷 Add Images to Your Document?</h3>
-            <p style="color: var(--text-muted, #888); font-size: 13px; margin-bottom: 18px;">Upload images and our AI will intelligently place them in the formatted output at the best position.</p>
-            
-            <!-- Image Preview in Modal -->
-            <div id="modal-image-preview" style="display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 16px; min-height: 0;"></div>
+            <p style="color: var(--text-muted, #888); font-size: 13px; margin-bottom: 18px;">Upload images and our AI
+                will intelligently place them in the formatted output at the best position.</p>
 
-            <button id="modal-add-images-btn" class="btn secondary" style="width: 100%; margin-bottom: 14px; padding: 10px; font-size: 14px;">
+            <!-- Image Preview in Modal -->
+            <div id="modal-image-preview"
+                style="display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 16px; min-height: 0;">
+            </div>
+
+            <button id="modal-add-images-btn" class="btn secondary"
+                style="width: 100%; margin-bottom: 14px; padding: 10px; font-size: 14px;">
                 🖼️ Choose Images
             </button>
-            
-            <div id="caption-options" style="display: none; margin-bottom: 14px; border: 1px solid var(--border, #e0e0e0); border-radius: 8px; padding: 10px;">
+
+            <div id="caption-options"
+                style="display: none; margin-bottom: 14px; border: 1px solid var(--border, #e0e0e0); border-radius: 8px; padding: 10px;">
                 <p style="font-size: 12px; color: var(--text-muted, #888); margin-bottom: 8px;">Caption Preference:</p>
                 <div style="display: flex; gap: 10px; justify-content: center;">
-                    <label style="display: flex; align-items: center; gap: 5px; cursor: pointer; font-size: 13px; padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border, #ddd);">
+                    <label
+                        style="display: flex; align-items: center; gap: 5px; cursor: pointer; font-size: 13px; padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border, #ddd);">
                         <input type="radio" name="caption-choice" value="with" checked> With Caption
                     </label>
-                    <label style="display: flex; align-items: center; gap: 5px; cursor: pointer; font-size: 13px; padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border, #ddd);">
+                    <label
+                        style="display: flex; align-items: center; gap: 5px; cursor: pointer; font-size: 13px; padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border, #ddd);">
                         <input type="radio" name="caption-choice" value="without"> Without Caption
                     </label>
                 </div>
             </div>
 
             <div class="modal-actions" style="flex-direction: column; gap: 8px;">
-                <button id="modal-format-with-images-btn" class="btn primary" style="width: 100%; display: none; padding: 10px; font-size: 14px;">✨ Format with Images</button>
-                <button id="modal-skip-images-btn" class="btn secondary" style="width: 100%; padding: 10px; font-size: 14px;">⏭️ Skip — Format without Images</button>
+                <button id="modal-format-with-images-btn" class="btn primary"
+                    style="width: 100%; display: none; padding: 10px; font-size: 14px;">✨ Format with Images</button>
+                <button id="modal-skip-images-btn" class="btn secondary"
+                    style="width: 100%; padding: 10px; font-size: 14px;">⏭️ Skip — Format without Images</button>
             </div>
         </div>
     </div>
@@ -467,11 +564,13 @@
     </div>
 
     <!-- Floating Full Screen Controls (Always visible, positioned below ribbon) -->
-    <div id="fullscreen-controls" style="display: flex; position: fixed; top: 110px; right: 20px; z-index: 2147483647; gap: 8px; align-items: center;">
-        <button id="fs-edit-btn" class="btn-small secondary" disabled style="opacity: 0.5; background: rgba(255,255,255,0.9); box-shadow: 0 4px 12px rgba(0,0,0,0.2); height: 40px; border-radius: 20px; padding: 0 16px; display: flex; align-items: center; gap: 6px; font-weight: bold; cursor: pointer;">
+    <div id="fullscreen-controls"
+        style="display: flex; position: fixed; top: 110px; right: 20px; z-index: 2147483647; gap: 8px; align-items: center;">
+        <button id="fs-edit-btn" class="btn-small secondary" disabled
+            style="opacity: 0.5; background: rgba(255,255,255,0.9); box-shadow: 0 4px 12px rgba(0,0,0,0.2); height: 40px; border-radius: 20px; padding: 0 16px; display: flex; align-items: center; gap: 6px; font-weight: bold; cursor: pointer;">
             ✏️ Edit
         </button>
-        <button id="exit-fullscreen-btn" class="icon-btn" title="Toggle Full Screen" 
+        <button id="exit-fullscreen-btn" class="icon-btn" title="Toggle Full Screen"
             style="background: #3b82f6; color: white; border-radius: 50%; width: 40px; height: 40px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); font-size: 18px; line-height: 40px; text-align: center; display: flex; justify-content: center; align-items: center; cursor: pointer;">
             ⛶
         </button>
@@ -506,89 +605,40 @@
     <div id="loading-overlay" class="loading-overlay" style="display: none;">
         <div class="loading-content">
             <div class="loader">
-              <div class="book-wrapper">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="currentColor"
-                  viewBox="0 0 126 75"
-                  class="book"
-                >
-                  <rect
-                    stroke-width="5"
-                    stroke="#e05452"
-                    rx="7.5"
-                    height="70"
-                    width="121"
-                    y="2.5"
-                    x="2.5"
-                  ></rect>
-                  <line
-                    stroke-width="5"
-                    stroke="#e05452"
-                    y2="75"
-                    x2="63.5"
-                    x1="63.5"
-                  ></line>
-                  <path
-                    stroke-linecap="round"
-                    stroke-width="4"
-                    stroke="#c18949"
-                    d="M25 20H50"
-                  ></path>
-                  <path
-                    stroke-linecap="round"
-                    stroke-width="4"
-                    stroke="#c18949"
-                    d="M101 20H76"
-                  ></path>
-                  <path
-                    stroke-linecap="round"
-                    stroke-width="4"
-                    stroke="#c18949"
-                    d="M16 30L50 30"
-                  ></path>
-                  <path
-                    stroke-linecap="round"
-                    stroke-width="4"
-                    stroke="#c18949"
-                    d="M110 30L76 30"
-                  ></path>
-                </svg>
-            
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="#ffffff74"
-                  viewBox="0 0 65 75"
-                  class="book-page"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-width="4"
-                    stroke="#c18949"
-                    d="M40 20H15"
-                  ></path>
-                  <path
-                    stroke-linecap="round"
-                    stroke-width="4"
-                    stroke="#c18949"
-                    d="M49 30L15 30"
-                  ></path>
-                  <path
-                    stroke-width="5"
-                    stroke="#e05452"
-                    d="M2.5 2.5H55C59.1421 2.5 62.5 5.85786 62.5 10V65C62.5 69.1421 59.1421 72.5 55 72.5H2.5V2.5Z"
-                  ></path>
-                </svg>
-              </div>
+                <div class="book-wrapper">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 126 75" class="book">
+                        <rect stroke-width="5" stroke="#e05452" rx="7.5" height="70" width="121" y="2.5" x="2.5"></rect>
+                        <line stroke-width="5" stroke="#e05452" y2="75" x2="63.5" x1="63.5"></line>
+                        <path stroke-linecap="round" stroke-width="4" stroke="#c18949" d="M25 20H50"></path>
+                        <path stroke-linecap="round" stroke-width="4" stroke="#c18949" d="M101 20H76"></path>
+                        <path stroke-linecap="round" stroke-width="4" stroke="#c18949" d="M16 30L50 30"></path>
+                        <path stroke-linecap="round" stroke-width="4" stroke="#c18949" d="M110 30L76 30"></path>
+                    </svg>
+
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="#ffffff74" viewBox="0 0 65 75" class="book-page">
+                        <path stroke-linecap="round" stroke-width="4" stroke="#c18949" d="M40 20H15"></path>
+                        <path stroke-linecap="round" stroke-width="4" stroke="#c18949" d="M49 30L15 30"></path>
+                        <path stroke-width="5" stroke="#e05452"
+                            d="M2.5 2.5H55C59.1421 2.5 62.5 5.85786 62.5 10V65C62.5 69.1421 59.1421 72.5 55 72.5H2.5V2.5Z">
+                        </path>
+                    </svg>
+                </div>
             </div>
             <h3 class="loading-title" id="loading-title-text">Analyzing & Formatting...</h3>
-            <div class="chunk-progress-container" id="chunk-progress-container" style="display: none; width: 100%; max-width: 320px; margin: 12px auto;">
+            <div class="chunk-progress-container" id="chunk-progress-container"
+                style="display: none; width: 100%; max-width: 320px; margin: 12px auto;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                    <span id="chunk-progress-label" style="font-size: 12px; color: var(--text-muted, #888); font-weight: 500;">Processing chunks...</span>
-                    <span id="chunk-progress-percent" style="font-size: 14px; color: var(--accent, #6C63FF); font-weight: 700;">0%</span>
+                    <span id="chunk-progress-label"
+                        style="font-size: 12px; color: var(--text-muted, #888); font-weight: 500;">Processing
+                        chunks...</span>
+                    <span id="chunk-progress-percent"
+                        style="font-size: 14px; color: var(--accent, #6C63FF); font-weight: 700;">0%</span>
                 </div>
-                <div style="width: 100%; height: 8px; background: var(--surface-alt, rgba(255,255,255,0.08)); border-radius: 99px; overflow: hidden;">
-                    <div id="chunk-progress-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #6C63FF, #00C9A7); border-radius: 99px; transition: width 0.4s ease;"></div>
+                <div
+                    style="width: 100%; height: 8px; background: var(--surface-alt, rgba(255,255,255,0.08)); border-radius: 99px; overflow: hidden;">
+                    <div id="chunk-progress-bar"
+                        style="width: 0%; height: 100%; background: linear-gradient(90deg, #6C63FF, #00C9A7); border-radius: 99px; transition: width 0.4s ease;">
+                    </div>
                 </div>
             </div>
             <p class="loading-subtitle" id="loading-progress-text">Applying AI rules, detecting diagrams, and
@@ -613,7 +663,8 @@
     <!-- Mobile Floating Action Button (Visible only on small screens) -->
     <div class="mobile-fab-container">
         <button id="mobile-fab-format" class="mobile-fab">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
                 <polygon points="5 3 19 12 5 21 5 3"></polygon>
             </svg>
             Format
@@ -639,15 +690,19 @@
     <!-- KaTeX -->
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
     <!-- Image Compression -->
-    <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
     <!-- FileSaver -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <!-- Typography Customization Modal -->
-    <div id="typography-modal" class="modal-overlay" style="display: none; align-items: center; justify-content: center; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); z-index: 10000; opacity: 1; transition: opacity 0.2s;">
-        <div class="modal-content typography-controls" style="background: var(--bg-main); padding: 24px; border-radius: 12px; width: 100%; max-width: 450px; border: 1px solid var(--border-color); box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+    <div id="typography-modal" class="modal-overlay"
+        style="display: none; align-items: center; justify-content: center; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); z-index: 10000; opacity: 1; transition: opacity 0.2s;">
+        <div class="modal-content typography-controls"
+            style="background: var(--bg-main); padding: 24px; border-radius: 12px; width: 100%; max-width: 450px; border: 1px solid var(--border-color); box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
             <h3 style="margin-top: 0; margin-bottom: 20px; font-size: 1.25rem;">Advanced Typography</h3>
-            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px;">Override template fonts manually.</p>
-            
+            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px;">Override template fonts
+                manually.</p>
+
             <div style="display: flex; flex-direction: column; gap: 16px;">
                 <!-- H1 -->
                 <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -659,7 +714,8 @@
                             <option value="Arial, sans-serif">Arial</option>
                             <option value="'Courier New', monospace">Courier</option>
                         </select>
-                        <input type="number" id="h1-size" class="toolbar-input" value="16" min="10" max="72" style="width: 60px;">
+                        <input type="number" id="h1-size" class="toolbar-input" value="16" min="10" max="72"
+                            style="width: 60px;">
                     </div>
                 </div>
                 <!-- H2 -->
@@ -672,7 +728,8 @@
                             <option value="Arial, sans-serif">Arial</option>
                             <option value="'Courier New', monospace">Courier</option>
                         </select>
-                        <input type="number" id="h2-size" class="toolbar-input" value="16" min="10" max="72" style="width: 60px;">
+                        <input type="number" id="h2-size" class="toolbar-input" value="16" min="10" max="72"
+                            style="width: 60px;">
                     </div>
                 </div>
                 <!-- H3 -->
@@ -685,7 +742,8 @@
                             <option value="Arial, sans-serif">Arial</option>
                             <option value="'Courier New', monospace">Courier</option>
                         </select>
-                        <input type="number" id="sub-sub-size" class="toolbar-input" value="14" min="10" max="72" style="width: 60px;">
+                        <input type="number" id="sub-sub-size" class="toolbar-input" value="14" min="10" max="72"
+                            style="width: 60px;">
                     </div>
                 </div>
                 <!-- Body -->
@@ -698,7 +756,8 @@
                             <option value="Arial, sans-serif">Arial</option>
                             <option value="'Courier New', monospace">Courier</option>
                         </select>
-                        <input type="number" id="p-size" class="toolbar-input" value="12" min="10" max="72" style="width: 60px;">
+                        <input type="number" id="p-size" class="toolbar-input" value="12" min="10" max="72"
+                            style="width: 60px;">
                     </div>
                 </div>
             </div>
@@ -712,4 +771,5 @@
     <!-- App Logic -->
     <script src="js/app.js?v=203"></script>
 </body>
+
 </html>

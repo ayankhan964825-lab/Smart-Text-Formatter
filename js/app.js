@@ -2383,44 +2383,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const generator = new window.OutputGenerator();
             let finalHtml = generator.generateHTML(styledElements);
 
-            // Add Table of Contents if checked
-            const includeToc = document.getElementById('include-toc')?.checked;
-            if (includeToc) {
-                const tempDiv = document.createElement('div');
-                tempDiv.innerHTML = finalHtml;
-                const headings = tempDiv.querySelectorAll('h2, h3');
 
-                if (headings.length > 0) {
-                    // Build academic-style bordered table ToC
-                    let tocHtml = `<div class="toc-container" style="page-break-after: always;">
-                        <h3 class="toc-title">CONTENT</h3>
-                        <table class="toc-table">
-                            <thead>
-                                <tr>
-                                    <th style="text-align: left;">Topic</th>
-                                    <th style="text-align: right; width: 80px;">Page No.</th>
-                                </tr>
-                            </thead>
-                            <tbody>`;
-
-                    headings.forEach((heading, index) => {
-                        const id = 'heading-' + index;
-                        heading.setAttribute('id', id);
-
-                        const isBold = heading.tagName === 'H1' || heading.tagName === 'H2';
-                        const fontStyle = isBold ? 'font-weight: 700;' : 'font-weight: 400; padding-left: 20px;';
-
-                        tocHtml += `<tr>
-                            <td style="${fontStyle}"><a href="#${id}" class="toc-link">${heading.textContent}</a></td>
-                            <td style="text-align: right; font-weight: 700;" class="toc-page-num" data-target-id="${id}">-</td>
-                        </tr>`;
-                    });
-
-                    tocHtml += `</tbody></table></div>`;
-                    // Content starts on a new page after TOC
-                    finalHtml = tocHtml + `<div class="content-after-toc">${tempDiv.innerHTML}</div>`;
-                }
-            }
 
             // Render to DOM or Trigger Modal
             const currentPreviewHtml = previewContainer.innerHTML.trim();
@@ -3106,8 +3069,6 @@ document.addEventListener('DOMContentLoaded', () => {
             console.warn("Mermaid rendering error:", mermaidErr);
         }
 
-        // Calculate accurate TOC page numbers now that all content/diagram heights are settled
-        await calculateAccurateTOC(container);
 
         // Run A4 Pagination Engine — split content into discrete A4 pages
         if (typeof window.paginatePreview === 'function') {
@@ -3115,67 +3076,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    async function calculateAccurateTOC(container) {
-        const tocCells = container.querySelectorAll('.toc-page-num');
-        if (tocCells.length === 0) return;
 
-        console.log("Dynamically calculating TOC offsets for exported document...");
-
-        // Create an invisible measurement wrapper matching PDF bounds
-        const measureWrapper = document.createElement('div');
-        measureWrapper.style.position = 'absolute';
-        measureWrapper.style.top = '-9999px';
-        measureWrapper.style.left = '-9999px';
-        measureWrapper.style.visibility = 'hidden';
-        measureWrapper.style.width = '210mm'; // A4 width
-        measureWrapper.style.padding = '25.4mm'; // 1-inch export margins
-        measureWrapper.style.boxSizing = 'border-box';
-        measureWrapper.style.fontFamily = "'Times New Roman', serif";
-        measureWrapper.style.fontSize = "11pt";
-        measureWrapper.style.lineHeight = "1.5";
-
-        // Clone into standard wrapper
-        measureWrapper.innerHTML = container.innerHTML;
-        document.body.appendChild(measureWrapper);
-
-        // Available content height per page: A4 = 297mm - 25.4mm top - 25.4mm bottom = 246.2mm
-        const pageMeasurement = document.createElement('div');
-        pageMeasurement.style.height = '246.2mm';
-        measureWrapper.appendChild(pageMeasurement);
-
-        // Let the browser paint to settle layout metrics
-        await new Promise(resolve => setTimeout(resolve, 50));
-
-        const pixelsPerPage = pageMeasurement.offsetHeight || 930; // Use 930px approx as fallback for 246.2mm
-        const wrapperRect = measureWrapper.getBoundingClientRect();
-        const contentContainer = measureWrapper.querySelector('.content-after-toc');
-
-        if (contentContainer) {
-            // Measure offset from start of actual content (ignoring the TOC height itself)
-            const contentStartTop = contentContainer.getBoundingClientRect().top;
-
-            measureWrapper.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach(heading => {
-                const targetId = heading.getAttribute('id');
-                if (targetId && heading.closest('.content-after-toc')) {
-                    const headingRect = heading.getBoundingClientRect();
-                    // Offset relative to where the content actually starts
-                    const offset = headingRect.top - contentStartTop;
-
-                    if (offset >= 0) {
-                        const pageNum = Math.floor(offset / pixelsPerPage) + 1;
-
-                        // Update the real visible DOM cell
-                        const realCell = container.querySelector(`.toc-page-num[data-target-id="${targetId}"]`);
-                        if (realCell) {
-                            realCell.textContent = pageNum;
-                        }
-                    }
-                }
-            });
-        }
-
-        document.body.removeChild(measureWrapper);
-    }
 
     // --- Global Utility Functions ---
     window.copyCodeToClipboard = function (btn) {
@@ -3647,8 +3548,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Expose globally so finalizeRendering can call it after AI formatting
-    window.calculateAccurateTOC = calculateAccurateTOC;
+
 
 
 

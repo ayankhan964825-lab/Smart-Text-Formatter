@@ -1218,7 +1218,7 @@ document.addEventListener('DOMContentLoaded', () => {
         hasFormattedOnce = true;
 
         // Disable formatting ribbon controls
-        const ribbonControls = document.querySelectorAll('.formatting-ribbon select, .formatting-ribbon input');
+        const ribbonControls = document.querySelectorAll('.typography-controls select, .typography-controls input, .global-settings-controls select, .global-settings-controls input');
         ribbonControls.forEach(control => {
             control.disabled = true;
             control.style.opacity = '0.6';
@@ -1307,7 +1307,7 @@ document.addEventListener('DOMContentLoaded', () => {
             updatePreviewWrapperState(true);
 
             // Re-enable formatting ribbon controls since input is empty
-            const ribbonControls = document.querySelectorAll('.formatting-ribbon select, .formatting-ribbon input');
+            const ribbonControls = document.querySelectorAll('.typography-controls select, .typography-controls input, .global-settings-controls select, .global-settings-controls input');
             ribbonControls.forEach(control => {
                 control.disabled = false;
                 control.style.opacity = '1';
@@ -3332,7 +3332,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if(window.referenceHandler) window.referenceHandler.clear();
         hasFormattedOnce = false;
         
-        const ribbonControls = document.querySelectorAll(".formatting-ribbon select, .formatting-ribbon input");
+        const ribbonControls = document.querySelectorAll('.typography-controls select, .typography-controls input, .global-settings-controls select, .global-settings-controls input');
         ribbonControls.forEach(control => {
             control.disabled = false;
             control.style.opacity = "1";
@@ -3666,6 +3666,35 @@ document.addEventListener('DOMContentLoaded', () => {
             // Remove old listener before re-attaching (prevent duplicates)
             page.removeEventListener('input', debouncedRepaginate);
             page.addEventListener('input', debouncedRepaginate);
+        });
+    }
+
+    // Expose globally so finalizeRendering can call it after AI formatting
+    window.calculateAccurateTOC = calculateAccurateTOC;
+
+    // --- Typography Modal Logic ---
+    const btnCustomizeTypography = document.getElementById('btn-customize-typography');
+    const typographyModal = document.getElementById('typography-modal');
+    const btnCloseTypography = document.getElementById('btn-close-typography');
+
+    if (btnCustomizeTypography && typographyModal) {
+        btnCustomizeTypography.addEventListener('click', () => {
+            typographyModal.style.display = 'flex';
+        });
+    }
+
+    if (btnCloseTypography && typographyModal) {
+        btnCloseTypography.addEventListener('click', () => {
+            typographyModal.style.display = 'none';
+        });
+    }
+
+    // Close modal when clicking outside content
+    if (typographyModal) {
+        typographyModal.addEventListener('click', (e) => {
+            if (e.target === typographyModal) {
+                typographyModal.style.display = 'none';
+            }
         });
     }
 

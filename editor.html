@@ -108,94 +108,7 @@
         <input type="file" id="pdf-upload-input" accept=".pdf" style="display:none;">
     </header>
 
-    <!-- Formatting Ribbon (Word-like Home Tab) -->
-    <nav class="formatting-ribbon">
-        <!-- Heading 1 Controls -->
-        <div class="ribbon-group">
-            <span class="ribbon-label" title="Document Title or Main Topic">Title (H1)</span>
-            <div class="ribbon-controls">
-                <select id="h1-font" class="toolbar-select">
-                    <option value="inherit">Default Font</option>
-                    <option value="'Times New Roman', serif" selected>Times New (Default)</option>
-                    <option value="Arial, sans-serif">Arial</option>
-                    <option value="'Courier New', monospace">Courier</option>
-                </select>
-                <input type="number" id="h1-size" class="toolbar-input" value="16" min="10" max="72"
-                    title="Font Size (pt)">
-            </div>
-        </div>
 
-        <!-- Heading 2 Controls -->
-        <div class="ribbon-group">
-            <span class="ribbon-label" title="Main Section Headings">Heading (H2)</span>
-            <div class="ribbon-controls">
-                <select id="h2-font" class="toolbar-select">
-                    <option value="inherit">Default Font</option>
-                    <option value="'Times New Roman', serif" selected>Times New (Default)</option>
-                    <option value="Arial, sans-serif">Arial</option>
-                    <option value="'Courier New', monospace">Courier</option>
-                </select>
-                <input type="number" id="h2-size" class="toolbar-input" value="16" min="10" max="72"
-                    title="Font Size (pt)">
-            </div>
-        </div>
-
-        <!-- Sub-subheading Controls -->
-        <div class="ribbon-group">
-            <span class="ribbon-label" title="Subsections">Subheading (H3)</span>
-            <div class="ribbon-controls">
-                <select id="sub-sub-font" class="toolbar-select">
-                    <option value="inherit">Default Font</option>
-                    <option value="'Times New Roman', serif" selected>Times New (Default)</option>
-                    <option value="Arial, sans-serif">Arial</option>
-                    <option value="'Courier New', monospace">Courier</option>
-                </select>
-                <input type="number" id="sub-sub-size" class="toolbar-input" value="14" min="10" max="72"
-                    title="Font Size (pt)">
-            </div>
-        </div>
-
-        <!-- Body Text Controls -->
-        <div class="ribbon-group">
-            <span class="ribbon-label">Body Text</span>
-            <div class="ribbon-controls">
-                <select id="p-font" class="toolbar-select">
-                    <option value="inherit">Default Font</option>
-                    <option value="'Times New Roman', serif" selected>Times New (Default)</option>
-                    <option value="Arial, sans-serif">Arial</option>
-                    <option value="'Courier New', monospace">Courier</option>
-                </select>
-                <input type="number" id="p-size" class="toolbar-input" value="12" min="10" max="72"
-                    title="Font Size (pt)">
-            </div>
-        </div>
-
-        <!-- Global Alignment Controls -->
-        <div class="ribbon-group">
-            <span class="ribbon-label">Alignment</span>
-            <div class="ribbon-controls">
-                <select id="global-alignment" class="toolbar-select" title="Text Alignment">
-                    <option value="left" selected>Left</option>
-                    <option value="center">Center</option>
-                    <option value="right">Right</option>
-                    <option value="justify">Justify</option>
-                </select>
-            </div>
-        </div>
-
-        <!-- Document Options -->
-        <div class="ribbon-group" style="border-right: none;">
-            <span class="ribbon-label">Options</span>
-            <div class="ribbon-controls" style="display: flex; align-items: center; height: 100%;">
-                <label
-                    style="font-size: 0.85rem; color: var(--text-main); display: flex; align-items: center; gap: 4px; cursor: pointer;">
-                    <input type="checkbox" id="include-toc">
-                    <span class="toc-text-desktop">Include Table of Contents</span>
-                    <span class="toc-text-mobile" style="display: none;">Include TOC</span>
-                </label>
-            </div>
-        </div>
-    </nav>
 
     <!-- Mobile Tabs (Visible only on small screens) -->
     <div class="mobile-tabs">
@@ -240,9 +153,32 @@
 
         <!-- Right Panel: Output Preview -->
         <section class="panel output-panel">
-            <div class="panel-header" style="flex-wrap: nowrap; gap: 12px; padding: 4px 12px;">
+            <div class="panel-header" style="display: flex; justify-content: space-between; align-items: center; padding: 4px 12px; gap: 12px; width: 100%;">
                 <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
                     <h2>Output</h2>
+                </div>
+                
+                <!-- Compact Global Formatting Controls -->
+                <div class="global-settings-controls" style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: flex-end;">
+                    <!-- Alignment -->
+                    <select id="global-alignment" class="toolbar-select" title="Text Alignment" style="padding: 4px 8px; font-size: 13px; height: 28px; border-radius: 4px; border: 1px solid var(--border-color); background: var(--bg-main); width: auto;">
+                        <option value="left" selected>Left</option>
+                        <option value="center">Center</option>
+                        <option value="right">Right</option>
+                        <option value="justify">Justify</option>
+                    </select>
+
+                    <!-- TOC Toggle -->
+                    <label style="font-size: 13px; color: var(--text-main); display: flex; align-items: center; gap: 4px; cursor: pointer; white-space: nowrap;">
+                        <input type="checkbox" id="include-toc" style="margin: 0; width: 14px; height: 14px;">
+                        <span class="toc-text-desktop">Include TOC</span>
+                    </label>
+
+                    <!-- Customize Typography Button -->
+                    <button id="btn-customize-typography" class="btn secondary btn-small" title="Advanced Font Settings" style="height: 28px; padding: 0 10px; display: flex; align-items: center; gap: 4px; font-size: 12px;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                        <span class="toc-text-desktop">Typography</span>
+                    </button>
                 </div>
             </div>
 
@@ -706,6 +642,73 @@
     <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
     <!-- FileSaver -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <!-- Typography Customization Modal -->
+    <div id="typography-modal" class="modal-overlay" style="display: none; align-items: center; justify-content: center; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); z-index: 10000; opacity: 1; transition: opacity 0.2s;">
+        <div class="modal-content typography-controls" style="background: var(--bg-main); padding: 24px; border-radius: 12px; width: 100%; max-width: 450px; border: 1px solid var(--border-color); box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+            <h3 style="margin-top: 0; margin-bottom: 20px; font-size: 1.25rem;">Advanced Typography</h3>
+            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px;">Override template fonts manually.</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 16px;">
+                <!-- H1 -->
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-weight: 500; font-size: 0.95rem;">Title (H1)</span>
+                    <div style="display: flex; gap: 8px;">
+                        <select id="h1-font" class="toolbar-select" style="width: 140px;">
+                            <option value="inherit">Template Default</option>
+                            <option value="'Times New Roman', serif" selected>Times New Roman</option>
+                            <option value="Arial, sans-serif">Arial</option>
+                            <option value="'Courier New', monospace">Courier</option>
+                        </select>
+                        <input type="number" id="h1-size" class="toolbar-input" value="16" min="10" max="72" style="width: 60px;">
+                    </div>
+                </div>
+                <!-- H2 -->
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-weight: 500; font-size: 0.95rem;">Heading (H2)</span>
+                    <div style="display: flex; gap: 8px;">
+                        <select id="h2-font" class="toolbar-select" style="width: 140px;">
+                            <option value="inherit">Template Default</option>
+                            <option value="'Times New Roman', serif" selected>Times New Roman</option>
+                            <option value="Arial, sans-serif">Arial</option>
+                            <option value="'Courier New', monospace">Courier</option>
+                        </select>
+                        <input type="number" id="h2-size" class="toolbar-input" value="16" min="10" max="72" style="width: 60px;">
+                    </div>
+                </div>
+                <!-- H3 -->
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-weight: 500; font-size: 0.95rem;">Subheading (H3)</span>
+                    <div style="display: flex; gap: 8px;">
+                        <select id="sub-sub-font" class="toolbar-select" style="width: 140px;">
+                            <option value="inherit">Template Default</option>
+                            <option value="'Times New Roman', serif" selected>Times New Roman</option>
+                            <option value="Arial, sans-serif">Arial</option>
+                            <option value="'Courier New', monospace">Courier</option>
+                        </select>
+                        <input type="number" id="sub-sub-size" class="toolbar-input" value="14" min="10" max="72" style="width: 60px;">
+                    </div>
+                </div>
+                <!-- Body -->
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-weight: 500; font-size: 0.95rem;">Body Text</span>
+                    <div style="display: flex; gap: 8px;">
+                        <select id="p-font" class="toolbar-select" style="width: 140px;">
+                            <option value="inherit">Template Default</option>
+                            <option value="'Times New Roman', serif" selected>Times New Roman</option>
+                            <option value="Arial, sans-serif">Arial</option>
+                            <option value="'Courier New', monospace">Courier</option>
+                        </select>
+                        <input type="number" id="p-size" class="toolbar-input" value="12" min="10" max="72" style="width: 60px;">
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; margin-top: 24px; gap: 12px;">
+                <button id="btn-close-typography" class="btn primary" style="padding: 8px 16px;">Done</button>
+            </div>
+        </div>
+    </div>
+
     <!-- App Logic -->
     <script src="js/app.js?v=203"></script>
 </body>

@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- State Management ---
     let hasFormattedOnce = false; // Only allow ribbon auto-updates after first manual format
-    
+
     // Auto-Save State
     let currentDocumentId = Date.now().toString();
     let autoSaveTimer = null;
@@ -80,12 +80,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // Reset classes
         toast.className = 'toast-message';
         toast.innerHTML = message;
-        
+
         // Reset custom styles in case it was a warning previously
         toast.style.color = '';
         toast.style.border = '';
         toast.style.fontWeight = '';
-        
+
         if (type === 'error' || type === true) {
             toast.style.background = 'rgba(229, 62, 62, 0.95)'; // Red
         } else if (type === 'warning') {
@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (connectApiKeyBtn) {
         connectApiKeyBtn.addEventListener('click', async () => {
             const val = customApiKeyInput.value.trim();
-            
+
             // Allow clearing key by passing empty input
             if (!val) {
                 localStorage.removeItem('gemini_api_key');
@@ -180,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
         toggleApiVisibilityBtn.addEventListener('click', () => {
             const isPassword = customApiKeyInput.type === 'password';
             customApiKeyInput.type = isPassword ? 'text' : 'password';
-            
+
             // Update icon visually
             const svgPath = toggleApiVisibilityBtn.querySelector('path');
             if (isPassword) {
@@ -209,7 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const outputPanel = document.querySelector('.output-panel');
         outputPanel.classList.toggle('fullscreen-mode');
         document.body.classList.toggle('fullscreen-active');
-        
+
         if (outputPanel.classList.contains('fullscreen-mode')) {
             if (fullScreenBtn) fullScreenBtn.innerHTML = '⮌ Exit Full Screen';
             if (fsControls) fsControls.style.display = 'flex';
@@ -225,7 +225,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (fullScreenBtn) {
         fullScreenBtn.addEventListener('click', toggleFullScreenMode);
     }
-    
+
     if (exitFullScreenBtn) {
         exitFullScreenBtn.addEventListener('click', toggleFullScreenMode);
     }
@@ -237,7 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const sel = window.getSelection();
         if (sel.rangeCount > 0 && previewContainerEl.contains(sel.anchorNode)) {
             savedSelectionRange = sel.getRangeAt(0).cloneRange();
-            
+
             // Auto-detect font size and update the input
             const node = sel.anchorNode;
             const element = node.nodeType === 3 ? node.parentNode : node;
@@ -326,7 +326,7 @@ document.addEventListener('DOMContentLoaded', () => {
             restoreSelection();
             manualImageInsert.click();
         });
-        
+
         manualImageInsert.addEventListener('change', (e) => {
             const file = e.target.files[0];
             if (!file) return;
@@ -392,7 +392,7 @@ document.addEventListener('DOMContentLoaded', () => {
             restoreSelection();
             const val = e.target.value;
             const previewContainer = document.getElementById('formatted-preview');
-            
+
             if (val === 'current') {
                 const sel = window.getSelection();
                 if (sel.rangeCount > 0 && previewContainer.contains(sel.anchorNode)) {
@@ -414,7 +414,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else if (val === 'clear-all') {
                 previewContainer.querySelectorAll('.page-break-before').forEach(node => node.classList.remove('page-break-before'));
             }
-            
+
             // Reset dropdown visual state
             e.target.selectedIndex = 0;
             previewContainer.focus();
@@ -449,17 +449,17 @@ document.addEventListener('DOMContentLoaded', () => {
         imageUploadInput.addEventListener('change', async (e) => {
             const files = e.target.files;
             if (!files || files.length === 0) return;
-            
+
             modalAddImagesBtn.innerHTML = '⏳ Processing...';
             modalAddImagesBtn.disabled = true;
-            
+
             for (let i = 0; i < files.length; i++) {
                 const file = files[i];
                 if (!file.type.startsWith('image/')) continue;
-                
+
                 const base64DataUrl = await compressImage(file, 1024, 0.7);
                 const imageId = window.appUploadedImages.length;
-                
+
                 window.appUploadedImages.push({
                     id: imageId,
                     mimeType: file.type,
@@ -467,11 +467,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     base64: base64DataUrl.split(',')[1]
                 });
             }
-            
+
             modalAddImagesBtn.innerHTML = '🖼️ Add More Images';
             modalAddImagesBtn.disabled = false;
             imageUploadInput.value = '';
-            
+
             // Update the modal UI to show thumbnails and caption/format options
             renderModalImagePreview();
             if (window.appUploadedImages.length > 0) {
@@ -488,11 +488,11 @@ document.addEventListener('DOMContentLoaded', () => {
         window.appUploadedImages.forEach((img, index) => {
             const wrapper = document.createElement('div');
             wrapper.className = 'image-thumb-wrapper';
-            
+
             const thumb = document.createElement('img');
             thumb.className = 'image-thumb';
             thumb.src = img.dataUrl;
-            
+
             const removeBtn = document.createElement('button');
             removeBtn.className = 'image-thumb-remove';
             removeBtn.innerHTML = '✖';
@@ -507,7 +507,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     modalAddImagesBtn.innerHTML = '🖼️ Choose Images';
                 }
             };
-            
+
             wrapper.appendChild(thumb);
             wrapper.appendChild(removeBtn);
             modalImagePreview.appendChild(wrapper);
@@ -537,18 +537,18 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    
+
     function renderImagePreview() {
         if (!imagePreviewStrip) return;
         imagePreviewStrip.innerHTML = '';
         window.appUploadedImages.forEach((img, index) => {
             const wrapper = document.createElement('div');
             wrapper.className = 'image-thumb-wrapper';
-            
+
             const thumb = document.createElement('img');
             thumb.className = 'image-thumb';
             thumb.src = img.dataUrl;
-            
+
             const removeBtn = document.createElement('button');
             removeBtn.className = 'image-thumb-remove';
             removeBtn.innerHTML = '✖';
@@ -558,7 +558,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.appUploadedImages.forEach((m, idx) => m.id = idx);
                 renderImagePreview();
             };
-            
+
             wrapper.appendChild(thumb);
             wrapper.appendChild(removeBtn);
             imagePreviewStrip.appendChild(wrapper);
@@ -586,7 +586,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     canvas.height = height;
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
-                    
+
                     resolve(canvas.toDataURL(file.type === 'image/png' ? 'image/png' : 'image/jpeg', quality));
                 };
                 img.onerror = error => reject(error);
@@ -641,7 +641,7 @@ document.addEventListener('DOMContentLoaded', () => {
         appendModal.style.display = 'none';
         updatePreviewWrapperState(false);
         if (window.switchToPreviewTabOnMobile) window.switchToPreviewTabOnMobile();
-        
+
         statusText.textContent = "Finalizing Rendering...";
         await finalizeRendering(previewContainer);
         statusText.textContent = "Formatted Successfully ✨";
@@ -650,11 +650,11 @@ document.addEventListener('DOMContentLoaded', () => {
     modalAppendBtn.addEventListener('click', async () => {
         insertHtmlAtCursor(pendingFormattedHtml);
         appendModal.style.display = 'none';
-        
+
         const previewContainer = document.getElementById('formatted-preview');
         updatePreviewWrapperState(false);
         if (window.switchToPreviewTabOnMobile) window.switchToPreviewTabOnMobile();
-        
+
         statusText.textContent = "Finalizing Rendering...";
         await finalizeRendering(previewContainer);
         statusText.textContent = "Appended Successfully ✨";
@@ -667,7 +667,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function populateModalCustomization(defaults) {
         if (!defaults) return;
-        
+
         const setFont = (modalId, fontValue) => {
             const el = document.getElementById(modalId);
             if (!el || !fontValue) return;
@@ -986,10 +986,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const grid = document.getElementById('template-grid');
         const customPanel = document.getElementById('template-customization');
         if (!grid || !window.templateEngine) return;
-        
+
         const templates = window.templateEngine.getAllTemplates();
         grid.innerHTML = '';
-        
+
         templates.forEach(t => {
             const isSelected = window.templateEngine.selectedTemplateId === t.id;
             const card = document.createElement('div');
@@ -999,7 +999,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="template-name">${t.name}</div>
                 <div class="template-desc">${t.description}</div>
             `;
-            
+
             card.addEventListener('click', () => {
                 window.templateEngine.selectTemplate(t.id);
                 document.querySelectorAll('.template-card').forEach(c => c.classList.remove('selected'));
@@ -1028,7 +1028,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function applyTemplateToRibbon() {
         // Read directly from modal instead of defaults
-        
+
         // Font assignments map (modalId -> ribbonId)
         const fontMap = {
             'modal-h1-font': 'heading1-font',
@@ -1050,7 +1050,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         }
-        
+
         // Size assignments map
         const sizeMap = {
             'modal-h1-size': 'heading1-size',
@@ -1065,7 +1065,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 ribbonEl.value = modalEl.value;
             }
         }
-        
+
         // Alignment
         const modalAlign = document.getElementById('modal-alignment');
         const ribbonAlign = document.getElementById('global-alignment');
@@ -1166,16 +1166,16 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('template-continue-btn')?.addEventListener('click', () => {
         document.getElementById('template-modal').style.display = 'none';
         applyTemplateToRibbon();
-        
+
         // Show Image Step Modal
         const imageStepModal = document.getElementById('image-step-modal');
         if (imageStepModal) imageStepModal.style.display = 'flex';
     });
 
     document.getElementById('template-skip-btn')?.addEventListener('click', () => {
-        if(window.templateEngine) window.templateEngine.selectTemplate('general');
+        if (window.templateEngine) window.templateEngine.selectTemplate('general');
         document.getElementById('template-modal').style.display = 'none';
-        
+
         const imageStepModal = document.getElementById('image-step-modal');
         if (imageStepModal) imageStepModal.style.display = 'flex';
     });
@@ -1191,19 +1191,19 @@ document.addEventListener('DOMContentLoaded', () => {
         // Reset image state for this new format session
         window.appUploadedImages = [];
         window.appImageCaptionEnabled = false;
-        
+
         // Reset image modal UI
         if (modalImagePreview) modalImagePreview.innerHTML = '';
         if (captionOptions) captionOptions.style.display = 'none';
         if (modalFormatWithImagesBtn) modalFormatWithImagesBtn.style.display = 'none';
         if (modalAddImagesBtn) modalAddImagesBtn.innerHTML = '🖼️ Choose Images';
-        
+
         // Show Template Modal FIRST
         const templateModal = document.getElementById('template-modal');
         if (templateModal) {
             renderTemplateGrid();
             // Pre-select general
-            if(window.templateEngine) window.templateEngine.selectTemplate('general');
+            if (window.templateEngine) window.templateEngine.selectTemplate('general');
             templateModal.style.display = 'flex';
         } else {
             // Fallback if modal missing
@@ -1242,33 +1242,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Helper function to extract rule values from ribbon
     function getRibbonRules() {
         const rules = {
-            h1: {
-                'font-family': document.getElementById('h1-font').value,
-                'font-size': document.getElementById('h1-size').value + 'pt'
-            },
-            h2: {
-                'font-family': document.getElementById('h2-font').value,
-                'font-size': document.getElementById('h2-size').value + 'pt'
-            },
-            'sub-subheading': {
-                'font-family': document.getElementById('sub-sub-font').value,
-                'font-size': document.getElementById('sub-sub-size').value + 'pt'
-            },
-            p: {
-                'font-family': document.getElementById('p-font').value,
-                'font-size': document.getElementById('p-size').value + 'pt'
-            },
             global: {
-                'text-align': document.getElementById('global-alignment').value
+                'text-align': document.getElementById('global-alignment') ? document.getElementById('global-alignment').value : 'left'
             }
         };
 
-        // Filter out 'inherit' defaults so we fallback to the parent CSS
-        for (const type in rules) {
-            if (rules[type]['font-family'] === 'inherit') {
-                delete rules[type]['font-family'];
-            }
-        }
         return rules;
     }
 
@@ -1334,7 +1312,7 @@ document.addEventListener('DOMContentLoaded', () => {
             loadingOverlay.classList.add(activeCustomKey ? 'theme-rcb' : 'theme-csk');
 
             loadingOverlay.style.display = 'flex';
-            
+
             // --- Fake Progress Counter ---
             const chunkProgressContainer = document.getElementById('chunk-progress-container');
             const chunkProgressBar = document.getElementById('chunk-progress-bar');
@@ -1346,17 +1324,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (chunkProgressBar) chunkProgressBar.style.width = '0%';
                 if (chunkProgressPercent) chunkProgressPercent.textContent = '0%';
                 if (chunkProgressLabel) chunkProgressLabel.textContent = 'Formatting Document...';
-                
+
                 if (window.loadingInterval) clearInterval(window.loadingInterval);
                 window.loadingPercent = 0;
-                
+
                 window.loadingInterval = setInterval(() => {
                     // Only run if we aren't hijacked by the multi-chunk logic
                     if (!window.isMultiChunking && window.loadingPercent < 98) {
                         const increment = window.loadingPercent < 80 ? Math.floor(Math.random() * 6) + 1 : 1;
                         window.loadingPercent += increment;
                         if (window.loadingPercent > 98) window.loadingPercent = 98;
-                        
+
                         if (chunkProgressBar) chunkProgressBar.style.width = window.loadingPercent + '%';
                         if (chunkProgressPercent) chunkProgressPercent.textContent = window.loadingPercent + '%';
                     }
@@ -1374,7 +1352,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // This prevents the AI from modifying or corrupting mermaid syntax.
             // Catch BOTH markdown-fenced ```mermaid AND bare flowchart/graph/etc declarations.
             const extractedMermaid = [];
-            
+
             // First pass: Markdown fenced blocks
             let cleanedText = textToProcess.replace(/```mermaid\s*\n([\s\S]*?)```/gi, (match, code) => {
                 const index = extractedMermaid.length;
@@ -2086,7 +2064,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         chunkProgressPercent.textContent = '0%';
                         chunkProgressLabel.textContent = `Part 0 of ${chunks.length}`;
                     }
-                    
+
                     const failedParts = []; // Track which parts failed to show in toast
 
                     for (let i = 0; i < chunks.length; i++) {
@@ -2178,7 +2156,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (chunkProgressContainer) {
                         chunkProgressContainer.style.display = 'none';
                     }
-                    
+
                     // Show a toast notification if any parts failed
                     if (failedParts.length > 0) {
                         const partsStr = failedParts.join(", ");
@@ -2455,7 +2433,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 updatePreviewWrapperState(false);
                 if (window.switchToPreviewTabOnMobile) window.switchToPreviewTabOnMobile();
                 await finalizeRendering(previewContainer);
-                
+
                 // Enable Edit Customization Button
                 const editBtn = document.getElementById('toggle-customization-btn');
                 const fsEditBtn = document.getElementById('fs-edit-btn');
@@ -2535,7 +2513,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (rawInput) {
                 rawInput.disabled = true;
             }
-            
+
             if (typeof debouncedAutoSave === 'function') {
                 debouncedAutoSave();
             }
@@ -2595,12 +2573,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 clearInterval(window.loadingInterval);
             }
             window.isMultiChunking = false;
-            
+
             const chunkProgressBar = document.getElementById('chunk-progress-bar');
             const chunkProgressPercent = document.getElementById('chunk-progress-percent');
             if (chunkProgressBar) chunkProgressBar.style.width = '100%';
             if (chunkProgressPercent) chunkProgressPercent.textContent = '100%';
-            
+
             const loadingOverlay = document.getElementById('loading-overlay');
             if (loadingOverlay) loadingOverlay.style.display = 'none';
         }
@@ -2807,9 +2785,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // 2. Export PDF (Using Python Backend with ConvertAPI for 1000% identical DOCX to PDF match)
     const handleExportPdf = async (e) => {
         if (e) e.preventDefault();
-        
+
         const exportOverlay = document.getElementById('export-loading-overlay');
-        
+
         try {
             const previewContainer = document.getElementById('formatted-preview');
             if (previewContainer.querySelector('.placeholder-text')) {
@@ -2858,7 +2836,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const pdfBlob = await response.blob();
-            
+
             // Download the PDF
             const url = URL.createObjectURL(pdfBlob);
             const a = document.createElement('a');
@@ -2868,7 +2846,7 @@ document.addEventListener('DOMContentLoaded', () => {
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
-            
+
             statusText.textContent = "PDF Exported Successfully ✨";
         } catch (error) {
             console.error("Critical PDF Export Error:", error);
@@ -3068,7 +3046,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     let finalSvg = null;
                     let lastError = null;
                     let currentCode = el.textContent;
-                    
+
                     // Retry loop for Mermaid Auto-Healing (max 1 retry)
                     for (let attempt = 1; attempt <= 2; attempt++) {
                         try {
@@ -3079,13 +3057,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         } catch (singleErr) {
                             lastError = singleErr;
                             console.warn(`Mermaid render failed (Attempt ${attempt}/2):`, singleErr);
-                            
+
                             // CLEANUP LEAKED MERMAID BOMBS
                             const leaked1 = document.getElementById('d' + id);
                             if (leaked1) leaked1.remove();
                             const leaked2 = document.getElementById(id);
                             if (leaked2) leaked2.remove();
-                            
+
                             // Auto-Healing Phase: Try to fix it on the first failure via Gemini AI
                             if (attempt === 1) {
                                 if (loadingOverlay) loadingOverlay.style.display = 'flex';
@@ -3155,19 +3133,19 @@ document.addEventListener('DOMContentLoaded', () => {
         measureWrapper.style.fontFamily = "'Times New Roman', serif";
         measureWrapper.style.fontSize = "11pt";
         measureWrapper.style.lineHeight = "1.5";
-        
+
         // Clone into standard wrapper
         measureWrapper.innerHTML = container.innerHTML;
         document.body.appendChild(measureWrapper);
 
         // Available content height per page: A4 = 297mm - 25.4mm top - 25.4mm bottom = 246.2mm
         const pageMeasurement = document.createElement('div');
-        pageMeasurement.style.height = '246.2mm'; 
+        pageMeasurement.style.height = '246.2mm';
         measureWrapper.appendChild(pageMeasurement);
 
         // Let the browser paint to settle layout metrics
         await new Promise(resolve => setTimeout(resolve, 50));
-        
+
         const pixelsPerPage = pageMeasurement.offsetHeight || 930; // Use 930px approx as fallback for 246.2mm
         const wrapperRect = measureWrapper.getBoundingClientRect();
         const contentContainer = measureWrapper.querySelector('.content-after-toc');
@@ -3182,10 +3160,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     const headingRect = heading.getBoundingClientRect();
                     // Offset relative to where the content actually starts
                     const offset = headingRect.top - contentStartTop;
-                    
+
                     if (offset >= 0) {
                         const pageNum = Math.floor(offset / pixelsPerPage) + 1;
-                        
+
                         // Update the real visible DOM cell
                         const realCell = container.querySelector(`.toc-page-num[data-target-id="${targetId}"]`);
                         if (realCell) {
@@ -3198,16 +3176,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         document.body.removeChild(measureWrapper);
     }
-    
+
     // --- Global Utility Functions ---
-    window.copyCodeToClipboard = function(btn) {
+    window.copyCodeToClipboard = function (btn) {
         const wrapper = btn.closest('.code-block-wrapper');
         if (!wrapper) return;
         const codeEl = wrapper.querySelector('code');
         if (!codeEl) return;
-        
+
         const textToCopy = codeEl.innerText || codeEl.textContent;
-        
+
         navigator.clipboard.writeText(textToCopy).then(() => {
             const originalText = btn.innerHTML;
             btn.innerHTML = '✅ Copied!';
@@ -3237,7 +3215,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     rawInput.addEventListener("input", debouncedAutoSave);
     formattedPreview.addEventListener("input", debouncedAutoSave);
-    if(documentTitleInput) documentTitleInput.addEventListener("input", debouncedAutoSave);
+    if (documentTitleInput) documentTitleInput.addEventListener("input", debouncedAutoSave);
 
     if (newDocBtn) {
         newDocBtn.addEventListener("click", () => {
@@ -3261,19 +3239,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const rawText = rawInput.value;
         const formattedHtml = formattedPreview.innerHTML;
         let title = documentTitleInput ? documentTitleInput.value.trim() : "";
-        
+
         if ((!title || title === "Untitled Document") && rawText.trim().length > 0) {
             const firstLine = rawText.trim().split("\n")[0];
             if (firstLine.length > 0) {
                 title = firstLine.substring(0, 30);
                 if (firstLine.length > 30) title += "...";
-                if(documentTitleInput) documentTitleInput.value = title;
+                if (documentTitleInput) documentTitleInput.value = title;
             } else {
                 title = "Untitled Document";
             }
         } else if (!title) {
             title = "Untitled Document";
-            if(documentTitleInput) documentTitleInput.value = title;
+            if (documentTitleInput) documentTitleInput.value = title;
         }
 
         const doc = {
@@ -3325,13 +3303,13 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `;
         updatePreviewWrapperState(true);
-        if(documentTitleInput) documentTitleInput.value = "Untitled Document";
+        if (documentTitleInput) documentTitleInput.value = "Untitled Document";
         window.appUploadedImages = [];
         window.appImageCaptionEnabled = false;
-        if(window.templateEngine) window.templateEngine.selectTemplate('general');
-        if(window.referenceHandler) window.referenceHandler.clear();
+        if (window.templateEngine) window.templateEngine.selectTemplate('general');
+        if (window.referenceHandler) window.referenceHandler.clear();
         hasFormattedOnce = false;
-        
+
         const ribbonControls = document.querySelectorAll('.typography-controls select, .typography-controls input, .global-settings-controls select, .global-settings-controls input');
         ribbonControls.forEach(control => {
             control.disabled = false;
@@ -3342,7 +3320,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 control.parentElement.style.cursor = "pointer";
             }
         });
-        
+
         if (saveStatus) saveStatus.classList.remove("visible");
     }
 
@@ -3371,7 +3349,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="doc-snippet">${doc.snippet}</div>
                 `;
                 info.onclick = () => loadDocument(doc.id);
-                
+
                 const delBtn = document.createElement("button");
                 delBtn.className = "doc-delete-btn";
                 delBtn.title = "Delete Document";
@@ -3426,17 +3404,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     updatePreviewWrapperState(false);
                 }
-                if(documentTitleInput) documentTitleInput.value = doc.title || "Untitled Document";
+                if (documentTitleInput) documentTitleInput.value = doc.title || "Untitled Document";
                 window.appUploadedImages = doc.images || [];
                 window.appImageCaptionEnabled = doc.captionEnabled || false;
-                if(doc.templateId && window.templateEngine) {
+                if (doc.templateId && window.templateEngine) {
                     window.templateEngine.selectTemplate(doc.templateId);
-                } else if(window.templateEngine) {
+                } else if (window.templateEngine) {
                     window.templateEngine.selectTemplate('general');
                 }
                 hasFormattedOnce = !!(doc.formattedHtml && doc.formattedHtml.length > 0);
                 isInitialLoad = false;
-                
+
                 if (saveStatus) {
                     saveStatus.textContent = "Loaded";
                     saveStatus.classList.add("visible");
@@ -3510,7 +3488,7 @@ document.addEventListener('DOMContentLoaded', () => {
             marker.id = 'sf-caret-marker';
             marker.style.position = 'absolute';
             marker.style.opacity = '0';
-            
+
             const r = range.cloneRange();
             r.collapse(false);
             r.insertNode(marker);
@@ -3571,12 +3549,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 offsetTop += currentEl.offsetTop || 0;
                 currentEl = currentEl.offsetParent;
             }
-            
+
             // Calculate child's bottom relative to the page's top (unscaled logical pixels)
             const childRelativeBottom = offsetTop + measureEl.offsetHeight;
-            
+
             const overflow = childRelativeBottom - safeBottomLimit;
-            
+
             // Check if there are other content elements on this page.
             const isFirstContentElement = currentPage.childNodes.length <= 2;
 
@@ -3606,7 +3584,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 pageNum++;
                 currentPage = createNewA4Page(pageNum);
                 container.appendChild(currentPage);
-                
+
                 // Append all moved elements to the new page
                 elementsToMove.forEach(el => currentPage.appendChild(el));
             }
@@ -3626,7 +3604,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 newSel.removeAllRanges();
                 newSel.addRange(newRange);
                 marker.parentNode.removeChild(marker);
-                
+
                 // Ensure the cursor is visible
                 if (marker.scrollIntoViewIfNeeded) {
                     marker.scrollIntoViewIfNeeded();
@@ -3672,31 +3650,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Expose globally so finalizeRendering can call it after AI formatting
     window.calculateAccurateTOC = calculateAccurateTOC;
 
-    // --- Typography Modal Logic ---
-    const btnCustomizeTypography = document.getElementById('btn-customize-typography');
-    const typographyModal = document.getElementById('typography-modal');
-    const btnCloseTypography = document.getElementById('btn-close-typography');
 
-    if (btnCustomizeTypography && typographyModal) {
-        btnCustomizeTypography.addEventListener('click', () => {
-            typographyModal.style.display = 'flex';
-        });
-    }
-
-    if (btnCloseTypography && typographyModal) {
-        btnCloseTypography.addEventListener('click', () => {
-            typographyModal.style.display = 'none';
-        });
-    }
-
-    // Close modal when clicking outside content
-    if (typographyModal) {
-        typographyModal.addEventListener('click', (e) => {
-            if (e.target === typographyModal) {
-                typographyModal.style.display = 'none';
-            }
-        });
-    }
 
     // Hook paginatePreview into the existing customization toggle
     // When "Edit" is enabled, pages become editable; when "Done", re-paginate
@@ -3749,7 +3703,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Update active panels
         const fsEditBtn = document.getElementById('fs-edit-btn');
         const mobileExportBar = document.getElementById('mobile-export-bar');
-        
+
         if (tabId === 'input') {
             inputPanel.classList.add('active-tab-panel');
             outputPanel.classList.remove('active-tab-panel');
@@ -3785,7 +3739,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Wrap the existing finishFormatting logic to auto-switch tabs
     // We do this by observing changes to the status text or intercepting the finalization
     // Since we don't want to heavily modify the core algorithm logic here, we'll expose a global function
-    window.switchToPreviewTabOnMobile = function() {
+    window.switchToPreviewTabOnMobile = function () {
         if (window.innerWidth <= 768) {
             switchMobileTab('preview');
         }

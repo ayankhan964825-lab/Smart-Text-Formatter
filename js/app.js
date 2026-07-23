@@ -1337,6 +1337,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                         if (chunkProgressBar) chunkProgressBar.style.width = window.loadingPercent + '%';
                         if (chunkProgressPercent) chunkProgressPercent.textContent = window.loadingPercent + '%';
+                        if (typeof window.updateAlphabetMorph === 'function') window.updateAlphabetMorph(window.loadingPercent);
                     }
                 }, 180);
             }
@@ -2080,6 +2081,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             chunkProgressBar.style.width = `${percent}%`;
                             chunkProgressPercent.textContent = `${percent}%`;
                             chunkProgressLabel.textContent = `Part ${i + 1} of ${chunks.length}`;
+                            if (typeof window.updateAlphabetMorph === 'function') window.updateAlphabetMorph(percent);
                         }
 
                         // Add context prefix for multi-chunk documents so Gemini preserves structure
@@ -2146,6 +2148,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (chunkProgressBar && chunks.length > 1) {
                             chunkProgressBar.style.width = `${completedPercent}%`;
                             chunkProgressPercent.textContent = `${completedPercent}%`;
+                            if (typeof window.updateAlphabetMorph === 'function') window.updateAlphabetMorph(completedPercent);
                         }
                         if (loadingTitle && chunks.length > 1) {
                             loadingTitle.textContent = `Processing Large Document...`;
@@ -3651,3 +3654,102 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 });
+
+// Alphabet Morph Animation Logic
+const alphabetString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const alphabetData = alphabetString.split("").map((char, index) => {
+    let targetX, targetY;
+    if (index < 6) {
+        // Row 1: Top Left Page (6 letters)
+        targetX = 15 + (index * 5);
+        targetY = 25;
+    } else if (index < 13) {
+        // Row 2: Bottom Left Page (7 letters)
+        targetX = 12 + ((index - 6) * 5);
+        targetY = 70;
+    } else if (index < 19) {
+        // Row 3: Top Right Page (6 letters)
+        targetX = 60 + ((index - 13) * 5);
+        targetY = 25;
+    } else {
+        // Row 4: Bottom Right Page (7 letters)
+        targetX = 58 + ((index - 19) * 5);
+        targetY = 70;
+    }
+
+    return {
+        char: char,
+        scatterX: Math.random() * 100,
+        scatterY: Math.random() * 100,
+        scatterRot: Math.random() * 180 - 90,
+        scatterScale: Math.random() * 0.5 + 0.5,
+        targetX: targetX,
+        targetY: targetY
+    };
+});
+
+window.initAlphabetMorph = function() {
+    const stage = document.getElementById("alphabetStage");
+    if (!stage) return;
+    if (stage.children.length === 0) {
+        stage.innerHTML = alphabetData.map(item => `<span class="alphabet-char" id="char-${item.char}">${item.char}</span>`).join("");
+    }
+};
+
+window.targetMorphPercent = 0;
+window.currentMorphPercent = 0;
+window.isMorphAnimating = false;
+
+window.updateAlphabetMorph = function(progressPercent) {
+    window.targetMorphPercent = progressPercent;
+    
+    if (!window.isMorphAnimating) {
+        window.isMorphAnimating = true;
+        requestAnimationFrame(morphLoop);
+    }
+};
+
+function morphLoop() {
+    window.currentMorphPercent += (window.targetMorphPercent - window.currentMorphPercent) * 0.08;
+    
+    if (Math.abs(window.targetMorphPercent - window.currentMorphPercent) < 0.1) {
+        window.currentMorphPercent = window.targetMorphPercent;
+    }
+    
+    const stage = document.getElementById("alphabetStage");
+    const label = document.getElementById("percentLabel");
+    
+    if (stage && label) {
+        if (stage.children.length === 0) {
+            window.initAlphabetMorph();
+        }
+    
+        const t = Math.min(Math.max(window.currentMorphPercent / 100, 0), 1);
+        const ease = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+    
+        alphabetData.forEach(item => {
+            const charEl = document.getElementById(`char-${item.char}`);
+            if(charEl) {
+                const x = item.scatterX + (item.targetX - item.scatterX) * ease;
+                const y = item.scatterY + (item.targetY - item.scatterY) * ease;
+                const rot = item.scatterRot * (1 - ease);
+                const scale = item.scatterScale + (1 - item.scatterScale) * ease;
+                const color = ease > 0.6 ? "var(--text-main)" : "var(--text-muted)";
+    
+                charEl.style.left = `${x}%`;
+                charEl.style.top = `${y}%`;
+                charEl.style.transform = `translate(-50%,-50%) rotate(${rot}deg) scale(${scale})`;
+                charEl.style.color = color;
+            }
+        });
+    
+        label.innerText = Math.round(window.currentMorphPercent) + "%";
+        label.style.color = "#c18949"; // Theme related brown color
+    }
+    
+    if (window.currentMorphPercent !== window.targetMorphPercent) {
+        requestAnimationFrame(morphLoop);
+    } else {
+        window.isMorphAnimating = false;
+    }
+}

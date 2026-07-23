@@ -2611,7 +2611,7 @@ body.fullscreen-active {
   width: 50%;
   height: auto;
   position: absolute;
-  animation: paging 0.4s linear infinite;
+  animation: paging 0.8s linear infinite;
   transform-origin: left;
 }
 @keyframes paging {
@@ -2625,3 +2625,36 @@ body.fullscreen-active {
     transform: rotateY(180deg) skewY(0deg);
   }
 }
+
+/* CSS for Alphabet Random to Structured Morph */
+.book-alphabet-stage {
+  position: absolute;
+  inset: 6% 4% 8% 4%;
+  pointer-events: none;
+  z-index: 3;
+  overflow: hidden;
+}
+
+.alphabet-char {
+  position: absolute;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  line-height: 1;
+  user-select: none;
+  transition: color 0.3s ease, text-shadow 0.3s ease; will-change: left, top, transform;
+}
+
+.book-center-badge {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 4;
+  font-size: 20px;
+  font-weight: 800;
+  color: #fef08a;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+}
+

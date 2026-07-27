@@ -3,6 +3,7 @@ import shutil
 import uuid
 import glob
 import requests
+import tempfile
 from fastapi import FastAPI, HTTPException, UploadFile, File
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -18,13 +19,29 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-TEMP_DIR = "/tmp/conversions" if os.name != 'nt' else "temp_conversions"
+TEMP_DIR = tempfile.gettempdir()
 os.makedirs(TEMP_DIR, exist_ok=True)
 
 # Comma-separated API keys from environment variable
 # E.g. ILOVEPDF_KEYS="project_key_1,project_key_2,project_key_3"
 ILOVEPDF_KEYS_ENV = os.environ.get("ILOVEPDF_KEYS", "")
 API_KEYS = [k.strip() for k in ILOVEPDF_KEYS_ENV.split(",") if k.strip()]
+
+# Unstructured API Keys
+UNSTRUCTURED_KEYS_ENV = os.environ.get("UNSTRUCTURED_API_KEYS", "aqQankPtVSx8dPucOQ1wT2kGKntLb5,g0jUhQT9GRyWvhgRJnvv6RC4aKL8ce,ZGmvB4PWo9famWUrE20hfPcemhsPWl,mI1pTd41yY78l4oWRHQDowWYeKLbto")
+UNSTRUCTURED_KEYS = [k.strip() for k in UNSTRUCTURED_KEYS_ENV.split(",") if k.strip()]
+unstructured_key_index = 0
+
+def get_next_unstructured_key():
+    if not UNSTRUCTURED_KEYS:
+        return None
+    return UNSTRUCTURED_KEYS[unstructured_key_index]
+
+def rotate_unstructured_key():
+    global unstructured_key_index
+    if UNSTRUCTURED_KEYS:
+        unstructured_key_index = (unstructured_key_index + 1) % len(UNSTRUCTURED_KEYS)
+        print(f"Rotated to next Unstructured key (Index: {unstructured_key_index})")
 
 # Global state to keep track of which key to use
 current_key_index = 0
@@ -214,6 +231,70 @@ async def convert_docx_to_pdf(file: UploadFile = File(...)):
                 os.remove(input_path)
             except:
                 pass
+
+@app.post("/api/parse-unstructured")
+def parse_unstructured(file: UploadFile = File(...)):
+    """
+    Parses a document (text, pdf, html) into JSON using Unstructured.io API.
+    Implements key rotation.
+    """
+    if not UNSTRUCTURED_KEYS:
+        raise HTTPException(status_code=500, detail="No Unstructured API keys configured on server")
+
+    job_id = str(uuid.uuid4())
+    ext = os.path.splitext(file.filename)[1] or ".txt"
+    input_path = os.path.join(TEMP_DIR, f"{job_id}{ext}")
+    
+    try:
+        with open(input_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+            
+        attempts = 0
+        max_attempts = len(UNSTRUCTURED_KEYS)
+        
+        while attempts < max_attempts:
+            api_key = get_next_unstructured_key()
+            print(f"[{job_id}] Attempting Unstructured parsing using key index {unstructured_key_index}...")
+            
+            url = 'https://api.unstructuredapp.io/general/v0/general'
+            headers = {'unstructured-api-key': api_key, 'accept': 'application/json'}
+            
+            try:
+                with open(input_path, 'rb') as f:
+                    files = {'files': (file.filename, f, file.content_type)}
+                    resp = requests.post(url, headers=headers, files=files)
+                
+                if resp.status_code == 200:
+                    return resp.json()
+                elif resp.status_code in [401, 403, 429]:
+                    print(f"[{job_id}] Unstructured Quota/Auth issue ({resp.status_code}). Rotating key...")
+                    rotate_unstructured_key()
+                    attempts += 1
+                else:
+                    print(f"[{job_id}] Unstructured API error: {resp.status_code} {resp.text}")
+                    resp.raise_for_status()
+                    
+            except requests.exceptions.HTTPError as http_err:
+                print(f"[{job_id}] Unstructured HTTP Error: {http_err}")
+                if attempts >= max_attempts - 1:
+                    raise
+            except Exception as api_err:
+                print(f"[{job_id}] Unexpected API error: {api_err}")
+                rotate_unstructured_key()
+                attempts += 1
+                
+        raise Exception("All Unstructured keys depleted or failed.")
+    
+    except Exception as e:
+        print(f"[{job_id}] Critical Parsing Error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        if os.path.exists(input_path):
+            try:
+                os.remove(input_path)
+            except:
+                pass
+
 
 if __name__ == "__main__":
     import uvicorn

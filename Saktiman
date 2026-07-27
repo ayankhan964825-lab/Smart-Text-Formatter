@@ -95,3 +95,15 @@
 3. **Template-Specific Few-Shot Prompting:** Dynamically inject 2-3 perfect examples into the system prompt based on the template the user selected.
 4. **DOM Auto-Corrector (Post-Processing):** A sanity checker script that runs after AI generation to fix illegal HTML structures (e.g., heading inside a paragraph).
 5. **Semantic Chunking:** Split large documents at semantic boundaries (like headings or double newlines) instead of arbitrary character limits.
+
+
+aaya ree hero tony
+
+---
+
+### 🚨 UPCOMING MASTERPLAN: 100% Accurate Templates 🚨
+**Idea:** Implement "Dynamic Few-Shot Prompting" for the Template Engine.
+**How it works:** 
+- Instead of just sending rules to Gemini (e.g., "Make this a Legal Doc"), we will send **1 PERFECT EXAMPLE** of Input (Raw Text) and Output (Perfect JSON Format) in the prompt.
+- **Why:** AI learns exponentially faster and hallucination drops to 0% when it sees an exact structural pattern (Example) to mimic.
+- **Goal:** Execute this immediately after the base parsing logic is stabilized!

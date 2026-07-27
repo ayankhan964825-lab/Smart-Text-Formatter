@@ -52,7 +52,21 @@ const DOCUMENT_TEMPLATES = {
 - PRESERVE the user's original text EXACTLY. Do NOT rewrite, rephrase, or summarize any paragraph. Only fix OCR typos.
 - References section must use the 'references' type with an items array, NOT a plain paragraph.
 - Heading numbering: Use "1. Introduction", "2. Literature Review" etc. for depth:2 headings.
-- Sub-sections: Use "2.1 Topic", "2.2 Topic" for depth:3 headings.`
+- Sub-sections: Use "2.1 Topic", "2.2 Topic" for depth:3 headings.
+
+--- EXTREMELY IMPORTANT: PERFECT EXAMPLE (FEW-SHOT) ---
+To achieve 100% accuracy, here is a perfectly formatted example you must mimic.
+[RAW INPUT]: "the study of plants. 1. intro. plants need water to grow well."
+[EXPECTED JSON OUTPUT]:
+{
+  "ai_thoughts": "Mapped to Abstract and Intro based on skeleton.",
+  "final_document": [
+    { "type": "heading", "depth": 2, "text": "Abstract" },
+    { "type": "p", "text": "the study of plants." },
+    { "type": "heading", "depth": 2, "text": "1. Introduction" },
+    { "type": "p", "text": "plants need water to grow well." }
+  ]
+}`
   },
 
   "assignment": {
@@ -81,7 +95,22 @@ const DOCUMENT_TEMPLATES = {
 - Answer text goes under each question as body paragraphs.
 - If sub-questions exist (a), b), i., ii.), format them as heading blocks with depth:3.
 - PRESERVE the user's original answers EXACTLY. Do NOT rewrite, rephrase, or improve any answer text.
-- Preserve any code snippets, formulas, or diagrams exactly as provided.`
+- Preserve any code snippets, formulas, or diagrams exactly as provided.
+
+--- EXTREMELY IMPORTANT: PERFECT EXAMPLE (FEW-SHOT) ---
+To achieve 100% accuracy, here is a perfectly formatted example you must mimic.
+[RAW INPUT]: "Assignment 1. Q1. What is AI? AI is a machine. b) types? Weak and Strong."
+[EXPECTED JSON OUTPUT]:
+{
+  "ai_thoughts": "Detected assignment title and Q1 with sub-question b.",
+  "final_document": [
+    { "type": "heading", "depth": 1, "text": "Assignment 1" },
+    { "type": "heading", "depth": 2, "text": "Q1. What is AI?" },
+    { "type": "p", "text": "AI is a machine." },
+    { "type": "heading", "depth": 3, "text": "b) types?" },
+    { "type": "p", "text": "Weak and Strong." }
+  ]
+}`
   },
 
   "project-report": {

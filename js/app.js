@@ -2554,6 +2554,29 @@ document.addEventListener('DOMContentLoaded', () => {
     const exportPdfBtn = document.getElementById('export-pdf');
     const exportWordBtn = document.getElementById('export-word');
 
+    // Helper: Merge tables that were split across pages for UI pagination
+    // Ensures PDF and Word exports see a single continuous table
+    function mergeSplitTables(container) {
+        const tables = Array.from(container.querySelectorAll('table[data-split-from-prev="true"]'));
+        tables.forEach(splitTable => {
+            // Find the previous table
+            let prevEl = splitTable.previousSibling;
+            while (prevEl && (prevEl.nodeType === 3 || prevEl.nodeType === 8 || prevEl.tagName === 'BR')) {
+                prevEl = prevEl.previousSibling;
+            }
+            if (prevEl && prevEl.tagName === 'TABLE') {
+                const prevTbody = prevEl.tBodies[0];
+                const splitTbody = splitTable.tBodies[0];
+                if (prevTbody && splitTbody) {
+                    while (splitTbody.firstChild) {
+                        prevTbody.appendChild(splitTbody.firstChild);
+                    }
+                    splitTable.remove();
+                }
+            }
+        });
+    }
+
     // Helper: Build export-ready HTML with page number footer styles
     function buildExportHtml(contentHtml) {
         // Shiv Prakash Research Paper Format Rules:
@@ -2775,6 +2798,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 while (page.firstChild) page.parentNode.insertBefore(page.firstChild, page);
                 page.remove();
             });
+            
+            // Re-merge any tables that were split for UI pagination
+            mergeSplitTables(clonedPreview);
 
             // Convert SVGs to images for clean rendering
             await convertSvgsToImages(clonedPreview);
@@ -2861,6 +2887,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 page.remove();
             });
+            
+            // Re-merge any tables that were split for UI pagination
+            mergeSplitTables(clonedPreview);
 
             // Convert Mermaid containers on the cloned DOM
             await convertSvgsToImages(clonedPreview);
@@ -3463,6 +3492,59 @@ document.addEventListener('DOMContentLoaded', () => {
             const isFirstContentElement = currentPage.childNodes.length <= 2;
 
             if (overflow > 2 && !isFirstContentElement) { // 2px tolerance
+                // --- SPECIAL HANDLING FOR TABLES: Split them across pages ---
+                if (child.tagName === 'TABLE' && child.tBodies.length > 0) {
+                    const tbody = child.tBodies[0];
+                    const rows = Array.from(tbody.rows);
+                    
+                    if (rows.length > 1) {
+                        // Create a clone of the table for the next page
+                        const nextTable = child.cloneNode(true);
+                        // Mark this table as a split continuation so we can merge it back during export
+                        nextTable.setAttribute('data-split-from-prev', 'true');
+                        
+                        const nextTbody = nextTable.tBodies[0];
+                        nextTbody.innerHTML = ''; // Clear rows in the next page's table
+                        
+                        let tableSplit = false;
+                        
+                        // Find which rows fit on the current page
+                        for (let r = rows.length - 1; r >= 0; r--) {
+                            const row = rows[r];
+                            nextTbody.insertBefore(row.cloneNode(true), nextTbody.firstChild);
+                            tbody.removeChild(row);
+                            
+                            // Re-measure after removing a row
+                            const newBottom = offsetTop + measureEl.offsetHeight;
+                            if (newBottom <= safeBottomLimit + 2) {
+                                tableSplit = true;
+                                break; // The rest of the table fits now!
+                            }
+                        }
+                        
+                        // If we managed to split it and keep at least 1 row on the current page
+                        if (tableSplit && tbody.rows.length > 0) {
+                            // Add page separator + new page
+                            const label = document.createElement('div');
+                            label.className = 'page-break-label';
+                            label.textContent = `— Page ${pageNum + 1} —`;
+                            container.appendChild(label);
+                            
+                            pageNum++;
+                            currentPage = createNewA4Page(pageNum);
+                            container.appendChild(currentPage);
+                            
+                            // Push the remainder of the table to the next page
+                            currentPage.appendChild(nextTable);
+                            continue; // Skip the standard move-to-next-page logic
+                        } else {
+                            // If it still doesn't fit or we couldn't split properly, revert to full move
+                            tbody.innerHTML = '';
+                            rows.forEach(r => tbody.appendChild(r));
+                        }
+                    }
+                }
+
                 // Roll it back — move the element to a new page
                 currentPage.removeChild(child);
 

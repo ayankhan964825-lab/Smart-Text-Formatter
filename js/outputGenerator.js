@@ -96,6 +96,30 @@ class OutputGenerator {
                 continue;
             }
 
+            // ── NEW: missing type ──
+            if (tag === 'missing') {
+                const sectionName = this._escapeHTML(element.section || 'Unknown Section');
+                const sectionId = this._escapeHTML(element.id || '');
+                const reason = this._escapeHTML(element.reason || 'The AI could not find information for this required section in your text.');
+                const cardId = 'missing-card-' + Math.random().toString(36).substr(2, 9);
+                
+                htmlParts.push(`
+                    <div id="${cardId}" class="missing-section-card no-print" data-section="${sectionName}" data-section-id="${sectionId}">
+                        <div class="missing-header">
+                            <h4>⚠️ Missing Section: ${sectionName}</h4>
+                        </div>
+                        <p class="missing-reason">${reason}</p>
+                        <textarea class="missing-section-hint" placeholder="Type a hint or short text here for the AI to generate this section..."></textarea>
+                        <div class="missing-actions">
+                            <button class="btn-retry-section" onclick="window.retryMissingSection('${cardId}', '${sectionId}', '${sectionName}', this)">Generate Section</button>
+                            <button class="btn-skip-section" onclick="document.getElementById('${cardId}').remove()">Skip</button>
+                        </div>
+                    </div>
+                `);
+                i++;
+                continue;
+            }
+
             // ── NEW: info type ──
             if (tag === 'info') {
                 const infoContent = this._escapeHTML(element.content || '');

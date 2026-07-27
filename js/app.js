@@ -3835,3 +3835,52 @@ function morphLoop() {
         window.isMorphAnimating = false;
     }
 }
+
+// --- Smart Retry for Missing Sections ---
+window.retryMissingSection = async function(cardId, sectionId, sectionName, btnElement) {
+    const card = document.getElementById(cardId);
+    if (!card) return;
+
+    const hintInput = card.querySelector('.missing-section-hint');
+    const hintText = hintInput ? hintInput.value.trim() : '';
+    
+    // UI Loading state
+    const originalBtnText = btnElement.innerText;
+    btnElement.innerText = "Generating...";
+    btnElement.disabled = true;
+    if (hintInput) hintInput.disabled = true;
+
+    try {
+        // Read original raw text
+        const rawText = document.getElementById('raw-input').value.trim();
+        
+        // Instantiate tools
+        const formatter = new window.AIFormatter();
+        const generator = new window.OutputGenerator();
+        
+        // Generate only the missing section
+        const responseJson = await formatter.generateMissingSection(sectionName, sectionId, hintText, rawText);
+        
+        if (responseJson && responseJson.final_document && responseJson.final_document.length > 0) {
+            // Convert the returned JSON blocks to HTML
+            const newHtml = generator.generateHTML(responseJson.final_document);
+            
+            // Replace the missing card with the actual generated HTML
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = newHtml;
+            
+            while(tempDiv.firstChild) {
+                card.parentNode.insertBefore(tempDiv.firstChild, card);
+            }
+            card.remove();
+        } else {
+            throw new Error("No content generated.");
+        }
+    } catch (error) {
+        console.error("Error generating missing section:", error);
+        alert("Failed to generate section. " + error.message);
+        btnElement.innerText = originalBtnText;
+        btnElement.disabled = false;
+        if (hintInput) hintInput.disabled = false;
+    }
+};

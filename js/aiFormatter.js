@@ -103,7 +103,7 @@ You will be provided with a 'Skeleton Definition' below. You MUST organize the f
 - If the user's raw text belongs to a section but lacks a heading, you MUST generate the appropriate "heading" block for it.
 - Do not invent new sections that are not in the Skeleton.
 - If a section is marked "required: false" and there is no relevant raw text, skip it.
-- If a section is marked "required: true" and is missing, append: {"type": "warning", "content": "Missing required section: [Section Name]"} at the end.
+- If a section is marked "required: true" and is missing, append: {"type": "missing", "section": "[Section Label]", "id": "[Section ID]"} at the end. USE ALIASES aggressively to match user text to skeleton sections before declaring them missing.
 
 5. RULE HIERARCHY (CONFLICT RESOLUTION)
 If there are conflicting instructions, follow this strict hierarchy:
@@ -485,6 +485,76 @@ CRITICAL RULES:
         }
 
         return cleaned;
+    }
+
+    async generateMissingSection(sectionName, sectionId, hintText, rawText) {
+        console.log(`[AIFormatter] Generating missing section: ${sectionName} with hint: "${hintText}"`);
+        
+        const systemInstruction = `You are an expert document formatter. The user is missing a required section: "${sectionName}" (ID: ${sectionId}) in their document.
+Your task is to generate ONLY the content for this specific section based on the user's hint and the context of the original document.
+
+[ORIGINAL DOCUMENT CONTEXT]:
+${rawText ? rawText.substring(0, 3000) + (rawText.length > 3000 ? '...' : '') : 'None provided.'}
+
+[USER HINT FOR MISSING SECTION]:
+${hintText || 'Please generate a standard ' + sectionName + ' appropriate for this document.'}
+
+[RULES]:
+1. Return ONLY a valid JSON object.
+2. Do not wrap it in markdown blockquotes or add any text outside the JSON object.
+3. The JSON MUST follow this schema exactly:
+{
+  "final_document": [
+     // Array of blocks (heading, p, table, ul, ol, etc.) just for this section
+  ]
+}
+4. You MUST start with a "heading" block for this section.
+5. DO NOT generate the entire document again. ONLY generate blocks for this specific missing section.`;
+
+        try {
+            // First try local proxy (dev), then fallback to production Vercel
+            let proxyResponse;
+            try {
+                console.log('[AIFormatter] Trying server proxy for missing section ...');
+                proxyResponse = await fetch('/api/format', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        rawText: hintText || "Generate section",
+                        systemInstruction: systemInstruction,
+                        isMermaidFix: false
+                    })
+                });
+            } catch (e) {
+                console.warn('[AIFormatter] Local proxy failed, trying vercel...');
+                proxyResponse = await fetch('https://smart-text-formatter-server.vercel.app/api/format', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        rawText: hintText || "Generate section",
+                        systemInstruction: systemInstruction,
+                        isMermaidFix: false
+                    })
+                });
+            }
+
+            if (!proxyResponse.ok) {
+                const errorData = await proxyResponse.json();
+                throw new Error(errorData.error || `Proxy error: ${proxyResponse.status}`);
+            }
+
+            const proxyData = await proxyResponse.json();
+            if (proxyData.error) throw new Error(proxyData.error);
+            
+            let jsonText = proxyData.text;
+            jsonText = jsonText.replace(/^```json\s*/i, '').replace(/```\s*$/i, '');
+            
+            const result = JSON.parse(jsonText);
+            return result;
+        } catch (error) {
+            console.error('[AIFormatter] Missing Section Generation Error:', error);
+            throw error;
+        }
     }
 }
 

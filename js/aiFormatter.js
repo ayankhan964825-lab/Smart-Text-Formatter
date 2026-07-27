@@ -31,7 +31,8 @@ class AIFormatter {
             const formData = new FormData();
             formData.append('file', textBlob, 'raw_input.txt');
             
-            const unstructuredRes = await fetch('http://127.0.0.1:8000/api/parse-unstructured', {
+            const BACKEND_URL = "https://smart-text-formatter.onrender.com/api/parse-unstructured";
+            const unstructuredRes = await fetch(BACKEND_URL, {
                 method: 'POST',
                 body: formData
             });

@@ -3913,7 +3913,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             try {
                 // Call our python backend route for Unstructured
-                const response = await fetch('http://localhost:8000/api/parse-unstructured', {
+                const BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+                    ? 'http://localhost:8000' 
+                    : 'https://smart-text-formatter.onrender.com';
+                    
+                const response = await fetch(`${BACKEND_URL}/api/parse-unstructured`, {
                     method: 'POST',
                     body: formData
                 });
@@ -3974,8 +3978,12 @@ document.addEventListener('DOMContentLoaded', () => {
             formData.append('file', file);
 
             try {
+                const BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+                    ? 'http://localhost:8000' 
+                    : 'https://smart-text-formatter.onrender.com';
+                    
                 // Call our python backend route for Adobe API
-                const response = await fetch('http://localhost:8000/api/extract-style', {
+                const response = await fetch(`${BACKEND_URL}/api/extract-style`, {
                     method: 'POST',
                     body: formData
                 });

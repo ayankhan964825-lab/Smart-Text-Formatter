@@ -139,11 +139,11 @@ Write all 4 steps as a single string in "ai_thoughts". Then write the actual blo
 - AI BOILERPLATE: REMOVE all conversational filler. Only return the JSON object.
 
 ${window.templateEngine ? window.templateEngine.getPromptContext() : ''}
-${window.referenceHandler ? window.referenceHandler.getPromptContext() : ''}`;
 
-        const referencePdf = window.referenceHandler && window.referenceHandler.hasReference() 
-            ? window.referenceHandler.getInlineData() 
-            : null;
+${window.referenceStyleGuide ? `--- ADOBE REFERENCE PDF STYLE GUIDE ---\nThe user wants the final document to visually match a reference PDF. Our Adobe Extraction API has analyzed the reference PDF and found these CSS styles:\n${window.referenceStyleGuide}\n\nCRITICAL INSTRUCTION: You MUST inject these exact fonts and sizes into your JSON output using inline 'style' properties. Example: {"type": "heading", "content": "Title", "style": "font-family: Arial; font-size: 24pt;"}` : ''}`;
+
+        // (We no longer use referenceHandler for inline PDF data because Adobe API handles styling)
+        const referencePdf = null;
 
         const callServerProxy = async () => {
             try {

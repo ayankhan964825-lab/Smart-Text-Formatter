@@ -19,7 +19,8 @@ class OutputGenerator {
         while (i < styledElements.length) {
             const element = styledElements[i];
             const tag = element.type;
-            const styleAttr = element.styleString ? ` style="${element.styleString}"` : '';
+            const inlineStyle = element.style || element.styleString || '';
+            const styleAttr = inlineStyle ? ` style="${inlineStyle}"` : '';
 
             // ── NEW: heading type with depth ──
             if (tag === 'heading') {

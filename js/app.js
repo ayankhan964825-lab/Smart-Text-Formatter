@@ -17,6 +17,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentDocumentId = Date.now().toString();
     let autoSaveTimer = null;
     let isInitialLoad = true;
+    
+    // Adobe Style Guide
+    window.referenceStyleGuide = null;
 
     // Helper to toggle preview wrapper background
     function updatePreviewWrapperState(isEmpty) {
@@ -3884,3 +3887,123 @@ window.retryMissingSection = async function(cardId, sectionId, sectionName, btnE
         if (hintInput) hintInput.disabled = false;
     }
 };
+
+// --- API File Upload Handlers (Smart Paste & Adobe Style) ---
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. Smart Paste (Unstructured API)
+    const rawDocUploadBtn = document.getElementById('raw-doc-upload-btn');
+    const rawDocUploadInput = document.getElementById('raw-doc-upload-input');
+    const rawInput = document.getElementById('raw-input');
+
+    if (rawDocUploadBtn && rawDocUploadInput) {
+        rawDocUploadBtn.addEventListener('click', () => {
+            rawDocUploadInput.click();
+        });
+
+        rawDocUploadInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const originalText = rawDocUploadBtn.innerHTML;
+            rawDocUploadBtn.innerHTML = '⏳ Extracting...';
+            rawDocUploadBtn.disabled = true;
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                // Call our python backend route for Unstructured
+                const response = await fetch('http://localhost:8000/api/parse-unstructured', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) throw new Error("Failed to extract text from file.");
+                
+                const data = await response.json();
+                let extractedText = "";
+                
+                if (data && Array.isArray(data)) {
+                    extractedText = data.map(el => el.text).join('\n\n');
+                } else if (data && data.text) {
+                    extractedText = data.text;
+                }
+
+                if (extractedText) {
+                    // Append or Replace text
+                    if (rawInput.value.trim().length > 0) {
+                        rawInput.value += '\n\n' + extractedText;
+                    } else {
+                        rawInput.value = extractedText;
+                    }
+                    alert("Text successfully extracted and pasted!");
+                } else {
+                    alert("No text could be extracted from this file.");
+                }
+
+            } catch (error) {
+                console.error("Smart Paste Error:", error);
+                alert("Smart Paste failed: " + error.message);
+            } finally {
+                rawDocUploadBtn.innerHTML = originalText;
+                rawDocUploadBtn.disabled = false;
+                rawDocUploadInput.value = ''; // reset
+            }
+        });
+    }
+
+    // 2. Reference PDF (Adobe Extract API)
+    const refPdfBtn = document.getElementById('ref-pdf-upload-btn');
+    const refPdfInput = document.getElementById('ref-pdf-upload-input');
+    const refPdfStatus = document.getElementById('ref-pdf-status');
+
+    if (refPdfBtn && refPdfInput) {
+        refPdfBtn.addEventListener('click', () => {
+            refPdfInput.click();
+        });
+
+        refPdfInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            refPdfBtn.style.display = 'none';
+            refPdfStatus.style.display = 'inline-block';
+            refPdfStatus.innerText = '🎨 Extracting Style...';
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                // Call our python backend route for Adobe API
+                const response = await fetch('http://localhost:8000/api/extract-style', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) throw new Error("Failed to extract style from Reference PDF.");
+                
+                const data = await response.json();
+                
+                if (data && data.style_guide) {
+                    window.referenceStyleGuide = data.style_guide;
+                    refPdfStatus.innerText = '✅ Style Copied!';
+                    refPdfStatus.style.color = '#38a169'; // Green
+                    console.log("Extracted Style Guide:\n", window.referenceStyleGuide);
+                    setTimeout(() => {
+                        refPdfStatus.style.display = 'none';
+                        refPdfBtn.style.display = 'flex';
+                        refPdfBtn.innerHTML = '✅ Style Saved';
+                    }, 3000);
+                }
+
+            } catch (error) {
+                console.error("Adobe API Error:", error);
+                alert("Could not extract style: " + error.message);
+                refPdfStatus.style.display = 'none';
+                refPdfBtn.style.display = 'flex';
+            } finally {
+                refPdfInput.value = ''; // reset
+            }
+        });
+    }
+});

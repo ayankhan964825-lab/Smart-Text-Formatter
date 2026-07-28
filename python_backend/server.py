@@ -7,7 +7,15 @@ import tempfile
 from fastapi import FastAPI, HTTPException, UploadFile, File
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
-
+import zipfile
+import json
+from adobe.pdfservices.operation.auth.service_principal_credentials import ServicePrincipalCredentials
+from adobe.pdfservices.operation.pdf_services import PDFServices
+from adobe.pdfservices.operation.pdfjobs.params.extract_pdf.extract_pdf_params import ExtractPDFParams
+from adobe.pdfservices.operation.pdfjobs.params.extract_pdf.extract_element_type import ExtractElementType
+from adobe.pdfservices.operation.pdfjobs.jobs.extract_pdf_job import ExtractPDFJob
+from adobe.pdfservices.operation.pdfjobs.result.extract_pdf_result import ExtractPDFResult
+from adobe.pdfservices.operation.pdf_services_media_type import PDFServicesMediaType
 app = FastAPI(title="Document Converter API (Render)")
 
 # Allow frontend to call the API
@@ -36,6 +44,25 @@ def get_next_unstructured_key():
     if not UNSTRUCTURED_KEYS:
         return None
     return UNSTRUCTURED_KEYS[unstructured_key_index]
+
+# Adobe API Keys
+ADOBE_KEYS = [
+    {"client_id": "96cee6ec5643421fad1f6a15314d8f21", "client_secret": "p8e-CvkXaKdblhvEF_SGIO5tVamakMv3LWOT"},
+    {"client_id": "31d94438d5db4c86a609f9de71d024c9", "client_secret": "p8e-vlouRizSwv8Ob8Fx0uFlRee3WQq7_xe-"},
+    {"client_id": "bb9e8ad3ac6d4668a4ec6dc5c56f72dd", "client_secret": "p8e-8Cbqu7CAwl3S-NNPfyzkFUdzsKpcVccu"}
+]
+adobe_key_index = 0
+
+def get_next_adobe_key():
+    if not ADOBE_KEYS:
+        return None
+    return ADOBE_KEYS[adobe_key_index]
+
+def rotate_adobe_key():
+    global adobe_key_index
+    if ADOBE_KEYS:
+        adobe_key_index = (adobe_key_index + 1) % len(ADOBE_KEYS)
+        print(f"Rotated to next Adobe key (Index: {adobe_key_index})")
 
 def rotate_unstructured_key():
     global unstructured_key_index
@@ -295,6 +322,97 @@ def parse_unstructured(file: UploadFile = File(...)):
             except:
                 pass
 
+@app.post("/api/extract-style")
+async def extract_style(file: UploadFile = File(...)):
+    job_id = str(uuid.uuid4())
+    input_path = os.path.join(TEMP_DIR, f"{job_id}_{file.filename}")
+    
+    try:
+        with open(input_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+        attempts = 0
+        max_attempts = len(ADOBE_KEYS)
+        
+        while attempts < max_attempts:
+            adobe_creds = get_next_adobe_key()
+            if not adobe_creds:
+                raise HTTPException(status_code=500, detail="Adobe credentials missing in configuration")
+                
+            print(f"[{job_id}] Attempting Adobe extraction using key index {adobe_key_index}...")
+            try:
+                credentials = ServicePrincipalCredentials(
+                    client_id=adobe_creds["client_id"],
+                    client_secret=adobe_creds["client_secret"]
+                )
+                pdf_services = PDFServices(credentials=credentials)
+                
+                with open(input_path, 'rb') as f:
+                    input_stream = f.read()
+                    
+                input_asset = pdf_services.upload(input_stream=input_stream, mime_type=PDFServicesMediaType.PDF.get_media_type())
+                
+                extract_pdf_params = ExtractPDFParams(
+                    elements_to_extract=[ExtractElementType.TEXT]
+                )
+                extract_pdf_job = ExtractPDFJob(input_asset=input_asset, extract_pdf_params=extract_pdf_params)
+                
+                location = pdf_services.submit(extract_pdf_job)
+                pdf_services_response = pdf_services.get_job_result(location, ExtractPDFResult)
+                
+                result_asset = pdf_services_response.get_result().get_resource()
+                stream_asset = pdf_services.get_content(result_asset)
+                
+                zip_path = os.path.join(TEMP_DIR, f"{job_id}_result.zip")
+                with open(zip_path, "wb") as f:
+                    f.write(stream_asset.get_input_stream())
+                
+                # If we get here, extraction succeeded. Break out of retry loop.
+                break
+                
+            except Exception as api_err:
+                print(f"[{job_id}] Adobe API error with key index {adobe_key_index}: {api_err}")
+                rotate_adobe_key()
+                attempts += 1
+                if attempts >= max_attempts:
+                    raise Exception("All Adobe keys depleted or failed.")
+            
+        # Parse JSON
+        with zipfile.ZipFile(zip_path, 'r') as z:
+            with z.open('structuredData.json') as json_file:
+                data = json.load(json_file)
+                
+        elements = data.get("elements", [])
+        
+        styles = []
+        for el in elements:
+            if "Text" in el and "Font" in el and "TextSize" in el:
+                path = el.get("Path", "")
+                font_name = el["Font"].get("name", "Default")
+                font_size = el.get("TextSize", 12)
+                
+                if "H1" in path or "H2" in path or "H3" in path:
+                    styles.append(f"Heading: {font_name} {font_size}pt")
+                elif "P" in path:
+                    styles.append(f"Body: {font_name} {font_size}pt")
+                    
+        unique_styles = list(set(styles))
+        style_guide = "\n".join(unique_styles[:6])
+        
+        if not style_guide.strip():
+            style_guide = "No specific styling found. Use standard formatting."
+            
+        return {"style_guide": style_guide}
+        
+    except Exception as e:
+        print(f"[{job_id}] Adobe Extract Error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        if os.path.exists(input_path):
+            try: os.remove(input_path)
+            except: pass
+        if 'zip_path' in locals() and os.path.exists(zip_path):
+            try: os.remove(zip_path)
+            except: pass
 
 if __name__ == "__main__":
     import uvicorn

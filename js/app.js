@@ -4076,7 +4076,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!proxyResponse || !proxyResponse.ok) throw new Error("Format API failed.");
             const data = await proxyResponse.json();
             
-            let jsonText = data.text;
+            if (!data || !data.candidates || !data.candidates[0].content) {
+                console.error('[AIFormatter] Invalid Paste Format response:', data);
+                throw new Error("Invalid API response structure from Gemini.");
+            }
+            let jsonText = data.candidates[0].content.parts[0].text;
             jsonText = jsonText.replace(/^```json\s*/i, '').replace(/```\s*$/i, '');
             const newBlocks = JSON.parse(jsonText);
 

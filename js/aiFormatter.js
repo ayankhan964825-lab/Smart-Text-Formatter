@@ -707,7 +707,11 @@ ${truncatedContext}
             const proxyData = await proxyResponse.json();
             if (proxyData.error) throw new Error(proxyData.error);
             
-            let jsonText = proxyData.text;
+            if (!proxyData || !proxyData.candidates || !proxyData.candidates[0].content) {
+                console.error('[AIFormatter] Invalid Auto-Generate response:', proxyData);
+                throw new Error("Invalid API response structure from Gemini.");
+            }
+            let jsonText = proxyData.candidates[0].content.parts[0].text;
             jsonText = jsonText.replace(/^```json\s*/i, '').replace(/```\s*$/i, '');
             
             const result = JSON.parse(jsonText);

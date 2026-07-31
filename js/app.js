@@ -4013,5 +4013,190 @@ document.addEventListener('DOMContentLoaded', () => {
                 refPdfInput.value = ''; // reset
             }
         });
+        });
     }
+
+    // ==========================================
+    // SMART ALERTS EVENT HANDLERS
+    // ==========================================
+    
+    window._smartAlertPasteFormat = async (cardId, sectionId, sectionLabel) => {
+        const textarea = document.getElementById(`textarea-${cardId}`);
+        const card = document.getElementById(cardId);
+        
+        // Toggle textarea visibility
+        if (textarea.style.display === 'none') {
+            textarea.style.display = 'block';
+            textarea.focus();
+            return;
+        }
+
+        const text = textarea.value.trim();
+        if (!text) {
+            alert("Please paste some text first.");
+            return;
+        }
+
+        // Proceed to format the pasted text
+        card.classList.add('generating');
+        try {
+            const ai = new window.AIFormatter();
+            
+            // Generate a mini response just for this section using general template logic
+            // so we don't apply the full skeleton again, we just want paragraphs/lists.
+            const systemInstruction = `You are a document formatter. Format the following user text meant for the "${sectionLabel}" section. Output a valid JSON array of blocks. Example: [{"type":"p", "content":"..."}]`;
+            
+            let proxyResponse;
+            try {
+                proxyResponse = await fetch('/api/format', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        rawText: text,
+                        systemInstruction: systemInstruction,
+                        isMermaidFix: false
+                    })
+                });
+            } catch (e) {
+                proxyResponse = await fetch('https://smart-text-formatter-server.vercel.app/api/format', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        rawText: text,
+                        systemInstruction: systemInstruction,
+                        isMermaidFix: false
+                    })
+                });
+            }
+
+            if (!proxyResponse.ok) throw new Error("Format API failed.");
+            const data = await proxyResponse.json();
+            
+            let jsonText = data.text;
+            jsonText = jsonText.replace(/^```json\s*/i, '').replace(/```\s*$/i, '');
+            const newBlocks = JSON.parse(jsonText);
+
+            // Construct the new section
+            const newSection = {
+                template_id: sectionId,
+                heading_title: sectionLabel,
+                blocks: Array.isArray(newBlocks.final_document) ? newBlocks.final_document : (Array.isArray(newBlocks) ? newBlocks : [])
+            };
+
+            _injectNewSection(newSection);
+            card.remove();
+
+        } catch (err) {
+            console.error("Paste Format Error:", err);
+            alert("Failed to format the pasted text. Please try again.");
+            card.classList.remove('generating');
+        }
+    };
+
+    window._smartAlertAutoGenerate = async (cardId, sectionId, sectionLabel) => {
+        const card = document.getElementById(cardId);
+        card.classList.add('generating');
+
+        try {
+            const ai = new window.AIFormatter();
+            const previewContainer = document.getElementById('preview-container');
+            const contextHtml = previewContainer ? previewContainer.innerHTML : '';
+            
+            const result = await ai.autoGenerateSection(sectionLabel, sectionId, contextHtml);
+            
+            // Find blocks from result
+            let newBlocks = [];
+            if (result && result.final_document) {
+                newBlocks = result.final_document;
+            } else if (Array.isArray(result)) {
+                newBlocks = result;
+            }
+
+            // Remove the top-level heading block from newBlocks if it matches the section name, 
+            // since we handle the heading via heading_title in the structured schema.
+            if (newBlocks.length > 0 && newBlocks[0].type === 'heading' && newBlocks[0].content === sectionLabel) {
+                newBlocks.shift();
+            }
+
+            const newSection = {
+                template_id: sectionId,
+                heading_title: sectionLabel,
+                blocks: newBlocks
+            };
+
+            _injectNewSection(newSection);
+            card.remove();
+
+        } catch (err) {
+            console.error("Auto Generate Error:", err);
+            alert("Failed to auto-generate the section. Please try again.");
+            card.classList.remove('generating');
+        }
+    };
+
+    // Helper to inject a newly resolved section into the structured document
+    function _injectNewSection(newSection) {
+        if (!window._lastDocumentSections || !Array.isArray(window._lastDocumentSections)) {
+            // Fallback if structured format wasn't used initially
+            window._lastDocumentSections = [newSection];
+        } else {
+            // Try to place it in the correct chronological order based on the skeleton
+            const template = window.templateEngine.getSelectedTemplate();
+            if (template && template.skeleton) {
+                const skeletonIds = template.skeleton.map(s => s.id);
+                const targetIndex = skeletonIds.indexOf(newSection.template_id);
+                
+                let inserted = false;
+                if (targetIndex !== -1) {
+                    for (let i = 0; i < window._lastDocumentSections.length; i++) {
+                        const currentSectionId = window._lastDocumentSections[i].template_id;
+                        const currentIndex = skeletonIds.indexOf(currentSectionId);
+                        if (currentIndex > targetIndex) {
+                            window._lastDocumentSections.splice(i, 0, newSection);
+                            inserted = true;
+                            break;
+                        }
+                    }
+                }
+                if (!inserted) {
+                    window._lastDocumentSections.push(newSection);
+                }
+            } else {
+                window._lastDocumentSections.push(newSection);
+            }
+        }
+
+        // Flatten and re-render
+        const flatBlocks = [];
+        for (const section of window._lastDocumentSections) {
+            if (section.heading_title) {
+                flatBlocks.push({ type: 'heading', depth: 2, content: section.heading_title, _template_id: section.template_id || 'none' });
+            }
+            if (Array.isArray(section.blocks)) {
+                for (const block of section.blocks) { flatBlocks.push(block); }
+            }
+        }
+
+        // Run through RuleEngine and OutputGenerator
+        const customRibbonRules = typeof window.getRibbonRules === 'function' ? window.getRibbonRules() : null;
+        const rules = new window.RuleEngine(customRibbonRules);
+        const styledElements = rules.applyRules(flatBlocks);
+        
+        const generator = new window.OutputGenerator();
+        const finalHtml = generator.generateHTML(styledElements);
+        
+        const previewContainer = document.getElementById('preview-container');
+        if (previewContainer) {
+            previewContainer.innerHTML = finalHtml;
+        }
+        
+        // Optional: Re-run mathjax if it exists
+        if (window.MathJax) {
+            window.MathJax.typesetPromise([previewContainer]).catch((err) => console.log('MathJax error', err));
+        }
+        if (typeof window.renderMermaidGraphs === 'function') {
+            window.renderMermaidGraphs(previewContainer);
+        }
+    }
+
 });

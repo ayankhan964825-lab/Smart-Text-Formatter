@@ -1,6 +1,7 @@
 /**
  * templateEngine.js
  * Manages document type templates with predefined formatting rules and section structures.
+ * Now uses the "Structured Sections Array" architecture for strict AI output control.
  */
 
 const DOCUMENT_TEMPLATES = {
@@ -31,7 +32,7 @@ const DOCUMENT_TEMPLATES = {
       { id: "abstract", label: "Abstract", required: true, aliases: ["Summary", "Executive Summary"] },
       { id: "introduction", label: "Introduction", required: true, aliases: ["Background", "Overview"] },
       { id: "literature_review", label: "Literature Review", required: false, aliases: ["Related Work", "Previous Studies"] },
-      { id: "methodology", label: "Methodology", required: true, aliases: ["Approach", "Methods", "System Design", "Implementation", "How I did it"] },
+      { id: "methodology", label: "Methodology", required: true, aliases: ["Methods", "System Design", "Implementation", "How I did it"] },
       { id: "results", label: "Results", required: false, aliases: ["Findings", "Outcomes", "Data Analysis", "What I found"] },
       { id: "discussion", label: "Discussion", required: false, aliases: ["Analysis", "Evaluation"] },
       { id: "conclusion", label: "Conclusion", required: true, aliases: ["Conclusions", "Final Thoughts"] },
@@ -45,28 +46,11 @@ const DOCUMENT_TEMPLATES = {
       alignment: "justify",
       lineSpacing: "2.0"
     },
-    promptContext: `This is an ACADEMIC RESEARCH PAPER. Follow these structural rules:
-- You MUST use the 'heading' type with depth values: depth:1 for the document title, depth:2 for main sections (Abstract, Introduction, etc.), depth:3 for sub-sections (1.1, 2.1, etc.).
-- DO NOT use old types like h1, h2, or sub-subheading. ONLY use 'heading' with the correct depth.
-- If the user's text contains content that belongs to skeleton sections but has no explicit heading, YOU MUST create the appropriate heading block and place the content under it.
+    promptContext: `This is an ACADEMIC RESEARCH PAPER.
 - PRESERVE the user's original text EXACTLY. Do NOT rewrite, rephrase, or summarize any paragraph. Only fix OCR typos.
-- References section must use the 'references' type with an items array, NOT a plain paragraph.
-- Heading numbering: Use "1. Introduction", "2. Literature Review" etc. for depth:2 headings.
-- Sub-sections: Use "2.1 Topic", "2.2 Topic" for depth:3 headings.
-
---- EXTREMELY IMPORTANT: PERFECT EXAMPLE (FEW-SHOT) ---
-To achieve 100% accuracy, here is a perfectly formatted example you must mimic.
-[RAW INPUT]: "the study of plants. 1. intro. plants need water to grow well."
-[EXPECTED JSON OUTPUT]:
-{
-  "ai_thoughts": "Mapped to Abstract and Intro based on skeleton.",
-  "final_document": [
-    { "type": "heading", "depth": 2, "text": "Abstract" },
-    { "type": "p", "text": "the study of plants." },
-    { "type": "heading", "depth": 2, "text": "1. Introduction" },
-    { "type": "p", "text": "plants need water to grow well." }
-  ]
-}`
+- References section: each reference item inside a section's blocks should use type "references" with an "items" array containing objects with "id" and "text".
+- Heading numbering: Use "1. Introduction", "2. Literature Review" etc. for section headings.
+- Sub-sections: Use "2.1 Topic", "2.2 Topic" for sub-section headings (these go inside the parent section's blocks array).`
   },
 
   "assignment": {
@@ -88,29 +72,12 @@ To achieve 100% accuracy, here is a perfectly formatted example you must mimic.
       alignment: "left",
       lineSpacing: "1.5"
     },
-    promptContext: `This is a COLLEGE/UNIVERSITY ASSIGNMENT. Follow these rules:
-- You MUST use the 'heading' type with depth values: depth:1 for document/assignment title, depth:2 for question headings, depth:3 for sub-questions.
-- DO NOT use old types like h1, h2, or sub-subheading.
-- Detect question numbers (Q1, Q.1, Question 1, 1., etc.) and format them as heading blocks with depth:2.
+    promptContext: `This is a COLLEGE/UNIVERSITY ASSIGNMENT.
+- Detect question numbers (Q1, Q.1, Question 1, 1., etc.) and format them as heading blocks with depth:2 inside the "qna" section.
 - Answer text goes under each question as body paragraphs.
 - If sub-questions exist (a), b), i., ii.), format them as heading blocks with depth:3.
 - PRESERVE the user's original answers EXACTLY. Do NOT rewrite, rephrase, or improve any answer text.
-- Preserve any code snippets, formulas, or diagrams exactly as provided.
-
---- EXTREMELY IMPORTANT: PERFECT EXAMPLE (FEW-SHOT) ---
-To achieve 100% accuracy, here is a perfectly formatted example you must mimic.
-[RAW INPUT]: "Assignment 1. Q1. What is AI? AI is a machine. b) types? Weak and Strong."
-[EXPECTED JSON OUTPUT]:
-{
-  "ai_thoughts": "Detected assignment title and Q1 with sub-question b.",
-  "final_document": [
-    { "type": "heading", "depth": 1, "text": "Assignment 1" },
-    { "type": "heading", "depth": 2, "text": "Q1. What is AI?" },
-    { "type": "p", "text": "AI is a machine." },
-    { "type": "heading", "depth": 3, "text": "b) types?" },
-    { "type": "p", "text": "Weak and Strong." }
-  ]
-}`
+- Preserve any code snippets, formulas, or diagrams exactly as provided.`
   },
 
   "project-report": {
@@ -123,7 +90,7 @@ To achieve 100% accuracy, here is a perfectly formatted example you must mimic.
       { id: "overview", label: "Overview", required: true, aliases: ["Introduction", "Executive Summary"] },
       { id: "objectives", label: "Objectives", required: true, aliases: ["Goals", "Aims"] },
       { id: "scope", label: "Scope", required: false, aliases: ["Boundaries", "Limitations"] },
-      { id: "methodology", label: "Methodology", required: true, aliases: ["Approach", "Process", "Execution"] },
+      { id: "methodology", label: "Methodology", required: true, aliases: ["Process", "Execution"] },
       { id: "outcomes", label: "Expected Outcomes", required: false, aliases: ["Results", "Deliverables"] },
       { id: "conclusion", label: "Conclusion", required: true, aliases: ["Summary", "Final Thoughts"] }
     ],
@@ -135,9 +102,7 @@ To achieve 100% accuracy, here is a perfectly formatted example you must mimic.
       alignment: "left",
       lineSpacing: "1.5"
     },
-    promptContext: `This is an ACADEMIC PROJECT REPORT document. Follow these rules:
-- You MUST use the 'heading' type with depth values: depth:1 for the Project Title, depth:2 for main sections (Overview, Objectives, etc.), depth:3 for sub-sections.
-- DO NOT use old types like h1, h2, or sub-subheading.
+    promptContext: `This is an ACADEMIC PROJECT REPORT document.
 - Start with a clear Project Title as a heading block with depth:1.
 - Objectives must be formatted as an ordered list (ol type) — clear, measurable goals.
 - Scope section defines boundaries of the project.
@@ -169,6 +134,10 @@ class TemplateEngine {
     return this.getTemplate(this.selectedTemplateId || "general");
   }
 
+  /**
+   * Builds the structured prompt context for the AI, including skeleton mapping rules
+   * and the new "document_sections" array instructions.
+   */
   getPromptContext() {
     const template = this.getSelectedTemplate();
     if (!template) return "";
@@ -184,18 +153,58 @@ class TemplateEngine {
     }
 
     if (template.skeleton && template.skeleton.length > 0) {
-      context += `\n\n--- STRUCTURAL SKELETON ---\n`;
-      context += `You MUST map the user's content to the following skeleton. The 'label' is the section name, 'aliases' are alternative names the user may have used for the same section.\n`;
-      context += `skeleton_definition = ${JSON.stringify(template.skeleton, null, 2)}\n`;
-      context += `\nCRITICAL RULES FOR SKELETON MAPPING:\n`;
-      context += `1. Do NOT look for exact word matches. Map content based on SEMANTIC MEANING using the aliases array.\n`;
-      context += `2. Output sections in the ORDER they appear in the skeleton_definition array.\n`;
-      context += `3. If a section has required:true but is MISSING from the user text, append this at the end: {"type":"info","content":"Missing required sections: [section name]"}\n`;
-      context += `4. If a section has required:false and is missing, simply OMIT it. Do NOT hallucinate content.\n`;
+      context += `\n\n--- STRUCTURAL SKELETON (SECTIONS ARRAY ARCHITECTURE) ---\n`;
+      context += `You MUST output sections in a "document_sections" array. Each section object has:\n`;
+      context += `  - "template_id": The skeleton ID if it matches a known section, or "none" if it's a custom/unknown section.\n`;
+      context += `  - "heading_title": The display title for the section heading (e.g., "1. Introduction").\n`;
+      context += `  - "blocks": An array of content blocks (p, table, ul, ol, equation, mermaid, references, code, blockquote, image) that belong under this section.\n\n`;
+
+      context += `SKELETON DEFINITION:\n`;
+      context += JSON.stringify(template.skeleton.map(s => ({
+        id: s.id,
+        label: s.label,
+        required: s.required,
+        aliases: s.aliases
+      })), null, 2);
+
+      context += `\n\nCRITICAL RULES FOR SECTIONS ARRAY:\n`;
+      context += `1. ALIAS MATCHING: Use aliases as FALLBACK mapping. If user text has heading "Approach" and no "Methodology" heading, map "Approach" content to template_id "methodology". But if BOTH "Methodology" AND "Approach" exist as separate headings with different content, keep both: one gets template_id "methodology", the other gets template_id "none" (custom section).\n`;
+      context += `2. SEQUENCE PRESERVATION: Read the user's text TOP-TO-BOTTOM. Place sections in the array in the EXACT order they appear in the raw text. Do NOT reorder sections to match the skeleton order. Preserve the user's chronological flow.\n`;
+      context += `3. CUSTOM SECTIONS (template_id: "none"): If you find a heading in the user's text that does NOT match any skeleton ID or alias, create a section with template_id "none" and set heading_title to the user's original heading text. Place it in the array exactly where it appeared in the text.\n`;
+      context += `4. MISSING SECTIONS: If a skeleton section (especially required ones) has NO matching content in the user's text, simply OMIT it from the array. Do NOT hallucinate content. The frontend will detect missing sections and alert the user.\n`;
+      context += `5. HEADING DETECTION: If the user's text has no explicit headings but contains content that semantically belongs to a skeleton section, create the section with the appropriate template_id and generate an appropriate heading_title.\n`;
     }
 
     context += `\n--- END DOCUMENT TYPE CONTEXT ---\n`;
     return context;
+  }
+
+  /**
+   * Returns the skeleton section IDs for the currently selected template.
+   * Used by outputGenerator to compute missing/bonus sections.
+   */
+  getSkeletonIds() {
+    const template = this.getSelectedTemplate();
+    if (!template || !template.skeleton) return [];
+    return template.skeleton.map(s => s.id);
+  }
+
+  /**
+   * Returns skeleton sections marked as required.
+   */
+  getRequiredSections() {
+    const template = this.getSelectedTemplate();
+    if (!template || !template.skeleton) return [];
+    return template.skeleton.filter(s => s.required);
+  }
+
+  /**
+   * Returns the full skeleton array for the current template.
+   */
+  getSkeleton() {
+    const template = this.getSelectedTemplate();
+    if (!template || !template.skeleton) return [];
+    return template.skeleton;
   }
 
   getRibbonDefaults() {

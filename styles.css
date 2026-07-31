@@ -2658,3 +2658,148 @@ body.fullscreen-active {
   text-shadow: 0 2px 8px rgba(0,0,0,0.8);
 }
 
+
+/* ============================================================
+   SMART ALERTS — Missing & Bonus Section Indicators
+   These are non-exportable UI elements in the Output Preview.
+   ============================================================ */
+
+.smart-alerts-container {
+  margin-bottom: 16px;
+}
+
+.smart-alert-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 18px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  border: 1px solid;
+  animation: smartAlertSlideIn 0.4s ease-out;
+}
+
+@keyframes smartAlertSlideIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.smart-alert-missing {
+  background: linear-gradient(135deg, #fff5f5, #ffe8e8);
+  border-color: #fca5a5;
+}
+
+.smart-alert-bonus {
+  background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+  border-color: #86efac;
+}
+
+.smart-alert-icon {
+  font-size: 22px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.smart-alert-body {
+  flex: 1;
+}
+
+.smart-alert-body strong {
+  font-size: 14px;
+  color: #1e293b;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.smart-alert-desc {
+  font-size: 13px;
+  color: #64748b;
+  margin: 0 0 10px 0;
+  line-height: 1.5;
+}
+
+.smart-alert-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.smart-alert-actions button {
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid;
+}
+
+.btn-paste-format {
+  background: #3b82f6;
+  color: #fff;
+  border-color: #2563eb !important;
+}
+.btn-paste-format:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+}
+
+.btn-auto-generate {
+  background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+  color: #fff;
+  border-color: #7c3aed !important;
+}
+.btn-auto-generate:hover {
+  background: linear-gradient(135deg, #7c3aed, #5b21b6);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.3);
+}
+
+.btn-skip-alert {
+  background: transparent;
+  color: #94a3b8;
+  border-color: #e2e8f0 !important;
+}
+.btn-skip-alert:hover {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.smart-alert-textarea {
+  width: 100%;
+  min-height: 80px;
+  margin-top: 10px;
+  padding: 10px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 13px;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.smart-alert-textarea:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+/* Generating state */
+.smart-alert-card.generating {
+  opacity: 0.7;
+  pointer-events: none;
+}
+.smart-alert-card.generating::after {
+  content: 'Generating...';
+  display: block;
+  text-align: center;
+  color: #7c3aed;
+  font-weight: 600;
+  font-size: 13px;
+  margin-top: 8px;
+  animation: pulse 1.5s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}

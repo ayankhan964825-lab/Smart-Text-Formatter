@@ -57,30 +57,58 @@ class AIFormatter {
         // Fetch the freshest key from localStorage right before API call
         const activeLocalApiKey = window.GEMINI_API_KEY_LOCAL || localStorage.getItem('gemini_api_key') || '';
 
+        // Determine if we have a skeleton-based template
+        const hasStructuredTemplate = window.templateEngine && 
+            window.templateEngine.getSelectedTemplate().id !== 'general' && 
+            window.templateEngine.getSkeleton().length > 0;
+
         const systemInstruction = `You are the "Advanced Document Architect AI". Your primary job is to take raw, unstructured user text and format it into a highly professional document based on specific rules, a visual skeleton, and an optional reference style.
 
 CORE DIRECTIVES (STRICTLY FOLLOW THESE):
 
 1. STRICT OUTPUT SCHEMA
 You must output ONLY a valid JSON OBJECT with exactly two keys:
-{
+${hasStructuredTemplate ? `{
+  "ai_thoughts": "Your step-by-step reasoning here...",
+  "document_sections": [
+    {
+      "template_id": "introduction",
+      "heading_title": "1. Introduction",
+      "blocks": [
+        { "type": "p", "content": "Paragraph text here..." },
+        { "type": "ul", "items": ["Item 1", "Item 2"] }
+      ]
+    },
+    {
+      "template_id": "none",
+      "heading_title": "Custom Section From User Text",
+      "blocks": [
+        { "type": "p", "content": "Custom content..." }
+      ]
+    }
+  ]
+}
+- "template_id" MUST be the skeleton section ID if the content matches a known section or its aliases. Use "none" ONLY for sections that do not match any skeleton ID or alias.
+- "heading_title" is the display heading (e.g., "1. Introduction", "Abstract", or the user's original heading if custom).
+- "blocks" is an array of content block objects belonging to this section.` : `{
   "ai_thoughts": "Your step-by-step reasoning here...",
   "final_document": [ ...document blocks array... ]
 }
+- The "final_document" array contains block objects.`}
 Do not wrap it in markdown blockquotes or add any text outside the JSON object.
 
-The "final_document" array contains block objects. Each block MUST have a "type" key.
-Allowed Types:
-- "heading": For titles and sections. MUST include a "depth" integer.
-- "p": For regular body text ONLY. Combine split sentences.
+ALLOWED BLOCK TYPES (inside blocks array):
+- "heading": For sub-section headings within a section. MUST include "depth" (use depth:3 for sub-sections). Do NOT use for main section headings — those are handled by heading_title.
+- "p": For regular body text ONLY. Combine split sentences. MUST have "content" key.
 - "table": For tabular data. MUST include "headers" array and "rows" array (array of arrays). USE THIS FOR INVOICES, RECEIPTS, AND ITEM LISTS.
-- "equation": For mathematical formulas. Include "format": "latex".
-- "blockquote": For quoted text. Optionally include "attribution".
-- "warning" / "info": For callouts or missing section notices.
+- "equation": For mathematical formulas. Include "format": "latex". MUST have "content" key.
+- "blockquote": For quoted text. Optionally include "attribution". MUST have "content" key.
+- "warning" / "info": For callouts or missing section notices. MUST have "content" key.
 - "ul" / "ol": For lists. MUST NOT have "content". MUST have an "items" array of strings.
-- "image": ONLY when instructed to place an uploaded image. Format: {"type": "image", "src": "[image_name]", "caption": "[relevant_caption]"}.
+- "image": ONLY when instructed to place an uploaded image. Format: {"type": "image", "content": "[image_index]"}.
 - "mermaid": For flowcharts, graphs, or bar diagrams. MUST include "content" with raw mermaid syntax.
 - "references": For citations. MUST include "items" array with "id" and "text".
+- "code": For code snippets. MUST have "content" key.
 
 2. CONTENT FILTERING & TABLE RULES (IMPORTANT)
 - FLUFF REMOVAL (MANDATORY): You MUST detect and REMOVE all AI-generated wrapper text and conversational filler that is NOT part of the actual document. This includes:
@@ -92,26 +120,15 @@ Allowed Types:
 - NARRATIVE EXCEPTION: However, if items/quantities are written as part of a natural narrative story (e.g., "I bought 2 laptops for $500 each."), keep it as a paragraph ("p"). Preserve the author's narrative intent.
 
 3. HEADING DEPTH LOGIC
-Whenever you use the "heading" type, you MUST include a "depth" integer:
+${hasStructuredTemplate ? `In the "document_sections" architecture, main section headings are in "heading_title" (NOT in the blocks array).
+Sub-headings within a section go inside the "blocks" array as: {"type": "heading", "depth": 3, "content": "2.1 Sub Topic"}.
+HEADINGS AND BODY TEXT MUST ALWAYS BE SEPARATE OBJECTS.` : `Whenever you use the "heading" type, you MUST include a "depth" integer:
 - depth: 1 = Main Document Title
 - depth: 2 = Major Sections (e.g., Introduction, Methodology)
 - depth: 3 = Sub-sections (e.g., 1.1 Data Sources)
-HEADINGS AND BODY TEXT MUST ALWAYS BE SEPARATE OBJECTS. A heading must NEVER contain body paragraph text in the same object.
+HEADINGS AND BODY TEXT MUST ALWAYS BE SEPARATE OBJECTS. A heading must NEVER contain body paragraph text in the same object.`}
 
-4. SKELETON MAPPING ENFORCEMENT
-You will be provided with a 'Skeleton Definition' below. You MUST organize the final document exactly in the order specified by the Skeleton.
-- If the user's raw text belongs to a section but lacks a heading, you MUST generate the appropriate "heading" block for it.
-- Do not invent new sections that are not in the Skeleton.
-- If a section is marked "required: false" and there is no relevant raw text, skip it.
-- If a section is marked "required: true" and is missing, append: {"type": "missing", "section": "[Section Label]", "id": "[Section ID]"} at the end. USE ALIASES aggressively to match user text to skeleton sections before declaring them missing.
-
-5. RULE HIERARCHY (CONFLICT RESOLUTION)
-If there are conflicting instructions, follow this strict hierarchy:
-Priority 1 (Highest): The Skeleton Definition sections and order.
-Priority 2: The formatting rules of the 'Selected Template' (e.g., specific question/answer formats).
-Priority 3 (Lowest): The style of the 'Reference PDF'.
-
-6. CONTENT PRESERVATION (MOST CRITICAL RULE)
+4. CONTENT PRESERVATION (MOST CRITICAL RULE)
 Your #1 job is to PRESERVE the user's ACTUAL document content EXACTLY as they wrote it.
 - DO NOT rewrite, rephrase, paraphrase, summarize, or change the user's core sentences in ANY way.
 - DO NOT replace the user's words with synonyms or "better" words.
@@ -121,17 +138,16 @@ Your #1 job is to PRESERVE the user's ACTUAL document content EXACTLY as they wr
   a) Fix obvious OCR/scanning typos (e.g., "th3" → "the", broken characters).
   b) Merge lines that were split by OCR into proper sentences.
   c) Add heading blocks from the Skeleton if the user's text lacks explicit headings.
-  d) Organize/reorder existing content to match the Skeleton section order.
 - If a Reference PDF is provided, analyze its STRUCTURE LAYOUT only (e.g., heading styles, spacing). DO NOT copy its tone, wording, or rewrite user text to match it.
 - Think of yourself as a DOCUMENT FORMATTER, not a CONTENT WRITER. You format and organize — you NEVER rewrite.
 
 --- EXECUTION STRATEGY (Chain of Thought) ---
-Before writing the final_document, you MUST think step-by-step inside the "ai_thoughts" key:
+Before writing the output, you MUST think step-by-step inside the "ai_thoughts" key:
 Step 1: STYLE EXTRACTION — Analyze the Reference PDF (if provided). Note heading styles and document structure layout ONLY. Do NOT plan to rewrite any user content.
-Step 2: CONTENT MAPPING — Read the User Raw Text word-by-word. Map each paragraph to the appropriate Skeleton section. Note which user paragraphs go under which skeleton heading.
+Step 2: CONTENT MAPPING — Read the User Raw Text top-to-bottom. ${hasStructuredTemplate ? 'Map each paragraph/heading to the appropriate skeleton section ID. If a heading matches no skeleton, assign template_id "none".' : 'Determine the logical structure of headings and paragraphs.'}
 Step 3: IMAGE CONTEXTUALIZATION — For each attached image, determine its subject. Plan to insert it after the most relevant paragraph.
 Step 4: BLOCK ASSEMBLY — Describe the final block order. Confirm that every "p" block contains the user's EXACT original text, not your rewritten version.
-Write all 4 steps as a single string in "ai_thoughts". Then write the actual blocks in "final_document".
+Write all 4 steps as a single string in "ai_thoughts". Then write the actual output.
 
 --- OCR & AI CLEANUP RULES ---
 - CITATIONS: Fix broken OCR citations to standard brackets: "[1] [2]". Keep them inside the "p" block. DO NOT use comma-separated groups like "[1, 2]".
@@ -140,7 +156,7 @@ Write all 4 steps as a single string in "ai_thoughts". Then write the actual blo
 
 ${window.templateEngine ? window.templateEngine.getPromptContext() : ''}
 
-${window.referenceStyleGuide ? `--- ADOBE REFERENCE PDF STYLE GUIDE ---\nThe user wants the final document to visually match a reference PDF. Our Adobe Extraction API has analyzed the reference PDF and found these CSS styles:\n${window.referenceStyleGuide}\n\nCRITICAL INSTRUCTION: You MUST inject these exact fonts and sizes into your JSON output using inline 'style' properties. Example: {"type": "heading", "content": "Title", "style": "font-family: Arial; font-size: 24pt;"}` : ''}`;
+${window.referenceStyleGuide ? `--- ADOBE REFERENCE PDF STYLE GUIDE ---\nThe user wants the final document to visually match a reference PDF. Our Adobe Extraction API has analyzed the reference PDF and found these CSS styles:\n${window.referenceStyleGuide}\n\nCRITICAL INSTRUCTION: You MUST inject these exact fonts and sizes into your JSON output using inline 'style' properties on blocks. Example: {"type": "p", "content": "Text", "style": "font-family: Arial; font-size: 12pt;"}` : ''}`;
 
         // (We no longer use referenceHandler for inline PDF data because Adobe API handles styling)
         const referencePdf = null;
@@ -380,7 +396,8 @@ CRITICAL RULES:
     }
 
     /**
-     * Parses the raw Gemini HTML/JSON classification response into a clean UI JSON array
+     * Parses the raw Gemini HTML/JSON classification response into a clean UI JSON array.
+     * Handles BOTH the new "document_sections" format AND the legacy "final_document" format.
      */
     async _parseResponse(data) {
         const outputText = data.candidates[0].content.parts[0].text;
@@ -395,10 +412,39 @@ CRITICAL RULES:
         try {
             const parsed = JSON.parse(cleanJson);
 
-            // NEW: Handle CoT JSON Object format { ai_thoughts, final_document }
-            if (parsed && typeof parsed === 'object' && !Array.isArray(parsed) && parsed.final_document) {
-                // Store AI thoughts globally so UI can display them
+            // NEW: Handle Structured Sections format { ai_thoughts, document_sections }
+            if (parsed && typeof parsed === 'object' && !Array.isArray(parsed) && parsed.document_sections) {
                 window._lastAiThoughts = parsed.ai_thoughts || '';
+                window._lastDocumentSections = parsed.document_sections; // Store for Smart Alerts
+                console.log('[AIFormatter] 🧠 AI Thoughts:', parsed.ai_thoughts || '(none)');
+                console.log('[AIFormatter] 📦 Structured Sections received:', parsed.document_sections.length);
+
+                // Flatten sections into a blocks array for backward compat with RuleEngine/OutputGenerator
+                const flatBlocks = [];
+                for (const section of parsed.document_sections) {
+                    // Add section heading as a depth:2 heading block
+                    if (section.heading_title) {
+                        flatBlocks.push({
+                            type: 'heading',
+                            depth: 2,
+                            content: section.heading_title,
+                            _template_id: section.template_id || 'none'
+                        });
+                    }
+                    // Add all blocks within this section
+                    if (Array.isArray(section.blocks)) {
+                        for (const block of section.blocks) {
+                            flatBlocks.push(block);
+                        }
+                    }
+                }
+                return flatBlocks;
+            }
+
+            // LEGACY: Handle CoT JSON Object format { ai_thoughts, final_document }
+            if (parsed && typeof parsed === 'object' && !Array.isArray(parsed) && parsed.final_document) {
+                window._lastAiThoughts = parsed.ai_thoughts || '';
+                window._lastDocumentSections = null;
                 console.log('[AIFormatter] 🧠 AI Thoughts:', parsed.ai_thoughts || '(none)');
                 const blocks = parsed.final_document;
                 if (!Array.isArray(blocks)) throw new Error("final_document is not an array.");
@@ -408,6 +454,7 @@ CRITICAL RULES:
             // FALLBACK: Handle legacy flat array format
             if (Array.isArray(parsed)) {
                 window._lastAiThoughts = '';
+                window._lastDocumentSections = null;
                 console.log('[AIFormatter] ℹ️ Received legacy flat array (no CoT).');
                 return parsed;
             }
@@ -418,13 +465,29 @@ CRITICAL RULES:
             const fixedJsonStr = await this.fixJsonSyntax(cleanJson, err.message);
             const fixedParsed = JSON.parse(fixedJsonStr);
 
-            // After auto-heal, check both formats
+            // After auto-heal, check all formats
+            if (fixedParsed && typeof fixedParsed === 'object' && !Array.isArray(fixedParsed) && fixedParsed.document_sections) {
+                window._lastAiThoughts = fixedParsed.ai_thoughts || '';
+                window._lastDocumentSections = fixedParsed.document_sections;
+                const flatBlocks = [];
+                for (const section of fixedParsed.document_sections) {
+                    if (section.heading_title) {
+                        flatBlocks.push({ type: 'heading', depth: 2, content: section.heading_title, _template_id: section.template_id || 'none' });
+                    }
+                    if (Array.isArray(section.blocks)) {
+                        for (const block of section.blocks) { flatBlocks.push(block); }
+                    }
+                }
+                return flatBlocks;
+            }
             if (fixedParsed && typeof fixedParsed === 'object' && !Array.isArray(fixedParsed) && fixedParsed.final_document) {
                 window._lastAiThoughts = fixedParsed.ai_thoughts || '';
+                window._lastDocumentSections = null;
                 return Array.isArray(fixedParsed.final_document) ? fixedParsed.final_document : [];
             }
             if (Array.isArray(fixedParsed)) {
                 window._lastAiThoughts = '';
+                window._lastDocumentSections = null;
                 return fixedParsed;
             }
             throw new Error("Auto-healed output is not valid.");
@@ -553,6 +616,86 @@ ${hintText || 'Please generate a standard ' + sectionName + ' appropriate for th
             return result;
         } catch (error) {
             console.error('[AIFormatter] Missing Section Generation Error:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Auto-generates a missing section using the existing document context.
+     * Uses the AI's knowledge base to fill in factual, relevant content.
+     * @param {string} sectionName - Display name of the section (e.g., "Abstract")
+     * @param {string} sectionId - Template ID (e.g., "abstract")
+     * @param {string} contextHtml - The existing formatted document's inner HTML for context
+     * @returns {Promise<Object>} JSON result with final_document blocks
+     */
+    async autoGenerateSection(sectionName, sectionId, contextHtml) {
+        console.log(`[AIFormatter] Auto-generating section: ${sectionName} using document context`);
+        
+        // Strip HTML tags for cleaner context
+        const plainContext = contextHtml.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+        const truncatedContext = plainContext.substring(0, 4000) + (plainContext.length > 4000 ? '...' : '');
+        
+        const systemInstruction = `You are an expert academic document writer. The user has a formatted document but is missing the "${sectionName}" section.
+Your task is to AUTO-GENERATE this section based on the surrounding document content.
+
+[EXISTING DOCUMENT CONTENT]:
+${truncatedContext}
+
+[RULES]:
+1. Base ALL generated content, facts, and references STRICTLY on the surrounding context of the document above.
+2. For "References" sections: Generate REAL, well-known academic references that are directly relevant to the document's topic. Use your knowledge base to cite real authors, real journal names, and real publication years. Do NOT invent fake author names or fake paper titles.
+3. For "Abstract" sections: Summarize the key points from the existing document content. Keep it concise (150-250 words).
+4. For "Conclusion" sections: Synthesize the findings and discussion from the document.
+5. Return ONLY a valid JSON object with this schema:
+{
+  "final_document": [
+     { "type": "heading", "depth": 2, "content": "${sectionName}" },
+     { "type": "p", "content": "Generated paragraph text..." }
+  ]
+}
+6. DO NOT generate the entire document again. ONLY generate blocks for this specific missing section.
+7. DO NOT include any text outside the JSON object.`;
+
+        try {
+            let proxyResponse;
+            try {
+                proxyResponse = await fetch('/api/format', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        rawText: `Auto-generate the "${sectionName}" section`,
+                        systemInstruction: systemInstruction,
+                        isMermaidFix: false
+                    })
+                });
+            } catch (e) {
+                console.warn('[AIFormatter] Local proxy failed for auto-generate, trying vercel...');
+                proxyResponse = await fetch('https://smart-text-formatter-server.vercel.app/api/format', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        rawText: `Auto-generate the "${sectionName}" section`,
+                        systemInstruction: systemInstruction,
+                        isMermaidFix: false
+                    })
+                });
+            }
+
+            if (!proxyResponse.ok) {
+                const errorData = await proxyResponse.json();
+                throw new Error(errorData.error || `Proxy error: ${proxyResponse.status}`);
+            }
+
+            const proxyData = await proxyResponse.json();
+            if (proxyData.error) throw new Error(proxyData.error);
+            
+            let jsonText = proxyData.text;
+            jsonText = jsonText.replace(/^```json\s*/i, '').replace(/```\s*$/i, '');
+            
+            const result = JSON.parse(jsonText);
+            return result;
+        } catch (error) {
+            console.error('[AIFormatter] Auto-Generate Section Error:', error);
             throw error;
         }
     }

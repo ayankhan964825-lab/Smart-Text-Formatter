@@ -164,11 +164,25 @@ ${window.referenceStyleGuide ? `--- ADOBE REFERENCE PDF STYLE GUIDE ---\nThe use
         const callServerProxy = async () => {
             try {
                 console.log('[AIFormatter] Trying server proxy /api/format ...');
-                const proxyResponse = await fetch('/api/format', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ rawText, systemInstruction, images, referencePdf })
-                });
+                let proxyResponse;
+                try {
+                    proxyResponse = await fetch('/api/format', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ rawText, systemInstruction, images, referencePdf })
+                    });
+                } catch(e) {
+                    console.warn('Network error on local fetch', e);
+                }
+
+                if (!proxyResponse || !proxyResponse.ok) {
+                    console.warn('[AIFormatter] Local proxy /api/format failed, falling back to vercel production proxy...');
+                    proxyResponse = await fetch('https://smarttextformatter.vercel.app/api/format', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ rawText, systemInstruction, images, referencePdf })
+                    });
+                }
 
                 if (proxyResponse.ok) {
                     console.log('[AIFormatter] ✅ Server proxy succeeded!');
@@ -657,13 +671,9 @@ ${truncatedContext}
 7. DO NOT include any text outside the JSON object.`;
 
         try {
-            const BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-                ? 'http://localhost:8000' 
-                : 'https://smart-text-formatter.onrender.com'; // using the known working render URL or vercel
-
             let proxyResponse;
             try {
-                proxyResponse = await fetch(`${BACKEND_URL}/api/format`, {
+                proxyResponse = await fetch('/api/format', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -673,8 +683,12 @@ ${truncatedContext}
                     })
                 });
             } catch (e) {
-                console.warn('[AIFormatter] Local proxy failed for auto-generate, trying vercel...');
-                proxyResponse = await fetch('https://smart-text-formatter-server.vercel.app/api/format', {
+                console.warn('Network error on local fetch', e);
+            }
+
+            if (!proxyResponse || !proxyResponse.ok) {
+                console.warn('[AIFormatter] Local proxy /api/format failed or not found, falling back to vercel production proxy...');
+                proxyResponse = await fetch('https://smarttextformatter.vercel.app/api/format', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -685,7 +699,7 @@ ${truncatedContext}
                 });
             }
 
-            if (!proxyResponse.ok) {
+            if (!proxyResponse || !proxyResponse.ok) {
                 const errorData = await proxyResponse.json();
                 throw new Error(errorData.error || `Proxy error: ${proxyResponse.status}`);
             }

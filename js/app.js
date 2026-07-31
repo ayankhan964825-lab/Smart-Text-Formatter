@@ -4045,13 +4045,9 @@ document.addEventListener('DOMContentLoaded', () => {
             // so we don't apply the full skeleton again, we just want paragraphs/lists.
             const systemInstruction = `You are a document formatter. Format the following user text meant for the "${sectionLabel}" section. Output a valid JSON array of blocks. Example: [{"type":"p", "content":"..."}]`;
             
-            const BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-                ? 'http://localhost:8000' 
-                : 'https://smart-text-formatter.onrender.com';
-
             let proxyResponse;
             try {
-                proxyResponse = await fetch(`${BACKEND_URL}/api/format`, {
+                proxyResponse = await fetch('/api/format', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -4061,7 +4057,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     })
                 });
             } catch (e) {
-                proxyResponse = await fetch('https://smart-text-formatter-server.vercel.app/api/format', {
+                console.warn('Network error on local fetch', e);
+            }
+
+            if (!proxyResponse || !proxyResponse.ok) {
+                console.warn('[AIFormatter] Local proxy /api/format failed or not found, falling back to vercel production proxy...');
+                proxyResponse = await fetch('https://smarttextformatter.vercel.app/api/format', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -4072,7 +4073,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             }
 
-            if (!proxyResponse.ok) throw new Error("Format API failed.");
+            if (!proxyResponse || !proxyResponse.ok) throw new Error("Format API failed.");
             const data = await proxyResponse.json();
             
             let jsonText = data.text;

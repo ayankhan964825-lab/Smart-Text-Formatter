@@ -4013,7 +4013,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 refPdfInput.value = ''; // reset
             }
         });
-        });
     }
 
     // ==========================================

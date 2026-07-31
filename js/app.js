@@ -4045,9 +4045,13 @@ document.addEventListener('DOMContentLoaded', () => {
             // so we don't apply the full skeleton again, we just want paragraphs/lists.
             const systemInstruction = `You are a document formatter. Format the following user text meant for the "${sectionLabel}" section. Output a valid JSON array of blocks. Example: [{"type":"p", "content":"..."}]`;
             
+            const BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+                ? 'http://localhost:8000' 
+                : 'https://smart-text-formatter.onrender.com';
+
             let proxyResponse;
             try {
-                proxyResponse = await fetch('/api/format', {
+                proxyResponse = await fetch(`${BACKEND_URL}/api/format`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({

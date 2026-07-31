@@ -657,9 +657,13 @@ ${truncatedContext}
 7. DO NOT include any text outside the JSON object.`;
 
         try {
+            const BACKEND_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+                ? 'http://localhost:8000' 
+                : 'https://smart-text-formatter.onrender.com'; // using the known working render URL or vercel
+
             let proxyResponse;
             try {
-                proxyResponse = await fetch('/api/format', {
+                proxyResponse = await fetch(`${BACKEND_URL}/api/format`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({

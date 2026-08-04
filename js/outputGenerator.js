@@ -321,7 +321,8 @@ class OutputGenerator {
         for (const el of styledElements) {
             if (el._template_id) {
                 if (el._template_id === 'title' || (el.type === 'heading' && el.depth === 1)) {
-                    continue; // Document title is never a bonus section
+                    returnedIds.add('title');
+                    continue; // Document title is recorded, not a bonus section
                 }
                 if (el._template_id === 'none') {
                     if (el.content && !bonusSections.includes(el.content)) {
@@ -338,7 +339,10 @@ class OutputGenerator {
             for (let i = 0; i < window._lastDocumentSections.length; i++) {
                 const section = window._lastDocumentSections[i];
                 if (section.is_title || section.template_id === 'title' || (i === 0 && (!section.blocks || section.blocks.length === 0))) {
-                    continue; // Skip title section
+                    if (section.heading_title || section.title || (section.blocks && section.blocks.length > 0)) {
+                        returnedIds.add('title');
+                    }
+                    continue; // Title section handled
                 }
                 if (section.template_id && section.template_id !== 'none') {
                     returnedIds.add(section.template_id);
@@ -348,6 +352,11 @@ class OutputGenerator {
                     }
                 }
             }
+        }
+
+        // Check if global documentTitle exists
+        if (window._documentTitle && window._documentTitle.trim() && window._documentTitle !== 'Untitled Document') {
+            returnedIds.add('title');
         }
 
         // --- GENERALIZED FUZZY & ALIAS MATCHER ---

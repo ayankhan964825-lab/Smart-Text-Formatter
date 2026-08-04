@@ -6,85 +6,117 @@
 
 class RuleEngine {
     constructor(customRibbonRules = null) {
-        // Default rules mapped directly to CSS inline styles
+        // Default rules mapped directly to Word OpenXML (docxExporter.js) specifications:
+        // H1: 16pt, bold, centered, uppercase (360 twips before = 18pt, 240 twips after = 12pt)
+        // H2: 16pt, bold, left, uppercase (300 twips before = 15pt, 200 twips after = 10pt)
+        // H3: 14pt, bold, left (240 twips before = 12pt, 160 twips after = 8pt)
+        // Body (p): 12pt, line-height 1.6, justify (160 twips after = 8pt)
         this.defaultRules = {
             // ── New unified heading type (replaces h1/h2/sub-subheading) ──
             'heading-1': {
                 'font-family': "'Times New Roman', serif",
                 'font-size': '16pt',
                 'font-weight': '700',
-                'margin-bottom': '1rem',
-                'border-bottom': '2px solid #DEE2E6',
-                'padding-bottom': '0.5rem'
+                'text-align': 'center',
+                'text-transform': 'uppercase',
+                'margin-top': '18pt',
+                'margin-bottom': '12pt'
             },
             'heading-2': {
                 'font-family': "'Times New Roman', serif",
                 'font-size': '16pt',
-                'font-weight': '600',
-                'margin-bottom': '0.75rem',
-                'margin-top': '1.5rem'
+                'font-weight': '700',
+                'text-align': 'left',
+                'text-transform': 'uppercase',
+                'margin-top': '15pt',
+                'margin-bottom': '10pt'
             },
             'heading-3': {
                 'font-family': "'Times New Roman', serif",
                 'font-size': '14pt',
-                'font-weight': '600',
-                'margin-bottom': '0.5rem',
-                'margin-top': '1rem'
+                'font-weight': '700',
+                'text-align': 'left',
+                'margin-top': '12pt',
+                'margin-bottom': '8pt'
             },
             // ── Backward-compat old types ──
             h1: {
                 'font-family': "'Times New Roman', serif",
                 'font-size': '16pt',
                 'font-weight': '700',
-                'margin-bottom': '1rem',
-                'border-bottom': '2px solid #DEE2E6',
-                'padding-bottom': '0.5rem'
+                'text-align': 'center',
+                'text-transform': 'uppercase',
+                'margin-top': '18pt',
+                'margin-bottom': '12pt'
             },
             h2: {
                 'font-family': "'Times New Roman', serif",
                 'font-size': '16pt',
-                'font-weight': '600',
-                'margin-bottom': '0.75rem',
-                'margin-top': '1.5rem'
+                'font-weight': '700',
+                'text-align': 'left',
+                'text-transform': 'uppercase',
+                'margin-top': '15pt',
+                'margin-bottom': '10pt'
             },
             h3: {
                 'font-family': "'Times New Roman', serif",
                 'font-size': '14pt',
-                'font-weight': '600',
-                'margin-bottom': '0.5rem',
-                'margin-top': '1rem'
+                'font-weight': '700',
+                'text-align': 'left',
+                'margin-top': '12pt',
+                'margin-bottom': '8pt'
             },
             p: {
                 'font-family': "'Times New Roman', serif",
                 'font-size': '12pt',
                 'line-height': '1.6',
-                'margin-bottom': '1rem'
+                'text-align': 'justify',
+                'text-justify': 'inter-word',
+                'margin-bottom': '8pt'
             },
             ul: {
                 'font-family': "'Times New Roman', serif",
-                'margin-bottom': '1rem',
-                'padding-left': '2rem'
+                'font-size': '12pt',
+                'line-height': '1.6',
+                'margin-bottom': '8pt',
+                'padding-left': '0.5in'
             },
             ol: {
                 'font-family': "'Times New Roman', serif",
-                'margin-bottom': '1rem',
-                'padding-left': '2rem'
+                'font-size': '12pt',
+                'line-height': '1.6',
+                'margin-bottom': '8pt',
+                'padding-left': '0.5in'
             },
             li: {
                 'font-family': "'Times New Roman', serif",
                 'font-size': '12pt',
                 'line-height': '1.6',
-                'margin-bottom': '0.5rem'
+                'margin-bottom': '4pt'
             },
             'sub-subheading': {
                 'font-family': "'Times New Roman', serif",
                 'font-size': '14pt',
                 'font-weight': '700',
-                'margin-bottom': '1rem',
-                'margin-top': '1.25rem',
+                'margin-top': '12pt',
+                'margin-bottom': '8pt',
                 'page-break-after': 'avoid'
             }
         };
+
+        // Merge defaults with active template formatting if available
+        if (typeof window !== 'undefined' && window.templateEngine && window.templateEngine.getSelectedTemplate) {
+            const tmpl = window.templateEngine.getSelectedTemplate();
+            if (tmpl && tmpl.formatting) {
+                const fmt = tmpl.formatting;
+                if (fmt.alignment) {
+                    this.defaultRules.p['text-align'] = fmt.alignment;
+                }
+                if (fmt.lineSpacing) {
+                    this.defaultRules.p['line-height'] = fmt.lineSpacing;
+                }
+            }
+        }
 
         // Merge defaults with ribbon overrides
         this.currentRules = { ...this.defaultRules };

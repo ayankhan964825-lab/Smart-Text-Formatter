@@ -29,6 +29,7 @@ const DOCUMENT_TEMPLATES = {
     icon: "🔬",
     description: "Academic research paper with standard structure.",
     skeleton: [
+      { id: "title", label: "Paper Title", required: true, aliases: ["Title", "Document Title", "Main Title", "Heading"] },
       { id: "abstract", label: "Abstract", required: true, aliases: ["Summary", "Executive Summary"] },
       { id: "introduction", label: "Introduction", required: true, aliases: ["Background", "Overview"] },
       { id: "literature_review", label: "Literature Review", required: true, aliases: ["Related Work", "Previous Studies", "Literature Survey"] },
@@ -39,17 +40,18 @@ const DOCUMENT_TEMPLATES = {
       { id: "references", label: "References", required: true, aliases: ["Bibliography", "Citations"] }
     ],
     formatting: {
-      h1: { fontFamily: "'Times New Roman', serif", fontSize: "16" },
+      h1: { fontFamily: "'Times New Roman', serif", fontSize: "16", textAlign: "center" },
       h2: { fontFamily: "'Times New Roman', serif", fontSize: "16" },
       h3: { fontFamily: "'Times New Roman', serif", fontSize: "14" },
       body: { fontFamily: "'Times New Roman', serif", fontSize: "12" },
       alignment: "justify",
-      lineSpacing: "2.0"
+      lineSpacing: "1.6"
     },
     promptContext: `This is an ACADEMIC RESEARCH PAPER.
+- MAIN TITLE: The document title (e.g., "Impact of Social Media on Student Academic Performance") MUST be captured as the very first section with template_id: "title", heading_title: "Title of Paper", and blocks: [] (or author/institution paragraphs if present).
 - PRESERVE the user's original text EXACTLY. Do NOT rewrite, rephrase, or summarize any paragraph. Only fix OCR typos.
 - References section: each reference item inside a section's blocks should use type "references" with an "items" array containing objects with "id" and "text".
-- Heading numbering: Use "1. Introduction", "2. Literature Review" etc. for section headings.
+- Heading numbering: Section numbering begins at Introduction ("1. Introduction"). The Title and Abstract are NOT numbered.
 - Sub-sections: Use "2.1 Topic", "2.2 Topic" for sub-section headings (these go inside the parent section's blocks array).`
   },
 

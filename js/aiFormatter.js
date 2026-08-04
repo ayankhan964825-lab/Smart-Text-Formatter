@@ -72,6 +72,19 @@ ${hasStructuredTemplate ? `{
   "ai_thoughts": "Your step-by-step reasoning here...",
   "document_sections": [
     {
+      "template_id": "title",
+      "is_title": true,
+      "heading_title": "Impact of Social Media on Student Academic Performance",
+      "blocks": []
+    },
+    {
+      "template_id": "abstract",
+      "heading_title": "Abstract",
+      "blocks": [
+        { "type": "p", "content": "Paragraph text here..." }
+      ]
+    },
+    {
       "template_id": "introduction",
       "heading_title": "1. Introduction",
       "blocks": [
@@ -88,9 +101,10 @@ ${hasStructuredTemplate ? `{
     }
   ]
 }
-- "template_id" MUST be the skeleton section ID if the content matches a known section or its aliases. Use "none" ONLY for sections that do not match any skeleton ID or alias.
-- "heading_title" is the display heading (e.g., "1. Introduction", "Abstract", or the user's original heading if custom).
-- "blocks" is an array of content block objects belonging to this section.` : `{
+- "template_id": MUST be the skeleton section ID (e.g., 'title', 'abstract', 'introduction', etc.) if the content matches. Use 'none' ONLY for custom sections.
+- "is_title": Set to true for the document title section.
+- "heading_title": The display heading (e.g., "Impact of Social Media...", "1. Introduction", "Abstract", etc.).
+- "blocks": Array of content block objects belonging to this section.` : `{
   "ai_thoughts": "Your step-by-step reasoning here...",
   "final_document": [ ...document blocks array... ]
 }
@@ -542,6 +556,15 @@ CRITICAL RULES:
         if (!text || typeof text !== 'string') return text;
 
         let cleaned = text;
+
+        // ── STEP 0: Strip markdown test instructions, headings, & code fences ──
+        // e.g. ## TEST 1: Basic Happy Path...
+        // **Purpose:** Verify that a complete...
+        // ``` or ```text or ```markdown
+        cleaned = cleaned.replace(/^#+\s+TEST\s+\d+.*?\n+/i, '');
+        cleaned = cleaned.replace(/^\*\*Purpose:\*\*.*?\n+/i, '');
+        cleaned = cleaned.replace(/^```[a-z0-9_-]*\s*\n+/i, '');
+        cleaned = cleaned.replace(/\n+```\s*$/i, '');
 
         // ── STEP 1: Remove common AI OPENING lines ──
         // These patterns match the FIRST 1-3 lines only (not the whole document)

@@ -573,25 +573,83 @@ body {
     background-color: #ffffff;
     width: 210mm;
     min-height: 297mm;
-    max-height: 297mm;  /* Fixed height â€” overflow goes to next page */
-    margin: 0 auto 20px auto;
+    max-height: 297mm;  /* Fixed height — overflow goes to next page */
+    margin: 0 auto 24px auto;
     padding: 25.4mm;    /* 1-inch margin, exact match to Word/PDF export */
     box-sizing: border-box;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    border: 1px solid #d1d5db;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.05);
+    border: none;
     border-radius: 2px;
     position: relative;
     overflow: hidden;  /* Overflow gets redistributed to next page by JS */
+    font-family: 'Times New Roman', Times, serif;
+    color: #111827;
+    line-height: 1.6;
+}
+
+/* Word-matching typography defaults inside A4 pages */
+.a4-page p {
+    text-align: justify;
+    text-justify: inter-word;
+    margin-top: 0;
+    margin-bottom: 8pt;
+    font-size: 12pt;
+    line-height: 1.6;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+.a4-page h1 {
+    text-align: center;
+    font-size: 16pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-top: 18pt;
+    margin-bottom: 12pt;
+    font-family: 'Times New Roman', Times, serif;
+    border: none !important;
+    padding: 0 !important;
+}
+
+.a4-page h2 {
+    text-align: left;
+    font-size: 16pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-top: 15pt;
+    margin-bottom: 10pt;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+.a4-page h3 {
+    text-align: left;
+    font-size: 14pt;
+    font-weight: 700;
+    margin-top: 12pt;
+    margin-bottom: 8pt;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+.a4-page ul, .a4-page ol {
+    margin-top: 0;
+    margin-bottom: 8pt;
+    padding-left: 0.5in;
+    font-size: 12pt;
+    line-height: 1.6;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+.a4-page li {
+    margin-bottom: 4pt;
 }
 
 /* Page number badge at bottom of each page */
 .a4-page .page-number-badge {
     position: absolute;
-    bottom: 10mm;
-    right: 12mm;
-    font-size: 9pt;
-    color: #9ca3af;
-    font-family: 'Times New Roman', serif;
+    bottom: 12mm;
+    right: 15mm;
+    font-size: 10pt;
+    color: #6b7280;
+    font-family: 'Times New Roman', Times, serif;
     user-select: none;
     pointer-events: none;
 }
@@ -600,19 +658,33 @@ body {
 .page-break-label {
     text-align: center;
     font-size: 11px;
-    font-family: sans-serif;
-    color: #6b7280;
-    letter-spacing: 0.5px;
-    margin: 6px auto 6px auto;
+    font-weight: 500;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: #9ca3af;
+    letter-spacing: 1px;
+    margin: 12px auto;
     width: 210mm;
     max-width: 100%;
     user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.page-break-label::before,
+.page-break-label::after {
+    content: '';
+    height: 1px;
+    background: #cbd5e1;
+    flex: 1;
+    max-width: 120px;
 }
 
 /* When in edit mode, show a visual focus on the active page */
 .a4-page[contenteditable="true"]:focus-within {
     outline: 2px solid rgba(49, 130, 206, 0.5);
-    box-shadow: 0 4px 20px rgba(49, 130, 206, 0.15);
+    box-shadow: 0 4px 24px rgba(49, 130, 206, 0.2);
 }
 
 @media print {

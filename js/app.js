@@ -4389,12 +4389,15 @@ document.addEventListener('DOMContentLoaded', () => {
             previewContainer.innerHTML = finalHtml;
         }
 
-        // Re-run MathJax and Mermaid
+        // Re-run MathJax, Mermaid, and A4 pagination
         if (window.MathJax) {
             window.MathJax.typesetPromise([previewContainer]).catch((err) => console.log('MathJax error', err));
         }
         if (typeof window.renderMermaidGraphs === 'function') {
             window.renderMermaidGraphs(previewContainer);
+        }
+        if (typeof window.paginatePreview === 'function') {
+            setTimeout(() => window.paginatePreview(), 80);
         }
     }
 

@@ -6,7 +6,7 @@
 ---
 
 ## TEST 1: Basic Happy Path (Sab Sahi Text)
-**Purpose:** Verify that a complete, well-ordered text formats correctly with proper numbering and no alerts.
+**Purpose:** Complete, well-ordered text → correct title, numbering, A4 layout, no alerts.
 
 ```
 Impact of Social Media on Student Academic Performance
@@ -39,18 +39,35 @@ References
 ```
 
 ### ✅ Kya Check Karna Hai:
-- [ ] Title "Impact of Social Media..." H1 size me dikhna chahiye (sabse bada)
+
+#### A) Title & Numbering
+- [ ] Title "Impact of Social Media…" sabse upar H1 (centered, bold, uppercase) me dikhna chahiye
 - [ ] Abstract ka koi number nahi hona chahiye (sirf "Abstract")
 - [ ] Introduction se Conclusion tak sequential numbering: 1, 2, 3, 4, 5, 6
 - [ ] References ka koi number nahi (sirf "References")
+
+#### B) A4 Page Layout (Output Preview)
+- [ ] Output preview me content **discrete A4 pages** me dikhe (Page 1, Page 2…)
+- [ ] Har page ke neeche "Page 1", "Page 2" badge dikhe
+- [ ] Pages ke beech "— Page Break —" separator dikhe
+- [ ] Font = Times New Roman, Body = 12pt, text = Justify (Word jaisa)
+- [ ] Pages ke andar 1-inch padding (margins) dikhe
+
+#### C) Alerts & Align Bar
 - [ ] **Koi bhi Smart Alert nahi aana chahiye** (sab sections present hain)
-- [ ] **"Align to Template Order" bar** dikhna chahiye output me (kyunki Research Paper template hai)
-- [ ] Export DOCX me headings bade aur body chhota (sizes sahi)
+- [ ] **"Align to Template Order" bar** dikhna chahiye output me
+
+#### D) Export Check
+- [ ] Export DOCX → Word me open karo → H1 bada, body chhota, font sahi
+- [ ] Export PDF → layout A4 page preview jaisa match kare
+
+#### E) UI Clean Check
+- [ ] Output header me **Typography button NAHI** dikhna chahiye (sirf Left/Center/Right/Justify dropdown rahe)
 
 ---
 
 ## TEST 2: Missing Sections (Abstract & Result Gayab)
-**Purpose:** Verify that missing required sections trigger proper Red/Purple alerts with Auto-Generate & Paste options.
+**Purpose:** Missing required sections → Red alerts with Auto-Generate & Paste buttons.
 
 ```
 Impact of Artificial Intelligence on Healthcare
@@ -76,17 +93,26 @@ References
 ```
 
 ### ✅ Kya Check Karna Hai:
+
+#### A) Title & Missing Section Alerts
+- [ ] Title "Impact of Artificial Intelligence on Healthcare" → H1 me display ho
 - [ ] **🔴 Red Alert: "Missing Required Section: Abstract"** dikhna chahiye
 - [ ] **🔴 Red Alert: "Missing Required Section: Results"** dikhna chahiye
 - [ ] Dono alerts me **[📝 Paste & Format]** aur **[✨ Auto-Generate]** buttons hone chahiye
+
+#### B) Numbering
 - [ ] Baaki sections ki numbering correct honi chahiye (1. Introduction, 2. Literature Review, etc.)
-- [ ] Title "Impact of AI..." H1 me display ho
+
+#### C) Auto-Generate
 - [ ] **[✨ Auto-Generate]** click karne par section sahi jagah inject ho (template order ke hisaab se)
+
+#### D) A4 Layout
+- [ ] A4 pages me dikhe, page badges aayein
 
 ---
 
 ## TEST 3: Galat Numbering (User ki Mistake — 5 ke baad 7)
-**Purpose:** Verify that algorithm auto-corrects wrong numbering from user's text.
+**Purpose:** Algorithm auto-corrects wrong numbering from user's text.
 
 ```
 A Study on Electric Vehicle Adoption in India
@@ -115,16 +141,17 @@ References
 ```
 
 ### ✅ Kya Check Karna Hai:
+- [ ] Title "A Study on Electric Vehicle Adoption…" → H1 me dikhe
 - [ ] Abstract ka koi number nahi (sirf "Abstract")
 - [ ] Numbering continuously correct honi chahiye: **1, 2, 3, 4, 5** (NOT 1, 2, 3, 5, 7)
 - [ ] **🔴 Red Alert: "Missing Required Section: Results"** dikhna chahiye (kyunki Results ka content nahi hai)
-- [ ] Title H1 me dikhna chahiye
 - [ ] References unnumbered rahein
+- [ ] A4 pages me dikhe
 
 ---
 
 ## TEST 4: Ulta Section Order (Discussion Pehle, Results Baad Me)
-**Purpose:** Verify that user's original section order is preserved by default, AND the "🔄 Align to Template Order" button correctly reorders.
+**Purpose:** User ka original order preserve ho by default, "🔄 Align to Template Order" button correctly reorder kare.
 
 ```
 Blockchain Technology in Supply Chain Management
@@ -153,20 +180,22 @@ References
 ```
 
 ### ✅ Kya Check Karna Hai:
-- [ ] **Default me user ka order preserve hona chahiye:** Discussion (4) pehle, Results (5) baad me
+- [ ] Title "Blockchain Technology…" → H1 me dikhe
+- [ ] **Default me user ka order preserve hona chahiye:** Discussion pehle, Results baad me
 - [ ] **"Align to Template Order" bar** dikhna chahiye output preview ke upar
 - [ ] Bar me likha ho: **"Sections are in your original order"**
 - [ ] **"🔄 Align to Template Order"** button click karne par:
-  - [ ] Results pehle aa jaye (4. Results) aur Discussion baad me (5. Discussion)
-  - [ ] Bar green ho jaye aur likhe: **"✅ Sections aligned to template standard order"**
+  - [ ] Results pehle aa jaye aur Discussion baad me
+  - [ ] Bar green ho jaye: **"✅ Sections aligned to template standard order"**
   - [ ] Button change ho jaye: **"↩️ Revert to Original Order"**
-- [ ] **Revert** click karne par wapas user ka pehle wala order aa jaye
-- [ ] Content kabhi mix ya swap na ho (Results ka text Results me hi rahe, Discussion ka Discussion me)
+- [ ] **Revert** click karne par wapas user ka original order aa jaye
+- [ ] Content kabhi mix ya swap na ho
+- [ ] A4 pages me dikhe
 
 ---
 
 ## TEST 5: Custom Sections (Template me na ho wale extra sections)
-**Purpose:** Verify that custom sections are detected, formatted, and shown in green bonus alert.
+**Purpose:** Custom sections → Green bonus alert, proper formatting with correct numbering.
 
 ```
 Machine Learning for Weather Prediction
@@ -204,16 +233,18 @@ References
 ```
 
 ### ✅ Kya Check Karna Hai:
+- [ ] Title "Machine Learning for Weather Prediction" → H1 me dikhe
 - [ ] **✨ Green Alert: "Custom Sections Detected: Hardware and Software Requirements, Ethical Considerations"**
 - [ ] Custom sections properly formatted with correct numbering
 - [ ] Sabhi standard sections bhi sahi dikhein
 - [ ] Custom sections ka content intact rahe
 - [ ] Export me bhi custom sections aayein
+- [ ] A4 pages me dikhe
 
 ---
 
 ## TEST 6: General Template (No Skeleton)
-**Purpose:** Verify that non-template formatting works fine. No smart alerts. No align bar.
+**Purpose:** Non-template text → no smart alerts, no align bar, clean formatting.
 
 > ⚠️ **Template: Use "General" template for this test**
 
@@ -244,17 +275,28 @@ Next Meeting: August 12, 2024
 - [ ] **"Align to Template Order" bar nahi dikhna chahiye**
 - [ ] Text properly formatted ho with headings
 - [ ] Export DOCX sahi kaam kare
+- [ ] A4 pages me dikhe
 
 ---
 
-## TEST 7: Export Validation (Size Check)
-**Purpose:** After formatting TEST 1, verify exported DOCX has correct heading/body sizes.
+## TEST 7: Export Validation (Word/PDF Size & Layout Check)
+**Purpose:** After formatting TEST 1, verify exported DOCX/PDF matches output preview.
 
 ### ✅ Kya Check Karna Hai (DOCX Export):
-- [ ] Title (H1) ka font size sabse bada (~16pt)
+- [ ] Title (H1) ka font size sabse bada (~16pt), centered, uppercase
 - [ ] Heading (H2) ka font size 16pt
 - [ ] Subheading (H3) ka font size 14pt
 - [ ] Body text ka font size 12pt
-- [ ] Font family consistent (Arial ya Times New Roman)
+- [ ] Font family = Times New Roman (consistent)
+- [ ] Text alignment = Justify (paragraph body)
 - [ ] **Smart Alert cards DOCX me nahi aane chahiye** (no-export filter)
 - [ ] **"Align to Template Order" bar DOCX me nahi aana chahiye**
+
+### ✅ Kya Check Karna Hai (PDF Export):
+- [ ] PDF ka layout A4 output preview se match kare
+- [ ] Page breaks wahi pe hone chahiye jahan preview me the
+- [ ] Font, spacing, margins same hone chahiye
+
+### ✅ Kya Check Karna Hai (UI):
+- [ ] Output header me **Typography button nahi** hona chahiye
+- [ ] Sirf **Left / Center / Right / Justify** alignment dropdown rahe

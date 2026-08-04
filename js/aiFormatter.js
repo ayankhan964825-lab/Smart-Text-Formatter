@@ -429,20 +429,31 @@ CRITICAL RULES:
             // NEW: Handle Structured Sections format { ai_thoughts, document_sections }
             if (parsed && typeof parsed === 'object' && !Array.isArray(parsed) && parsed.document_sections) {
                 window._lastAiThoughts = parsed.ai_thoughts || '';
+                
+                // Renumber sections (fix user numbering gaps, apply unnumbered rules)
+                // NOTE: We do NOT auto-align to skeleton order by default — user's original sequence is preserved.
+                if (typeof window._renumberSections === 'function') {
+                    window._renumberSections(parsed.document_sections);
+                }
+
+                // Store original order for revert feature, then set active document sections
+                window._originalDocumentSections = JSON.parse(JSON.stringify(parsed.document_sections));
                 window._lastDocumentSections = parsed.document_sections; // Store for Smart Alerts
+                window._isAlignedToTemplate = false; // Track alignment state
                 console.log('[AIFormatter] 🧠 AI Thoughts:', parsed.ai_thoughts || '(none)');
                 console.log('[AIFormatter] 📦 Structured Sections received:', parsed.document_sections.length);
 
                 // Flatten sections into a blocks array for backward compat with RuleEngine/OutputGenerator
                 const flatBlocks = [];
-                for (const section of parsed.document_sections) {
-                    // Add section heading as a depth:2 heading block
+                for (let sIdx = 0; sIdx < parsed.document_sections.length; sIdx++) {
+                    const section = parsed.document_sections[sIdx];
                     if (section.heading_title) {
+                        const isTitle = section.is_title || section.template_id === 'title' || (sIdx === 0 && (!section.blocks || section.blocks.length === 0));
                         flatBlocks.push({
                             type: 'heading',
-                            depth: 2,
+                            depth: isTitle ? 1 : 2,
                             content: section.heading_title,
-                            _template_id: section.template_id || 'none'
+                            _template_id: isTitle ? 'title' : (section.template_id || 'none')
                         });
                     }
                     // Add all blocks within this section
@@ -482,11 +493,25 @@ CRITICAL RULES:
             // After auto-heal, check all formats
             if (fixedParsed && typeof fixedParsed === 'object' && !Array.isArray(fixedParsed) && fixedParsed.document_sections) {
                 window._lastAiThoughts = fixedParsed.ai_thoughts || '';
+
+                if (typeof window._renumberSections === 'function') {
+                    window._renumberSections(fixedParsed.document_sections);
+                }
+
+                window._originalDocumentSections = JSON.parse(JSON.stringify(fixedParsed.document_sections));
                 window._lastDocumentSections = fixedParsed.document_sections;
+                window._isAlignedToTemplate = false;
                 const flatBlocks = [];
-                for (const section of fixedParsed.document_sections) {
+                for (let sIdx = 0; sIdx < fixedParsed.document_sections.length; sIdx++) {
+                    const section = fixedParsed.document_sections[sIdx];
                     if (section.heading_title) {
-                        flatBlocks.push({ type: 'heading', depth: 2, content: section.heading_title, _template_id: section.template_id || 'none' });
+                        const isTitle = section.is_title || section.template_id === 'title' || (sIdx === 0 && (!section.blocks || section.blocks.length === 0));
+                        flatBlocks.push({
+                            type: 'heading',
+                            depth: isTitle ? 1 : 2,
+                            content: section.heading_title,
+                            _template_id: isTitle ? 'title' : (section.template_id || 'none')
+                        });
                     }
                     if (Array.isArray(section.blocks)) {
                         for (const block of section.blocks) { flatBlocks.push(block); }
@@ -671,51 +696,86 @@ ${truncatedContext}
 7. DO NOT include any text outside the JSON object.`;
 
         try {
+            const activeLocalApiKey = window.GEMINI_API_KEY_LOCAL || localStorage.getItem('gemini_api_key') || '';
             let proxyResponse;
-            try {
-                proxyResponse = await fetch('/api/format', {
+
+            if (activeLocalApiKey) {
+                console.log('[AIFormatter] Custom API key found — calling Gemini DIRECTLY for Auto-Generate...');
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${activeLocalApiKey}`;
+                const requestBody = {
+                    system_instruction: { parts: [{ text: systemInstruction }] },
+                    contents: [{ parts: [{ text: `Auto-generate the "${sectionName}" section` }] }],
+                    generationConfig: { temperature: 0.1, responseMimeType: "application/json" }
+                };
+
+                proxyResponse = await fetch(url, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        rawText: `Auto-generate the "${sectionName}" section`,
-                        systemInstruction: systemInstruction,
-                        isMermaidFix: false
-                    })
+                    body: JSON.stringify(requestBody)
                 });
-            } catch (e) {
-                console.warn('Network error on local fetch', e);
+            } else {
+                try {
+                    proxyResponse = await fetch('/api/format', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            rawText: `Auto-generate the "${sectionName}" section`,
+                            systemInstruction: systemInstruction,
+                            isMermaidFix: false
+                        })
+                    });
+                } catch (e) {
+                    console.warn('Network error on local fetch', e);
+                }
+
+                if (!proxyResponse || !proxyResponse.ok) {
+                    console.warn('[AIFormatter] Local proxy /api/format failed, falling back to vercel proxy...');
+                    try {
+                        proxyResponse = await fetch('https://smarttextformatter.vercel.app/api/format', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                rawText: `Auto-generate the "${sectionName}" section`,
+                                systemInstruction: systemInstruction,
+                                isMermaidFix: false
+                            })
+                        });
+                    } catch (e) {
+                        console.warn('Network error on Vercel fetch', e);
+                    }
+                }
             }
 
             if (!proxyResponse || !proxyResponse.ok) {
-                console.warn('[AIFormatter] Local proxy /api/format failed or not found, falling back to vercel production proxy...');
-                proxyResponse = await fetch('https://smarttextformatter.vercel.app/api/format', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        rawText: `Auto-generate the "${sectionName}" section`,
-                        systemInstruction: systemInstruction,
-                        isMermaidFix: false
-                    })
-                });
-            }
-
-            if (!proxyResponse || !proxyResponse.ok) {
-                const errorData = await proxyResponse.json();
-                throw new Error(errorData.error || `Proxy error: ${proxyResponse.status}`);
+                console.warn("[AIFormatter] Auto Generate API failed. Using mock fallback for demonstration.");
+                return {
+                    final_document: [
+                        { type: 'p', content: `[Offline Fallback] This is an auto-generated placeholder for the missing "${sectionName}" section. The AI formatting service is currently unreachable.` },
+                        { type: 'p', content: `Please configure your local Gemini API key in the settings to enable live AI auto-generation, or ensure you are connected to the internet.` }
+                    ]
+                };
             }
 
             const proxyData = await proxyResponse.json();
-            if (proxyData.error) throw new Error(proxyData.error);
             
+            // If direct Gemini API hit (not proxy), data structure is different!
+            if (activeLocalApiKey && proxyData.candidates && proxyData.candidates[0].content) {
+                let jsonText = proxyData.candidates[0].content.parts[0].text;
+                jsonText = jsonText.replace(/^```json\s*/i, '').replace(/```\s*$/i, '');
+                return JSON.parse(jsonText);
+            }
+
+            // Proxy return structure
+            if (proxyData.error) throw new Error(proxyData.error);
             if (!proxyData || !proxyData.candidates || !proxyData.candidates[0].content) {
                 console.error('[AIFormatter] Invalid Auto-Generate response:', proxyData);
                 throw new Error("Invalid API response structure from Gemini.");
             }
+            
             let jsonText = proxyData.candidates[0].content.parts[0].text;
             jsonText = jsonText.replace(/^```json\s*/i, '').replace(/```\s*$/i, '');
+            return JSON.parse(jsonText);
             
-            const result = JSON.parse(jsonText);
-            return result;
         } catch (error) {
             console.error('[AIFormatter] Auto-Generate Section Error:', error);
             throw error;

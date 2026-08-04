@@ -31,17 +31,17 @@ const DOCUMENT_TEMPLATES = {
     skeleton: [
       { id: "abstract", label: "Abstract", required: true, aliases: ["Summary", "Executive Summary"] },
       { id: "introduction", label: "Introduction", required: true, aliases: ["Background", "Overview"] },
-      { id: "literature_review", label: "Literature Review", required: false, aliases: ["Related Work", "Previous Studies"] },
+      { id: "literature_review", label: "Literature Review", required: true, aliases: ["Related Work", "Previous Studies", "Literature Survey"] },
       { id: "methodology", label: "Methodology", required: true, aliases: ["Methods", "System Design", "Implementation", "How I did it"] },
-      { id: "results", label: "Results", required: false, aliases: ["Findings", "Outcomes", "Data Analysis", "What I found"] },
+      { id: "results", label: "Results", required: true, aliases: ["Findings", "Outcomes", "Data Analysis", "What I found", "Experimental Results", "Results and Discussion"] },
       { id: "discussion", label: "Discussion", required: false, aliases: ["Analysis", "Evaluation"] },
       { id: "conclusion", label: "Conclusion", required: true, aliases: ["Conclusions", "Final Thoughts"] },
       { id: "references", label: "References", required: true, aliases: ["Bibliography", "Citations"] }
     ],
     formatting: {
       h1: { fontFamily: "'Times New Roman', serif", fontSize: "16" },
-      h2: { fontFamily: "'Times New Roman', serif", fontSize: "14" },
-      h3: { fontFamily: "'Times New Roman', serif", fontSize: "13" },
+      h2: { fontFamily: "'Times New Roman', serif", fontSize: "16" },
+      h3: { fontFamily: "'Times New Roman', serif", fontSize: "14" },
       body: { fontFamily: "'Times New Roman', serif", fontSize: "12" },
       alignment: "justify",
       lineSpacing: "2.0"
@@ -66,8 +66,8 @@ const DOCUMENT_TEMPLATES = {
     ],
     formatting: {
       h1: { fontFamily: "Arial, sans-serif", fontSize: "16" },
-      h2: { fontFamily: "Arial, sans-serif", fontSize: "14" },
-      h3: { fontFamily: "Arial, sans-serif", fontSize: "13" },
+      h2: { fontFamily: "Arial, sans-serif", fontSize: "16" },
+      h3: { fontFamily: "Arial, sans-serif", fontSize: "14" },
       body: { fontFamily: "Arial, sans-serif", fontSize: "12" },
       alignment: "left",
       lineSpacing: "1.5"
@@ -91,14 +91,14 @@ const DOCUMENT_TEMPLATES = {
       { id: "objectives", label: "Objectives", required: true, aliases: ["Goals", "Aims"] },
       { id: "scope", label: "Scope", required: false, aliases: ["Boundaries", "Limitations"] },
       { id: "methodology", label: "Methodology", required: true, aliases: ["Process", "Execution"] },
-      { id: "outcomes", label: "Expected Outcomes", required: false, aliases: ["Results", "Deliverables"] },
+      { id: "outcomes", label: "Expected Outcomes", required: true, aliases: ["Results", "Deliverables", "Outcomes", "What was achieved"] },
       { id: "conclusion", label: "Conclusion", required: true, aliases: ["Summary", "Final Thoughts"] }
     ],
     formatting: {
       h1: { fontFamily: "Arial, sans-serif", fontSize: "16" },
-      h2: { fontFamily: "Arial, sans-serif", fontSize: "14" },
-      h3: { fontFamily: "Arial, sans-serif", fontSize: "12" },
-      body: { fontFamily: "Arial, sans-serif", fontSize: "11" },
+      h2: { fontFamily: "Arial, sans-serif", fontSize: "16" },
+      h3: { fontFamily: "Arial, sans-serif", fontSize: "14" },
+      body: { fontFamily: "Arial, sans-serif", fontSize: "12" },
       alignment: "left",
       lineSpacing: "1.5"
     },

@@ -288,6 +288,19 @@
                 </div>
             </div>
 
+            <!-- Auto-Align to Template Order Bar (hidden by default, shown for structured templates) -->
+            <div id="align-template-bar" class="align-template-bar no-export no-print" style="display: none;">
+                <div class="align-bar-info">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 6h18M3 12h12M3 18h18"/>
+                    </svg>
+                    <span id="align-bar-label">Sections are in your original order</span>
+                </div>
+                <button id="btn-align-template" class="btn-align-toggle" onclick="window._toggleAlignToTemplate()">
+                    🔄 Align to Template Order
+                </button>
+            </div>
+
             <div id="preview-scroll-wrapper" class="preview-scroll-wrapper empty-state"
                 style="flex: 1; overflow: auto; padding: 30px 15px;">
                 <div id="formatted-preview" class="preview-container" contenteditable="false">
@@ -598,6 +611,10 @@
     <script>mermaid.initialize({ startOnLoad: false, theme: 'default', securityLevel: 'loose', suppressErrorRendering: true, flowchart: { htmlLabels: false } });</script>
     <!-- KaTeX for Math/Equation rendering -->
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 
     <!-- Core Engine Modules -->
     <script src="js/textProcessor.js?v=600"></script>
@@ -685,29 +702,6 @@
         </button>
     </div>
 
-    <script src="js/docxExporter.js"></script>
-    <!-- Marked.js (Markdown parser) -->
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <!-- DOMPurify (Security) -->
-    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js"></script>
-    <!-- Mermaid (Diagrams) -->
-    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.8.0/dist/mermaid.min.js"></script>
-    <script>
-        mermaid.initialize({
-            startOnLoad: false,
-            theme: 'default',
-            securityLevel: 'loose', // Important for allowing HTML in nodes if needed
-            htmlLabels: false,      // CRITICAL: Must be false for Canvas export to work
-            fontFamily: 'Times New Roman'
-        });
-    </script>
-    <!-- KaTeX -->
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
-    <!-- Image Compression -->
-    <script
-        src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
-    <!-- FileSaver -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <!-- Typography Customization Modal -->
     <div id="typography-modal" class="modal-overlay"
         style="display: none; align-items: center; justify-content: center; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); z-index: 10000; opacity: 1; transition: opacity 0.2s;">
@@ -783,7 +777,7 @@
     </div>
 
     <!-- App Logic -->
-    <script src="js/app.js?v=203"></script>
+    <!-- Removed duplicate app.js inclusion -->
 </body>
 
 </html>

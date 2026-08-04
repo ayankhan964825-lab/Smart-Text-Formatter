@@ -42,35 +42,54 @@ const DocxExporter = (() => {
             '</pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r>';
     }
 
-    // ---- Inline run extraction ----
-    function runs(el) {
-        let r = '';
-        for (const c of el.childNodes) {
-            if (c.nodeType === 3) {
-                const t = c.textContent;
-                if (t.trim() || t.includes(' ')) r += '<w:r><w:t xml:space="preserve">' + esc(t) + '</w:t></w:r>';
-            } else if (c.nodeType === 1) {
-                const tg = c.tagName.toLowerCase();
-                if (tg === 'b' || tg === 'strong') r += fmtRuns(c, '<w:b/>');
-                else if (tg === 'i' || tg === 'em') r += fmtRuns(c, '<w:i/>');
-                else if (tg === 'u') r += fmtRuns(c, '<w:u w:val="single"/>');
-                else if (tg === 'br') r += '<w:r><w:br/></w:r>';
-                else if (tg === 'img') r += handleImage(c);
-                else r += runs(c);
+    function extractStyleAsRpr(el) {
+        let rpr = '';
+        if (el && el.style) {
+            if (el.style.fontSize) {
+                let pt = parseFloat(el.style.fontSize);
+                if (el.style.fontSize.includes('px')) pt = pt * 0.75;
+                if (pt) {
+                    const halfPt = Math.round(pt * 2);
+                    rpr += `<w:sz w:val="${halfPt}"/><w:szCs w:val="${halfPt}"/>`;
+                }
+            }
+            if (el.style.fontFamily) {
+                let font = el.style.fontFamily.replace(/['"]/g, '').split(',')[0].trim();
+                rpr += `<w:rFonts w:ascii="${esc(font)}" w:hAnsi="${esc(font)}" w:cs="${esc(font)}"/>`;
+            }
+            if (el.style.fontWeight === 'bold' || el.style.fontWeight >= 600 || el.style.fontWeight === '700') {
+                rpr += '<w:b/><w:bCs/>';
+            }
+            if (el.style.fontStyle === 'italic') {
+                rpr += '<w:i/><w:iCs/>';
             }
         }
-        return r;
+        return rpr;
     }
 
-    function fmtRuns(el, rpr) {
+    // ---- Inline run extraction ----
+    function runs(el, inheritedRpr = '') {
         let r = '';
+        const elRpr = (el.nodeType === 1) ? extractStyleAsRpr(el) : '';
+        const currentRpr = inheritedRpr + elRpr;
+
         for (const c of el.childNodes) {
             if (c.nodeType === 3) {
                 const t = c.textContent;
-                if (t.trim() || t.includes(' ')) r += '<w:r><w:rPr>' + rpr + '</w:rPr><w:t xml:space="preserve">' + esc(t) + '</w:t></w:r>';
+                if (t.trim() || t.includes(' ')) {
+                    const rprTag = currentRpr ? `<w:rPr>${currentRpr}</w:rPr>` : '';
+                    r += `<w:r>${rprTag}<w:t xml:space="preserve">${esc(t)}</w:t></w:r>`;
+                }
             } else if (c.nodeType === 1) {
-                if (c.tagName.toLowerCase() === 'img') r += handleImage(c);
-                else r += fmtRuns(c, rpr);
+                const tg = c.tagName.toLowerCase();
+                let childRpr = currentRpr;
+                if (tg === 'b' || tg === 'strong') childRpr += '<w:b/><w:bCs/>';
+                else if (tg === 'i' || tg === 'em') childRpr += '<w:i/><w:iCs/>';
+                else if (tg === 'u') childRpr += '<w:u w:val="single"/>';
+                
+                if (tg === 'br') r += '<w:r><w:br/></w:r>';
+                else if (tg === 'img') r += handleImage(c);
+                else r += runs(c, childRpr);
             }
         }
         return r;
@@ -87,19 +106,27 @@ const DocxExporter = (() => {
             }
             if (el.nodeType !== 1) return;
             if (el.style && el.style.display === 'none') return;
+            if (el.classList && (el.classList.contains('no-export') || el.classList.contains('smart-alert-card') || el.classList.contains('smart-alerts-container'))) return;
             const tg = el.tagName.toLowerCase();
+
+            let jc = '';
+            if (el.style && el.style.textAlign) {
+                let align = el.style.textAlign;
+                if (align === 'justify') jc = '<w:jc w:val="both"/>';
+                else jc = `<w:jc w:val="${align}"/>`;
+            }
 
             if (/^h[1-6]$/.test(tg)) {
                 const pb = el.classList && el.classList.contains('page-break-before') ? '<w:pageBreakBefore/>' : '';
-                xml += '<w:p><w:pPr><w:pStyle w:val="Heading' + tg[1] + '"/>' + pb + '<w:keepNext/></w:pPr>' + runs(el) + '</w:p>';
+                xml += '<w:p><w:pPr><w:pStyle w:val="Heading' + tg[1] + '"/>' + pb + jc + '<w:keepNext/></w:pPr>' + runs(el) + '</w:p>';
             } else if (tg === 'p') {
-                const pb = el.classList && el.classList.contains('page-break-before') ? '<w:pPr><w:pageBreakBefore/></w:pPr>' : '';
-                xml += '<w:p>' + pb + runs(el) + '</w:p>';
+                const pb = el.classList && el.classList.contains('page-break-before') ? '<w:pageBreakBefore/>' : '';
+                xml += '<w:p><w:pPr>' + pb + jc + '</w:pPr>' + runs(el) + '</w:p>';
             } else if (tg === 'ul' || tg === 'ol') {
                 const nid = tg === 'ul' ? '1' : '2';
                 for (const li of el.children) {
                     if (li.tagName.toLowerCase() === 'li')
-                        xml += '<w:p><w:pPr><w:numPr><w:ilvl w:val="0"/><w:numId w:val="' + nid + '"/></w:numPr></w:pPr>' + runs(li) + '</w:p>';
+                        xml += '<w:p><w:pPr><w:numPr><w:ilvl w:val="0"/><w:numId w:val="' + nid + '"/></w:numPr>' + jc + '</w:pPr>' + runs(li) + '</w:p>';
                 }
             } else if (tg === 'table') {
                 xml += '<w:tbl><w:tblPr><w:tblW w:w="0" w:type="auto"/><w:tblBorders>';
@@ -111,7 +138,15 @@ const DocxExporter = (() => {
                     tr.querySelectorAll('th, td').forEach(cell => {
                         xml += '<w:tc><w:tcPr><w:tcW w:w="0" w:type="auto"/></w:tcPr><w:p>';
                         if (cell.tagName === 'TH') xml += '<w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:rPr><w:b/></w:rPr><w:t xml:space="preserve">' + esc(cell.textContent) + '</w:t></w:r>';
-                        else xml += runs(cell);
+                        else {
+                            let cellJc = '';
+                            if (cell.style && cell.style.textAlign) {
+                                let cAlign = cell.style.textAlign;
+                                if (cAlign === 'justify') cellJc = '<w:jc w:val="both"/>';
+                                else cellJc = `<w:jc w:val="${cAlign}"/>`;
+                            }
+                            xml += (cellJc ? `<w:pPr>${cellJc}</w:pPr>` : '') + runs(cell);
+                        }
                         xml += '</w:p></w:tc>';
                     });
                     xml += '</w:tr>';
@@ -180,8 +215,8 @@ const DocxExporter = (() => {
             '<w:pPr><w:spacing w:after="160" w:line="276" w:lineRule="auto"/><w:jc w:val="both"/></w:pPr>' +
             '<w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman" w:cs="Times New Roman"/><w:sz w:val="24"/><w:szCs w:val="24"/></w:rPr></w:style>' +
             [1,2,3,4,5,6].map(n => {
-                // H1: 14pt (28 half-pts), H2-H6: 12pt (24 half-pts) per research paper rules
-                const sz = n === 1 ? 28 : 24;
+                // H1: 16pt (32 half-pts), H2: 16pt (32 half-pts), H3: 14pt (28 half-pts), H4-H6: 12pt (24 half-pts)
+                const sz = (n === 1 || n === 2) ? 32 : (n === 3 ? 28 : 24);
                 const before = [360,300,240,200,200,200][n-1];
                 const after = [240,200,160,120,120,120][n-1];
                 const jc = n === 1 ? '<w:jc w:val="center"/>' : '<w:jc w:val="left"/>';

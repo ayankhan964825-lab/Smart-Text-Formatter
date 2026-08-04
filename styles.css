@@ -2689,6 +2689,11 @@ body.fullscreen-active {
   border-color: #fca5a5;
 }
 
+.smart-alert-optional {
+  background: linear-gradient(135deg, #f5f3ff, #ede9fe);
+  border-color: #c4b5fd;
+}
+
 .smart-alert-bonus {
   background: linear-gradient(135deg, #f0fdf4, #dcfce7);
   border-color: #86efac;
@@ -2802,4 +2807,67 @@ body.fullscreen-active {
 @keyframes pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.5; }
+}
+
+/* ============================================================
+   ALIGN TO TEMPLATE ORDER BAR
+   ============================================================ */
+
+.align-template-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+  border-bottom: 1px solid #e2e8f0;
+  gap: 12px;
+  animation: smartAlertSlideIn 0.3s ease-out;
+}
+
+.align-template-bar.aligned {
+  background: linear-gradient(135deg, #f0fdf4, #ecfdf5);
+  border-bottom-color: #86efac;
+}
+
+.align-bar-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #64748b;
+}
+
+.align-template-bar.aligned .align-bar-info {
+  color: #16a34a;
+}
+
+.btn-align-toggle {
+  padding: 5px 14px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid #c4b5fd;
+  background: linear-gradient(135deg, #ede9fe, #f5f3ff);
+  color: #6d28d9;
+  white-space: nowrap;
+}
+
+.btn-align-toggle:hover {
+  background: linear-gradient(135deg, #ddd6fe, #ede9fe);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.2);
+}
+
+.align-template-bar.aligned .btn-align-toggle {
+  background: linear-gradient(135deg, #fef2f2, #fff1f2);
+  border-color: #fca5a5;
+  color: #dc2626;
+}
+
+.align-template-bar.aligned .btn-align-toggle:hover {
+  background: linear-gradient(135deg, #fee2e2, #fecaca);
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.2);
 }

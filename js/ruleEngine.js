@@ -19,14 +19,14 @@ class RuleEngine {
             },
             'heading-2': {
                 'font-family': "'Times New Roman', serif",
-                'font-size': '14pt',
+                'font-size': '16pt',
                 'font-weight': '600',
                 'margin-bottom': '0.75rem',
                 'margin-top': '1.5rem'
             },
             'heading-3': {
                 'font-family': "'Times New Roman', serif",
-                'font-size': '12pt',
+                'font-size': '14pt',
                 'font-weight': '600',
                 'margin-bottom': '0.5rem',
                 'margin-top': '1rem'
@@ -42,14 +42,14 @@ class RuleEngine {
             },
             h2: {
                 'font-family': "'Times New Roman', serif",
-                'font-size': '14pt',
+                'font-size': '16pt',
                 'font-weight': '600',
                 'margin-bottom': '0.75rem',
                 'margin-top': '1.5rem'
             },
             h3: {
                 'font-family': "'Times New Roman', serif",
-                'font-size': '12pt',
+                'font-size': '14pt',
                 'font-weight': '600',
                 'margin-bottom': '0.5rem',
                 'margin-top': '1rem'
@@ -78,7 +78,7 @@ class RuleEngine {
             },
             'sub-subheading': {
                 'font-family': "'Times New Roman', serif",
-                'font-size': '12pt',
+                'font-size': '14pt',
                 'font-weight': '700',
                 'margin-bottom': '1rem',
                 'margin-top': '1.25rem',

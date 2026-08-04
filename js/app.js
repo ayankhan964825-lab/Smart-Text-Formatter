@@ -2472,6 +2472,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 thoughtsPanel.style.display = 'none';
             }
 
+            // Show "Align to Template Order" bar if a structured template is active
+            if (typeof window._showAlignBarIfNeeded === 'function') {
+                window._showAlignBarIfNeeded();
+            }
+
             // Disable Format Now button & Text Input so they can't reformat without refresh
             if (formatBtn) {
                 formatBtn.disabled = true;
@@ -2593,44 +2598,44 @@ document.addEventListener('DOMContentLoaded', () => {
                 .pdf-export-wrapper {
                     font-family: 'Times New Roman', serif;
                     color: #000;
-                    font-size: 16px !important;       /* 12pt */
-                    line-height: 1.6 !important;      /* 1.6x line spacing */
-                    text-align: justify !important;
-                    word-wrap: break-word !important;
+                    font-size: 16px;
+                    line-height: 1.6;
+                    text-align: justify;
+                    word-wrap: break-word;
                 }
                 .pdf-export-wrapper h1 {
-                    font-size: 18.66px !important;    /* 14pt */
-                    font-weight: bold !important;
-                    text-align: center !important;
-                    text-transform: uppercase !important;
-                    margin-top: 24px !important;
-                    margin-bottom: 16px !important;
-                    line-height: 1.3 !important;
+                    font-size: 21.33px;
+                    font-weight: bold;
+                    text-align: center;
+                    text-transform: uppercase;
+                    margin-top: 24px;
+                    margin-bottom: 16px;
+                    line-height: 1.3;
                 }
                 .pdf-export-wrapper h2 {
-                    font-size: 16px !important;       /* 12pt */
-                    font-weight: bold !important;
-                    text-align: left !important;
-                    text-transform: uppercase !important;
-                    margin-top: 20px !important;
-                    margin-bottom: 12px !important;
-                    line-height: 1.3 !important;
+                    font-size: 21.33px;
+                    font-weight: bold;
+                    text-align: left;
+                    text-transform: uppercase;
+                    margin-top: 20px;
+                    margin-bottom: 12px;
+                    line-height: 1.3;
                 }
                 .pdf-export-wrapper h3, .pdf-export-wrapper h4, 
                 .pdf-export-wrapper h5, .pdf-export-wrapper h6 {
-                    font-size: 16px !important;       /* 12pt */
-                    font-weight: bold !important;
-                    text-align: left !important;
-                    margin-top: 16px !important;
-                    margin-bottom: 10px !important;
-                    line-height: 1.3 !important;
+                    font-size: 18.66px;
+                    font-weight: bold;
+                    text-align: left;
+                    margin-top: 16px;
+                    margin-bottom: 10px;
+                    line-height: 1.3;
                 }
                 .pdf-export-wrapper p, .pdf-export-wrapper ul, .pdf-export-wrapper ol, .pdf-export-wrapper table {
-                    margin-top: 0 !important;
-                    margin-bottom: 12px !important;   /* 9pt */
+                    margin-top: 0;
+                    margin-bottom: 12px;
                 }
                 .pdf-export-wrapper li {
-                    margin-bottom: 4px !important;
+                    margin-bottom: 4px;
                 }
             </style>
             <div class="pdf-export-wrapper">
@@ -4045,50 +4050,103 @@ document.addEventListener('DOMContentLoaded', () => {
             // so we don't apply the full skeleton again, we just want paragraphs/lists.
             const systemInstruction = `You are a document formatter. Format the following user text meant for the "${sectionLabel}" section. Output a valid JSON array of blocks. Example: [{"type":"p", "content":"..."}]`;
             
-            let proxyResponse;
+            let newBlocks = null;
+
             try {
-                proxyResponse = await fetch('/api/format', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        rawText: text,
-                        systemInstruction: systemInstruction,
-                        isMermaidFix: false
-                    })
-                });
-            } catch (e) {
-                console.warn('Network error on local fetch', e);
-            }
+                const activeLocalApiKey = window.GEMINI_API_KEY_LOCAL || localStorage.getItem('gemini_api_key') || '';
+                let proxyResponse;
 
-            if (!proxyResponse || !proxyResponse.ok) {
-                console.warn('[AIFormatter] Local proxy /api/format failed or not found, falling back to vercel production proxy...');
-                proxyResponse = await fetch('https://smarttextformatter.vercel.app/api/format', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        rawText: text,
-                        systemInstruction: systemInstruction,
-                        isMermaidFix: false
-                    })
-                });
-            }
+                if (activeLocalApiKey) {
+                    console.log('[AIFormatter] Custom API key found — calling Gemini DIRECTLY for Paste & Format...');
+                    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${activeLocalApiKey}`;
+                    const requestBody = {
+                        system_instruction: { parts: [{ text: systemInstruction }] },
+                        contents: [{ parts: [{ text }] }],
+                        generationConfig: { temperature: 0.1, responseMimeType: "application/json" }
+                    };
 
-            if (!proxyResponse || !proxyResponse.ok) throw new Error("Format API failed.");
-            const data = await proxyResponse.json();
-            
-            if (!data || !data.candidates || !data.candidates[0].content) {
-                console.error('[AIFormatter] Invalid Paste Format response:', data);
-                throw new Error("Invalid API response structure from Gemini.");
+                    proxyResponse = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(requestBody)
+                    });
+                } else {
+                    try {
+                        proxyResponse = await fetch('/api/format', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                rawText: text,
+                                systemInstruction: systemInstruction,
+                                isMermaidFix: false
+                            })
+                        });
+                    } catch (e) {
+                        console.warn('Network error on local fetch', e);
+                    }
+
+                    if (!proxyResponse || !proxyResponse.ok) {
+                        console.warn('[AIFormatter] Local proxy /api/format failed or not found, falling back to vercel proxy...');
+                        try {
+                            proxyResponse = await fetch('https://smarttextformatter.vercel.app/api/format', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    rawText: text,
+                                    systemInstruction: systemInstruction,
+                                    isMermaidFix: false
+                                })
+                            });
+                        } catch (e) {
+                            console.warn('Network error on Vercel fetch', e);
+                        }
+                    }
+                }
+
+                if (!proxyResponse || !proxyResponse.ok) throw new Error("Format API failed.");
+                const proxyData = await proxyResponse.json();
+                
+                // If direct Gemini API hit (not proxy), data structure is different!
+                let newParsed;
+                if (activeLocalApiKey && proxyData.candidates && proxyData.candidates[0].content) {
+                    let jsonText = proxyData.candidates[0].content.parts[0].text;
+                    jsonText = jsonText.replace(/^```json\s*/i, '').replace(/```\s*$/i, '');
+                    newParsed = JSON.parse(jsonText);
+                } else {
+                    // Proxy return structure
+                    if (proxyData.error) throw new Error(proxyData.error);
+                    if (!proxyData || !proxyData.candidates || !proxyData.candidates[0].content) {
+                        console.error('[AIFormatter] Invalid Paste Format response:', proxyData);
+                        throw new Error("Invalid API response structure from Gemini.");
+                    }
+                    let jsonText = proxyData.candidates[0].content.parts[0].text;
+                    jsonText = jsonText.replace(/^```json\s*/i, '').replace(/```\s*$/i, '');
+                    newParsed = JSON.parse(jsonText);
+                }
+                
+                newBlocks = Array.isArray(newParsed.final_document) ? newParsed.final_document : (Array.isArray(newParsed) ? newParsed : []);
+
+            } catch (apiErr) {
+                console.warn("[AIFormatter] Paste Format API failed, using heuristic fallback.", apiErr);
+                // Heuristic Fallback
+                try {
+                    const processor = new window.TextProcessor(text);
+                    const textBlocks = processor.tokenize();
+                    const detector = new window.StructureDetector();
+                    newBlocks = detector.classifyBlocks(textBlocks, []);
+                } catch (fallbackErr) {
+                    newBlocks = text.split(/\n\s*\n/).filter(b => b.trim()).map(block => ({
+                        type: 'p',
+                        content: block.trim()
+                    }));
+                }
             }
-            let jsonText = data.candidates[0].content.parts[0].text;
-            jsonText = jsonText.replace(/^```json\s*/i, '').replace(/```\s*$/i, '');
-            const newBlocks = JSON.parse(jsonText);
 
             // Construct the new section
             const newSection = {
                 template_id: sectionId,
                 heading_title: sectionLabel,
-                blocks: Array.isArray(newBlocks.final_document) ? newBlocks.final_document : (Array.isArray(newBlocks) ? newBlocks : [])
+                blocks: newBlocks || []
             };
 
             _injectNewSection(newSection);
@@ -4107,7 +4165,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             const ai = new window.AIFormatter();
-            const previewContainer = document.getElementById('preview-container');
+            const previewContainer = document.getElementById('formatted-preview');
             const contextHtml = previewContainer ? previewContainer.innerHTML : '';
             
             const result = await ai.autoGenerateSection(sectionLabel, sectionId, contextHtml);
@@ -4142,6 +4200,78 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // Helper to align document sections to the template skeleton order
+    function _alignSectionsToSkeleton(sections) {
+        if (!sections || !Array.isArray(sections) || sections.length <= 1) return sections;
+        const template = window.templateEngine ? window.templateEngine.getSelectedTemplate() : null;
+        if (!template || !template.skeleton || template.skeleton.length === 0 || template.id === 'general') {
+            return sections;
+        }
+
+        const skeletonIds = template.skeleton.map(s => s.id);
+        
+        // Sort known template sections according to skeleton order, while keeping document title at index 0
+        const sorted = [...sections].sort((a, b) => {
+            // Document title always stays first
+            if (a.is_title || a.template_id === 'title') return -1;
+            if (b.is_title || b.template_id === 'title') return 1;
+
+            const idxA = skeletonIds.indexOf(a.template_id);
+            const idxB = skeletonIds.indexOf(b.template_id);
+
+            if (idxA !== -1 && idxB !== -1) {
+                return idxA - idxB;
+            }
+            return 0;
+        });
+
+        return sorted;
+    }
+    window._alignSectionsToSkeleton = _alignSectionsToSkeleton;
+
+    // Helper to renumber document sections sequentially while respecting unnumbered sections (Abstract, References, etc.)
+    function _renumberSections(sections) {
+        if (!sections || !Array.isArray(sections)) return;
+
+        const unnumberedIds = new Set(['abstract', 'title', 'title_page', 'keywords', 'references', 'bibliography', 'appendix', 'acknowledgements']);
+        const unnumberedLabels = new Set(['abstract', 'references', 'bibliography', 'keywords', 'acknowledgements', 'title page', 'table of contents']);
+
+        // Check if this document uses numbered headings (e.g. has "1. Introduction" or is research paper)
+        const template = window.templateEngine ? window.templateEngine.getSelectedTemplate() : null;
+        const isResearchPaper = template && template.id === 'research-paper';
+        const hasNumberedHeadings = sections.some(s => s.heading_title && /^\d+\.\s+/.test(s.heading_title.trim()));
+
+        if (!isResearchPaper && !hasNumberedHeadings) {
+            return; // Don't force numbering if the document wasn't numbered
+        }
+
+        let sectionIndex = 1;
+        for (let i = 0; i < sections.length; i++) {
+            const section = sections[i];
+            if (!section.heading_title) continue;
+
+            const tId = (section.template_id || '').toLowerCase();
+            // Strip any existing number prefix like "1. ", "2. ", "1.1 "
+            const cleanTitle = section.heading_title.replace(/^\d+(\.\d+)*\.\s*/, '').trim();
+
+            // Check if this is the Document Title at the very start (e.g. index 0 with no blocks or single title)
+            const isDocTitle = i === 0 && (tId === 'title' || tId === 'none' || !section.blocks || section.blocks.length === 0) && !/^(introduction|abstract|methodology|result|discussion|review|conclusion|references)/i.test(cleanTitle);
+
+            if (isDocTitle || unnumberedIds.has(tId) || unnumberedLabels.has(cleanTitle.toLowerCase())) {
+                // Keep unnumbered (e.g. "Abstract", "References", or Document Title)
+                section.heading_title = cleanTitle;
+                if (isDocTitle) {
+                    section.is_title = true;
+                }
+            } else {
+                // Main body section gets sequential numbering (1. Introduction, 2. Literature Review, etc.)
+                section.heading_title = `${sectionIndex}. ${cleanTitle}`;
+                sectionIndex++;
+            }
+        }
+    }
+    window._renumberSections = _renumberSections;
+
     // Helper to inject a newly resolved section into the structured document
     function _injectNewSection(newSection) {
         if (!window._lastDocumentSections || !Array.isArray(window._lastDocumentSections)) {
@@ -4174,11 +4304,21 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
+        // Dynamically renumber sections sequentially
+        _renumberSections(window._lastDocumentSections);
+
         // Flatten and re-render
         const flatBlocks = [];
-        for (const section of window._lastDocumentSections) {
+        for (let sIdx = 0; sIdx < window._lastDocumentSections.length; sIdx++) {
+            const section = window._lastDocumentSections[sIdx];
             if (section.heading_title) {
-                flatBlocks.push({ type: 'heading', depth: 2, content: section.heading_title, _template_id: section.template_id || 'none' });
+                const isTitle = section.is_title || section.template_id === 'title' || (sIdx === 0 && (!section.blocks || section.blocks.length === 0));
+                flatBlocks.push({
+                    type: 'heading',
+                    depth: isTitle ? 1 : 2,
+                    content: section.heading_title,
+                    _template_id: isTitle ? 'title' : (section.template_id || 'none')
+                });
             }
             if (Array.isArray(section.blocks)) {
                 for (const block of section.blocks) { flatBlocks.push(block); }
@@ -4193,7 +4333,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const generator = new window.OutputGenerator();
         const finalHtml = generator.generateHTML(styledElements);
         
-        const previewContainer = document.getElementById('preview-container');
+        const previewContainer = document.getElementById('formatted-preview');
         if (previewContainer) {
             previewContainer.innerHTML = finalHtml;
         }
@@ -4206,5 +4346,112 @@ document.addEventListener('DOMContentLoaded', () => {
             window.renderMermaidGraphs(previewContainer);
         }
     }
+
+    // ══════════════════════════════════════════════════
+    // ALIGN TO TEMPLATE ORDER — Toggle Handler
+    // ══════════════════════════════════════════════════
+
+    // Helper: re-render output from current window._lastDocumentSections
+    function _reRenderFromSections() {
+        if (!window._lastDocumentSections || !Array.isArray(window._lastDocumentSections)) return;
+
+        // Renumber after alignment/revert
+        _renumberSections(window._lastDocumentSections);
+
+        // Flatten sections to blocks
+        const flatBlocks = [];
+        for (let sIdx = 0; sIdx < window._lastDocumentSections.length; sIdx++) {
+            const section = window._lastDocumentSections[sIdx];
+            if (section.heading_title) {
+                const isTitle = section.is_title || section.template_id === 'title' || (sIdx === 0 && (!section.blocks || section.blocks.length === 0));
+                flatBlocks.push({
+                    type: 'heading',
+                    depth: isTitle ? 1 : 2,
+                    content: section.heading_title,
+                    _template_id: isTitle ? 'title' : (section.template_id || 'none')
+                });
+            }
+            if (Array.isArray(section.blocks)) {
+                for (const block of section.blocks) { flatBlocks.push(block); }
+            }
+        }
+
+        // Run through RuleEngine and OutputGenerator
+        const customRibbonRules = typeof window.getRibbonRules === 'function' ? window.getRibbonRules() : null;
+        const rules = new window.RuleEngine(customRibbonRules);
+        const styledElements = rules.applyRules(flatBlocks);
+
+        const generator = new window.OutputGenerator();
+        const finalHtml = generator.generateHTML(styledElements);
+
+        const previewContainer = document.getElementById('formatted-preview');
+        if (previewContainer) {
+            previewContainer.innerHTML = finalHtml;
+        }
+
+        // Re-run MathJax and Mermaid
+        if (window.MathJax) {
+            window.MathJax.typesetPromise([previewContainer]).catch((err) => console.log('MathJax error', err));
+        }
+        if (typeof window.renderMermaidGraphs === 'function') {
+            window.renderMermaidGraphs(previewContainer);
+        }
+    }
+
+    // Toggle between user's original order and template skeleton order
+    window._toggleAlignToTemplate = function() {
+        const bar = document.getElementById('align-template-bar');
+        const label = document.getElementById('align-bar-label');
+        const btn = document.getElementById('btn-align-template');
+
+        if (!window._lastDocumentSections || !window._originalDocumentSections) return;
+
+        if (window._isAlignedToTemplate) {
+            // Revert to original order
+            window._lastDocumentSections = JSON.parse(JSON.stringify(window._originalDocumentSections));
+            window._isAlignedToTemplate = false;
+
+            if (bar) bar.classList.remove('aligned');
+            if (label) label.textContent = 'Sections are in your original order';
+            if (btn) btn.innerHTML = '🔄 Align to Template Order';
+            console.log('[AlignToggle] ↩️ Reverted to original user order');
+        } else {
+            // Align to template skeleton order
+            if (typeof window._alignSectionsToSkeleton === 'function') {
+                window._lastDocumentSections = window._alignSectionsToSkeleton(window._lastDocumentSections);
+            }
+            window._isAlignedToTemplate = true;
+
+            if (bar) bar.classList.add('aligned');
+            if (label) label.textContent = '✅ Sections aligned to template standard order';
+            if (btn) btn.innerHTML = '↩️ Revert to Original Order';
+            console.log('[AlignToggle] 🔄 Aligned to template skeleton order');
+        }
+
+        // Re-render the preview with the new order
+        _reRenderFromSections();
+    };
+
+    // Show the align bar only when a structured template is active and sections exist
+    window._showAlignBarIfNeeded = function() {
+        const bar = document.getElementById('align-template-bar');
+        if (!bar) return;
+
+        const template = window.templateEngine ? window.templateEngine.getSelectedTemplate() : null;
+        const hasStructuredTemplate = template && template.id !== 'general' && template.skeleton && template.skeleton.length > 0;
+        const hasSections = window._lastDocumentSections && window._lastDocumentSections.length > 0;
+
+        if (hasStructuredTemplate && hasSections) {
+            bar.style.display = 'flex';
+            // Reset to default state
+            bar.classList.remove('aligned');
+            const label = document.getElementById('align-bar-label');
+            const btn = document.getElementById('btn-align-template');
+            if (label) label.textContent = 'Sections are in your original order';
+            if (btn) btn.innerHTML = '🔄 Align to Template Order';
+        } else {
+            bar.style.display = 'none';
+        }
+    };
 
 });

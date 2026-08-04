@@ -316,12 +316,17 @@ class OutputGenerator {
 
         // Collect template_ids returned by the AI from the flattened blocks
         const returnedIds = new Set();
-        const bonusSections = [];
+        let bonusSections = [];
         
         for (const el of styledElements) {
             if (el._template_id) {
+                if (el._template_id === 'title' || (el.type === 'heading' && el.depth === 1)) {
+                    continue; // Document title is never a bonus section
+                }
                 if (el._template_id === 'none') {
-                    bonusSections.push(el.content || 'Custom Section');
+                    if (el.content && !bonusSections.includes(el.content)) {
+                        bonusSections.push(el.content);
+                    }
                 } else {
                     returnedIds.add(el._template_id);
                 }
@@ -330,7 +335,11 @@ class OutputGenerator {
 
         // Also check window._lastDocumentSections (raw structured data) for more accuracy
         if (window._lastDocumentSections && Array.isArray(window._lastDocumentSections)) {
-            for (const section of window._lastDocumentSections) {
+            for (let i = 0; i < window._lastDocumentSections.length; i++) {
+                const section = window._lastDocumentSections[i];
+                if (section.is_title || section.template_id === 'title' || (i === 0 && (!section.blocks || section.blocks.length === 0))) {
+                    continue; // Skip title section
+                }
                 if (section.template_id && section.template_id !== 'none') {
                     returnedIds.add(section.template_id);
                 } else if (section.template_id === 'none' || !section.template_id) {
@@ -341,21 +350,48 @@ class OutputGenerator {
             }
         }
 
-        // Compute missing sections (only required ones trigger the alert)
-        const missingSections = skeleton.filter(s => s.required && !returnedIds.has(s.id));
+        // --- GENERALIZED FUZZY & ALIAS MATCHER ---
+        // If the AI marked a section as "none" but its heading title semantically matches a skeleton section,
+        // map it automatically so we never produce false "missing" or false "bonus" alerts.
+        for (const s of skeleton) {
+            if (returnedIds.has(s.id)) continue;
+            
+            const matchedBonusIdx = bonusSections.findIndex(title => {
+                if (!title) return false;
+                const clean = title.toLowerCase().replace(/^\d+(\.\d+)*\.\s*/, '').trim();
+                const label = s.label.toLowerCase();
+                if (clean === label || clean.includes(label) || label.includes(clean)) return true;
+                if (Array.isArray(s.aliases)) {
+                    for (const alias of s.aliases) {
+                        const cleanAlias = alias.toLowerCase();
+                        if (clean === cleanAlias || clean.includes(cleanAlias) || cleanAlias.includes(clean)) return true;
+                    }
+                }
+                return false;
+            });
+
+            if (matchedBonusIdx !== -1) {
+                returnedIds.add(s.id);
+                bonusSections.splice(matchedBonusIdx, 1);
+            }
+        }
+
+        // Compute missing sections in two categories
+        const missingRequired = skeleton.filter(s => s.required && !returnedIds.has(s.id));
+        const missingOptional = skeleton.filter(s => !s.required && !returnedIds.has(s.id));
 
         let alertsHtml = '';
 
-        // --- RED: Missing Sections Alert ---
-        if (missingSections.length > 0) {
-            const missingCards = missingSections.map(s => {
+        // --- RED: Missing Required Sections Alert ---
+        if (missingRequired.length > 0) {
+            const missingCards = missingRequired.map(s => {
                 const cardId = 'smart-missing-' + s.id;
                 return `
                 <div id="${cardId}" class="smart-alert-card smart-alert-missing no-export no-print" data-section-id="${s.id}" data-section-name="${s.label}">
                     <div class="smart-alert-icon">⚠️</div>
                     <div class="smart-alert-body">
-                        <strong>Missing: ${s.label}</strong>
-                        <p class="smart-alert-desc">This required section was not found in your text.</p>
+                        <strong>Missing Required Section: ${s.label}</strong>
+                        <p class="smart-alert-desc">This mandatory section is missing from your text.</p>
                         <div class="smart-alert-actions">
                             <button class="btn-paste-format" onclick="window._smartAlertPasteFormat('${cardId}', '${s.id}', '${s.label}')">📝 Paste & Format</button>
                             <button class="btn-auto-generate" onclick="window._smartAlertAutoGenerate('${cardId}', '${s.id}', '${s.label}')">✨ Auto-Generate</button>
@@ -369,6 +405,29 @@ class OutputGenerator {
             alertsHtml += `<div class="smart-alerts-container no-export no-print">${missingCards}</div>`;
         }
 
+        // --- PURPLE: Optional Sections Suggestion ---
+        if (missingOptional.length > 0) {
+            const optionalCards = missingOptional.map(s => {
+                const cardId = 'smart-optional-' + s.id;
+                return `
+                <div id="${cardId}" class="smart-alert-card smart-alert-optional no-export no-print" data-section-id="${s.id}" data-section-name="${s.label}">
+                    <div class="smart-alert-icon">💡</div>
+                    <div class="smart-alert-body">
+                        <strong>Optional Section: ${s.label}</strong>
+                        <p class="smart-alert-desc">This recommended section can be added to complete your document.</p>
+                        <div class="smart-alert-actions">
+                            <button class="btn-auto-generate btn-optional-generate" onclick="window._smartAlertAutoGenerate('${cardId}', '${s.id}', '${s.label}')">✨ Add & Generate</button>
+                            <button class="btn-paste-format" onclick="window._smartAlertPasteFormat('${cardId}', '${s.id}', '${s.label}')">📝 Paste</button>
+                            <button class="btn-skip-alert" onclick="document.getElementById('${cardId}').remove()">✕ Dismiss</button>
+                        </div>
+                        <textarea class="smart-alert-textarea" id="textarea-${cardId}" placeholder="Paste your raw text for '${s.label}' here..." style="display:none;"></textarea>
+                    </div>
+                </div>`;
+            }).join('');
+
+            alertsHtml += `<div class="smart-alerts-container no-export no-print">${optionalCards}</div>`;
+        }
+
         // --- GREEN: Bonus Sections Alert ---
         if (bonusSections.length > 0) {
             const bonusNames = bonusSections.map(name => `<strong>${this._escapeHTML(name)}</strong>`).join(', ');
@@ -376,8 +435,8 @@ class OutputGenerator {
             <div class="smart-alert-card smart-alert-bonus no-export no-print">
                 <div class="smart-alert-icon">✨</div>
                 <div class="smart-alert-body">
-                    <strong>Bonus Sections Detected</strong>
-                    <p class="smart-alert-desc">I found custom headings in your text that aren't part of the template: ${bonusNames}. They've been added to your document automatically.</p>
+                    <strong>Custom Sections Detected</strong>
+                    <p class="smart-alert-desc">I found custom sections in your text outside standard template structure: ${bonusNames}. They've been seamlessly formatted into your document.</p>
                 </div>
             </div>`;
         }

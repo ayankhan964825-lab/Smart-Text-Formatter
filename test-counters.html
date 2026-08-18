@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.smart-numbering {
+  counter-reset: h2counter;
+}
+
+.smart-numbering h2 {
+  counter-reset: h3counter;
+}
+
+.smart-numbering h2::before {
+  counter-increment: h2counter;
+  content: counter(h2counter) ". ";
+}
+.a4-page {
+  /* whatever properties it has */
+  padding: 10px; border: 1px solid red;
+}
+</style>
+</head>
+<body>
+<div class="smart-numbering" id="container">
+  <div class="a4-page">
+    <h2>First</h2>
+    <p>Text</p>
+  </div>
+  <div class="a4-page">
+    <h2>Second</h2>
+    <p>Text</p>
+  </div>
+</div>
+</body>
+</html>

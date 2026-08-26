@@ -36,43 +36,68 @@
                 </svg>
             </button>
         </div>
-        <div class="settings-content">
-            <!-- Documents Section -->
-            <div class="setting-group" style="padding-bottom: 0; border-bottom: none;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                    <label class="setting-label" style="margin: 0;">My Documents</label>
-                    <button id="new-doc-btn" class="btn primary btn-small" style="padding: 4px 8px; font-size: 12px;">➕
-                        New</button>
-                </div>
-                <div id="document-list" class="document-list">
-                    <!-- Document items will be injected here via JS -->
+        <div class="settings-content" style="display: flex; flex-direction: column; height: 100%;">
+            <!-- Documents Section (Recent History) -->
+            <!-- Modals Triggers -->
+            <div class="setting-group" style="padding-bottom: 12px; display:flex; flex-direction:column; gap:4px; border:none;">
+                <button class="menu-link-item" id="open-history-modal-btn">
+                    <span style="display:flex; align-items:center; gap:12px;">
+                        <span style="font-size:18px;">📁</span>
+                        Recent History
+                    </span>
+                </button>
+                
+                <button class="menu-link-item" id="open-api-modal-btn">
+                    <span style="display:flex; align-items:center; gap:12px;">
+                        <span style="font-size:18px;">🔑</span>
+                        API Settings
+                    </span>
+                </button>
+
+                <a href="#" class="menu-link-item" id="how-to-use-btn">
+                    <span style="display:flex; align-items:center; gap:12px;">
+                        <span style="font-size:18px;">💡</span>
+                        How to Use
+                    </span>
+                </a>
+                
+                <!-- Legal & Info Accordion -->
+                <div class="menu-accordion">
+                    <button class="menu-accordion-header" id="legal-info-btn">
+                        <span style="display:flex; align-items:center; gap:12px;">
+                            <span style="font-size:18px;">📋</span>
+                            Legal & Info
+                        </span>
+                        <svg class="accordion-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.5;"><polyline points="6 9 12 15 18 9"/></svg>
+                    </button>
+                    <div class="menu-accordion-content" id="legal-info-content">
+                        <a href="#" class="submenu-link"><span style="width:20px; text-align:center;">ℹ️</span> About Us</a>
+                        <a href="#" class="submenu-link"><span style="width:20px; text-align:center; color:#ff4757; font-weight:bold;">?</span> FAQ</a>
+                        <a href="#" class="submenu-link"><span style="width:20px; text-align:center;">🆘</span> Support</a>
+                        <a href="#" class="submenu-link"><span style="width:20px; text-align:center;">📞</span> Contact Us</a>
+                        <a href="#" class="submenu-link"><span style="width:20px; text-align:center;">🔒</span> Privacy Policy</a>
+                        <a href="#" class="submenu-link"><span style="width:20px; text-align:center;">📜</span> Terms of Service</a>
+                    </div>
                 </div>
             </div>
 
-            <!-- API Key Section -->
-            <div class="setting-group">
-                <label for="custom-api-key" class="setting-label">Gemini API Key</label>
-                <p class="setting-desc">Use your own free API key to avoid rate limits and queue times.</p>
-                <div class="api-input-wrapper">
-                    <div style="position: relative; width: 100%;">
-                        <input type="password" id="custom-api-key" class="setting-input" placeholder="AIzaSy..."
-                            style="width: 100%; padding-right: 36px;">
-                        <button id="toggle-api-visibility" class="icon-btn" type="button" title="Show API Key"
-                            style="position: absolute; right: 4px; top: 50%; transform: translateY(-50%); width: 28px; height: 28px; min-width: unset; min-height: unset; padding: 4px;">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-icon">
-                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                                <circle cx="12" cy="12" r="3"></circle>
-                            </svg>
-                        </button>
-                    </div>
-                    <div style="display: flex; gap: 8px; margin-top: 8px; width: 100%;">
-                        <button id="connect-api-key-btn" class="btn primary btn-small" style="flex: 1;">Connect</button>
-                    </div>
-                </div>
-                <p id="api-key-status" class="setting-status" style="display: none; margin-top: 8px;"></p>
-                <a href="https://aistudio.google.com/app/apikey" target="_blank" class="setting-link">Get a free key
-                    →</a>
+            <!-- Bottom Actions -->
+            <div style="margin-top: auto; display: flex; flex-direction: column; align-items:center; gap: 12px; padding-top:20px;">
+                
+                <button class="menu-link-item" style="color:#ff6b81; justify-content:center; padding:8px;">
+                    <span style="font-weight:600; display:flex; align-items:center; gap:8px;">☕ Buy Me a Coffee</span>
+                </button>
+                
+                <a href="#" class="instagram-btn" style="width:100%; display:flex; justify-content:center; align-items:center; gap:8px; background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); color:white; padding:12px; border-radius:8px; text-decoration:none; font-weight:600; font-size:14px; box-shadow: 0 4px 12px rgba(220, 39, 67, 0.3);">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                    Follow on Instagram
+                </a>
+
+                <button id="clear-data-btn" class="menu-link-item" style="color:#d32f2f; justify-content:center; padding:8px; opacity:0.8;">
+                    <span style="font-size:12px; display:flex; align-items:center; gap:6px;">🗑️ Clear App Data</span>
+                </button>
+
+                <p style="font-size:12px; color:var(--text-muted); text-align:center; margin:8px 0 0 0;">Made by <b style="color:var(--text-color);">SmartFormatter</b></p>
             </div>
         </div>
     </div>
@@ -105,7 +130,11 @@
                 placeholder="Document Title" title="Click to rename document">
             <span id="save-status" class="save-status"></span>
         </div>
-        <div class="top-controls desktop-export-container" style="display: flex; gap: 8px;">
+        <div class="top-controls desktop-export-container" style="display: flex; gap: 8px; align-items: center;">
+            <button class="icon-btn theme-toggle" id="editor-theme-toggle" title="Toggle Dark/Light Mode" style="margin-right: 4px;">
+                <svg class="i-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+                <svg class="i-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
+            </button>
             <button id="export-pdf" class="btn primary btn-small" disabled
                 style="opacity: 0.5; cursor: not-allowed;">Export to PDF</button>
             <button id="export-word" class="btn primary btn-small" disabled
@@ -686,11 +715,137 @@
         </button>
     </div>
 
+    <!-- Global Floating Action Buttons (Support & AI Bot) -->
+    <div class="global-fab-container">
+        <!-- AI Helper Bot FAB -->
+        <button id="ai-bot-fab" class="global-fab ai-fab" title="Ask AI for help">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 8V4H8"></path>
+                <rect x="4" y="8" width="16" height="12" rx="2" ry="2"></rect>
+                <path d="M2 14h2"></path>
+                <path d="M20 14h2"></path>
+                <path d="M15 13v2"></path>
+                <path d="M9 13v2"></path>
+            </svg>
+        </button>
+        <!-- WhatsApp FAB -->
+        <a href="https://wa.me/919648250545?text=Hey%20I%20need%20help%20for%20smart%20text%20formatting" target="_blank" id="whatsapp-fab" class="global-fab wa-fab" title="Chat with us on WhatsApp">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+            </svg>
+        </a>
+    </div>
 
+    <!-- AI Bot Chat Window (Hidden by default) -->
+    <div id="ai-chat-window" class="ai-chat-window">
+        <div class="ai-chat-header">
+            <h3 style="margin:0; font-size:15px; font-weight:600; display:flex; align-items:center; gap:6px;">🤖 Smart Assistant</h3>
+            <button id="close-ai-chat" class="icon-btn" title="Close Chat" style="color:var(--text-color); width:28px; height:28px; padding:4px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+        <div class="ai-chat-messages" id="ai-chat-messages">
+            <div class="chat-message bot">
+                <p>Hello! I'm your AI formatting assistant. Need help writing a prompt or adjusting your document? Ask me!</p>
+            </div>
+        </div>
+        <div class="ai-chat-input-area">
+            <input type="text" id="ai-chat-input" placeholder="Type a message...">
+            <button id="ai-chat-send" class="icon-btn primary" style="background:var(--primary-color); color:white; border-radius:50%; width:32px; height:32px; padding:6px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+            </button>
+        </div>
+    </div>
 
+    <!-- Premium Modals Overlay -->
+    <div id="premium-modal-overlay" class="premium-modal-overlay"></div>
 
-    <!-- App Logic -->
-    <!-- Removed duplicate app.js inclusion -->
+    <!-- API Settings Modal -->
+    <div id="api-settings-modal" class="premium-modal">
+        <div class="modal-header">
+            <div class="modal-title-wrapper">
+                <span class="modal-icon">🔑</span>
+                <h2>API Settings</h2>
+            </div>
+            <button class="close-modal-btn icon-btn" id="close-api-modal" title="Close">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p class="modal-subtitle">Configure your Gemini API key for OCR and AI Assistant features</p>
+            
+            <div class="api-input-group">
+                <label>Personal Gemini API Key:</label>
+                <div class="premium-input-wrapper">
+                    <input type="password" id="custom-api-key" class="premium-input" placeholder="AIzaSy...">
+                    <button id="toggle-api-visibility" class="icon-btn" type="button" title="Show API Key">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </button>
+                </div>
+                <p class="hint-text">💡 Your API key enables OCR scanning and AI chatbot features.</p>
+            </div>
+
+            <div class="api-instructions-card">
+                <h3>🔑 How to Get Free API Key:</h3>
+                <ol>
+                    <li>Visit <a href="https://aistudio.google.com/app/apikey" target="_blank">Google AI Studio</a></li>
+                    <li>Click <b>"Get API Key"</b> or <b>"Create API Key"</b></li>
+                    <li>Copy the key (starts with <code>AIzaSy...</code>)</li>
+                    <li>Paste it above and click <b>Save</b></li>
+                </ol>
+            </div>
+
+            <div class="modal-actions">
+                <button id="connect-api-key-btn" class="btn primary modal-btn save-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                    Save Settings
+                </button>
+                <button id="test-api-key-btn" class="btn secondary modal-btn test-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path><path d="M22 12A10 10 0 0 0 12 2v10z"></path></svg>
+                    Test My Key
+                </button>
+            </div>
+            <p id="api-key-status" class="setting-status" style="display: none; margin-top: 12px; text-align:center;"></p>
+        </div>
+    </div>
+
+    <!-- Recent History Modal -->
+    <div id="history-modal" class="premium-modal">
+        <div class="modal-header">
+            <div class="modal-title-wrapper">
+                <span class="modal-icon">🕰️</span>
+                <h2>Recent History</h2>
+            </div>
+            <button class="close-modal-btn icon-btn" id="close-history-modal" title="Close">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <p class="modal-subtitle" style="margin:0;">Your last 10 formatted documents</p>
+                <button id="new-doc-btn" class="btn primary btn-small" style="padding: 4px 12px; font-size: 12px; border-radius:12px;">➕ New Draft</button>
+            </div>
+            <div id="document-list" class="premium-history-list">
+                <!-- Document items will be injected here via JS -->
+            </div>
+        </div>
+    </div>
+
 </body>
 
 </html>

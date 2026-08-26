@@ -3273,7 +3273,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 documentList.innerHTML = `<p style="font-size:12px; color:var(--text-muted); text-align:center; padding: 20px 0;">No saved documents.</p>`;
                 return;
             }
-            docs.forEach(doc => {
+            docs.slice(0, 10).forEach(doc => {
                 const dateStr = new Date(doc.updatedAt).toLocaleString();
                 const item = document.createElement("div");
                 item.className = "doc-item";
@@ -4349,5 +4349,150 @@ document.addEventListener('DOMContentLoaded', () => {
             alignContent.style.display = 'none';
         }
     };
+
+});
+
+// --- NEW UI LOGIC (Theme Toggle, Sidebar, FABs) ---
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. Theme Toggle
+    const themeToggleBtn = document.getElementById('editor-theme-toggle');
+    const htmlEl = document.documentElement;
+    
+    // Load saved theme
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+        htmlEl.setAttribute('data-theme', savedTheme);
+    } else {
+        // Check system preference
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            htmlEl.setAttribute('data-theme', 'dark');
+        }
+    }
+
+    if (themeToggleBtn) {
+        themeToggleBtn.addEventListener('click', () => {
+            const currentTheme = htmlEl.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            htmlEl.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        });
+    }
+
+    // 2. Sidebar Accordion
+    const legalBtn = document.getElementById('legal-info-btn');
+    if (legalBtn) {
+        legalBtn.addEventListener('click', () => {
+            const accordion = legalBtn.parentElement;
+            accordion.classList.toggle('active');
+        });
+    }
+
+    // 3. AI Chat Window Toggle
+    const aiBotFab = document.getElementById('ai-bot-fab');
+    const aiChatWindow = document.getElementById('ai-chat-window');
+    const closeAiChat = document.getElementById('close-ai-chat');
+
+    if (aiBotFab && aiChatWindow && closeAiChat) {
+        aiBotFab.addEventListener('click', () => {
+            aiChatWindow.classList.add('open');
+        });
+        closeAiChat.addEventListener('click', () => {
+            aiChatWindow.classList.remove('open');
+        });
+    }
+
+    // 4. Clear Data Button
+    const clearDataBtn = document.getElementById('clear-data-btn');
+    if (clearDataBtn) {
+        clearDataBtn.addEventListener('click', () => {
+            if (confirm("Are you sure you want to clear all your document history and API keys? This cannot be undone.")) {
+                localStorage.removeItem('docsHistory');
+                localStorage.removeItem('geminiApiKey');
+                location.reload();
+            }
+        });
+    }
+
+    // 5. How to use (dummy click for now)
+    const howToBtn = document.getElementById('how-to-use-btn');
+    if (howToBtn) {
+        howToBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            alert("How to use guide coming soon!");
+        });
+    }
+
+    // 6. Premium Modals Logic
+    const apiModalBtn = document.getElementById('open-api-modal-btn');
+    const historyModalBtn = document.getElementById('open-history-modal-btn');
+    const apiModal = document.getElementById('api-settings-modal');
+    const historyModal = document.getElementById('history-modal');
+    const closeApiBtn = document.getElementById('close-api-modal');
+    const closeHistoryBtn = document.getElementById('close-history-modal');
+    const modalOverlay = document.getElementById('premium-modal-overlay');
+
+    const openModal = (modal) => {
+        if(modalOverlay) modalOverlay.classList.add('open');
+        if(modal) modal.classList.add('open');
+        // Close sidebar when opening a modal
+        const menuOverlay = document.getElementById('menu-overlay');
+        const settingsMenu = document.getElementById('settings-menu');
+        if(menuOverlay) menuOverlay.classList.remove('active');
+        if(settingsMenu) settingsMenu.classList.remove('open');
+    };
+
+    const closeAllModals = () => {
+        if(modalOverlay) modalOverlay.classList.remove('open');
+        if(apiModal) apiModal.classList.remove('open');
+        if(historyModal) historyModal.classList.remove('open');
+    };
+
+    if(apiModalBtn) apiModalBtn.addEventListener('click', () => openModal(apiModal));
+    if(historyModalBtn) historyModalBtn.addEventListener('click', () => openModal(historyModal));
+    if(closeApiBtn) closeApiBtn.addEventListener('click', closeAllModals);
+    if(closeHistoryBtn) closeHistoryBtn.addEventListener('click', closeAllModals);
+    if(modalOverlay) modalOverlay.addEventListener('click', closeAllModals);
+
+    // API Key Test Button logic
+    const testApiBtn = document.getElementById('test-api-key-btn');
+    if (testApiBtn) {
+        testApiBtn.addEventListener('click', async () => {
+            const apiKeyInput = document.getElementById('custom-api-key');
+            const key = apiKeyInput ? apiKeyInput.value.trim() : '';
+            const statusEl = document.getElementById('api-key-status');
+            
+            if (!key) {
+                if(statusEl) {
+                    statusEl.textContent = 'Please enter an API key first.';
+                    statusEl.style.display = 'block';
+                    statusEl.style.color = '#ff6b6b';
+                }
+                return;
+            }
+
+            testApiBtn.innerHTML = 'Testing...';
+            try {
+                // A lightweight call to models list to test the key
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${key}`);
+                if (response.ok) {
+                    if(statusEl) {
+                        statusEl.textContent = '✅ Key is valid!';
+                        statusEl.style.display = 'block';
+                        statusEl.style.color = '#00C9A7';
+                    }
+                } else {
+                    throw new Error('Invalid Key');
+                }
+            } catch (err) {
+                if(statusEl) {
+                    statusEl.textContent = '❌ Invalid or expired key.';
+                    statusEl.style.display = 'block';
+                    statusEl.style.color = '#ff6b6b';
+                }
+            } finally {
+                testApiBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path><path d="M22 12A10 10 0 0 0 12 2v10z"></path></svg> Test My Key';
+            }
+        });
+    }
 
 });

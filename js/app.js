@@ -27,6 +27,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (wrapper) {
             if (isEmpty) {
                 wrapper.classList.add('empty-state');
+                const actionsBar = document.getElementById('output-actions-bar');
+                if (actionsBar) actionsBar.style.display = 'none';
+                const fsEditBtn = document.getElementById('fs-edit-btn');
+                if (fsEditBtn) fsEditBtn.style.display = 'none';
+                const fsExitBtn = document.getElementById('exit-fullscreen-btn');
+                if (fsExitBtn) fsExitBtn.style.display = 'none';
             } else {
                 wrapper.classList.remove('empty-state');
             }
@@ -216,12 +222,30 @@ document.addEventListener('DOMContentLoaded', () => {
         if (outputPanel.classList.contains('fullscreen-mode')) {
             if (fullScreenBtn) fullScreenBtn.innerHTML = '⮌ Exit Full Screen';
             if (fsControls) fsControls.style.display = 'flex';
-            if (exitFullScreenBtn) exitFullScreenBtn.innerHTML = '✖';
+            
+            const floatingExit = document.getElementById('floating-exit-fullscreen');
+            if (floatingExit) floatingExit.style.display = 'flex';
+            
+            if (exitFullScreenBtn) {
+                exitFullScreenBtn.innerHTML = '✖ Exit';
+                exitFullScreenBtn.style.background = '#ef4444'; // Red for exit
+                exitFullScreenBtn.style.padding = '0 12px';
+                exitFullScreenBtn.style.width = 'auto';
+            }
         } else {
             if (fullScreenBtn) fullScreenBtn.innerHTML = '⛶ Full Screen';
             // KEEP it flex so the floating controls are always available
             if (fsControls) fsControls.style.display = 'flex';
-            if (exitFullScreenBtn) exitFullScreenBtn.innerHTML = '⛶';
+            
+            const floatingExit = document.getElementById('floating-exit-fullscreen');
+            if (floatingExit) floatingExit.style.display = 'none';
+            
+            if (exitFullScreenBtn) {
+                exitFullScreenBtn.innerHTML = '⛶';
+                exitFullScreenBtn.style.background = '#3b82f6'; // Blue for normal
+                exitFullScreenBtn.style.padding = '0';
+                exitFullScreenBtn.style.width = '32px';
+            }
         }
     };
 
@@ -357,7 +381,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const rtfSelects = document.querySelectorAll('.rtf-select');
     rtfSelects.forEach(select => {
         select.addEventListener('change', () => {
-            if (select.id === 'page-break-select') return; // Handled separately
+            document.getElementById('formatted-preview').focus();
             restoreSelection();
             const command = select.getAttribute('data-command');
             if (command) {
@@ -366,17 +390,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Alignment select options are the commands themselves (e.g. justifyLeft)
                 document.execCommand(select.value, false, null);
             }
-            document.getElementById('formatted-preview').focus();
         });
     });
 
     const rtfColors = document.querySelectorAll('.rtf-color');
     rtfColors.forEach(input => {
         input.addEventListener('input', () => {
+            document.getElementById('formatted-preview').focus();
             restoreSelection();
             const command = input.getAttribute('data-command');
             document.execCommand(command, false, input.value);
-            document.getElementById('formatted-preview').focus();
         });
     });
 
@@ -398,41 +421,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // --- Custom RTF Page Break Logic ---
-    const pageBreakSelect = document.getElementById('page-break-select');
-    if (pageBreakSelect) {
-        pageBreakSelect.addEventListener('change', (e) => {
-            restoreSelection();
-            const val = e.target.value;
-            const previewContainer = document.getElementById('formatted-preview');
 
-            if (val === 'current') {
-                const sel = window.getSelection();
-                if (sel.rangeCount > 0 && previewContainer.contains(sel.anchorNode)) {
-                    let node = sel.anchorNode;
-                    while (node && node !== previewContainer) {
-                        if (node.nodeType === 1) {
-                            const tagName = node.tagName.toUpperCase();
-                            const display = window.getComputedStyle(node).display;
-                            if (['H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'P', 'UL', 'OL', 'TABLE', 'BLOCKQUOTE', 'PRE'].includes(tagName) || display === 'block') {
-                                node.classList.toggle('page-break-before');
-                                break;
-                            }
-                        }
-                        node = node.parentNode;
-                    }
-                }
-            } else if (val === 'all-h2') {
-                previewContainer.querySelectorAll('h2').forEach(node => node.classList.add('page-break-before'));
-            } else if (val === 'clear-all') {
-                previewContainer.querySelectorAll('.page-break-before').forEach(node => node.classList.remove('page-break-before'));
-            }
-
-            // Reset dropdown visual state
-            e.target.selectedIndex = 0;
-            previewContainer.focus();
-        });
-    }
 
     // --- Overwrite/Append Modal Logic ---
     const appendModal = document.getElementById('append-modal');
@@ -3466,132 +3455,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (allChildren.length === 0) return; // Nothing to paginate
 
-        const maxH = getA4ContentHeightPx();
-        container.innerHTML = ''; // Clear
+        container.innerHTML = ''; // Clear the container to prevent duplicate content
 
-        let pageNum = 1;
-        let currentPage = createNewA4Page(pageNum);
+        let currentPage = createNewA4Page(1);
         container.appendChild(currentPage);
 
         for (let i = 0; i < allChildren.length; i++) {
-            const child = allChildren[i];
-            currentPage.appendChild(child);
-
-            // IDEA 2 — Bulletproof Geometric Overflow Detector using getBoundingClientRect
-            let measureEl = child;
-            if (child.nodeType !== 1) { // If it's a text node or comment
-                if (child.nodeType === 3 && !child.textContent.trim()) {
-                    continue; // Skip empty text nodes from triggering overflow
-                }
-                const wrapper = document.createElement('span');
-                currentPage.replaceChild(wrapper, child);
-                wrapper.appendChild(child);
-                measureEl = wrapper;
-            }
-
-            const pageStyle = window.getComputedStyle(currentPage);
-            const padTop = parseFloat(pageStyle.paddingTop) || 96; // Fallback to 25.4mm
-            const safeBottomLimit = padTop + maxH;
-
-            // Use offsetTop and offsetHeight which are immune to CSS zoom and transform scaling
-            let currentEl = measureEl;
-            let offsetTop = 0;
-            while (currentEl && currentEl !== currentPage) {
-                offsetTop += currentEl.offsetTop || 0;
-                currentEl = currentEl.offsetParent;
-            }
-
-            // Calculate child's bottom relative to the page's top (unscaled logical pixels)
-            const childRelativeBottom = offsetTop + measureEl.offsetHeight;
-
-            const overflow = childRelativeBottom - safeBottomLimit;
-
-            // Check if there are other content elements on this page.
-            const isFirstContentElement = currentPage.childNodes.length <= 2;
-
-            if (overflow > 2 && !isFirstContentElement) { // 2px tolerance
-                // --- SPECIAL HANDLING FOR TABLES: Split them across pages ---
-                if (child.tagName === 'TABLE' && child.tBodies.length > 0) {
-                    const tbody = child.tBodies[0];
-                    const rows = Array.from(tbody.rows);
-                    
-                    if (rows.length > 1) {
-                        // Create a clone of the table for the next page
-                        const nextTable = child.cloneNode(true);
-                        // Mark this table as a split continuation so we can merge it back during export
-                        nextTable.setAttribute('data-split-from-prev', 'true');
-                        
-                        const nextTbody = nextTable.tBodies[0];
-                        nextTbody.innerHTML = ''; // Clear rows in the next page's table
-                        
-                        let tableSplit = false;
-                        
-                        // Find which rows fit on the current page
-                        for (let r = rows.length - 1; r >= 0; r--) {
-                            const row = rows[r];
-                            nextTbody.insertBefore(row.cloneNode(true), nextTbody.firstChild);
-                            tbody.removeChild(row);
-                            
-                            // Re-measure after removing a row
-                            const newBottom = offsetTop + measureEl.offsetHeight;
-                            if (newBottom <= safeBottomLimit + 2) {
-                                tableSplit = true;
-                                break; // The rest of the table fits now!
-                            }
-                        }
-                        
-                        // If we managed to split it and keep at least 1 row on the current page
-                        if (tableSplit && tbody.rows.length > 0) {
-                            // Add page separator + new page
-                            const label = document.createElement('div');
-                            label.className = 'page-break-label';
-                            label.textContent = `— Page ${pageNum + 1} —`;
-                            container.appendChild(label);
-                            
-                            pageNum++;
-                            currentPage = createNewA4Page(pageNum);
-                            container.appendChild(currentPage);
-                            
-                            // Push the remainder of the table to the next page
-                            currentPage.appendChild(nextTable);
-                            continue; // Skip the standard move-to-next-page logic
-                        } else {
-                            // If it still doesn't fit or we couldn't split properly, revert to full move
-                            tbody.innerHTML = '';
-                            rows.forEach(r => tbody.appendChild(r));
-                        }
-                    }
-                }
-
-                // Roll it back — move the element to a new page
-                currentPage.removeChild(child);
-
-                // --- KEEP WITH NEXT (Orphan Heading Prevention) ---
-                const elementsToMove = [child];
-                let prev = currentPage.lastElementChild;
-                let attempts = 0;
-                // If the last element on the page is a heading, pull it to the next page too!
-                // But NEVER pull it if it's the ONLY content element left on the page (prevent empty pages)
-                while (prev && prev.tagName && prev.tagName.match(/^H[1-6]$/i) && attempts < 3 && currentPage.childNodes.length > 2) {
-                    currentPage.removeChild(prev);
-                    elementsToMove.unshift(prev);
-                    prev = currentPage.lastElementChild;
-                    attempts++;
-                }
-
-                // Add page separator + new page
-                const label = document.createElement('div');
-                label.className = 'page-break-label';
-                label.textContent = `— Page ${pageNum + 1} —`;
-                container.appendChild(label);
-
-                pageNum++;
-                currentPage = createNewA4Page(pageNum);
-                container.appendChild(currentPage);
-
-                // Append all moved elements to the new page
-                elementsToMove.forEach(el => currentPage.appendChild(el));
-            }
+            currentPage.appendChild(allChildren[i]);
         }
 
         // Attach input listeners to each page for Idea 1 (debounced re-pagination on edit)
@@ -3623,11 +3493,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (window.isCustomizationActive) {
             page.setAttribute('contenteditable', 'true');
         }
-        // Page number badge
-        const badge = document.createElement('span');
-        badge.className = 'page-number-badge';
-        badge.textContent = `Page ${num}`;
-        page.appendChild(badge);
         return page;
     }
 
@@ -4413,7 +4278,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Toggle between user's original order and template skeleton order
     window._toggleAlignToTemplate = function() {
-        const bar = document.getElementById('align-template-bar');
+        const bar = document.getElementById('output-actions-bar');
         const label = document.getElementById('align-bar-label');
         const btn = document.getElementById('btn-align-template');
 
@@ -4445,25 +4310,43 @@ document.addEventListener('DOMContentLoaded', () => {
         _reRenderFromSections();
     };
 
-    // Show the align bar only when a structured template is active and sections exist
+    // Show the align bar and enable actions ONLY when document is formatted
     window._showAlignBarIfNeeded = function() {
-        const bar = document.getElementById('align-template-bar');
-        if (!bar) return;
+        const actionsBar = document.getElementById('output-actions-bar');
+        const alignContent = document.getElementById('align-template-content');
+        if (!actionsBar) return;
 
+        // Make the entire action bar visible
+        actionsBar.style.display = 'flex';
+
+        // Enable Edit and Fullscreen buttons
+        const editBtn = document.getElementById('fs-edit-btn');
+        if (editBtn) {
+            editBtn.disabled = false;
+            editBtn.style.display = 'flex';
+            editBtn.style.opacity = '1';
+        }
+        
+        const exitFullscreenBtn = document.getElementById('exit-fullscreen-btn');
+        if (exitFullscreenBtn) {
+            exitFullscreenBtn.style.display = 'flex';
+        }
+
+        // Check if we need to show the Align to Template functionality
         const template = window.templateEngine ? window.templateEngine.getSelectedTemplate() : null;
         const hasStructuredTemplate = template && template.id !== 'general' && template.skeleton && template.skeleton.length > 0;
         const hasSections = window._lastDocumentSections && window._lastDocumentSections.length > 0;
 
-        if (hasStructuredTemplate && hasSections) {
-            bar.style.display = 'flex';
+        if (hasStructuredTemplate && hasSections && alignContent) {
+            alignContent.style.display = 'flex';
             // Reset to default state
-            bar.classList.remove('aligned');
+            actionsBar.classList.remove('aligned');
             const label = document.getElementById('align-bar-label');
             const btn = document.getElementById('btn-align-template');
             if (label) label.textContent = 'Sections are in your original order';
             if (btn) btn.innerHTML = '🔄 Align to Template Order';
-        } else {
-            bar.style.display = 'none';
+        } else if (alignContent) {
+            alignContent.style.display = 'none';
         }
     };
 

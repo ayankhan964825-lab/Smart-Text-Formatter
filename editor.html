@@ -175,84 +175,20 @@
         </section>
 
         <!-- Right Panel: Output Preview -->
-        <section class="panel output-panel">
-            <div class="panel-header"
-                style="display: flex; justify-content: space-between; align-items: center; padding: 4px 12px; gap: 12px; width: 100%;">
-                <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
-                    <h2>Output</h2>
-                </div>
+        <section class="panel output-panel" style="position: relative;">
+            
+            <!-- Dedicated Floating Exit Button for Fullscreen Mode -->
+            <button id="floating-exit-fullscreen" onclick="document.getElementById('exit-fullscreen-btn').click()" 
+                style="display: none; position: fixed; top: 16px; right: 16px; z-index: 2147483647; background: #ef4444; color: white; border: 2px solid white; border-radius: 50%; width: 44px; height: 44px; font-size: 20px; font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.3); cursor: pointer; align-items: center; justify-content: center;">
+                ✖
+            </button>
 
-                <!-- Compact Global Formatting Controls -->
-                <div class="global-settings-controls"
-                    style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: flex-end;">
-                    <!-- Alignment -->
-                    <select id="global-alignment" class="toolbar-select" title="Text Alignment"
-                        style="padding: 4px 8px; font-size: 13px; height: 28px; border-radius: 4px; border: 1px solid var(--border-color); background: var(--bg-main); width: auto;">
-                        <option value="left" selected>Left</option>
-                        <option value="center">Center</option>
-                        <option value="right">Right</option>
-                        <option value="justify">Justify</option>
-                    </select>
-                </div>
+            <div class="panel-header" style="justify-content: space-between;">
+                <h2>Output</h2>
             </div>
 
 
 
-            <!-- Mini Rich Text Toolbar (Sticky on mobile) -->
-            <div class="mini-toolbar" id="mini-rtf-toolbar" style="display: none;">
-                <!-- Fonts & Blocks -->
-                <select class="rtf-select" data-command="fontName" title="Font">
-                    <option value="Arial">Arial</option>
-                    <option value="Times New Roman" selected>Times New</option>
-                    <option value="Courier New">Courier</option>
-                </select>
-                <input type="number" class="rtf-number toolbar-input" data-command="fontSizePt" value="12" min="8"
-                    max="72" title="Size (pt)" style="width: 45px;">
-                <select class="rtf-select" data-command="formatBlock" title="Heading">
-                    <option value="P">Para</option>
-                    <option value="H1">Title</option>
-                    <option value="H2">Heading</option>
-                    <option value="H3">Subhead</option>
-                </select>
-
-                <!-- Basic Styles -->
-                <div class="style-group">
-                    <button class="icon-btn rtf-btn" data-command="bold" title="Bold"><b>B</b></button>
-                    <button class="icon-btn rtf-btn" data-command="italic" title="Italic"><i>I</i></button>
-                    <button class="icon-btn rtf-btn" data-command="underline" title="Underline"><u>U</u></button>
-                </div>
-
-                <!-- Insert Image -->
-                <div class="style-group">
-                    <input type="file" id="manual-image-insert" accept="image/*" style="display: none;">
-                    <button class="icon-btn" id="manual-image-btn" title="Insert Image at Cursor">🖼️</button>
-                </div>
-
-                <!-- Colors -->
-                <div class="style-group">
-                    <input type="color" class="rtf-color" data-command="foreColor" title="Text Color" value="#000000">
-                    <input type="color" class="rtf-color" data-command="hiliteColor" title="Highlight" value="#ffff00">
-                </div>
-
-                <!-- Alignments & Lists -->
-                <select class="rtf-select rtf-align" title="Align">
-                    <option value="justifyLeft" selected>Left</option>
-                    <option value="justifyCenter">Center</option>
-                    <option value="justifyRight">Right</option>
-                    <option value="justifyFull">Justify</option>
-                </select>
-                <div class="style-group">
-                    <button class="icon-btn rtf-btn" data-command="insertUnorderedList" title="Bullet">•</button>
-                    <button class="icon-btn rtf-btn" data-command="insertOrderedList" title="Number">1.</button>
-                </div>
-                <select class="rtf-select" id="page-break-select" title="Page Break Options"
-                    style="font-size: 11px; font-weight: 500; min-width: 90px; padding-left: 4px; padding-right: 18px;">
-                    <option value="" disabled selected>📄 Break...</option>
-                    <option value="current">Current Selection (Toggle)</option>
-                    <option value="all-h2">All Headings (H2)</option>
-                    <option value="clear-all">Clear All Breaks</option>
-                </select>
-            </div>
 
             <!-- AI Reasoning Panel (CoT) -->
             <div id="ai-thoughts-panel" class="ai-thoughts-panel" style="display:none;">
@@ -276,18 +212,91 @@
                 </div>
             </div>
 
-            <!-- Auto-Align to Template Order Bar (hidden by default, shown for structured templates) -->
-            <div id="align-template-bar" class="align-template-bar no-export no-print" style="display: none;">
-                <div class="align-bar-info">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M3 6h18M3 12h12M3 18h18"/>
-                    </svg>
-                    <span id="align-bar-label">Sections are in your original order</span>
+            <!-- Output Actions Bar (always visible after formatting) -->
+            <div id="output-actions-bar" class="no-export no-print" style="display: none; padding: 8px; flex-direction: column; gap: 8px;">
+                
+                <!-- TOP ROW: Action buttons -->
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; width: 100%;">
+                    <!-- Left Side: Align Template Logic -->
+                    <div id="align-template-content" style="display: none; align-items: center; gap: 12px; flex-shrink: 0;">
+                        <div class="align-bar-info">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 6h18M3 12h12M3 18h18"/>
+                            </svg>
+                            <span id="align-bar-label">Sections are in your original order</span>
+                        </div>
+                        <button id="btn-align-template" class="btn-align-toggle" onclick="window._toggleAlignToTemplate()">
+                            🔄 Align to Template Order
+                        </button>
+                    </div>
+
+                    <!-- Right Side: Edit / Fullscreen Controls -->
+                    <div id="fullscreen-controls" style="display: flex; gap: 6px; align-items: center; flex: 1; justify-content: flex-end;">
+                        <!-- Global Alignment Dropdown -->
+                        <select id="global-alignment" class="toolbar-select" title="Text Alignment"
+                            style="padding: 4px 8px; font-size: 13px; height: 32px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-main); width: auto; flex-shrink: 0;">
+                            <option value="left" selected>Left</option>
+                            <option value="center">Center</option>
+                            <option value="right">Right</option>
+                            <option value="justify">Justify</option>
+                        </select>
+                        
+                        <button id="fs-edit-btn" class="btn-small secondary"
+                            style="background: white; border: 1px solid #cbd5e1; height: 32px; border-radius: 6px; padding: 0 12px; display: flex; align-items: center; gap: 6px; font-weight: bold; cursor: pointer; color: #334155; flex-shrink: 0;">
+                            ✏️ Edit
+                        </button>
+                        <button id="exit-fullscreen-btn" class="icon-btn" title="Toggle Full Screen"
+                            style="background: #3b82f6; color: white; border-radius: 6px; width: 32px; height: 32px; font-size: 16px; display: flex; justify-content: center; align-items: center; cursor: pointer; border: none; flex-shrink: 0;">
+                            ⛶
+                        </button>
+                    </div>
                 </div>
-                <button id="btn-align-template" class="btn-align-toggle" onclick="window._toggleAlignToTemplate()">
-                    🔄 Align to Template Order
-                </button>
+
+                <!-- BOTTOM ROW: Mini Rich Text Toolbar -->
+                <div class="mini-toolbar" id="mini-rtf-toolbar" style="display: none; border: none; margin: 0; background: transparent; padding: 0; gap: 4px; justify-content: flex-start; width: 100%; overflow-x: auto; flex-wrap: nowrap;">
+                    <!-- Fonts & Blocks -->
+                    <select class="rtf-select" data-command="fontName" title="Font" style="max-width: 75px;">
+                        <option value="Arial">Arial</option>
+                        <option value="Times New Roman" selected>Times</option>
+                        <option value="Courier New">Courier</option>
+                    </select>
+                    <input type="number" class="rtf-number toolbar-input" data-command="fontSizePt" value="12" min="8"
+                        max="72" title="Size (pt)" style="width: 55px; padding-right: 2px;">
+                    <select class="rtf-select" data-command="formatBlock" title="Heading" style="width: 70px;">
+                        <option value="P">Para</option>
+                        <option value="H1">Title</option>
+                        <option value="H2">H2</option>
+                        <option value="H3">H3</option>
+                    </select>
+    
+                    <!-- Basic Styles -->
+                    <div class="style-group">
+                        <button class="icon-btn rtf-btn" data-command="bold" title="Bold"><b>B</b></button>
+                        <button class="icon-btn rtf-btn" data-command="italic" title="Italic"><i>I</i></button>
+                        <button class="icon-btn rtf-btn" data-command="underline" title="Underline"><u>U</u></button>
+                    </div>
+    
+                    <!-- Colors -->
+                    <div class="style-group">
+                        <input type="color" class="rtf-color" data-command="foreColor" title="Text Color" value="#000000">
+                        <input type="color" class="rtf-color" data-command="hiliteColor" title="Highlight" value="#ffff00">
+                    </div>
+    
+                    <!-- Alignments & Lists -->
+                    <select class="rtf-select rtf-align" title="Align" style="width: 75px;">
+                        <option value="justifyLeft" selected>Left</option>
+                        <option value="justifyCenter">Center</option>
+                        <option value="justifyRight">Right</option>
+                        <option value="justifyFull">Justify</option>
+                    </select>
+                    <div class="style-group">
+                        <button class="icon-btn rtf-btn" data-command="insertUnorderedList" title="Bullet">•</button>
+                        <button class="icon-btn rtf-btn" data-command="insertOrderedList" title="Number">1.</button>
+                    </div>
+                </div>
             </div>
+
+
 
             <div id="preview-scroll-wrapper" class="preview-scroll-wrapper empty-state"
                 style="flex: 1; overflow: auto; padding: 30px 15px;">
@@ -575,19 +584,6 @@
             <button id="modal-cancel-btn" class="btn-small secondary"
                 style="margin-top:20px; width: 100%;">Cancel</button>
         </div>
-    </div>
-
-    <!-- Floating Full Screen Controls (Always visible, positioned below ribbon) -->
-    <div id="fullscreen-controls"
-        style="display: flex; position: fixed; top: 110px; right: 20px; z-index: 2147483647; gap: 8px; align-items: center;">
-        <button id="fs-edit-btn" class="btn-small secondary" disabled
-            style="opacity: 0.5; background: rgba(255,255,255,0.9); box-shadow: 0 4px 12px rgba(0,0,0,0.2); height: 40px; border-radius: 20px; padding: 0 16px; display: flex; align-items: center; gap: 6px; font-weight: bold; cursor: pointer;">
-            ✏️ Edit
-        </button>
-        <button id="exit-fullscreen-btn" class="icon-btn" title="Toggle Full Screen"
-            style="background: #3b82f6; color: white; border-radius: 50%; width: 40px; height: 40px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); font-size: 18px; line-height: 40px; text-align: center; display: flex; justify-content: center; align-items: center; cursor: pointer;">
-            ⛶
-        </button>
     </div>
 
     <!-- Scripts -->

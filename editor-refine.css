@@ -317,8 +317,6 @@ body { font-family: var(--sf-font-sans) !important; background: var(--sf-paper) 
   .top-bar.refined .document-title-input { min-width: 110px; font-size: 13px !important; }
   .desktop-export-container { display: none !important; }
   .top-bar.refined { justify-content: space-between !important; }
-  #exit-fullscreen-btn { display: none !important; }
-  #fs-edit-btn { display: none; }
 
   /* --- Hide formatting ribbon --- */
   .formatting-ribbon { display: none !important; }

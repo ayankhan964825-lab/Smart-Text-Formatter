@@ -143,7 +143,15 @@ class OutputGenerator {
 
                 const listItemsHTML = listItems
                     .map(item => {
-                        let cleanItem = item.trim().replace(/^[-*•]\s+/, '').replace(/^\d+\.\s+/, '');
+                        let text = '';
+                        if (typeof item === 'string') {
+                            text = item;
+                        } else if (item !== null && typeof item === 'object') {
+                            text = item.text || item.content || item.value || JSON.stringify(item);
+                        } else {
+                            text = String(item || '');
+                        }
+                        let cleanItem = text.trim().replace(/^[-*•]\s+/, '').replace(/^\d+\.\s+/, '');
                         return `<li${styleAttr}>${this._cleanMarkdown(this._escapeHTML(cleanItem))}</li>`;
                     })
                     .join('\n');

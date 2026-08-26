@@ -311,6 +311,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const rtfBtns = document.querySelectorAll('.rtf-btn');
     rtfBtns.forEach(btn => {
+        // Prevent focus loss on mobile devices when tapping buttons
+        const preventFocusLoss = (e) => e.preventDefault();
+        btn.addEventListener('mousedown', preventFocusLoss);
+        btn.addEventListener('touchstart', preventFocusLoss, { passive: false });
+
         btn.addEventListener('click', (e) => {
             e.preventDefault();
             restoreSelection(); // Restore text selection before applying command
@@ -324,6 +329,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const manualImageBtn = document.getElementById('manual-image-btn');
     const manualImageInsert = document.getElementById('manual-image-insert');
     if (manualImageBtn && manualImageInsert) {
+        // Prevent focus loss on mobile
+        const preventFocusLoss = (e) => e.preventDefault();
+        manualImageBtn.addEventListener('mousedown', preventFocusLoss);
+        manualImageBtn.addEventListener('touchstart', preventFocusLoss, { passive: false });
+
         manualImageBtn.addEventListener('click', (e) => {
             e.preventDefault();
             restoreSelection();

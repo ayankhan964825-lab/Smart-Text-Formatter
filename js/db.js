@@ -108,6 +108,18 @@ class LocalDB {
             request.onerror = (e) => reject(e.target.error);
         });
     }
+
+    async clearAllDocuments() {
+        await this.initPromise;
+        return new Promise((resolve, reject) => {
+            const transaction = this.db.transaction([STORE_NAME], 'readwrite');
+            const store = transaction.objectStore(STORE_NAME);
+            const request = store.clear();
+            
+            request.onsuccess = () => resolve(true);
+            request.onerror = (e) => reject(e.target.error);
+        });
+    }
 }
 
 // Global instance

@@ -36,10 +36,10 @@
                 </svg>
             </button>
         </div>
-        <div class="settings-content" style="display: flex; flex-direction: column; height: 100%;">
+        <div class="settings-content" style="display: flex; flex-direction: column;">
             <!-- Documents Section (Recent History) -->
             <!-- Modals Triggers -->
-            <div class="setting-group" style="padding-bottom: 12px; display:flex; flex-direction:column; gap:4px; border:none;">
+            <div class="setting-group" style="padding-bottom: 12px; display:flex; flex-direction:column; gap:4px; border:none; background: transparent;">
                 <button class="menu-link-item" id="open-history-modal-btn">
                     <span style="display:flex; align-items:center; gap:12px;">
                         <span style="font-size:18px;">📁</span>
@@ -88,7 +88,7 @@
                     <span style="font-weight:600; display:flex; align-items:center; gap:8px;">☕ Buy Me a Coffee</span>
                 </button>
                 
-                <a href="https://instagram.com" target="_blank" class="instagram-btn" style="width:100%; display:flex; justify-content:center; align-items:center; gap:8px; background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); color:white; padding:12px; border-radius:8px; text-decoration:none; font-weight:600; font-size:14px; box-shadow: 0 4px 12px rgba(220, 39, 67, 0.3);">
+                <a href="https://instagram.com/ayan__khxxn" target="_blank" class="instagram-btn" style="width:100%; display:flex; justify-content:center; align-items:center; gap:8px; background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); color:white; padding:12px; border-radius:8px; text-decoration:none; font-weight:600; font-size:14px; box-shadow: 0 4px 12px rgba(220, 39, 67, 0.3);">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
                     Follow on Instagram
                 </a>
@@ -382,10 +382,16 @@
                         <polyline points="10 9 9 9 8 9" />
                     </svg>
                 </div>
-                <div>
+                <div style="flex-grow: 1;">
                     <h3 class="tmpl-title">Choose Document Type</h3>
                     <p class="tmpl-subtitle">Select a structure to guide AI formatting</p>
                 </div>
+                <button type="button" class="icon-btn" onclick="document.getElementById('template-modal').style.display='none'" title="Close" style="margin-left: auto; background: transparent; border: none; cursor: pointer; color: var(--text-muted);">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
             </div>
 
             <!-- Template Cards Grid -->
@@ -739,29 +745,36 @@
     </div>
 
     <!-- AI Bot Chat Window (Hidden by default) -->
-    <div id="ai-chat-window" class="ai-chat-window">
-        <div class="ai-chat-header">
-            <h3 style="margin:0; font-size:15px; font-weight:600; display:flex; align-items:center; gap:6px;">🤖 Smart Assistant</h3>
-            <button id="close-ai-chat" class="icon-btn" title="Close Chat" style="color:var(--text-color); width:28px; height:28px; padding:4px;">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
+    <div id="ai-chat-window" class="ai-chat-window dark-theme">
+        <div class="ai-chat-header custom-gradient">
+            <h3 style="margin:0; font-size:16px; font-weight:700; display:flex; align-items:center; gap:8px;">
+                🤖 AI Assistant
+            </h3>
+            <button id="close-ai-chat" class="icon-btn" title="Close Chat" style="color:white; width:28px; height:28px; padding:4px;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </button>
         </div>
-        <div class="ai-chat-messages" id="ai-chat-messages">
-            <div class="chat-message bot">
-                <p>Hello! I'm your AI formatting assistant. Need help writing a prompt or adjusting your document? Ask me!</p>
+        
+        <!-- Quick Questions Section -->
+        <div class="ai-quick-questions">
+            <p class="qq-title">Quick Questions:</p>
+            <div class="qq-list">
+                <button class="qq-btn">How do I format messy text?</button>
+                <button class="qq-btn">What is the difference between Document and Paragraph format?</button>
+                <button class="qq-btn">Where can I see my saved history?</button>
+                <button class="qq-btn">How do I export my work to Word or PDF?</button>
+                <button class="qq-btn">How does the auto-save feature work?</button>
             </div>
         </div>
-        <div class="ai-chat-input-area">
-            <input type="text" id="ai-chat-input" placeholder="Type a message...">
-            <button id="ai-chat-send" class="icon-btn primary" style="background:var(--primary-color); color:white; border-radius:50%; width:32px; height:32px; padding:6px;">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="22" y1="2" x2="11" y2="13"></line>
-                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                </svg>
-            </button>
+
+        <div class="ai-chat-messages" id="ai-chat-messages">
+            <div class="chat-message bot custom-bot-msg">
+                <p>👋 <i>Hi! I'm here to help you with the app. Ask me anything!</i></p>
+            </div>
+        </div>
+        <div class="ai-chat-input-area custom-input-area">
+            <input type="text" id="ai-chat-input" placeholder="Ask about the app..." class="custom-chat-input">
+            <button id="ai-chat-send" class="custom-send-btn">Send</button>
         </div>
     </div>
 
@@ -979,8 +992,8 @@
 
             <!-- Footer Buttons -->
             <div class="about-footer-btns">
-                <button class="btn secondary" style="flex:1; background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); color:white; border:none;" onclick="document.getElementById('close-about-modal').click()">← Open App</button>
-                <button class="btn secondary" style="flex:1; border: 1px solid rgba(255,255,255,0.2); background: transparent;" onclick="document.getElementById('close-about-modal').click(); document.getElementById('open-contact-btn').click();">Contact Us</button>
+                <button class="btn primary" style="flex:1;" onclick="document.getElementById('close-about-modal').click()">← Open App</button>
+                <button class="btn primary" style="flex:1;" onclick="document.getElementById('close-about-modal').click(); document.getElementById('open-contact-btn').click();">Contact Us</button>
             </div>
 
         </div>
@@ -1066,7 +1079,7 @@
                 <button class="btn secondary" style="background: linear-gradient(135deg, #7c73ff, #6C63FF); color:white; border:none; padding:10px 20px; border-radius:24px; font-weight:600; cursor:pointer;" onclick="document.getElementById('close-faq-modal').click(); document.getElementById('open-contact-btn').click();">📞 Contact Support</button>
             </div>
 
-            <button class="btn secondary" style="width:100%; margin-top:24px;" onclick="document.getElementById('close-faq-modal').click()">← Back to App</button>
+            <button class="btn primary" style="width:100%; margin-top:24px;" onclick="document.getElementById('close-faq-modal').click()">← Back to App</button>
 
         </div>
     </div>
@@ -1143,9 +1156,9 @@
                 <h5>💬 WhatsApp Support</h5>
                 <p>Fastest response! Chat with us on WhatsApp at <b style="color:var(--text-main);">+91 9648250545</b></p>
             </a>
-            <a href="mailto:support@smartformatter.in" class="help-card" style="margin-bottom:24px;">
+            <a href="mailto:ayankhan964825@gmail.com" class="help-card" style="margin-bottom:24px;">
                 <h5>📧 Email Support</h5>
-                <p>Detailed queries? Email us at<br><b style="color:var(--primary-color);">support@smartformatter.in</b></p>
+                <p>Detailed queries? Email us at<br><b style="color:var(--primary-color);">ayankhan964825@gmail.com</b></p>
             </a>
 
             <div class="app-info-card" style="background: rgba(255,255,255,0.02); border-radius: 12px; padding: 16px; text-align:center; margin-bottom:24px; border:1px solid var(--border-color);">
@@ -1184,16 +1197,16 @@
                 </div>
             </a>
 
-            <a href="mailto:ayan@example.com" class="contact-card">
-                <div class="contact-icon" style="background:#ea4335;">✉️</div>
+            <a href="mailto:ayankhan964825@gmail.com" class="contact-card">
+                <div class="contact-icon" style="background: linear-gradient(135deg, #FF6B6B 0%, #EE5253 100%);">📧</div>
                 <div class="contact-text">
                     <h4>Email</h4>
-                    <span class="c-info">support@smartformatter.in</span>
+                    <span class="c-info">ayankhan964825@gmail.com</span>
                     <span class="c-sub">For detailed queries • Response within 24-48 hours</span>
                 </div>
             </a>
 
-            <a href="https://instagram.com/ayan.khan" target="_blank" class="contact-card">
+            <a href="https://instagram.com/ayan__khxxn" target="_blank" class="contact-card">
                 <div class="contact-icon" style="background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);">📸</div>
                 <div class="contact-text">
                     <h4>Instagram</h4>
@@ -1304,11 +1317,11 @@
             <div class="privacy-section" style="margin-bottom:24px;">
                 <h3 style="color:var(--primary-color); font-size:16px; margin:0 0 12px 0; display:flex; align-items:center; gap:8px;">📧 Contact</h3>
                 <p style="color:var(--text-muted); font-size:13.5px; line-height:1.6; margin:0 0 8px 0;">For privacy concerns, contact us:</p>
-                <p style="color:var(--text-muted); font-size:13.5px; line-height:1.6; margin:0;">WhatsApp: +91 9648250545<br>Email: <a href="mailto:support@smartformatter.in" style="color:#6C63FF; text-decoration:none;">support@smartformatter.in</a></p>
+                <p style="color:var(--text-muted); font-size:13.5px; line-height:1.6; margin:0;">WhatsApp: +91 9648250545<br>Email: <a href="mailto:ayankhan964825@gmail.com" style="color:#6C63FF; text-decoration:none;">ayankhan964825@gmail.com</a></p>
             </div>
 
             <div style="text-align:center;">
-                <button class="btn secondary" onclick="document.getElementById('close-privacy-modal').click()">← Back to App</button>
+                <button class="btn primary" onclick="document.getElementById('close-privacy-modal').click()">← Back to App</button>
                 <p style="color:#666; font-size:12px; margin-top:16px;">Last updated: August 27, 2026</p>
             </div>
 
@@ -1401,7 +1414,7 @@
             </div>
 
             <div style="text-align:center;">
-                <button class="btn secondary" onclick="document.getElementById('close-terms-modal').click()">← Back to App</button>
+                <button class="btn primary" onclick="document.getElementById('close-terms-modal').click()">← Back to App</button>
                 <p style="color:#666; font-size:12px; margin-top:16px;">Last updated: August 27, 2026</p>
             </div>
 

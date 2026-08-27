@@ -54,12 +54,12 @@
                     </span>
                 </button>
 
-                <a href="#" class="menu-link-item" id="how-to-use-btn">
+                <button class="menu-link-item how-to-use-btn" id="how-to-use-btn">
                     <span style="display:flex; align-items:center; gap:12px;">
                         <span style="font-size:18px;">💡</span>
                         How to Use
                     </span>
-                </a>
+                </button>
                 
                 <!-- Legal & Info Accordion -->
                 <div class="menu-accordion">
@@ -71,24 +71,24 @@
                         <svg class="accordion-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.5;"><polyline points="6 9 12 15 18 9"/></svg>
                     </button>
                     <div class="menu-accordion-content" id="legal-info-content">
-                        <a href="#" class="submenu-link"><span style="width:20px; text-align:center;">ℹ️</span> About Us</a>
-                        <a href="#" class="submenu-link"><span style="width:20px; text-align:center; color:#ff4757; font-weight:bold;">?</span> FAQ</a>
-                        <a href="#" class="submenu-link"><span style="width:20px; text-align:center;">🆘</span> Support</a>
-                        <a href="#" class="submenu-link"><span style="width:20px; text-align:center;">📞</span> Contact Us</a>
-                        <a href="#" class="submenu-link"><span style="width:20px; text-align:center;">🔒</span> Privacy Policy</a>
-                        <a href="#" class="submenu-link"><span style="width:20px; text-align:center;">📜</span> Terms of Service</a>
+                        <button class="submenu-link" id="open-about-btn" style="border:none; background:none; cursor:pointer; font-family:inherit; font-size:inherit; color:inherit; text-align:left;"><span style="width:20px; text-align:center;">ℹ️</span> About Us</button>
+                        <button class="submenu-link" id="open-faq-btn" style="border:none; background:none; cursor:pointer; font-family:inherit; font-size:inherit; color:inherit; text-align:left;"><span style="width:20px; text-align:center; color:#ff4757; font-weight:bold;">?</span> FAQ</button>
+                        <button class="submenu-link" id="open-support-btn" style="border:none; background:none; cursor:pointer; font-family:inherit; font-size:inherit; color:inherit; text-align:left;"><span style="width:20px; text-align:center;">🆘</span> Support</button>
+                        <button class="submenu-link" id="open-contact-btn" style="border:none; background:none; cursor:pointer; font-family:inherit; font-size:inherit; color:inherit; text-align:left;"><span style="width:20px; text-align:center;">📞</span> Contact Us</button>
+                        <button class="submenu-link" id="open-privacy-btn" style="border:none; background:none; cursor:pointer; font-family:inherit; font-size:inherit; color:inherit; text-align:left;"><span style="width:20px; text-align:center;">🔒</span> Privacy Policy</button>
+                        <button class="submenu-link" id="open-terms-btn" style="border:none; background:none; cursor:pointer; font-family:inherit; font-size:inherit; color:inherit; text-align:left;"><span style="width:20px; text-align:center;">📜</span> Terms of Service</button>
                     </div>
                 </div>
             </div>
 
             <!-- Bottom Actions -->
-            <div style="margin-top: auto; display: flex; flex-direction: column; align-items:center; gap: 12px; padding-top:20px;">
+            <div style="display: flex; flex-direction: column; align-items:center; gap: 12px; padding-top:12px;">
                 
-                <button class="menu-link-item" style="color:#ff6b81; justify-content:center; padding:8px;">
+                <button id="open-buymeacoffee-btn" class="menu-link-item" style="color:#ff6b81; justify-content:center; padding:8px;">
                     <span style="font-weight:600; display:flex; align-items:center; gap:8px;">☕ Buy Me a Coffee</span>
                 </button>
                 
-                <a href="#" class="instagram-btn" style="width:100%; display:flex; justify-content:center; align-items:center; gap:8px; background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); color:white; padding:12px; border-radius:8px; text-decoration:none; font-weight:600; font-size:14px; box-shadow: 0 4px 12px rgba(220, 39, 67, 0.3);">
+                <a href="https://instagram.com" target="_blank" class="instagram-btn" style="width:100%; display:flex; justify-content:center; align-items:center; gap:8px; background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); color:white; padding:12px; border-radius:8px; text-decoration:none; font-weight:600; font-size:14px; box-shadow: 0 4px 12px rgba(220, 39, 67, 0.3);">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
                     Follow on Instagram
                 </a>
@@ -96,8 +96,10 @@
                 <button id="clear-data-btn" class="menu-link-item" style="color:#d32f2f; justify-content:center; padding:8px; opacity:0.8;">
                     <span style="font-size:12px; display:flex; align-items:center; gap:6px;">🗑️ Clear App Data</span>
                 </button>
+            </div>
 
-                <p style="font-size:12px; color:var(--text-muted); text-align:center; margin:8px 0 0 0;">Made by <b style="color:var(--text-color);">SmartFormatter</b></p>
+            <div style="margin-top: auto; padding-top: 16px;">
+                <p style="font-size:12px; color:var(--text-muted); text-align:center; margin:0;">Made by <b style="color:var(--text-color);">Ayan Khan</b></p>
             </div>
         </div>
     </div>
@@ -781,7 +783,7 @@
             </button>
         </div>
         <div class="modal-body">
-            <p class="modal-subtitle">Configure your Gemini API key for OCR and AI Assistant features</p>
+            <p class="modal-subtitle">Configure your Gemini API key for the AI Assistant and Smart Formatting</p>
             
             <div class="api-input-group">
                 <label>Personal Gemini API Key:</label>
@@ -794,7 +796,7 @@
                         </svg>
                     </button>
                 </div>
-                <p class="hint-text">💡 Your API key enables OCR scanning and AI chatbot features.</p>
+                <p class="hint-text">💡 Your API key enables the AI chatbot and smart text formatting capabilities.</p>
             </div>
 
             <div class="api-instructions-card">
@@ -843,6 +845,628 @@
             <div id="document-list" class="premium-history-list">
                 <!-- Document items will be injected here via JS -->
             </div>
+        </div>
+    </div>
+    <!-- How to Use Modal -->
+    <div id="how-to-use-modal" class="premium-modal">
+        <div class="modal-header">
+            <div class="modal-title-wrapper">
+                <span class="modal-icon">💡</span>
+                <div style="display:flex; flex-direction:column;">
+                    <h2>How to Use SmartFormatter</h2>
+                    <p class="modal-subtitle" style="margin:0; font-size:12px; margin-top:2px;">Complete guide to all features</p>
+                </div>
+            </div>
+            <button class="close-modal-btn icon-btn" id="close-how-to-use-modal" title="Close">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+        <div class="modal-body" style="max-height: 60vh; overflow-y: auto;">
+            <div class="how-to-section">
+                <h3 style="color:var(--text-main); font-size:15px; margin-bottom:12px; display:flex; align-items:center; gap:6px;">📝 1. Formatting Your Text</h3>
+                <ul style="color:var(--text-muted); font-size:13.5px; line-height:1.6; padding-left:20px; margin-bottom:20px;">
+                    <li style="margin-bottom:8px;"><b style="color:var(--text-main);">Paste Text:</b> Paste any raw text, notes, chat logs, or OCR output into the left editor.</li>
+                    <li style="margin-bottom:8px;"><b style="color:var(--text-main);">Basic Formatting:</b> Use the top toolbar to bold, italicize, or add lists.</li>
+                    <li style="margin-bottom:8px;"><b style="color:var(--text-main);">Live Preview:</b> See your perfectly formatted output instantly on the right side.</li>
+                </ul>
+            </div>
+
+            <div class="how-to-section">
+                <h3 style="color:var(--text-main); font-size:15px; margin-bottom:12px; display:flex; align-items:center; gap:6px;">🤖 2. AI Assistant</h3>
+                <ul style="color:var(--text-muted); font-size:13.5px; line-height:1.6; padding-left:20px; margin-bottom:20px;">
+                    <li style="margin-bottom:8px;"><b style="color:var(--text-main);">Ask Questions:</b> Click the 🤖 button for AI help</li>
+                    <li style="margin-bottom:8px;"><b style="color:var(--text-main);">Smart Advice:</b> Get formatting tips and text suggestions</li>
+                    <li style="margin-bottom:8px;"><b style="color:var(--text-main);">API Key:</b> Set your Gemini API key in API Settings for unlimited use</li>
+                </ul>
+            </div>
+
+            <div class="how-to-section">
+                <h3 style="color:var(--text-main); font-size:15px; margin-bottom:12px; display:flex; align-items:center; gap:6px;">💾 3. Exporting & History</h3>
+                <ul style="color:var(--text-muted); font-size:13.5px; line-height:1.6; padding-left:20px; margin-bottom:8px;">
+                    <li style="margin-bottom:8px;"><b style="color:var(--text-main);">Export:</b> Click "Export to PDF" or "Export to Word" for a beautifully formatted final document.</li>
+                    <li style="margin-bottom:8px;"><b style="color:var(--text-main);">Auto-Save:</b> Your work is automatically saved. Access your last 10 drafts in "Recent History".</li>
+                </ul>
+            </div>
+
+            <div style="background: var(--secondary-bg); border-radius: 12px; padding: 14px 16px; margin-top: 8px; display:flex; align-items:center; justify-content:center; gap:8px; color: var(--text-main); font-size: 13.5px;">
+                <span style="font-size: 16px;">🗨️</span> 
+                <span><b style="color: var(--text-main);">Need help?</b> Contact the developer via WhatsApp button or ask the AI assistant!</span>
+            </div>
+        </div>
+    </div>
+    <!-- About Us Modal -->
+    <div id="about-us-modal" class="premium-modal">
+        <div class="modal-header" style="border-bottom:none; padding-bottom:0;">
+            <div class="modal-title-wrapper" style="opacity:0; height:0; overflow:hidden;">
+                <!-- Hidden default header, we use custom layout below -->
+                <span class="modal-icon">ℹ️</span><h2>About Us</h2>
+            </div>
+            <button class="close-modal-btn icon-btn" id="close-about-modal" title="Close" style="position:absolute; top:16px; right:16px;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+        </div>
+        <div class="modal-body" style="max-height: 70vh; overflow-y: auto; padding: 0 24px 24px 24px;">
+            
+            <!-- Header -->
+            <div style="text-align: center; margin-bottom: 32px; padding-top: 12px;">
+                <div style="width: 72px; height: 72px; background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); border-radius: 20px; margin: 0 auto 16px auto; display: flex; align-items: center; justify-content: center; font-size: 36px; box-shadow: 0 10px 25px rgba(124, 58, 237, 0.4);">📝</div>
+                <h2 style="margin: 0 0 8px 0; font-size: 28px; color: var(--text-main); font-weight:700;">SmartFormatter</h2>
+                <p style="margin: 0; color: var(--text-muted); font-size: 15px;">Smart Text Formatting Manager</p>
+            </div>
+
+            <!-- Our Mission -->
+            <div class="about-section" style="margin-bottom: 32px;">
+                <h3 style="color:var(--text-main); font-size:18px; margin-bottom:12px; display:flex; align-items:center; gap:8px;">🎯 Our Mission</h3>
+                <p style="color:var(--text-muted); font-size:14px; line-height:1.6; margin:0;">SmartFormatter was created with a simple goal: <b style="color:var(--text-main);">help users format text smartly</b>. We believe everyone deserves a tool that takes the stress out of structuring documents and helps them make perfectly formatted output instantly.</p>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="stat-number" style="color:var(--primary-color);">10K+</div>
+                    <div class="stat-label">Users Trust Us</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" style="color:var(--primary-color);">100%</div>
+                    <div class="stat-label">Free & Secure</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" style="color:var(--primary-color);">4.9 <span>⭐</span></div>
+                    <div class="stat-label">User Rating</div>
+                </div>
+            </div>
+
+            <!-- Key Features -->
+            <div class="about-section" style="margin-bottom: 32px;">
+                <h3 style="color:var(--text-main); font-size:18px; margin-bottom:16px; display:flex; align-items:center; gap:8px;">✨ Key Features</h3>
+                <div class="features-grid">
+                    <div class="feature-box"><span class="f-icon">📝</span> Smart Formatter</div>
+                    <div class="feature-box"><span class="f-icon">🤖</span> AI Assistant</div>
+                    <div class="feature-box"><span class="f-icon">💾</span> PDF & Word Export</div>
+                    <div class="feature-box"><span class="f-icon">🔒</span> Works Offline</div>
+                    <div class="feature-box"><span class="f-icon">⚡</span> Live Preview</div>
+                    <div class="feature-box"><span class="f-icon">📱</span> Responsive UI</div>
+                </div>
+            </div>
+
+            <!-- Meet the Developer -->
+            <div class="about-section" style="margin-bottom: 32px;">
+                <h3 style="color:var(--text-main); font-size:18px; margin-bottom:16px; display:flex; align-items:center; gap:8px;">👨‍💻 Meet the Developer</h3>
+                <div class="dev-card">
+                    <div class="dev-avatar">👨‍💻</div>
+                    <div class="dev-info">
+                        <h4 style="margin:0 0 4px 0; color:var(--text-main); font-size:16px; font-weight:700;">Ayan Khan</h4>
+                        <p style="margin:0 0 6px 0; color:var(--text-muted); font-size:13px;">Student & Developer</p>
+                        <p style="margin:0; color:var(--text-muted); font-size:13px; font-style:italic;">Building tools that make productivity easier</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Why SmartFormatter? -->
+            <div class="about-section" style="margin-bottom: 32px;">
+                <h3 style="color:var(--text-main); font-size:18px; margin-bottom:16px; display:flex; align-items:center; gap:8px;">🌟 Why SmartFormatter?</h3>
+                <ul class="why-list">
+                    <li><b>Made by a Student:</b> We understand the real challenges of formatting messy notes.</li>
+                    <li><b>Privacy First:</b> Your data stays on your device, processing locally.</li>
+                    <li><b>AI Powered:</b> Built-in Gemini support to instantly rewrite and refine.</li>
+                    <li><b>Free Core Features:</b> Everything you need, completely free to use.</li>
+                    <li><b>Regular Updates:</b> We're constantly improving based on feedback.</li>
+                </ul>
+            </div>
+
+            <!-- Footer Buttons -->
+            <div class="about-footer-btns">
+                <button class="btn secondary" style="flex:1; background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); color:white; border:none;" onclick="document.getElementById('close-about-modal').click()">← Open App</button>
+                <button class="btn secondary" style="flex:1; border: 1px solid rgba(255,255,255,0.2); background: transparent;" onclick="document.getElementById('close-about-modal').click(); document.getElementById('open-contact-btn').click();">Contact Us</button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- FAQ Modal -->
+    <div id="faq-modal" class="premium-modal" style="max-width: 450px !important;">
+        <div class="modal-header" style="border-bottom:none; padding-bottom:0;">
+            <div class="modal-title-wrapper" style="opacity:0; height:0; overflow:hidden;">
+                <span class="modal-icon">?</span><h2>FAQ</h2>
+            </div>
+            <button class="close-modal-btn icon-btn" id="close-faq-modal" title="Close" style="position:absolute; top:16px; right:16px; z-index: 10;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+        </div>
+        <div class="modal-body" style="max-height: 75vh; overflow-y: auto; padding: 0 20px 24px 20px;">
+            
+            <div style="text-align: center; margin-bottom: 24px; padding-top: 12px;">
+                <div style="width: 64px; height: 64px; background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); border-radius: 16px; margin: 0 auto 12px auto; display: flex; align-items: center; justify-content: center; font-size: 32px; box-shadow: 0 8px 20px rgba(124, 58, 237, 0.4);">📝</div>
+                <h2 style="margin: 0 0 8px 0; font-size: 22px; color: var(--text-main); font-weight:700;">Frequently Asked<br>Questions</h2>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="faq-search-wrapper" style="position:relative; margin-bottom:24px;">
+                <span style="position:absolute; left:16px; top:50%; transform:translateY(-50%); color:var(--text-muted);">🔍</span>
+                <input type="text" id="faq-search-input" placeholder="Search FAQs..." style="width:100%; background:rgba(255,255,255,0.05); border:1px solid var(--border-color); border-radius:24px; padding:12px 16px 12px 40px; color:var(--text-main); font-size:14px; outline:none;" oninput="filterFaqs(this.value)">
+            </div>
+
+            <!-- Category 1 -->
+            <div class="faq-category">
+                <h3 style="color:var(--primary-color); font-size:14px; margin:0 0 12px 0; display:flex; align-items:center; gap:8px;">📱 Getting Started</h3>
+                
+                <div class="faq-item">
+                    <button class="faq-question">How do I format my document?<span class="faq-icon">+</span></button>
+                    <div class="faq-answer"><p>Simply paste your messy text into the editor and let our Smart Formatting engine organize it for you automatically. You can also use the AI Assistant for complex rewrites.</p></div>
+                </div>
+                
+                <div class="faq-item">
+                    <button class="faq-question">Can I use this app without internet?<span class="faq-icon">+</span></button>
+                    <div class="faq-answer"><p>Yes! The core formatting and local storage work completely offline. However, the Gemini AI Assistant requires an active internet connection to communicate with Google's servers.</p></div>
+                </div>
+                
+                <div class="faq-item">
+                    <button class="faq-question">How do I install this as an app?<span class="faq-icon">+</span></button>
+                    <div class="faq-answer"><p>You can install SmartFormatter as a PWA (Progressive Web App). Just tap the "Add to Home Screen" option in your browser menu on mobile.</p></div>
+                </div>
+            </div>
+
+            <!-- Category 2 -->
+            <div class="faq-category" style="margin-top:24px;">
+                <h3 style="color:var(--primary-color); font-size:14px; margin:0 0 12px 0; display:flex; align-items:center; gap:8px;">📊 Formatting Features</h3>
+                
+                <div class="faq-item">
+                    <button class="faq-question">What file formats can I export?<span class="faq-icon">+</span></button>
+                    <div class="faq-answer"><p>You can currently export your formatted documents as PDF or Word (.docx) files using the Export button in the top right corner.</p></div>
+                </div>
+                
+                <div class="faq-item">
+                    <button class="faq-question">Is there a limit to text length?<span class="faq-icon">+</span></button>
+                    <div class="faq-answer"><p>There are no strict limits on text length for manual formatting. However, the AI Assistant may have token limits based on your Gemini API key restrictions.</p></div>
+                </div>
+            </div>
+
+            <!-- Category 3 -->
+            <div class="faq-category" style="margin-top:24px;">
+                <h3 style="color:var(--primary-color); font-size:14px; margin:0 0 12px 0; display:flex; align-items:center; gap:8px;">☁ Privacy & Data</h3>
+                
+                <div class="faq-item">
+                    <button class="faq-question">Are my documents saved on a server?<span class="faq-icon">+</span></button>
+                    <div class="faq-answer"><p>No! Your documents and API keys are saved strictly in your browser's Local Storage. We do not have access to your data.</p></div>
+                </div>
+                
+                <div class="faq-item">
+                    <button class="faq-question">Is my API key safe?<span class="faq-icon">+</span></button>
+                    <div class="faq-answer"><p>Yes, your API key is encrypted and stored locally on your device. It is never sent to our servers, only directly to Google's API.</p></div>
+                </div>
+            </div>
+
+            <!-- Support Card -->
+            <div style="background: var(--bg-body); border-radius: 16px; padding: 20px; text-align:center; margin-top:24px; border:1px solid var(--border-color);">
+                <h4 style="color:var(--text-main); margin:0 0 8px 0; font-size:15px;">Still have questions?</h4>
+                <p style="color:var(--text-muted); font-size:13px; line-height:1.5; margin:0 0 16px 0;">Couldn't find what you're looking for? We're here to help!</p>
+                <button class="btn secondary" style="background: linear-gradient(135deg, #7c73ff, #6C63FF); color:white; border:none; padding:10px 20px; border-radius:24px; font-weight:600; cursor:pointer;" onclick="document.getElementById('close-faq-modal').click(); document.getElementById('open-contact-btn').click();">📞 Contact Support</button>
+            </div>
+
+            <button class="btn secondary" style="width:100%; margin-top:24px;" onclick="document.getElementById('close-faq-modal').click()">← Back to App</button>
+
+        </div>
+    </div>
+
+    <!-- Support Modal -->
+    <div id="support-modal" class="premium-modal" style="max-width: 450px !important;">
+        <div class="modal-header" style="border-bottom:none; padding-bottom:0;">
+            <div class="modal-title-wrapper" style="opacity:0; height:0; overflow:hidden;">
+                <span class="modal-icon">🆘</span><h2>Support</h2>
+            </div>
+            <button class="close-modal-btn icon-btn" id="close-support-modal" title="Close" style="position:absolute; top:16px; right:16px; z-index: 10;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+        </div>
+        <div class="modal-body" style="max-height: 75vh; overflow-y: auto; padding: 0 20px 24px 20px;">
+            
+            <div style="text-align: center; margin-bottom: 24px; padding-top: 12px;">
+                <div style="width: 64px; height: 64px; background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); border-radius: 16px; margin: 0 auto 12px auto; display: flex; align-items: center; justify-content: center; font-size: 32px; box-shadow: 0 8px 20px rgba(124, 58, 237, 0.4);">📝</div>
+                <h2 style="margin: 0 0 8px 0; font-size: 22px; color: var(--text-main); font-weight:700;">Support Center</h2>
+                <p style="margin: 0; color: var(--text-muted); font-size: 13px; line-height: 1.5; padding: 0 10px;">Welcome to SmartFormatter Support! We're here to help you get the most out of your text formatting experience.</p>
+            </div>
+
+            <div class="support-section-title">🚀 Quick Links</div>
+            <div class="quick-links-grid" style="display:flex; flex-direction:column; gap:8px; margin-bottom:24px;">
+                <button class="support-quick-btn" onclick="document.getElementById('close-support-modal').click(); document.getElementById('open-faq-btn').click();">
+                    <span class="sq-icon" style="color:#ff4757;">❓</span> FAQ
+                </button>
+                <button class="support-quick-btn" onclick="document.getElementById('close-support-modal').click(); document.getElementById('open-contact-btn').click();">
+                    <span class="sq-icon" style="color:var(--text-main);">💬</span> Contact Us
+                </button>
+                <button class="support-quick-btn" onclick="document.getElementById('close-support-modal').click(); document.getElementById('open-privacy-btn').click();">
+                    <span class="sq-icon" style="color:#fbc531;">🔒</span> Privacy Policy
+                </button>
+                <button class="support-quick-btn" onclick="document.getElementById('close-support-modal').click(); document.getElementById('open-terms-btn').click();">
+                    <span class="sq-icon" style="color:#e1b12c;">📜</span> Terms of Service
+                </button>
+            </div>
+
+            <div class="support-section-title">🆘 Common Issues</div>
+            <div class="common-issue-card">
+                <h5>📱 App Not Loading</h5>
+                <p>Try clearing cache: <span class="highlight-shortcut">Ctrl</span> + <span class="highlight-shortcut">Shift</span> + <span class="highlight-shortcut">R</span> to hard reload. This clears all cached data and should fix loading issues.</p>
+            </div>
+            
+            <div class="common-issue-card">
+                <h5>🤖 AI Assistant Not Working</h5>
+                <p>If the AI is unresponsive, check your API key in settings. Ensure it is valid and has not exceeded its quota.</p>
+            </div>
+            
+            <div class="common-issue-card">
+                <h5>📝 Complex Formatting (Tables & Data)</h5>
+                <p>Our Smart AI is highly capable of formatting complex data and tables! If raw text looks broken, just ask the AI Assistant to "convert this into a clean table" and watch the magic happen.</p>
+            </div>
+            
+            <div class="common-issue-card">
+                <h5>📊 Export Not Working</h5>
+                <p>Make sure you have text in the preview pane. Exporting requires the generated HTML to be fully loaded.</p>
+            </div>
+
+            <div class="troubleshooting-card">
+                <h5 style="display:flex; align-items:center; gap:8px;"><span style="font-size:16px;">🔧</span> General Troubleshooting Steps</h5>
+                <ol>
+                    <li>Try refreshing the page (Ctrl+Shift+R or Cmd+Shift+R)</li>
+                    <li>Clear browser cache and cookies</li>
+                    <li>Check your internet connection</li>
+                    <li>Try a different browser (Chrome/Edge recommended)</li>
+                    <li>Re-enter your API key</li>
+                    <li>Contact support if issue persists</li>
+                </ol>
+            </div>
+
+            <div class="support-section-title">📞 Get Help</div>
+            <a href="https://wa.me/919648250545" target="_blank" class="help-card" style="margin-bottom:12px;">
+                <h5>💬 WhatsApp Support</h5>
+                <p>Fastest response! Chat with us on WhatsApp at <b style="color:var(--text-main);">+91 9648250545</b></p>
+            </a>
+            <a href="mailto:support@smartformatter.in" class="help-card" style="margin-bottom:24px;">
+                <h5>📧 Email Support</h5>
+                <p>Detailed queries? Email us at<br><b style="color:var(--primary-color);">support@smartformatter.in</b></p>
+            </a>
+
+            <div class="app-info-card" style="background: rgba(255,255,255,0.02); border-radius: 12px; padding: 16px; text-align:center; margin-bottom:24px; border:1px solid var(--border-color);">
+                <p style="color:var(--text-muted); font-size:12px; line-height:1.8; margin:0;">App Version: 2.0<br>Last Updated: August 2026<br>Platform: Progressive Web App (PWA)</p>
+            </div>
+
+            <button class="btn primary" style="width:100%; margin-top:24px;" onclick="document.getElementById('close-support-modal').click()">← Back to App</button>
+
+        </div>
+    </div>
+
+    <!-- Contact Us Modal -->
+    <div id="contact-modal" class="premium-modal" style="max-width: 450px !important;">
+        <div class="modal-header" style="border-bottom:none; padding-bottom:0;">
+            <div class="modal-title-wrapper" style="opacity:0; height:0; overflow:hidden;">
+                <span class="modal-icon">📞</span><h2>Contact Us</h2>
+            </div>
+            <button class="close-modal-btn icon-btn" id="close-contact-modal" title="Close" style="position:absolute; top:16px; right:16px; z-index: 10;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+        </div>
+        <div class="modal-body" style="max-height: 75vh; overflow-y: auto; padding: 0 20px 24px 20px;">
+            
+            <div style="text-align: center; margin-bottom: 24px; padding-top: 12px;">
+                <div style="width: 64px; height: 64px; background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); border-radius: 16px; margin: 0 auto 12px auto; display: flex; align-items: center; justify-content: center; font-size: 32px; box-shadow: 0 8px 20px rgba(124, 58, 237, 0.4);">📝</div>
+                <h2 style="margin: 0 0 8px 0; font-size: 22px; color: var(--text-main); font-weight:700;">Contact Us</h2>
+                <p style="margin: 0; color: var(--text-muted); font-size: 13px; line-height: 1.5; padding: 0 10px;">Have questions, feedback, or need help? We'd love to hear from you! Choose your preferred way to reach us.</p>
+            </div>
+
+            <a href="https://wa.me/919648250545" target="_blank" class="contact-card">
+                <div class="contact-icon" style="background:#25D366;">💬</div>
+                <div class="contact-text">
+                    <h4>WhatsApp</h4>
+                    <span class="c-info">+91 9648250545</span>
+                    <span class="c-sub">Fastest response • Usually within hours</span>
+                </div>
+            </a>
+
+            <a href="mailto:ayan@example.com" class="contact-card">
+                <div class="contact-icon" style="background:#ea4335;">✉️</div>
+                <div class="contact-text">
+                    <h4>Email</h4>
+                    <span class="c-info">support@smartformatter.in</span>
+                    <span class="c-sub">For detailed queries • Response within 24-48 hours</span>
+                </div>
+            </a>
+
+            <a href="https://instagram.com/ayan.khan" target="_blank" class="contact-card">
+                <div class="contact-icon" style="background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);">📸</div>
+                <div class="contact-text">
+                    <h4>Instagram</h4>
+                    <span class="c-info">@ayan.khan</span>
+                    <span class="c-sub">Follow for updates • DM for quick chat</span>
+                </div>
+            </a>
+
+            <div class="contact-info-card">
+                <h4 style="margin:0 0 8px 0; color:var(--text-main); font-size:14px; display:flex; align-items:center; justify-content:center; gap:6px;"><span style="font-size:16px;">⏱️</span> Response Times</h4>
+                <p style="margin:0; color:var(--text-muted); font-size:12.5px; line-height:1.6; text-align:center;">WhatsApp: Within a few hours<br>(during daytime IST)<br>Email: 24-48 hours<br>Instagram DM: Variable</p>
+            </div>
+
+            <div class="about-section" style="margin-bottom: 24px;">
+                <h3 style="color:var(--text-main); font-size:15px; margin-bottom:12px; display:flex; align-items:center; gap:8px;">📝 Before You Contact Us</h3>
+                <div style="background: var(--bg-body); border-radius: 12px; padding: 16px; border: 1px solid var(--border-color); text-align:center;">
+                    <p style="color:var(--text-muted); font-size:13px; line-height:1.6; margin:0 0 12px 0;">Many common questions are already answered in our FAQ. Check it out first - you might find your answer instantly!</p>
+                    <button class="btn secondary" style="background: var(--secondary-hover); border:none; padding:8px 16px; border-radius:20px; font-size:13px; cursor:pointer;" onclick="document.getElementById('close-contact-modal').click(); document.getElementById('open-faq-btn').click();">📚 View FAQ</button>
+                </div>
+            </div>
+
+            <div class="about-section" style="margin-bottom: 24px;">
+                <h3 style="color:var(--text-main); font-size:15px; margin-bottom:12px; display:flex; align-items:center; gap:8px;">🐛 Reporting Bugs</h3>
+                <p style="color:var(--text-muted); font-size:13px; margin:0 0 8px 0;">Found a bug? Please include:</p>
+                <ul style="color:var(--text-muted); font-size:13px; line-height:1.6; padding-left:20px; margin:0;">
+                    <li>Your device model and OS version</li>
+                    <li>Browser you're using</li>
+                    <li>Steps to reproduce the issue</li>
+                    <li>Screenshots if possible</li>
+                </ul>
+            </div>
+
+            <button class="btn primary" style="width:100%; margin-top:24px;" onclick="document.getElementById('close-contact-modal').click()">← Back to App</button>
+
+        </div>
+    </div>
+
+    <!-- Privacy Policy Modal -->
+    <div id="privacy-modal" class="premium-modal" style="max-width: 500px !important;">
+        <div class="modal-header" style="border-bottom:none; padding-bottom:0;">
+            <div class="modal-title-wrapper" style="opacity:0; height:0; overflow:hidden;">
+                <span class="modal-icon">🔒</span><h2>Privacy Policy</h2>
+            </div>
+            <button class="close-modal-btn icon-btn" id="close-privacy-modal" title="Close" style="position:absolute; top:16px; right:16px; z-index: 10;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+        </div>
+        <div class="modal-body" style="max-height: 75vh; overflow-y: auto; padding: 0 24px 24px 24px;">
+            
+            <div style="text-align: center; margin-bottom: 24px; padding-top: 12px;">
+                <div style="width: 64px; height: 64px; background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); border-radius: 16px; margin: 0 auto 12px auto; display: flex; align-items: center; justify-content: center; font-size: 32px; box-shadow: 0 8px 20px rgba(124, 58, 237, 0.4);">📝</div>
+                <h2 style="margin: 0 0 8px 0; font-size: 24px; color: var(--text-main); font-weight:700;">Privacy Policy</h2>
+            </div>
+
+            <p style="color:var(--text-main); font-size:13.5px; font-weight:bold; margin-bottom:12px;">Effective Date: August 2026</p>
+            <p style="color:var(--text-muted); font-size:13.5px; line-height:1.6; margin-bottom:24px;">SmartFormatter ("we", "our", or "the app") is committed to protecting your privacy. This policy explains how we handle your data.</p>
+            
+            <div class="privacy-section">
+                <h3 style="color:var(--primary-color); font-size:16px; margin:0 0 12px 0; display:flex; align-items:center; gap:8px;">📊 Data We Collect</h3>
+                <ul class="privacy-list">
+                    <li><b>Formatting Data:</b> Text and documents - stored locally on your device</li>
+                    <li><b>API Keys:</b> Gemini AI Key (only if you use AI features)</li>
+                    <li><b>Usage Analytics:</b> Anonymous usage patterns via Google Analytics (no personal data)</li>
+                </ul>
+            </div>
+
+            <div class="privacy-section">
+                <h3 style="color:var(--primary-color); font-size:16px; margin:0 0 12px 0; display:flex; align-items:center; gap:8px;">💾 Data Storage</h3>
+                <ul class="privacy-list">
+                    <li><b>Local Storage:</b> All formatted data and keys are stored locally on your device for offline access and complete privacy</li>
+                    <li><b>Cloud Storage:</b> We do NOT store your documents on any cloud database</li>
+                    <li><b>Security:</b> All API requests to Google are encrypted via HTTPS</li>
+                </ul>
+            </div>
+
+            <div class="privacy-section">
+                <h3 style="color:var(--primary-color); font-size:16px; margin:0 0 12px 0; display:flex; align-items:center; gap:8px;">🔒 Data Security</h3>
+                <ul class="privacy-list">
+                    <li>All data transmission uses HTTPS encryption</li>
+                    <li>We never access your local files or API keys</li>
+                </ul>
+            </div>
+
+            <div class="privacy-section">
+                <h3 style="color:var(--primary-color); font-size:16px; margin:0 0 12px 0; display:flex; align-items:center; gap:8px;">🤝 Third-Party Services</h3>
+                <ul class="privacy-list">
+                    <li><b>Google Gemini AI:</b> For AI formatting (your prompts are sent securely to Google)</li>
+                    <li><b>Google Analytics:</b> For anonymous usage analytics</li>
+                </ul>
+            </div>
+
+            <div class="privacy-section">
+                <h3 style="color:var(--primary-color); font-size:16px; margin:0 0 12px 0; display:flex; align-items:center; gap:8px;">📢 Advertising & Cookies</h3>
+                <ul class="privacy-list">
+                    <li>We use third-party advertising companies to serve advertisements.</li>
+                    <li>These companies may use cookies and similar technologies to collect anonymized data about your visits to this and other websites in order to provide advertisements about goods and services of interest to you.</li>
+                </ul>
+            </div>
+
+            <div class="privacy-section">
+                <h3 style="color:var(--primary-color); font-size:16px; margin:0 0 12px 0; display:flex; align-items:center; gap:8px;">👤 Your Rights</h3>
+                <ul class="privacy-list">
+                    <li>Delete all data anytime by clearing your browser cache/local storage</li>
+                    <li>Use the app completely offline without the AI features</li>
+                </ul>
+            </div>
+
+            <div class="privacy-section" style="margin-bottom:24px;">
+                <h3 style="color:var(--primary-color); font-size:16px; margin:0 0 12px 0; display:flex; align-items:center; gap:8px;">📧 Contact</h3>
+                <p style="color:var(--text-muted); font-size:13.5px; line-height:1.6; margin:0 0 8px 0;">For privacy concerns, contact us:</p>
+                <p style="color:var(--text-muted); font-size:13.5px; line-height:1.6; margin:0;">WhatsApp: +91 9648250545<br>Email: <a href="mailto:support@smartformatter.in" style="color:#6C63FF; text-decoration:none;">support@smartformatter.in</a></p>
+            </div>
+
+            <div style="text-align:center;">
+                <button class="btn secondary" onclick="document.getElementById('close-privacy-modal').click()">← Back to App</button>
+                <p style="color:#666; font-size:12px; margin-top:16px;">Last updated: August 27, 2026</p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Terms of Service Modal -->
+    <div id="terms-modal" class="premium-modal" style="max-width: 500px !important;">
+        <div class="modal-header" style="border-bottom:none; padding-bottom:0;">
+            <div class="modal-title-wrapper" style="opacity:0; height:0; overflow:hidden;">
+                <span class="modal-icon">📜</span><h2>Terms of Service</h2>
+            </div>
+            <button class="close-modal-btn icon-btn" id="close-terms-modal" title="Close" style="position:absolute; top:16px; right:16px; z-index: 10;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+        </div>
+        <div class="modal-body" style="max-height: 75vh; overflow-y: auto; padding: 0 24px 24px 24px;">
+            
+            <div style="text-align: center; margin-bottom: 24px; padding-top: 12px;">
+                <div style="width: 64px; height: 64px; background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); border-radius: 16px; margin: 0 auto 12px auto; display: flex; align-items: center; justify-content: center; font-size: 32px; box-shadow: 0 8px 20px rgba(124, 58, 237, 0.4);">📜</div>
+                <h2 style="margin: 0 0 8px 0; font-size: 24px; color: var(--text-main); font-weight:700;">Terms of Service</h2>
+            </div>
+
+            <p style="color:var(--text-main); font-size:13.5px; font-weight:bold; margin-bottom:12px;">Effective Date: August 2026</p>
+            <p style="color:var(--text-muted); font-size:13.5px; line-height:1.6; margin-bottom:24px;">By using SmartFormatter ("the app"), you agree to these terms. Please read them carefully.</p>
+            
+            <div class="privacy-section">
+                <h3 style="color:var(--primary-color); font-size:16px; margin:0 0 12px 0; display:flex; align-items:center; gap:8px;">📱 About the App</h3>
+                <p style="color:var(--text-muted); font-size:13.5px; line-height:1.6; margin:0 0 12px 0;">SmartFormatter is a free AI-powered text formatting tool. The app helps you:</p>
+                <ul class="privacy-list">
+                    <li>Format unstructured text beautifully</li>
+                    <li>Convert text into Markdown and HTML</li>
+                    <li>Export files instantly</li>
+                </ul>
+            </div>
+
+            <div class="privacy-section">
+                <h3 style="color:var(--primary-color); font-size:16px; margin:0 0 12px 0; display:flex; align-items:center; gap:8px;">✅ Acceptable Use</h3>
+                <p style="color:var(--text-muted); font-size:13.5px; line-height:1.6; margin:0 0 12px 0;">You agree to:</p>
+                <ul class="privacy-list">
+                    <li>Use the app for personal, educational, or professional purposes</li>
+                    <li>Provide your own valid Gemini API key for AI features</li>
+                    <li>Not attempt to reverse-engineer or modify the app</li>
+                    <li>Not use the app for any illegal activities</li>
+                </ul>
+            </div>
+
+            <div class="privacy-section">
+                <h3 style="color:var(--primary-color); font-size:16px; margin:0 0 12px 0; display:flex; align-items:center; gap:8px;">⚠️ Disclaimer</h3>
+                <ul class="privacy-list">
+                    <li>The app provides AI formatting as a <b>guidance tool only</b></li>
+                    <li>We are NOT responsible for any incorrect AI outputs or data loss</li>
+                    <li>Always verify your formatted documents before using them professionally</li>
+                </ul>
+            </div>
+
+            <div class="privacy-section">
+                <h3 style="color:var(--primary-color); font-size:16px; margin:0 0 12px 0; display:flex; align-items:center; gap:8px;">💾 Data & Privacy</h3>
+                <ul class="privacy-list">
+                    <li>Your data is stored locally on your device for fast access</li>
+                    <li>We do not sell or share your personal data</li>
+                    <li>See our <a href="#" style="color:#6C63FF; text-decoration:none;" onclick="document.getElementById('close-terms-modal').click(); document.getElementById('open-privacy-btn').click();">Privacy Policy</a> for details</li>
+                </ul>
+            </div>
+
+            <div class="privacy-section">
+                <h3 style="color:var(--primary-color); font-size:16px; margin:0 0 12px 0; display:flex; align-items:center; gap:8px;">🔄 Updates & Changes</h3>
+                <ul class="privacy-list">
+                    <li>We may update the app and these terms periodically</li>
+                    <li>Continued use after updates means acceptance of new terms</li>
+                    <li>Major changes will be communicated via the app</li>
+                </ul>
+            </div>
+
+            <div class="privacy-section">
+                <h3 style="color:#ff4757; font-size:16px; margin:0 0 12px 0; display:flex; align-items:center; gap:8px;">🚫 Limitation of Liability</h3>
+                <p style="color:var(--text-muted); font-size:13.5px; line-height:1.6; margin:0 0 12px 0;">The app is provided "as is" without warranties. We are not liable for:</p>
+                <ul class="privacy-list">
+                    <li>Data loss (always backup important text)</li>
+                    <li>Formatting errors</li>
+                    <li>Service interruptions from Google Gemini API</li>
+                    <li>Any damages arising from app usage</li>
+                </ul>
+            </div>
+
+            <div class="privacy-section" style="margin-bottom:24px;">
+                <h3 style="color:var(--primary-color); font-size:16px; margin:0 0 12px 0; display:flex; align-items:center; gap:8px;">📧 Contact</h3>
+                <p style="color:var(--text-muted); font-size:13.5px; line-height:1.6; margin:0 0 8px 0;">For questions about these terms:</p>
+                <p style="color:var(--text-muted); font-size:13.5px; line-height:1.6; margin:0;">WhatsApp: +91 9648250545<br>Website: <a href="#" style="color:#6C63FF; text-decoration:none;">smartformatter.in</a></p>
+            </div>
+
+            <div style="text-align:center;">
+                <button class="btn secondary" onclick="document.getElementById('close-terms-modal').click()">← Back to App</button>
+                <p style="color:#666; font-size:12px; margin-top:16px;">Last updated: August 27, 2026</p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Buy Me A Coffee / Support Modal -->
+    <div id="buymeacoffee-modal" class="premium-modal" style="max-width: 480px !important;">
+        <div class="modal-header" style="border-bottom:none; padding-bottom:0;">
+            <div class="modal-title-wrapper" style="opacity:0; height:0; overflow:hidden;">
+                <span class="modal-icon">👑</span><h2>Unlock Premium</h2>
+            </div>
+            <button class="close-modal-btn icon-btn" id="close-buymeacoffee-modal" title="Close" style="position:absolute; top:16px; right:16px; z-index: 10; background:rgba(255,255,255,0.1); border-radius:50%; padding:6px; width:32px; height:32px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+        </div>
+        
+        <div class="modal-body" style="max-height: 80vh; overflow-y: auto; padding: 0 20px 24px 20px;">
+            <div style="text-align: center; margin-bottom: 24px;">
+                <h2 style="margin: 0 0 4px 0; font-size: 22px; color: var(--text-main); font-weight:700; display:flex; align-items:center; justify-content:center; gap:8px;">👑 Support the Developer</h2>
+                <p style="color:var(--text-muted); font-size:13px; margin:0;">Thanks for your support! Help me build better features.</p>
+            </div>
+
+            <!-- Developer Message Box -->
+            <div style="border: 1px solid var(--primary-color); border-radius: 12px; padding: 16px; margin-bottom: 20px; background: var(--secondary-bg);">
+                <p style="color:var(--text-main); font-size:13.5px; line-height:1.6; margin:0 0 16px 0; text-align:center;">
+                    Hey there! 👋 I'm a solo developer building this app to help you format text beautifully. Your contribution goes a long way:
+                </p>
+                <p style="color:var(--text-main); font-size:13.5px; margin:0 0 12px 0; text-align:center;">Your support helps me:</p>
+                <ul style="color:var(--text-muted); font-size:13.5px; line-height:1.8; list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:8px;">
+                    <li style="display:flex; align-items:flex-start; gap:8px;"><span style="flex-shrink:0;">💰</span> Cover AI API Server Costs</li>
+                    <li style="display:flex; align-items:flex-start; gap:8px;"><span style="flex-shrink:0;">☁️</span> Maintain hosting & domain</li>
+                    <li style="display:flex; align-items:flex-start; gap:8px;"><span style="flex-shrink:0;">✨</span> Help me build more awesome features!</li>
+                    <li style="display:flex; align-items:flex-start; gap:8px;"><span style="flex-shrink:0;">💖</span> Keep the app running smoothly</li>
+                </ul>
+            </div>
+
+            <!-- QR Code Box -->
+            <div style="background: var(--bg-panel); border-radius: 16px; padding: 24px; text-align:center; margin-bottom: 16px;">
+                <h3 style="color:var(--primary-color); font-size:16px; margin:0 0 16px 0; display:flex; align-items:center; justify-content:center; gap:8px;">☕ Scan to Support</h3>
+                
+                <div style="background: white; width: 180px; height: 180px; border-radius: 12px; padding: 12px; margin: 0 auto 16px auto; display:flex; align-items:center; justify-content:center;">
+                    <!-- Actual QR code image -->
+                    <img src="./image/qr-code.png" alt="QR Code" style="width: 100%; height: 100%; border-radius: 8px; object-fit: contain;">
+                </div>
+
+                <p style="color:var(--text-muted); font-size:12px; margin:0 0 16px 0;">Scan with any UPI app (GPay, PhonePe, Paytm, etc.)</p>
+                
+                <div style="display:flex; gap:12px; justify-content:center;">
+                    <button style="background: rgba(45, 212, 191, 0.1); border: 1px solid rgba(45, 212, 191, 0.3); color: #2dd4bf; padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; display:flex; align-items:center; gap:6px; cursor:pointer;">
+                        📥 Download QR
+                    </button>
+                    <button style="background: rgba(129, 140, 248, 0.1); border: 1px solid rgba(129, 140, 248, 0.3); color: var(--primary-color); padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; display:flex; align-items:center; gap:6px; cursor:pointer;">
+                        🔗 Share QR
+                    </button>
+                </div>
+            </div>
+
+            <!-- Footer Buttons -->
+            <div style="text-align:center;">
+                <p style="color:#ff6b81; font-size:12px; font-style:italic; margin:0 0 16px 0; font-weight:500;">💖 Send me a WhatsApp message after donating!</p>
+
+                <button class="btn secondary" onclick="document.getElementById('close-buymeacoffee-modal').click()">Maybe Later</button>
+            </div>
+
         </div>
     </div>
 

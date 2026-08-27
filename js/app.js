@@ -4405,30 +4405,55 @@ document.addEventListener('DOMContentLoaded', () => {
     const clearDataBtn = document.getElementById('clear-data-btn');
     if (clearDataBtn) {
         clearDataBtn.addEventListener('click', () => {
-            if (confirm("Are you sure you want to clear all your document history and API keys? This cannot be undone.")) {
-                localStorage.removeItem('docsHistory');
-                localStorage.removeItem('geminiApiKey');
+            if (confirm("Are you sure you want to clear all your data (history, settings, API keys)? This cannot be undone.")) {
+                localStorage.clear(); // Clears everything including history and api keys
                 location.reload();
             }
         });
     }
 
-    // 5. How to use (dummy click for now)
+    // 5. How to use Logic (now opens modal)
     const howToBtn = document.getElementById('how-to-use-btn');
-    if (howToBtn) {
-        howToBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            alert("How to use guide coming soon!");
-        });
-    }
+    const howToModal = document.getElementById('how-to-use-modal');
+    const closeHowToBtn = document.getElementById('close-how-to-use-modal');
 
     // 6. Premium Modals Logic
     const apiModalBtn = document.getElementById('open-api-modal-btn');
     const historyModalBtn = document.getElementById('open-history-modal-btn');
+    
+    // Legal & Info Buttons
+    const aboutBtn = document.getElementById('open-about-btn');
+    const faqBtn = document.getElementById('open-faq-btn');
+    const supportBtn = document.getElementById('open-support-btn');
+    const contactBtn = document.getElementById('open-contact-btn');
+    const privacyBtn = document.getElementById('open-privacy-btn');
+    const termsBtn = document.getElementById('open-terms-btn');
+    const buymeacoffeeBtn = document.getElementById('open-buymeacoffee-btn');
+
     const apiModal = document.getElementById('api-settings-modal');
     const historyModal = document.getElementById('history-modal');
+    
+    // Legal & Info Modals
+    const aboutModal = document.getElementById('about-us-modal');
+    const faqModal = document.getElementById('faq-modal');
+    const supportModal = document.getElementById('support-modal');
+    const contactModal = document.getElementById('contact-modal');
+    const privacyModal = document.getElementById('privacy-modal');
+    const termsModal = document.getElementById('terms-modal');
+    const buymeacoffeeModal = document.getElementById('buymeacoffee-modal');
+
     const closeApiBtn = document.getElementById('close-api-modal');
     const closeHistoryBtn = document.getElementById('close-history-modal');
+    
+    // Legal & Info Close Buttons
+    const closeAboutBtn = document.getElementById('close-about-modal');
+    const closeFaqBtn = document.getElementById('close-faq-modal');
+    const closeSupportBtn = document.getElementById('close-support-modal');
+    const closeContactBtn = document.getElementById('close-contact-modal');
+    const closePrivacyBtn = document.getElementById('close-privacy-modal');
+    const closeTermsBtn = document.getElementById('close-terms-modal');
+    const closeBuymeacoffeeBtn = document.getElementById('close-buymeacoffee-modal');
+
     const modalOverlay = document.getElementById('premium-modal-overlay');
 
     const openModal = (modal) => {
@@ -4445,12 +4470,38 @@ document.addEventListener('DOMContentLoaded', () => {
         if(modalOverlay) modalOverlay.classList.remove('open');
         if(apiModal) apiModal.classList.remove('open');
         if(historyModal) historyModal.classList.remove('open');
+        if(howToModal) howToModal.classList.remove('open');
+        if(aboutModal) aboutModal.classList.remove('open');
+        if(faqModal) faqModal.classList.remove('open');
+        if(supportModal) supportModal.classList.remove('open');
+        if(contactModal) contactModal.classList.remove('open');
+        if(privacyModal) privacyModal.classList.remove('open');
+        if(termsModal) termsModal.classList.remove('open');
+        if(buymeacoffeeModal) buymeacoffeeModal.classList.remove('open');
     };
 
     if(apiModalBtn) apiModalBtn.addEventListener('click', () => openModal(apiModal));
     if(historyModalBtn) historyModalBtn.addEventListener('click', () => openModal(historyModal));
+    if(howToBtn) howToBtn.addEventListener('click', () => openModal(howToModal));
+    if(aboutBtn) aboutBtn.addEventListener('click', () => openModal(aboutModal));
+    if(faqBtn) faqBtn.addEventListener('click', () => openModal(faqModal));
+    if(supportBtn) supportBtn.addEventListener('click', () => openModal(supportModal));
+    if(contactBtn) contactBtn.addEventListener('click', () => openModal(contactModal));
+    if(privacyBtn) privacyBtn.addEventListener('click', () => openModal(privacyModal));
+    if(termsBtn) termsBtn.addEventListener('click', () => openModal(termsModal));
+    if(buymeacoffeeBtn) buymeacoffeeBtn.addEventListener('click', () => openModal(buymeacoffeeModal));
+    
     if(closeApiBtn) closeApiBtn.addEventListener('click', closeAllModals);
     if(closeHistoryBtn) closeHistoryBtn.addEventListener('click', closeAllModals);
+    if(closeHowToBtn) closeHowToBtn.addEventListener('click', closeAllModals);
+    if(closeAboutBtn) closeAboutBtn.addEventListener('click', closeAllModals);
+    if(closeFaqBtn) closeFaqBtn.addEventListener('click', closeAllModals);
+    if(closeSupportBtn) closeSupportBtn.addEventListener('click', closeAllModals);
+    if(closeContactBtn) closeContactBtn.addEventListener('click', closeAllModals);
+    if(closePrivacyBtn) closePrivacyBtn.addEventListener('click', closeAllModals);
+    if(closeTermsBtn) closeTermsBtn.addEventListener('click', closeAllModals);
+    if(closeBuymeacoffeeBtn) closeBuymeacoffeeBtn.addEventListener('click', closeAllModals);
+
     if(modalOverlay) modalOverlay.addEventListener('click', closeAllModals);
 
     // API Key Test Button logic
@@ -4494,5 +4545,52 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // FAQ Accordion Logic
+    const faqQuestions = document.querySelectorAll('.faq-question');
+    faqQuestions.forEach(q => {
+        q.addEventListener('click', () => {
+            const item = q.parentElement;
+            const answer = q.nextElementSibling;
+            
+            // Toggle active class
+            item.classList.toggle('active');
+            
+            if (item.classList.contains('active')) {
+                answer.style.maxHeight = answer.scrollHeight + "px";
+            } else {
+                answer.style.maxHeight = null;
+            }
+        });
+    });
+
+    // FAQ Search Logic
+    window.filterFaqs = (query) => {
+        const lowerQuery = query.toLowerCase();
+        const faqItems = document.querySelectorAll('.faq-item');
+        
+        faqItems.forEach(item => {
+            const text = item.textContent.toLowerCase();
+            if (text.includes(lowerQuery)) {
+                item.style.display = "block";
+            } else {
+                item.style.display = "none";
+            }
+        });
+        
+        // Hide categories if all items inside are hidden
+        const categories = document.querySelectorAll('.faq-category');
+        categories.forEach(cat => {
+            const itemsInCat = cat.querySelectorAll('.faq-item');
+            let hasVisible = false;
+            itemsInCat.forEach(i => {
+                if(i.style.display !== 'none') hasVisible = true;
+            });
+            const h3 = cat.querySelector('h3');
+            if(h3) {
+                h3.style.display = hasVisible ? "flex" : "none";
+            }
+        });
+    };
 
 });

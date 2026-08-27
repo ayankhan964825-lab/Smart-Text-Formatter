@@ -290,9 +290,8 @@ body { font-family: var(--sf-font-sans) !important; background: var(--sf-paper) 
 
 /* Mobile export bar */
 .mobile-export-container {
-  background: var(--sf-paper-trans-2) !important;
-  backdrop-filter: blur(16px);
-  border-top: 1px solid rgba(216, 203, 169, 0.55) !important;
+    background: rgba(247, 241, 229, 0.98) !important;
+    border-top: 1px solid rgba(216, 203, 169, 0.55) !important;
 }
 .mobile-export-btn.primary {
   background: var(--sf-ink) !important;
@@ -332,6 +331,15 @@ body { font-family: var(--sf-font-sans) !important; background: var(--sf-paper) 
   .top-bar.refined .document-title-input { min-width: 110px; font-size: 13px !important; }
   .desktop-export-container { display: none !important; }
   .top-bar.refined { justify-content: space-between !important; }
+  .theme-toggle {
+    position: absolute !important;
+    top: 12px;
+    right: 16px;
+    margin: 0 !important;
+  }
+  .top-bar.refined .logo {
+    padding-right: 40px; /* prevent input from overlapping with absolute toggle */
+  }
 
   /* --- Hide formatting ribbon --- */
   .formatting-ribbon { display: none !important; }
@@ -712,9 +720,7 @@ body { font-family: var(--sf-font-sans) !important; background: var(--sf-paper) 
 .premium-modal-overlay {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    background: rgba(0, 0, 0, 0.85);
     z-index: 1999;
     opacity: 0;
     pointer-events: none;
@@ -1353,7 +1359,8 @@ body { font-family: var(--sf-font-sans) !important; background: var(--sf-paper) 
 .ai-chat-window.dark-theme {
     background: var(--bg-panel) !important;
     border: 1px solid var(--border-color) !important;
-    height: 520px !important;
+    height: auto !important;
+    max-height: calc(100vh - 120px) !important;
     width: 360px !important;
     box-shadow: 0 10px 40px rgba(0,0,0,0.15) !important;
     color: var(--text-main);

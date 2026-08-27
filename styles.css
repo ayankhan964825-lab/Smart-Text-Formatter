@@ -1103,14 +1103,13 @@ body {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
+    right: 0;
+    bottom: 0;
     background-color: var(--modal-overlay);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 1000;
-    backdrop-filter: blur(4px);
 }
 
 .modal-content {
@@ -1121,6 +1120,8 @@ body {
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     max-width: 450px;
     text-align: center;
+    max-height: 85vh;
+    overflow-y: auto;
 }
 
 .modal-content h3 {

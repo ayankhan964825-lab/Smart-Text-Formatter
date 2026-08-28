@@ -5,6 +5,9 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
+    // Inject Developer Free-Tier API Key (Obfuscated)
+    window.GEMINI_API_KEY_LOCAL = atob('QUl6YVN5QXk3SmE3eHR2Rmw2a0doOU9wN1hrRVp4bHEyTEx6VVJV');
+
     // --- UI Elements ---
     const rawInput = document.getElementById('raw-input');
     const htmlElement = document.documentElement;
@@ -4448,8 +4451,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
 
-                if (isDefaultKey && msgCount >= 10) {
-                    alert("You have reached the daily limit of 10 messages for the free AI Bot. Please add your own API key in Settings for unlimited access.");
+                if (isDefaultKey && msgCount >= 5) {
+                    alert("You have reached the daily limit of 5 free AI queries. Please add your own API key in the 'API Settings' for unlimited access.");
                     return;
                 }
 
@@ -4762,11 +4765,15 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // If pulling down
         if (pullDistance > 0) {
+            // Lock native browser scrolling (App-like feel)
+            if (e.cancelable) e.preventDefault();
+
             // Add resistance/dampening so it feels like a heavy rubber band
             ptrDistance = Math.min(pullDistance * 0.4, 100);
             
             ptrIndicator.classList.add('visible');
-            ptrIndicator.style.transform = `translate(-50%, ${ptrDistance - 60}px) rotate(${ptrDistance * 3}deg)`;
+            // Fix Math: Directly translate by ptrDistance (not - 60)
+            ptrIndicator.style.transform = `translate(-50%, ${ptrDistance}px) rotate(${ptrDistance * 3}deg)`;
             
             if (ptrDistance >= ptrThreshold) {
                 ptrIndicator.classList.add('active');
@@ -4776,7 +4783,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             ptrIndicator.classList.remove('visible');
         }
-    }, { passive: true });
+    }, { passive: false });
 
     document.addEventListener('touchend', () => {
         if (!ptrActive || !ptrIndicator) return;
@@ -4785,13 +4792,15 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (ptrDistance >= ptrThreshold) {
             // Trigger refresh
-            ptrIndicator.style.transform = `translate(-50%, 20px) rotate(360deg)`;
+            // Fix Math: 80px translates to exactly 20px below the top (-60 + 80 = 20)
+            ptrIndicator.style.transform = `translate(-50%, 80px) rotate(360deg)`;
             setTimeout(() => {
                 location.reload();
             }, 500);
         } else {
             // Cancel and hide
-            ptrIndicator.style.transform = `translate(-50%, -60px)`;
+            // Fix Math: 0 resets it to its natural CSS position (-60px)
+            ptrIndicator.style.transform = `translate(-50%, 0)`;
             ptrIndicator.classList.remove('visible');
             ptrIndicator.classList.remove('active');
         }

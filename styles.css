@@ -493,7 +493,16 @@ body {
 }
 
   /* Dynamic Theme Transition - Only active when button is pressed */
-.theme-transition, .theme-transition *, .theme-transition *::before, .theme-transition *::after {
+.theme-transition,
+.theme-transition body,
+.theme-transition .panel,
+.theme-transition .top-bar,
+.theme-transition .workspace,
+.theme-transition .modal-content,
+.theme-transition .mobile-tabs,
+.theme-transition .ai-chat-window,
+.theme-transition .ai-chat-header,
+.theme-transition .panel-header {
     transition: background-color 0.35s ease, color 0.35s ease, border-color 0.35s ease, background 0.35s ease !important;
 }
 

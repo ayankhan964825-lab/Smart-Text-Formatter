@@ -127,9 +127,6 @@
                 </span>
                 <span class="editor-brand-word"><b>Smart</b><i>Formatter</i></span>
             </a>
-            <span class="editor-brand-sep">/</span>
-            <input type="text" id="document-title" class="document-title-input" value="Untitled Document"
-                placeholder="Document Title" title="Click to rename document">
             <span id="save-status" class="save-status"></span>
         </div>
         <div class="top-controls" style="display: flex; gap: 8px; align-items: center;">
@@ -142,12 +139,8 @@
                     style="opacity: 0.5; cursor: not-allowed;">Export to PDF</button>
                 <button id="export-word" class="btn primary btn-small" disabled
                     style="opacity: 0.5; cursor: not-allowed;">Export to Word</button>
-                <button id="add-page-numbers-btn" class="btn primary btn-small" title="Upload a PDF and add page numbers">📄
-                    Add Page Numbers</button>
             </div>
         </div>
-        <!-- Hidden file input for PDF page number injection -->
-        <input type="file" id="pdf-upload-input" accept=".pdf" style="display:none;">
     </header>
 
 
@@ -166,18 +159,6 @@
             <div class="panel-header">
                 <h2>Raw Text Input</h2>
                 <div class="panel-actions" style="display:flex; align-items:center; gap:8px;">
-                    <!-- Unstructured Upload (Smart Paste) -->
-                    <input type="file" id="raw-doc-upload-input" accept=".pdf,.doc,.docx,.txt" style="display: none;">
-                    <button id="raw-doc-upload-btn" class="btn secondary" title="Smart Paste Document" style="display:flex; align-items:center; gap:4px; font-size:12px; padding:0 10px; height:28px;">
-                        📄 Upload File
-                    </button>
-
-                    <!-- Reference PDF Upload (Adobe) -->
-                    <input type="file" id="ref-pdf-upload-input" accept=".pdf" style="display: none;">
-                    <button id="ref-pdf-upload-btn" class="btn secondary" title="Extract Style from Reference PDF" style="display:flex; align-items:center; gap:4px; font-size:12px; padding:0 10px; height:28px; border: 1px solid var(--primary-color); color: var(--primary-color);">
-                        🎨 Ref. PDF
-                    </button>
-                    <span id="ref-pdf-status" style="font-size: 11px; color: var(--primary-color); display: none;">Styling...</span>
 
                     <input type="file" id="image-upload-input" multiple accept="image/*" style="display: none;">
                     <button id="format-btn" class="btn primary format-action-btn" style="height:28px; padding: 0 12px;">

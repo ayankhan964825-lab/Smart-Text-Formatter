@@ -1491,3 +1491,18 @@ body { font-family: var(--sf-font-sans) !important; background: var(--sf-paper) 
     width: 20px;
     height: 20px;
 }
+
+/* --- Dark Mode Specific Button Colors --- */
+:root[data-theme="dark"] #export-pdf,
+:root[data-theme="dark"] #export-word {
+    background-color: #3182ce !important; /* Soft Blue */
+    color: white !important;
+    border: none !important;
+    box-shadow: 0 2px 6px rgba(49, 130, 206, 0.3) !important;
+}
+
+:root[data-theme="dark"] #export-pdf:hover:not([disabled]),
+:root[data-theme="dark"] #export-word:hover:not([disabled]) {
+    background-color: #2b6cb0 !important; /* Darker Blue */
+    box-shadow: 0 4px 10px rgba(49, 130, 206, 0.4) !important;
+}

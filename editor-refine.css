@@ -312,7 +312,7 @@ body { font-family: var(--sf-font-sans) !important; background: var(--sf-paper) 
     flex-direction: column !important;
   }
   .panel {
-    min-height: 50vh !important;
+    min-height: 50dvh !important;
   }
 }
 
@@ -373,7 +373,7 @@ body { font-family: var(--sf-font-sans) !important; background: var(--sf-paper) 
   .workspace {
     display: block !important;
     padding: 0 !important;
-    height: calc(100vh - 100px) !important;
+    height: calc(100dvh - 100px) !important;
     overflow: hidden;
   }
   .panel {
@@ -613,7 +613,7 @@ body { font-family: var(--sf-font-sans) !important; background: var(--sf-paper) 
     width: 320px;
     max-width: calc(100vw - 48px);
     height: 400px;
-    max-height: calc(100vh - 120px);
+    max-height: calc(100dvh - 120px);
     background: var(--bg-color);
     border: 1px solid var(--border-color);
     border-radius: 16px;
@@ -1360,7 +1360,7 @@ body { font-family: var(--sf-font-sans) !important; background: var(--sf-paper) 
     background: var(--bg-panel) !important;
     border: 1px solid var(--border-color) !important;
     height: auto !important;
-    max-height: calc(100vh - 120px) !important;
+    max-height: calc(100dvh - 120px) !important;
     width: 360px !important;
     box-shadow: 0 10px 40px rgba(0,0,0,0.15) !important;
     color: var(--text-main);
@@ -1455,4 +1455,39 @@ body { font-family: var(--sf-font-sans) !important; background: var(--sf-paper) 
 
 .custom-send-btn:hover {
     opacity: 0.9;
+}
+
+/* --- Native App Pull-to-Refresh --- */
+.ptr-indicator {
+    position: fixed;
+    top: -60px; /* Hidden by default */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 40px;
+    background: var(--sf-paper);
+    border-radius: 50%;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    color: var(--sf-ink);
+    opacity: 0;
+    transition: opacity 0.2s;
+    pointer-events: none;
+}
+.ptr-indicator.visible {
+    opacity: 1;
+}
+.ptr-indicator.active .ptr-spinner {
+    animation: ptr-spin 1s linear infinite;
+    color: #6C63FF;
+}
+@keyframes ptr-spin {
+    100% { transform: rotate(360deg); }
+}
+.ptr-spinner svg {
+    width: 20px;
+    height: 20px;
 }

@@ -89,15 +89,15 @@ body {
     line-height: 1.6;
     background-color: var(--bg-body);
     color: var(--text-main);
+    overscroll-behavior-y: none; /* Prevents rubber-banding on mobile */
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    height: 100dvh;
     /* Fallback */
     height: 100dvh;
     /* Modern mobile dynamic height */
     overflow: hidden;
     /* Prevent body scroll, panels will scroll */
-    transition: background-color var(--transition-speed), color var(--transition-speed);
 }
 
 /* --- Buttons --- */
@@ -248,7 +248,7 @@ body {
     top: 0;
     left: 0;
     width: 100vw;
-    height: 100vh;
+    height: 100dvh;
     background-color: rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(2px);
     z-index: 999;
@@ -473,7 +473,7 @@ body {
     overflow: hidden;
     /* optional subtle gradient background */
     background: radial-gradient(circle at 50% 0%, var(--primary-color) 0%, transparent 15%);
-    background-size: 100vw 100vh;
+    background-size: 100vw 100dvh;
     background-repeat: no-repeat;
     opacity: 0.98;
 }
@@ -490,7 +490,11 @@ body {
     flex-direction: column;
     overflow: hidden;
     box-shadow: var(--shadow-md);
-    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+  /* Dynamic Theme Transition - Only active when button is pressed */
+.theme-transition, .theme-transition *, .theme-transition *::before, .theme-transition *::after {
+    transition: background-color 0.35s ease, color 0.35s ease, border-color 0.35s ease, background 0.35s ease !important;
 }
 
 .panel:focus-within {
@@ -1120,7 +1124,7 @@ body {
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     max-width: 450px;
     text-align: center;
-    max-height: 85vh;
+    max-height: 85dvh;
     overflow-y: auto;
 }
 
@@ -1363,7 +1367,7 @@ body {
     top: 0;
     left: 0;
     width: 100vw;
-    height: 100vh;
+    height: 100dvh;
     background: rgba(255, 255, 255, 0.2);
     /* Very high transparency */
     backdrop-filter: blur(4px);
@@ -1595,7 +1599,7 @@ body.fullscreen-active {
     top: 0;
     left: 0;
     width: 100vw;
-    height: 100vh;
+    height: 100dvh;
     z-index: 9999;
     border-radius: 0;
     border: none;
@@ -2009,7 +2013,7 @@ body.fullscreen-active {
 
 .template-modal-content {
     max-width: 560px !important;
-    max-height: 88vh;
+    max-height: 88dvh;
     overflow-y: auto;
     width: 95%;
     padding: 0 !important;
@@ -3000,4 +3004,21 @@ body.fullscreen-active {
   #fs-edit-btn, #exit-fullscreen-btn {
     flex-shrink: 0;
   }
+}
+
+/* --- MOBILE PERFORMANCE HACKS (60FPS) --- */
+@media (max-width: 768px) {
+    * {
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+    }
+    :root {
+        --bg-panel: #ffffff;
+        --bg-header: #ffffff;
+        --blur-effect: none;
+    }
+    :root[data-theme="dark"] {
+        --bg-panel: #161b22;
+        --bg-header: #161b22;
+    }
 }

@@ -4371,10 +4371,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (themeToggleBtn) {
         themeToggleBtn.addEventListener('click', () => {
+            // Apply dynamic transition class
+            document.body.classList.add('theme-transition');
+
             const currentTheme = htmlEl.getAttribute('data-theme');
             const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
             htmlEl.setAttribute('data-theme', newTheme);
             localStorage.setItem('theme', newTheme);
+
+            // Remove transition class after animation completes
+            setTimeout(() => {
+                document.body.classList.remove('theme-transition');
+            }, 350);
         });
     }
 
@@ -4719,5 +4727,76 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     };
+
+    // --- Native App Pull-to-Refresh Logic ---
+    let ptrStartY = 0;
+    let ptrActive = false;
+    let ptrDistance = 0;
+    const ptrThreshold = 75; // px to trigger refresh
+    const ptrIndicator = document.getElementById('ptr-indicator');
+
+    document.addEventListener('touchstart', (e) => {
+        // Only active on mobile width
+        if (window.innerWidth > 768 || !ptrIndicator) return;
+        
+        // Find if user is touching a scrollable container
+        const scrollArea = e.target.closest('#source-text, #formatted-output, .ai-chat-messages, .modal-content');
+        
+        // If they are scrolled down even 1 pixel, DO NOT activate pull to refresh
+        if (scrollArea && scrollArea.scrollTop > 0) {
+            ptrActive = false;
+            return;
+        }
+        
+        ptrStartY = e.touches[0].clientY;
+        ptrActive = true;
+        ptrDistance = 0;
+        ptrIndicator.style.transition = 'none'; // Remove transition for 1:1 finger tracking
+    }, { passive: true });
+
+    document.addEventListener('touchmove', (e) => {
+        if (!ptrActive || !ptrIndicator) return;
+        
+        const touchY = e.touches[0].clientY;
+        const pullDistance = touchY - ptrStartY;
+        
+        // If pulling down
+        if (pullDistance > 0) {
+            // Add resistance/dampening so it feels like a heavy rubber band
+            ptrDistance = Math.min(pullDistance * 0.4, 100);
+            
+            ptrIndicator.classList.add('visible');
+            ptrIndicator.style.transform = `translate(-50%, ${ptrDistance - 60}px) rotate(${ptrDistance * 3}deg)`;
+            
+            if (ptrDistance >= ptrThreshold) {
+                ptrIndicator.classList.add('active');
+            } else {
+                ptrIndicator.classList.remove('active');
+            }
+        } else {
+            ptrIndicator.classList.remove('visible');
+        }
+    }, { passive: true });
+
+    document.addEventListener('touchend', () => {
+        if (!ptrActive || !ptrIndicator) return;
+        
+        ptrIndicator.style.transition = 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s';
+        
+        if (ptrDistance >= ptrThreshold) {
+            // Trigger refresh
+            ptrIndicator.style.transform = `translate(-50%, 20px) rotate(360deg)`;
+            setTimeout(() => {
+                location.reload();
+            }, 500);
+        } else {
+            // Cancel and hide
+            ptrIndicator.style.transform = `translate(-50%, -60px)`;
+            ptrIndicator.classList.remove('visible');
+            ptrIndicator.classList.remove('active');
+        }
+        
+        ptrActive = false;
+    });
 
 });

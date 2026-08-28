@@ -42,9 +42,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Force Light Theme
-    htmlElement.setAttribute('data-theme', 'light');
-    localStorage.setItem('sf-theme', 'light');
 
     // --- Event Listeners ---
     const formatBtn = document.getElementById('format-btn');
@@ -916,9 +913,9 @@ document.addEventListener('DOMContentLoaded', () => {
             grid.appendChild(card);
         });
 
-        // If a non-general template was already selected (e.g. re-opening modal), show customization
+        // If a template was already selected (e.g. initial load or re-opening modal), show customization
         const hasSelection = document.querySelector('.template-card.selected');
-        if (customPanel && hasSelection && window.templateEngine.selectedTemplateId !== 'general') {
+        if (customPanel && hasSelection) {
             customPanel.style.display = 'block';
             populateModalCustomization(window.templateEngine.getRibbonDefaults());
         }
@@ -3062,6 +3059,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function debouncedAutoSave() {
         if (isInitialLoad) return;
+        if (!hasFormattedOnce) return; // Prevent saving until formatting starts
         if (saveStatus) {
             saveStatus.textContent = "Saving...";
             saveStatus.classList.add("visible");

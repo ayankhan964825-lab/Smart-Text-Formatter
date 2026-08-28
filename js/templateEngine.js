@@ -17,7 +17,7 @@ const DOCUMENT_TEMPLATES = {
       h2: { fontFamily: "'Times New Roman', serif", fontSize: "16" },
       h3: { fontFamily: "'Times New Roman', serif", fontSize: "14" },
       body: { fontFamily: "'Times New Roman', serif", fontSize: "12" },
-      alignment: "left",
+      alignment: "justify",
       lineSpacing: "1.5"
     },
     promptContext: ""
@@ -67,11 +67,11 @@ const DOCUMENT_TEMPLATES = {
       { id: "references", label: "References", required: false, aliases: ["Bibliography", "Citations"] }
     ],
     formatting: {
-      h1: { fontFamily: "Arial, sans-serif", fontSize: "16" },
-      h2: { fontFamily: "Arial, sans-serif", fontSize: "16" },
-      h3: { fontFamily: "Arial, sans-serif", fontSize: "14" },
-      body: { fontFamily: "Arial, sans-serif", fontSize: "12" },
-      alignment: "left",
+      h1: { fontFamily: "'Times New Roman', serif", fontSize: "16" },
+      h2: { fontFamily: "'Times New Roman', serif", fontSize: "16" },
+      h3: { fontFamily: "'Times New Roman', serif", fontSize: "14" },
+      body: { fontFamily: "'Times New Roman', serif", fontSize: "12" },
+      alignment: "justify",
       lineSpacing: "1.5"
     },
     promptContext: `This is a COLLEGE/UNIVERSITY ASSIGNMENT.
@@ -97,11 +97,11 @@ const DOCUMENT_TEMPLATES = {
       { id: "conclusion", label: "Conclusion", required: true, aliases: ["Summary", "Final Thoughts"] }
     ],
     formatting: {
-      h1: { fontFamily: "Arial, sans-serif", fontSize: "16" },
-      h2: { fontFamily: "Arial, sans-serif", fontSize: "16" },
-      h3: { fontFamily: "Arial, sans-serif", fontSize: "14" },
-      body: { fontFamily: "Arial, sans-serif", fontSize: "12" },
-      alignment: "left",
+      h1: { fontFamily: "'Times New Roman', serif", fontSize: "16" },
+      h2: { fontFamily: "'Times New Roman', serif", fontSize: "16" },
+      h3: { fontFamily: "'Times New Roman', serif", fontSize: "14" },
+      body: { fontFamily: "'Times New Roman', serif", fontSize: "12" },
+      alignment: "justify",
       lineSpacing: "1.5"
     },
     promptContext: `This is an ACADEMIC PROJECT REPORT document.

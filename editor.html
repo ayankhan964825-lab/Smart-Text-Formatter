@@ -244,10 +244,10 @@
                         <!-- Global Alignment Dropdown -->
                         <select id="global-alignment" class="toolbar-select" title="Text Alignment"
                             style="padding: 4px 8px; font-size: 13px; height: 32px; border-radius: 6px; border: 1px solid var(--border-color); background: var(--bg-main); width: auto; flex-shrink: 0;">
-                            <option value="left" selected>Left</option>
+                            <option value="justify" selected>Justify</option>
+                            <option value="left">Left</option>
                             <option value="center">Center</option>
                             <option value="right">Right</option>
-                            <option value="justify">Justify</option>
                         </select>
                         
                         <button id="fs-edit-btn" class="btn-small secondary"
@@ -341,7 +341,6 @@
     <div class="mobile-export-container" id="mobile-export-bar">
         <button id="mobile-export-pdf" class="btn primary mobile-export-btn" disabled>📄 Export PDF</button>
         <button id="mobile-export-word" class="btn primary mobile-export-btn" disabled>📝 Export Word</button>
-        <button id="mobile-add-page-numbers" class="btn primary mobile-export-btn">📄 Page #</button>
     </div>
 
     <!-- Template Selection Modal -->
@@ -388,7 +387,7 @@
                             <path
                                 d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
                         </svg>
-                        <span>Adjust Formatting</span>
+                        <span>Customize Font and Size</span>
                     </div>
                     <svg class="tmpl-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -400,8 +399,8 @@
                         <div class="tmpl-fmt-cell">
                             <label>Title (H1)</label>
                             <select id="modal-h1-font" class="modal-select">
-                                <option value="Arial, sans-serif">Arial</option>
                                 <option value="'Times New Roman', serif">Times New Roman</option>
+                                <option value="Arial, sans-serif">Arial</option>
                                 <option value="'Courier New', monospace">Courier New</option>
                                 <option value="Georgia, serif">Georgia</option>
                                 <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
@@ -413,8 +412,8 @@
                         <div class="tmpl-fmt-cell">
                             <label>Heading (H2)</label>
                             <select id="modal-h2-font" class="modal-select">
-                                <option value="Arial, sans-serif">Arial</option>
                                 <option value="'Times New Roman', serif">Times New Roman</option>
+                                <option value="Arial, sans-serif">Arial</option>
                                 <option value="'Courier New', monospace">Courier New</option>
                                 <option value="Georgia, serif">Georgia</option>
                                 <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
@@ -426,8 +425,8 @@
                         <div class="tmpl-fmt-cell">
                             <label>Subheading (H3)</label>
                             <select id="modal-h3-font" class="modal-select">
-                                <option value="Arial, sans-serif">Arial</option>
                                 <option value="'Times New Roman', serif">Times New Roman</option>
+                                <option value="Arial, sans-serif">Arial</option>
                                 <option value="'Courier New', monospace">Courier New</option>
                                 <option value="Georgia, serif">Georgia</option>
                                 <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
@@ -439,8 +438,8 @@
                         <div class="tmpl-fmt-cell">
                             <label>Body Text</label>
                             <select id="modal-body-font" class="modal-select">
-                                <option value="Arial, sans-serif">Arial</option>
                                 <option value="'Times New Roman', serif">Times New Roman</option>
+                                <option value="Arial, sans-serif">Arial</option>
                                 <option value="'Courier New', monospace">Courier New</option>
                                 <option value="Georgia, serif">Georgia</option>
                                 <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
@@ -487,10 +486,10 @@
                         </div>
                         <!-- Hidden select for JS compatibility -->
                         <select id="modal-alignment" class="modal-select" style="display:none;">
+                            <option value="justify">Justify</option>
                             <option value="left">Left Align</option>
                             <option value="center">Center Align</option>
                             <option value="right">Right Align</option>
-                            <option value="justify">Justify</option>
                         </select>
                     </div>
                 </div>

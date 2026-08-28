@@ -1,5 +1,5 @@
 # Technology Stack
-**Project:** Smart Text Formatting Algorithm
+**Project:** FormatFlow Algorithm
 
 This project is designed as a lightweight, frontend-only Web Application (Single Page Application) for Phase 1 and 2, meaning it runs entirely in the user's browser without requiring a backend server.
 

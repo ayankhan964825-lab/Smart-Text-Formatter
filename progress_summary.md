@@ -1,4 +1,4 @@
-# Smart Formatter: Code Syntax & Rendering Fixes
+# FormatFlow: Code Syntax & Rendering Fixes
 
 **Date**: May 1, 2026
 **Project**: Smart Document Formatter (NewProject)

@@ -1,4 +1,4 @@
-# Smart Text Formatter — Future Ideas Roadmap
+# FormatFlow — Future Ideas Roadmap
 
 > Saved on: 2026-07-04 | All ideas discussed in chat, preserved for future implementation.
 
@@ -51,7 +51,7 @@
 ## 🧩 Idea 7: Browser Extension / Chrome Plugin
 **Priority:** #7
 **Status:** Not Started
-**Description:** Chrome extension where user selects text on any webpage → "Format with Smart Text Formatter" → opens in app pre-filled. Viral growth potential.
+**Description:** Chrome extension where user selects text on any webpage → "Format with FormatFlow" → opens in app pre-filled. Viral growth potential.
 
 ---
 

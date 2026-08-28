@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const pptx = new PptxGenJS();
                 pptx.layout = 'LAYOUT_16x9';
-                pptx.author = 'Smart Text Formatter Team';
+                pptx.author = 'FormatFlow Team';
                 pptx.title = 'Cauchy Integral Theorem';
 
                 // Colors

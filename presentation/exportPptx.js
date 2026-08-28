@@ -20,8 +20,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const pptx = new PptxGenJS();
                 pptx.layout = 'LAYOUT_16x9';
-                pptx.author = 'Smart Text Formatter Team';
-                pptx.title = 'Smart Text Formatter — OOPD Showcase';
+                pptx.author = 'FormatFlow Team';
+                pptx.title = 'FormatFlow — OOPD Showcase';
 
                 // ═══════════════════════════════════════════
                 //  DESIGN TOKENS
@@ -158,7 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         bold: true, charSpacing: 4, align: 'center', valign: 'middle'
                     });
                     s.addText([
-                        { text: 'Smart Text\n', options: { fontSize: 56, fontFace: FONT, bold: true, color: W } },
+                        { text: 'FormatFlow\n', options: { fontSize: 56, fontFace: FONT, bold: true, color: W } },
                         { text: 'Formatter', options: { fontSize: 56, fontFace: FONT, bold: true, color: PURPLE } }
                     ], { x: 0.5, y: 1.4, w: 9, h: 1.9, align: 'center', valign: 'middle', lineSpacingMultiple: 0.95 });
                     s.addText('Intelligent Document Formatting, Reimagined.', {
@@ -239,7 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     s.transition = TRANSITION;
 
                     addLabel(s, 'The Solution');
-                    addHeading(s, [{ text: 'Smart Text ' }, { text: 'Formatter', color: GOLD }]);
+                    addHeading(s, [{ text: 'FormatFlow ' }, { text: 'Formatter', color: GOLD }]);
                     addBody(s, 'A web-based application that intelligently reads, understands, and formats unstructured text documents — powered by AI and pure Object-Oriented Design.', { y: 1.85, h: 0.65, fontSize: 15 });
 
                     const pills = [
@@ -458,7 +458,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         { text: 'You.', options: { fontSize: 56, fontFace: FONT, bold: true, color: ORANGE } }
                     ], { x: 0.5, y: 0.7, w: 9, h: 1.3, align: 'center', valign: 'middle' });
 
-                    s.addText('Smart Text Formatter — OOPD Project Showcase', {
+                    s.addText('FormatFlow — OOPD Project Showcase', {
                         x: 1, y: 2.1, w: 8, h: 0.5, fontSize: 20, fontFace: FONT, color: W70, align: 'center'
                     });
 

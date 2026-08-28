@@ -284,8 +284,8 @@ body { font-family: var(--sf-font-sans) !important; background: var(--sf-paper) 
 
 /* Mobile export bar */
 .mobile-export-container {
-    background: rgba(247, 241, 229, 0.98) !important;
-    border-top: 1px solid rgba(216, 203, 169, 0.55) !important;
+    background: var(--sf-paper) !important;
+    border-top: 1px solid var(--sf-border) !important;
 }
 .mobile-export-btn.primary {
   background: var(--sf-ink) !important;
@@ -1341,7 +1341,7 @@ body { font-family: var(--sf-font-sans) !important; background: var(--sf-paper) 
 .privacy-list li b {
     color: var(--text-main);
 }
-/* Smart Formatter Style AI Chat Window */
+/* FormatFlow Style AI Chat Window */
 .ai-chat-window.dark-theme {
     background: var(--bg-panel) !important;
     border: 1px solid var(--border-color) !important;

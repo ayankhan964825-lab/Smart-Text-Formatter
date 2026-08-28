@@ -1,5 +1,5 @@
 # APIs & Interfaces Document
-**Project:** Smart Text Formatting Algorithm
+**Project:** FormatFlow Algorithm
 
 Since Phase 1 is fully client-side and relies on no backend, this document primarily outlines the **Internal JavaScript Module APIs** connecting the application logic, and the planned **Future Public API Endpoint** (Phase 3).
 

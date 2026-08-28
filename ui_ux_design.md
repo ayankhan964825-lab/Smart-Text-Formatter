@@ -1,5 +1,5 @@
 # UI/UX & Design Document
-**Project:** Smart Text Formatting Algorithm
+**Project:** FormatFlow Algorithm
 
 ## 1. Design Philosophy
 - **Clean & Minimal:** Focus on content with an uncluttered interface, giving priority to readability.

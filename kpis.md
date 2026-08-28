@@ -1,5 +1,5 @@
 # Key Performance Indicators (KPIs) & Success Metrics
-**Project:** Smart Text Formatting Algorithm
+**Project:** FormatFlow Algorithm
 
 These metrics define the success criteria and performance benchmarks for the algorithm and the web application.
 

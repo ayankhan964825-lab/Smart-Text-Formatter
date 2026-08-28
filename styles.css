@@ -1,5 +1,5 @@
 /* =========================================
-   Smart Text Formatting - Core Styles
+   FormatFlow - Core Styles
 ========================================= */
 
 /* --- Custom Properties / Theme Variables --- */
@@ -2029,6 +2029,9 @@ body.fullscreen-active {
     border-radius: 16px !important;
     border: 1px solid rgba(124, 58, 237, 0.12) !important;
     box-shadow: 0 25px 60px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(255,255,255,0.05) !important;
+    background: var(--bg-panel) !important;
+    backdrop-filter: var(--blur-effect);
+    -webkit-backdrop-filter: var(--blur-effect);
 }
 
 /* ── Modal Header ── */

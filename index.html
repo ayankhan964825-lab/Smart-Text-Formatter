@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Smart Text Formatter — AI-powered document formatting, done in seconds</title>
+<title>FormatFlow — AI-powered document formatting, done in seconds</title>
 <link rel="icon" type="image/png" href="image/favicon.png">
 <link rel="apple-touch-icon" href="image/favicon.png">
 <meta name="description" content="Turn raw, messy text into publication-ready PDF, Word and PowerPoint documents. AI-native structure detection, Mermaid diagrams, math equations, exports that feel handcrafted." />
@@ -11,6 +11,10 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,900&family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="landing.css?v=4" />
+<script>
+  const storedTheme = localStorage.getItem('sf-theme');
+  if (storedTheme) document.documentElement.setAttribute('data-theme', storedTheme);
+</script>
 </head>
 <body>
 
@@ -62,7 +66,7 @@
         <span class="reveal">In under 10 seconds.</span>
       </h1>
       <p class="hero-sub" data-testid="hero-sub">
-        Smart Formatter reads your raw text like an editor would — detecting structure, inserting diagrams, aligning math, and exporting <b>pixel-perfect</b> PDF, Word &amp; PowerPoint files. No templates. No fiddling. Just clean, publishable output.
+        FormatFlow reads your raw text like an editor would — detecting structure, inserting diagrams, aligning math, and exporting <b>pixel-perfect</b> PDF, Word &amp; PowerPoint files. No templates. No fiddling. Just clean, publishable output.
       </p>
 
       <div class="hero-actions">

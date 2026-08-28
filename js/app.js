@@ -433,110 +433,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const imageUploadInput = document.getElementById('image-upload-input');
     const imagePreviewStrip = document.getElementById('image-preview-strip');
 
-    // --- Image Step Modal Logic ---
-    const imageStepModal = document.getElementById('image-step-modal');
-    const modalAddImagesBtn = document.getElementById('modal-add-images-btn');
-    const modalFormatWithImagesBtn = document.getElementById('modal-format-with-images-btn');
-    const modalSkipImagesBtn = document.getElementById('modal-skip-images-btn');
-    const captionOptions = document.getElementById('caption-options');
-    const modalImagePreview = document.getElementById('modal-image-preview');
 
-    // When user clicks "Choose Images" inside the modal
-    if (modalAddImagesBtn && imageUploadInput) {
-        modalAddImagesBtn.addEventListener('click', () => {
-            imageUploadInput.click();
-        });
-
-        imageUploadInput.addEventListener('change', async (e) => {
-            const files = e.target.files;
-            if (!files || files.length === 0) return;
-
-            modalAddImagesBtn.innerHTML = '⏳ Processing...';
-            modalAddImagesBtn.disabled = true;
-
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-                if (!file.type.startsWith('image/')) continue;
-
-                const base64DataUrl = await compressImage(file, 1024, 0.7);
-                const imageId = window.appUploadedImages.length;
-
-                window.appUploadedImages.push({
-                    id: imageId,
-                    mimeType: file.type,
-                    dataUrl: base64DataUrl,
-                    base64: base64DataUrl.split(',')[1]
-                });
-            }
-
-            modalAddImagesBtn.innerHTML = '🖼️ Add More Images';
-            modalAddImagesBtn.disabled = false;
-            imageUploadInput.value = '';
-
-            // Update the modal UI to show thumbnails and caption/format options
-            renderModalImagePreview();
-            if (window.appUploadedImages.length > 0) {
-                captionOptions.style.display = 'block';
-                modalFormatWithImagesBtn.style.display = 'block';
-            }
-        });
-    }
-
-    // Render thumbnails inside the modal
-    function renderModalImagePreview() {
-        if (!modalImagePreview) return;
-        modalImagePreview.innerHTML = '';
-        window.appUploadedImages.forEach((img, index) => {
-            const wrapper = document.createElement('div');
-            wrapper.className = 'image-thumb-wrapper';
-
-            const thumb = document.createElement('img');
-            thumb.className = 'image-thumb';
-            thumb.src = img.dataUrl;
-
-            const removeBtn = document.createElement('button');
-            removeBtn.className = 'image-thumb-remove';
-            removeBtn.innerHTML = '✖';
-            removeBtn.onclick = () => {
-                window.appUploadedImages.splice(index, 1);
-                window.appUploadedImages.forEach((m, idx) => m.id = idx);
-                renderModalImagePreview();
-                // Hide caption/format options if no images remain
-                if (window.appUploadedImages.length === 0) {
-                    captionOptions.style.display = 'none';
-                    modalFormatWithImagesBtn.style.display = 'none';
-                    modalAddImagesBtn.innerHTML = '🖼️ Choose Images';
-                }
-            };
-
-            wrapper.appendChild(thumb);
-            wrapper.appendChild(removeBtn);
-            modalImagePreview.appendChild(wrapper);
-        });
-        // Also sync to the main strip (for later use)
-        renderImagePreview();
-    }
-
-    // "Format with Images" button in modal
-    if (modalFormatWithImagesBtn) {
-        modalFormatWithImagesBtn.addEventListener('click', () => {
-            // Store caption preference
-            const captionChoice = document.querySelector('input[name="caption-choice"]:checked')?.value || 'with';
-            window.appImageCaptionEnabled = (captionChoice === 'with');
-            imageStepModal.style.display = 'none';
-            proceedWithFormatting();
-        });
-    }
-
-    // "Skip" button in modal
-    if (modalSkipImagesBtn) {
-        modalSkipImagesBtn.addEventListener('click', () => {
-            window.appUploadedImages = []; // Clear any images
-            window.appImageCaptionEnabled = false;
-            imageStepModal.style.display = 'none';
-            proceedWithFormatting();
-        });
-    }
 
 
     function renderImagePreview() {
@@ -1167,18 +1064,13 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('template-continue-btn')?.addEventListener('click', () => {
         document.getElementById('template-modal').style.display = 'none';
         applyTemplateToRibbon();
-
-        // Show Image Step Modal
-        const imageStepModal = document.getElementById('image-step-modal');
-        if (imageStepModal) imageStepModal.style.display = 'flex';
+        proceedWithFormatting();
     });
 
     document.getElementById('template-skip-btn')?.addEventListener('click', () => {
         if (window.templateEngine) window.templateEngine.selectTemplate('general');
         document.getElementById('template-modal').style.display = 'none';
-
-        const imageStepModal = document.getElementById('image-step-modal');
-        if (imageStepModal) imageStepModal.style.display = 'flex';
+        proceedWithFormatting();
     });
 
     // Handle Format Button Click — Show TEMPLATE modal first
@@ -1193,11 +1085,6 @@ document.addEventListener('DOMContentLoaded', () => {
         window.appUploadedImages = [];
         window.appImageCaptionEnabled = false;
 
-        // Reset image modal UI
-        if (modalImagePreview) modalImagePreview.innerHTML = '';
-        if (captionOptions) captionOptions.style.display = 'none';
-        if (modalFormatWithImagesBtn) modalFormatWithImagesBtn.style.display = 'none';
-        if (modalAddImagesBtn) modalAddImagesBtn.innerHTML = '🖼️ Choose Images';
 
         // Show Template Modal FIRST
         const templateModal = document.getElementById('template-modal');
@@ -1208,8 +1095,7 @@ document.addEventListener('DOMContentLoaded', () => {
             templateModal.style.display = 'flex';
         } else {
             // Fallback if modal missing
-            const imageStepModal = document.getElementById('image-step-modal');
-            if (imageStepModal) imageStepModal.style.display = 'flex';
+            proceedWithFormatting();
         }
     });
 
@@ -1356,14 +1242,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const extractedMermaid = [];
 
             // First pass: Markdown fenced blocks
-            let cleanedText = textToProcess.replace(/```mermaid\s*\n([\s\S]*?)```/gi, (match, code) => {
+            let cleanedText = textToProcess.replace(/```\s*mermaid[\s\n]*([\s\S]*?)```/gi, (match, code) => {
                 const index = extractedMermaid.length;
                 extractedMermaid.push(code.trim());
                 return `\n\n%%MERMAID_PLACEHOLDER_${index}%%\n\n`;
             });
 
             // Second pass: Bare/Raw Mermaid blocks (un-fenced text that starts with a mermaid keyword)
-            const bareMermaidRegex = /^(graph|flowchart|sequenceDiagram|gantt|classDiagram|stateDiagram|pie|journey)[\s\S]+?(?=\n\n|\n$|$)/gim;
+            const bareMermaidRegex = /^(graph|flowchart|sequenceDiagram|gantt|classDiagram|stateDiagram|stateDiagram-v2|pie|journey|erDiagram|mindmap|timeline|quadrantChart|gitGraph)[\s\S]+?(?=\n\n|\n$|$)/gim;
             cleanedText = cleanedText.replace(bareMermaidRegex, (match) => {
                 // To avoid false positives on normal text that happens to start with "Graph",
                 // we only extract it if it contains an arrow "-->" or brackets "[]" typical of mermaid

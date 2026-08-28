@@ -546,45 +546,6 @@
         </div>
     </div>
 
-    <div id="image-step-modal" class="modal-overlay" style="display: none;">
-        <div class="modal-content" style="max-width: 420px; text-align: center;">
-            <h3 style="margin-bottom: 6px;">📷 Add Images to Your Document?</h3>
-            <p style="color: var(--text-muted, #888); font-size: 13px; margin-bottom: 18px;">Upload images and our AI
-                will intelligently place them in the formatted output at the best position.</p>
-
-            <!-- Image Preview in Modal -->
-            <div id="modal-image-preview"
-                style="display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 16px; min-height: 0;">
-            </div>
-
-            <button id="modal-add-images-btn" class="btn secondary"
-                style="width: 100%; margin-bottom: 14px; padding: 10px; font-size: 14px;">
-                🖼️ Choose Images
-            </button>
-
-            <div id="caption-options"
-                style="display: none; margin-bottom: 14px; border: 1px solid var(--border, #e0e0e0); border-radius: 8px; padding: 10px;">
-                <p style="font-size: 12px; color: var(--text-muted, #888); margin-bottom: 8px;">Caption Preference:</p>
-                <div style="display: flex; gap: 10px; justify-content: center;">
-                    <label
-                        style="display: flex; align-items: center; gap: 5px; cursor: pointer; font-size: 13px; padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border, #ddd);">
-                        <input type="radio" name="caption-choice" value="with" checked> With Caption
-                    </label>
-                    <label
-                        style="display: flex; align-items: center; gap: 5px; cursor: pointer; font-size: 13px; padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border, #ddd);">
-                        <input type="radio" name="caption-choice" value="without"> Without Caption
-                    </label>
-                </div>
-            </div>
-
-            <div class="modal-actions" style="flex-direction: column; gap: 8px;">
-                <button id="modal-format-with-images-btn" class="btn primary"
-                    style="width: 100%; display: none; padding: 10px; font-size: 14px;">✨ Format with Images</button>
-                <button id="modal-skip-images-btn" class="btn secondary"
-                    style="width: 100%; padding: 10px; font-size: 14px;">⏭️ Skip — Format without Images</button>
-            </div>
-        </div>
-    </div>
 
     <!-- Overwrite/Append Modal -->
     <div id="append-modal" class="modal-overlay" style="display: none;">
@@ -844,7 +805,7 @@
             <div class="modal-title-wrapper">
                 <span class="modal-icon">💡</span>
                 <div style="display:flex; flex-direction:column;">
-                    <h2>How to Use SmartFormatter</h2>
+                    <h2>How to Use FormatFlow</h2>
                     <p class="modal-subtitle" style="margin:0; font-size:12px; margin-top:2px;">Complete guide to all features</p>
                 </div>
             </div>
@@ -904,14 +865,14 @@
             <!-- Header -->
             <div style="text-align: center; margin-bottom: 32px; padding-top: 12px;">
                 <div style="width: 72px; height: 72px; background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); border-radius: 20px; margin: 0 auto 16px auto; display: flex; align-items: center; justify-content: center; font-size: 36px; box-shadow: 0 10px 25px rgba(124, 58, 237, 0.4);">📝</div>
-                <h2 style="margin: 0 0 8px 0; font-size: 28px; color: var(--text-main); font-weight:700;">SmartFormatter</h2>
+                <h2 style="margin: 0 0 8px 0; font-size: 28px; color: var(--text-main); font-weight:700;">FormatFlow</h2>
                 <p style="margin: 0; color: var(--text-muted); font-size: 15px;">FormatFlow Manager</p>
             </div>
 
             <!-- Our Mission -->
             <div class="about-section" style="margin-bottom: 32px;">
                 <h3 style="color:var(--text-main); font-size:18px; margin-bottom:12px; display:flex; align-items:center; gap:8px;">🎯 Our Mission</h3>
-                <p style="color:var(--text-muted); font-size:14px; line-height:1.6; margin:0;">SmartFormatter was created with a simple goal: <b style="color:var(--text-main);">help users format text smartly</b>. We believe everyone deserves a tool that takes the stress out of structuring documents and helps them make perfectly formatted output instantly.</p>
+                <p style="color:var(--text-muted); font-size:14px; line-height:1.6; margin:0;">FormatFlow was created with a simple goal: <b style="color:var(--text-main);">help users format text smartly</b>. We believe everyone deserves a tool that takes the stress out of structuring documents and helps them make perfectly formatted output instantly.</p>
             </div>
 
             <!-- Stats Grid -->
@@ -956,9 +917,9 @@
                 </div>
             </div>
 
-            <!-- Why SmartFormatter? -->
+            <!-- Why FormatFlow? -->
             <div class="about-section" style="margin-bottom: 32px;">
-                <h3 style="color:var(--text-main); font-size:18px; margin-bottom:16px; display:flex; align-items:center; gap:8px;">🌟 Why SmartFormatter?</h3>
+                <h3 style="color:var(--text-main); font-size:18px; margin-bottom:16px; display:flex; align-items:center; gap:8px;">🌟 Why FormatFlow?</h3>
                 <ul class="why-list">
                     <li><b>Made by a Student:</b> We understand the real challenges of formatting messy notes.</li>
                     <li><b>Privacy First:</b> Your data stays on your device, processing locally.</li>
@@ -1016,7 +977,7 @@
                 
                 <div class="faq-item">
                     <button class="faq-question">How do I install this as an app?<span class="faq-icon">+</span></button>
-                    <div class="faq-answer"><p>You can install SmartFormatter as a PWA (Progressive Web App). Just tap the "Add to Home Screen" option in your browser menu on mobile.</p></div>
+                    <div class="faq-answer"><p>You can install FormatFlow as a PWA (Progressive Web App). Just tap the "Add to Home Screen" option in your browser menu on mobile.</p></div>
                 </div>
             </div>
 
@@ -1077,7 +1038,7 @@
             <div style="text-align: center; margin-bottom: 24px; padding-top: 12px;">
                 <div style="width: 64px; height: 64px; background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); border-radius: 16px; margin: 0 auto 12px auto; display: flex; align-items: center; justify-content: center; font-size: 32px; box-shadow: 0 8px 20px rgba(124, 58, 237, 0.4);">📝</div>
                 <h2 style="margin: 0 0 8px 0; font-size: 22px; color: var(--text-main); font-weight:700;">Support Center</h2>
-                <p style="margin: 0; color: var(--text-muted); font-size: 13px; line-height: 1.5; padding: 0 10px;">Welcome to SmartFormatter Support! We're here to help you get the most out of your text formatting experience.</p>
+                <p style="margin: 0; color: var(--text-muted); font-size: 13px; line-height: 1.5; padding: 0 10px;">Welcome to FormatFlow Support! We're here to help you get the most out of your text formatting experience.</p>
             </div>
 
             <div class="support-section-title">🚀 Quick Links</div>
@@ -1240,7 +1201,7 @@
             </div>
 
             <p style="color:var(--text-main); font-size:13.5px; font-weight:bold; margin-bottom:12px;">Effective Date: August 2026</p>
-            <p style="color:var(--text-muted); font-size:13.5px; line-height:1.6; margin-bottom:24px;">SmartFormatter ("we", "our", or "the app") is committed to protecting your privacy. This policy explains how we handle your data.</p>
+            <p style="color:var(--text-muted); font-size:13.5px; line-height:1.6; margin-bottom:24px;">FormatFlow ("we", "our", or "the app") is committed to protecting your privacy. This policy explains how we handle your data.</p>
             
             <div class="privacy-section">
                 <h3 style="color:var(--primary-color); font-size:16px; margin:0 0 12px 0; display:flex; align-items:center; gap:8px;">📊 Data We Collect</h3>
@@ -1324,11 +1285,11 @@
             </div>
 
             <p style="color:var(--text-main); font-size:13.5px; font-weight:bold; margin-bottom:12px;">Effective Date: August 2026</p>
-            <p style="color:var(--text-muted); font-size:13.5px; line-height:1.6; margin-bottom:24px;">By using SmartFormatter ("the app"), you agree to these terms. Please read them carefully.</p>
+            <p style="color:var(--text-muted); font-size:13.5px; line-height:1.6; margin-bottom:24px;">By using FormatFlow ("the app"), you agree to these terms. Please read them carefully.</p>
             
             <div class="privacy-section">
                 <h3 style="color:var(--primary-color); font-size:16px; margin:0 0 12px 0; display:flex; align-items:center; gap:8px;">📱 About the App</h3>
-                <p style="color:var(--text-muted); font-size:13.5px; line-height:1.6; margin:0 0 12px 0;">SmartFormatter is a free AI-powered text formatting tool. The app helps you:</p>
+                <p style="color:var(--text-muted); font-size:13.5px; line-height:1.6; margin:0 0 12px 0;">FormatFlow is a free AI-powered text formatting tool. The app helps you:</p>
                 <ul class="privacy-list">
                     <li>Format unstructured text beautifully</li>
                     <li>Convert text into Markdown and HTML</li>
@@ -1388,7 +1349,7 @@
             <div class="privacy-section" style="margin-bottom:24px;">
                 <h3 style="color:var(--primary-color); font-size:16px; margin:0 0 12px 0; display:flex; align-items:center; gap:8px;">📧 Contact</h3>
                 <p style="color:var(--text-muted); font-size:13.5px; line-height:1.6; margin:0 0 8px 0;">For questions about these terms:</p>
-                <p style="color:var(--text-muted); font-size:13.5px; line-height:1.6; margin:0;">WhatsApp: +91 9648250545<br>Website: <a href="#" style="color:#6C63FF; text-decoration:none;">smartformatter.in</a></p>
+                <p style="color:var(--text-muted); font-size:13.5px; line-height:1.6; margin:0;">WhatsApp: +91 9648250545<br>Website: <a href="#" style="color:#6C63FF; text-decoration:none;">formatflow.in</a></p>
             </div>
 
             <div style="text-align:center;">
@@ -1442,14 +1403,49 @@
                 <p style="color:var(--text-muted); font-size:12px; margin:0 0 16px 0;">Scan with any UPI app (GPay, PhonePe, Paytm, etc.)</p>
                 
                 <div style="display:flex; gap:12px; justify-content:center;">
-                    <button style="background: rgba(45, 212, 191, 0.1); border: 1px solid rgba(45, 212, 191, 0.3); color: #2dd4bf; padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; display:flex; align-items:center; gap:6px; cursor:pointer;">
+                    <button onclick="downloadQR()" style="background: rgba(45, 212, 191, 0.1); border: 1px solid rgba(45, 212, 191, 0.3); color: #2dd4bf; padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; display:flex; align-items:center; gap:6px; cursor:pointer;">
                         📥 Download QR
                     </button>
-                    <button style="background: rgba(129, 140, 248, 0.1); border: 1px solid rgba(129, 140, 248, 0.3); color: var(--primary-color); padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; display:flex; align-items:center; gap:6px; cursor:pointer;">
+                    <button onclick="shareQR()" style="background: rgba(129, 140, 248, 0.1); border: 1px solid rgba(129, 140, 248, 0.3); color: var(--primary-color); padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 600; display:flex; align-items:center; gap:6px; cursor:pointer;">
                         🔗 Share QR
                     </button>
                 </div>
             </div>
+
+            <script>
+                function downloadQR() {
+                    const link = document.createElement('a');
+                    link.href = './image/qr-code.png';
+                    link.download = 'FormatFlow-Support-QR.png';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }
+                
+                async function shareQR() {
+                    if (navigator.share) {
+                        try {
+                            const response = await fetch('./image/qr-code.png');
+                            const blob = await response.blob();
+                            const file = new File([blob], 'qr-code.png', { type: blob.type });
+                            
+                            await navigator.share({
+                                title: 'Support FormatFlow',
+                                text: 'Scan this QR code to support FormatFlow via UPI!',
+                                files: [file]
+                            });
+                        } catch (err) {
+                            console.log('Share failed or was canceled', err);
+                            navigator.share({
+                                title: 'Support FormatFlow',
+                                text: 'Support FormatFlow! Visit our app to scan the UPI QR.',
+                            }).catch(e => console.error(e));
+                        }
+                    } else {
+                        alert('Sharing is not supported on this browser.');
+                    }
+                }
+            </script>
 
             <!-- Footer Buttons -->
             <div style="text-align:center;">

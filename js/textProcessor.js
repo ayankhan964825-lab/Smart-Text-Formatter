@@ -32,7 +32,7 @@ class TextProcessor {
         // --- Extract Mermaid code blocks before tokenizing ---
         // Replace ```mermaid ... ``` with a special placeholder token
         const mermaidBlocks = [];
-        const textWithoutMermaid = normalizedText.replace(/```mermaid\s*\n([\s\S]*?)```/g, (match, code) => {
+        const textWithoutMermaid = normalizedText.replace(/```\s*mermaid[\s\n]*([\s\S]*?)```/gi, (match, code) => {
             const index = mermaidBlocks.length;
             mermaidBlocks.push(code.trim());
             return `%%MERMAID_BLOCK_${index}%%`;

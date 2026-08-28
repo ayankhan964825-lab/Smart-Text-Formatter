@@ -284,14 +284,13 @@ body { font-family: var(--sf-font-sans) !important; background: var(--sf-paper) 
 
 /* Mobile export bar */
 .mobile-export-container {
-    background: var(--sf-paper) !important;
-    border-top: 1px solid var(--sf-border) !important;
+    background: var(--bg-panel) !important;
+    border-top: 1px solid var(--border-color) !important;
 }
 .mobile-export-btn.primary {
-  background: var(--sf-ink) !important;
-  color: var(--sf-paper) !important;
+  background: var(--primary-color) !important;
+  color: #ffffff !important;
   border-radius: 999px !important;
-  font-family: var(--sf-font-sans) !important;
   font-weight: 600 !important;
   font-size: 12px !important;
 }
@@ -1472,10 +1471,14 @@ body { font-family: var(--sf-font-sans) !important; background: var(--sf-paper) 
 }
 
 .analytics-modal {
-    background: var(--bg-surface);
+    background: var(--bg-panel);
+    backdrop-filter: blur(16px);
     border-radius: 16px;
-    width: 100%;
+    width: 90%;
     max-width: 420px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
     box-shadow: 0 20px 60px rgba(0,0,0,0.3);
     overflow: hidden;
     animation: analytics-slide-in 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -1499,11 +1502,16 @@ body { font-family: var(--sf-font-sans) !important; background: var(--sf-paper) 
     font-size: 16px;
     font-weight: 600;
     color: var(--text-main);
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 10px;
 }
 
 .analytics-modal-body {
     padding: 16px 20px;
-    max-height: 65vh;
+    flex: 1;
     overflow-y: auto;
 }
 

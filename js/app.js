@@ -217,17 +217,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const miniToolbar = document.getElementById('mini-rtf-toolbar');
     const previewContainerEl = document.getElementById('formatted-preview');
 
-    const toggleFullScreenMode = () => {
+    window.toggleFullScreenMode = () => {
         const outputPanel = document.querySelector('.output-panel');
+        if (!outputPanel) return;
+        
         outputPanel.classList.toggle('fullscreen-mode');
         document.body.classList.toggle('fullscreen-active');
 
         if (outputPanel.classList.contains('fullscreen-mode')) {
             if (fullScreenBtn) fullScreenBtn.innerHTML = '⮌ Exit Full Screen';
             if (fsControls) fsControls.style.display = 'flex';
-            
-            const floatingExit = document.getElementById('floating-exit-fullscreen');
-            if (floatingExit) floatingExit.style.display = 'flex';
             
             if (exitFullScreenBtn) {
                 exitFullScreenBtn.innerHTML = '✖ Exit';
@@ -239,9 +238,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (fullScreenBtn) fullScreenBtn.innerHTML = '⛶ Full Screen';
             // KEEP it flex so the floating controls are always available
             if (fsControls) fsControls.style.display = 'flex';
-            
-            const floatingExit = document.getElementById('floating-exit-fullscreen');
-            if (floatingExit) floatingExit.style.display = 'none';
             
             if (exitFullScreenBtn) {
                 exitFullScreenBtn.innerHTML = '⛶';
@@ -2490,6 +2486,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 rawInput.disabled = true;
             }
 
+            // Show the Analytics button in output panel
+            const analyzeBtn = document.getElementById('analyze-btn');
+            if (analyzeBtn) {
+                analyzeBtn.style.display = 'flex';
+            }
+
             if (typeof debouncedAutoSave === 'function') {
                 debouncedAutoSave();
             }
@@ -2534,6 +2536,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             if (rawInput) {
                 rawInput.disabled = false;
+            }
+            
+            const analyzeBtn = document.getElementById('analyze-btn');
+            if (analyzeBtn) {
+                analyzeBtn.style.display = 'none';
             }
         } finally {
             // As per user request: only re-enable the alignment control for live previews.
@@ -3252,6 +3259,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (window.templateEngine) window.templateEngine.selectTemplate('general');
         if (window.referenceHandler) window.referenceHandler.clear();
         hasFormattedOnce = false;
+        
+        const analyzeBtn = document.getElementById('analyze-btn');
+        if (analyzeBtn) {
+            analyzeBtn.style.display = 'none';
+        }
 
         const ribbonControls = document.querySelectorAll('.typography-controls select, .typography-controls input, .global-settings-controls select, .global-settings-controls input');
         ribbonControls.forEach(control => {
@@ -3356,6 +3368,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     window.templateEngine.selectTemplate('general');
                 }
                 hasFormattedOnce = !!(doc.formattedHtml && doc.formattedHtml.length > 0);
+                const analyzeBtn = document.getElementById('analyze-btn');
+                if (analyzeBtn) {
+                    analyzeBtn.style.display = hasFormattedOnce ? 'flex' : 'none';
+                }
                 isInitialLoad = false;
 
                 if (saveStatus) {

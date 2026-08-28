@@ -54,26 +54,20 @@ body { font-family: var(--sf-font-sans) !important; background: var(--sf-paper) 
 .top-bar.refined .hamburger-btn:hover { background: var(--sf-paper-2) !important; }
 
 .editor-brand {
-  display: inline-flex; align-items: center; gap: 8px;
-  font-family: var(--sf-font-display); color: var(--sf-ink);
-  text-decoration: none; transition: opacity .2s ease;
-  padding: 4px 8px; border-radius: 8px;
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--sf-font-display); color: var(--sf-ink);
+    text-decoration: none; transition: opacity .2s ease;
+    padding: 4px 8px; border-radius: 8px;
 }
 .editor-brand:hover { background: var(--sf-paper-2); }
-.editor-brand-mark {
-  width: 30px; height: 30px; border-radius: 8px;
-  background: var(--sf-ink); color: var(--sf-paper);
-  display: grid; place-items: center;
-  transform: rotate(-3deg);
-  transition: transform .3s cubic-bezier(.34,1.56,.64,1);
-}
-.editor-brand:hover .editor-brand-mark { transform: rotate(3deg) scale(1.06); }
-.editor-brand-word { font-size: 16px; font-weight: 600; letter-spacing: -.01em; }
-.editor-brand-word b { font-weight: 700; }
-.editor-brand-word i {
-  font-family: var(--sf-font-script);
-  font-style: italic; font-weight: 400;
-  color: var(--sf-coral); margin-left: 2px;
+.editor-brand-icon { height: 30px; border-radius: 8px; object-fit: cover; transition: transform .3s ease; }
+.editor-brand:hover .editor-brand-icon { transform: scale(1.08) rotate(2deg); }
+.editor-brand-word { font-size: 18px; font-weight: 600; letter-spacing: -.01em; display: flex; align-items: center; }
+.editor-brand-text-format { color: var(--sf-ink); font-weight: 500; transition: color .3s ease; }
+.editor-brand-text-flow {
+    font-family: var(--sf-font-script);
+    font-style: italic; font-weight: 400;
+    color: var(--sf-coral); margin-left: 2px;
 }
 .editor-brand-sep { color: var(--sf-ink-mute); font-size: 18px; font-weight: 300; padding: 0 2px; }
 
@@ -318,27 +312,19 @@ body { font-family: var(--sf-font-sans) !important; background: var(--sf-paper) 
 
 /* Mobile (up to 768px) */
 @media (max-width: 768px) {
-  /* --- Brand: Compact "SF" --- */
-  .editor-brand-word, .editor-brand-sep { display: none; }
-  .editor-brand::after {
-    content: "SF";
-    font-family: var(--sf-font-display);
-    font-weight: 700;
-    font-size: 14px;
-    color: var(--sf-ink);
-    letter-spacing: -0.02em;
-  }
+  /* --- Brand --- */
+  .editor-brand-sep { display: none; }
+  .editor-brand-icon { height: 26px; }
+  .editor-brand-word { font-size: 16px; }
   .top-bar.refined .document-title-input { min-width: 110px; font-size: 13px !important; }
   .desktop-export-container { display: none !important; }
   .top-bar.refined { justify-content: space-between !important; }
   .theme-toggle {
-    position: absolute !important;
-    top: 12px;
-    right: 16px;
+    /* position: absolute removed to fix collision with hamburger menu */
     margin: 0 !important;
   }
   .top-bar.refined .logo {
-    padding-right: 40px; /* prevent input from overlapping with absolute toggle */
+    padding-right: 0px; 
   }
 
   /* --- Hide formatting ribbon --- */

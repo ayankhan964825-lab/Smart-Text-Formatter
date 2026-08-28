@@ -95,20 +95,13 @@ img { max-width: 100%; display: block; }
 }
 [data-theme="dark"] .nav { background: rgba(12,18,32,.72); border-bottom-color: rgba(42,53,80,.6); }
 
-.brand { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); }
-.brand-mark {
-  display: grid; place-items: center;
-  width: 40px; height: 40px;
-  background: var(--ink); color: var(--paper);
-  border-radius: 10px;
-  transform: rotate(-3deg);
-  transition: transform .3s cubic-bezier(.34,1.56,.64,1);
-}
-.brand-mark.small { width: 32px; height: 32px; }
-.brand:hover .brand-mark { transform: rotate(3deg) scale(1.08); }
-.brand-word { font-size: 20px; font-weight: 600; letter-spacing: -.01em; }
-.brand-word b { font-weight: 700; }
-.brand-italic { font-family: var(--font-script); font-style: italic; font-weight: 400; color: var(--coral); margin-left: 2px; }
+.brand { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); text-decoration: none; }
+.brand-icon { height: 32px; border-radius: 8px; object-fit: cover; transition: transform .3s ease; }
+.brand-icon-footer { height: 26px; border-radius: 6px; object-fit: cover; transition: transform .3s ease; }
+.brand:hover .brand-icon, .brand:hover .brand-icon-footer { transform: scale(1.08) rotate(2deg); }
+.brand-word { font-size: 24px; font-weight: 600; letter-spacing: -.01em; display: flex; align-items: center; }
+.brand-text-format { color: var(--ink); font-weight: 500; transition: color .3s ease; }
+.brand-text-flow { color: var(--coral); font-family: var(--font-script); font-style: italic; font-weight: 400; margin-left: 2px; }
 
 .nav-links { display: flex; align-items: center; gap: 6px; justify-self: center; }
 .nav-links a {
@@ -541,5 +534,7 @@ img { max-width: 100%; display: block; }
   .hero-title { font-size: 44px; }
   .mock-body { grid-template-columns: 1fr; }
   .mock-arrow { transform: rotate(90deg); }
-  .brand-word { font-size: 16px; }
+  .brand-icon { height: 26px; }
+  .brand-icon-footer { height: 22px; }
+  .brand-word { font-size: 18px; }
 }

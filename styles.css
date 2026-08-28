@@ -609,8 +609,8 @@ body {
 
 /* Each discrete A4 page */
 .a4-page {
-    background-color: var(--a4-bg);
-    color: var(--text-main);
+    background-color: #ffffff;
+    color: #000000;
     width: 210mm;
     min-height: 297mm;
     margin: 0 auto 24px auto;

@@ -4,11 +4,13 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Smart Text Formatter — AI-powered document formatting, done in seconds</title>
+<link rel="icon" type="image/png" href="image/favicon.png">
+<link rel="apple-touch-icon" href="image/favicon.png">
 <meta name="description" content="Turn raw, messy text into publication-ready PDF, Word and PowerPoint documents. AI-native structure detection, Mermaid diagrams, math equations, exports that feel handcrafted." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,900&family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="landing.css?v=1" />
+<link rel="stylesheet" href="landing.css?v=4" />
 </head>
 <body>
 
@@ -18,16 +20,9 @@
 <!-- ==================== NAV ==================== -->
 <header class="nav" data-testid="site-nav">
   <a href="/" class="brand" data-testid="brand-logo">
-    <span class="brand-mark">
-      <svg viewBox="0 0 40 40" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M8 6h18l6 6v22a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2Z"/>
-        <path d="M26 6v6h6"/>
-        <path d="M12 20l3 3 8-8"/>
-        <path d="M12 28h16"/>
-      </svg>
-    </span>
+    <img src="image/favicon.png" alt="Favicon" class="brand-icon">
     <span class="brand-word">
-      <b>Smart</b><span class="brand-italic">Formatter</span>
+      <span class="brand-text-format">Format</span><span class="brand-text-flow">Flow</span>
     </span>
   </a>
 
@@ -237,6 +232,15 @@ next section is history and background</pre>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
       </a>
     </article>
+
+    <article class="feature-card" data-testid="feature-analytics">
+      <div class="f-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+      </div>
+      <h3>Java-powered text analytics</h3>
+      <p>One-click readability scores, word frequency, sentence complexity and more — powered by a Java backend microservice.</p>
+      <div class="f-tag">Java + Javalin</div>
+    </article>
   </div>
 </section>
 
@@ -347,10 +351,10 @@ next steps we discuss in monday standup</pre>
   <div class="footer-inner">
     <div class="footer-brand">
       <a href="/" class="brand">
-        <span class="brand-mark small">
-          <svg viewBox="0 0 40 40" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h18l6 6v22a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2Z"/><path d="M26 6v6h6"/><path d="M12 20l3 3 8-8"/><path d="M12 28h16"/></svg>
+        <img src="image/favicon.png" alt="Favicon" class="brand-icon-footer">
+        <span class="brand-word" style="font-size: 18px;">
+          <span class="brand-text-format">Format</span><span class="brand-text-flow">Flow</span>
         </span>
-        <span class="brand-word"><b>Smart</b><span class="brand-italic">Formatter</span></span>
       </a>
       <p class="footer-tagline">AI-native document formatting.<br/>Built by <a href="https://github.com/ayankhan964825-lab" target="_blank" rel="noopener">Ayan Khan</a> · Open source under MIT.</p>
     </div>
@@ -397,6 +401,9 @@ next steps we discuss in monday standup</pre>
     entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
   }, { threshold: 0.12 });
   document.querySelectorAll('.feature-card, .step, .showcase-card, .stat, .section-head').forEach(el => io.observe(el));
+
+  // Wake up Render backend (Java Analytics) on page load
+  fetch('https://stf-java-analytics.onrender.com/').catch(() => {});
 </script>
 
 </body>

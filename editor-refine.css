@@ -1457,41 +1457,6 @@ body { font-family: var(--sf-font-sans) !important; background: var(--sf-paper) 
     opacity: 0.9;
 }
 
-/* --- Native App Pull-to-Refresh --- */
-.ptr-indicator {
-    position: fixed;
-    top: -60px; /* Hidden by default */
-    left: 50%;
-    transform: translateX(-50%);
-    width: 40px;
-    height: 40px;
-    background: var(--sf-paper);
-    border-radius: 50%;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-    color: var(--sf-ink);
-    opacity: 0;
-    transition: opacity 0.2s;
-    pointer-events: none;
-}
-.ptr-indicator.visible {
-    opacity: 1;
-}
-.ptr-indicator.active .ptr-spinner {
-    animation: ptr-spin 1s linear infinite;
-    color: #6C63FF;
-}
-@keyframes ptr-spin {
-    100% { transform: rotate(360deg); }
-}
-.ptr-spinner svg {
-    width: 20px;
-    height: 20px;
-}
-
 /* --- Dark Mode Specific Button Colors --- */
 :root[data-theme="dark"] #export-pdf,
 :root[data-theme="dark"] #export-word {

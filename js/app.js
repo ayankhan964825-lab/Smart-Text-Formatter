@@ -3866,7 +3866,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (!proxyResponse || !proxyResponse.ok) {
                         console.warn('[AIFormatter] Local proxy /api/format failed or not found, falling back to vercel proxy...');
                         try {
-                            proxyResponse = await fetch('https://smarttextformatter.vercel.app/api/format', {
+                            proxyResponse = await fetch('https://formatxflow.vercel.app/api/format', {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify({

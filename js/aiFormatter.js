@@ -191,7 +191,7 @@ ${window.referenceStyleGuide ? `--- ADOBE REFERENCE PDF STYLE GUIDE ---\nThe use
 
                 if (!proxyResponse || !proxyResponse.ok) {
                     console.warn('[AIFormatter] Local proxy /api/format failed, falling back to vercel production proxy...');
-                    proxyResponse = await fetch('https://smarttextformatter.vercel.app/api/format', {
+                    proxyResponse = await fetch('https://formatxflow.vercel.app/api/format', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ rawText, systemInstruction, images, referencePdf })
@@ -652,7 +652,7 @@ ${hintText || 'Please generate a standard ' + sectionName + ' appropriate for th
                 });
             } catch (e) {
                 console.warn('[AIFormatter] Local proxy failed, trying vercel...');
-                proxyResponse = await fetch('https://smart-text-formatter-server.vercel.app/api/format', {
+                proxyResponse = await fetch('https://formatxflow.vercel.app/api/format', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -754,7 +754,7 @@ ${truncatedContext}
                 if (!proxyResponse || !proxyResponse.ok) {
                     console.warn('[AIFormatter] Local proxy /api/format failed, falling back to vercel proxy...');
                     try {
-                        proxyResponse = await fetch('https://smarttextformatter.vercel.app/api/format', {
+                        proxyResponse = await fetch('https://formatxflow.vercel.app/api/format', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({

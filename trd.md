@@ -1,7 +1,7 @@
 **TECHNICAL REQUIREMENTS DOCUMENT**
 **TextMorph — FormatFlow**
 Technical Architecture and Implementation Specification | Version 2.0
-https://smarttextformatter.vercel.app
+https://formatxflow.vercel.app
 
 | Field | Details |
 |---|---|

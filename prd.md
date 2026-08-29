@@ -1,7 +1,7 @@
 **PRODUCT REQUIREMENTS DOCUMENT**
 **TextMorph — FormatFlow**
 AI-Powered Document Formatting Platform | Version 2.0
-https://smarttextformatter.vercel.app
+https://formatxflow.vercel.app
 
 | Field | Details |
 |---|---|
@@ -9,7 +9,7 @@ https://smarttextformatter.vercel.app
 | Version | 2.0 (Major Feature Update) |
 | Document Type | Product Requirements Document (PRD) |
 | Tech Stack | HTML5, CSS3, Vanilla JavaScript, Gemini API |
-| Previous Version | v1.0 — Live at smarttextformatter.vercel.app |
+| Previous Version | v1.0 — Live at formatxflow.vercel.app |
 | Status | Active Development |
 | Date | April 2026 |
 

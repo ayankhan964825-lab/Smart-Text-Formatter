@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Allow: /index.html
+Allow: /editor.html
+Disallow: /presentation/
+
+Sitemap: https://formatxflow.vercel.app/sitemap.xml

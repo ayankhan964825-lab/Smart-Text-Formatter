@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FormatFlow — OOPD Project Showcase</title>
-    <meta name="description" content="Apple-event inspired presentation on OOP Design.">
+    <meta name="description" content="FormatFlow project presentation — Java-powered intelligent document formatting.">
     <link rel="stylesheet" href="styles.css">
 
     <!-- PptxGenJS Dependencies -->
@@ -22,33 +22,33 @@
 
     <!-- Navigation Arrows -->
     <button class="nav-arrow nav-prev" id="nav-prev" aria-label="Previous slide">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="15 18 9 12 15 6"></polyline>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M15 18l-6-6 6-6" />
         </svg>
     </button>
     <button class="nav-arrow nav-next" id="nav-next" aria-label="Next slide">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="9 6 15 12 9 18"></polyline>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M9 18l6-6-6-6" />
         </svg>
     </button>
 
-    <!-- Slide Counter -->
-    <div class="slide-counter" id="slide-counter">1 / 13</div>
-
-    <!-- Navigation Dots -->
+    <!-- Slide Indicator -->
+    <div class="slide-indicator" id="slide-counter">1 / 13</div>
     <div class="slide-dots" id="slide-dots"></div>
 
-    <!-- Fullscreen Toggle -->
+    <!-- Fullscreen + Export Button -->
     <button class="fullscreen-btn" id="fullscreen-btn" aria-label="Toggle fullscreen">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3" />
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" width="20" height="20">
+            <path d="M8 3H5a2 2 0 00-2 2v3M21 8V5a2 2 0 00-2-2h-3M3 16v3a2 2 0 002 2h3M16 21h3a2 2 0 002-2v-3" />
         </svg>
     </button>
-
-    <!-- Download PPTX Export Button -->
-    <button class="export-pptx-btn" id="export-pptx-btn" aria-label="Export to PowerPoint"
-        style="position: fixed; top: 20px; right: 80px; z-index: 1000; width: 44px; height: 44px; border-radius: 50%; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255,255,255,0.2); backdrop-filter: blur(10px); color: white; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease;">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+    <button class="fullscreen-btn" id="export-pptx-btn" aria-label="Export as PPTX"
+        style="bottom: 80px; background: rgba(41,151,255,0.2); border-color: rgba(41,151,255,0.3);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" width="20" height="20">
             <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3" />
         </svg>
     </button>
@@ -65,7 +65,7 @@
             <h1 class="animate-in hero-title" style="--delay: 1">
                 Format<br><span class="gradient-text-hero">Flow</span>
             </h1>
-            <p class="animate-in subtitle" style="--delay: 2">Intelligent Document Formatting, Reimagined.</p>
+            <p class="animate-in subtitle" style="--delay: 2">AI-Powered Document Formatting Engine Built with Java</p>
             <div class="animate-in meta-row" style="--delay: 3">
                 <span class="tag">Object-Oriented Programming & Design</span>
             </div>
@@ -103,7 +103,7 @@
             <div class="split-right">
                 <p class="animate-in section-label" style="--delay: 0">Presented By</p>
                 <h2 class="animate-in slide-heading" style="--delay: 1">Our <span
-                        class="gradient-text-electric">Group</span></h2>
+                        class="gradient-text-electric">Team</span></h2>
                 <div class="animate-in credits-block" style="--delay: 2; text-align: left;">
                     <div class="credits-row"
                         style="justify-content: center; margin-bottom: 24px; gap: clamp(24px, 4vw, 48px);">
@@ -112,9 +112,8 @@
                             <span class="credit-id" style="font-size: clamp(12px, 1.5vw, 16px);">RA2511003030020</span>
                         </div>
                         <div class="credit-item" style="text-align: left;">
-                            <span class="credit-name" style="font-size: clamp(16px, 2vw, 24px);">Tapish Ganesh
-                                Ingle</span>
-                            <span class="credit-id" style="font-size: clamp(12px, 1.5vw, 16px);">RA2511003030044</span>
+                            <span class="credit-name" style="font-size: clamp(16px, 2vw, 24px);">Abhinav</span>
+                            <span class="credit-id" style="font-size: clamp(12px, 1.5vw, 16px);">RA2511003030015</span>
                         </div>
                     </div>
                     <div class="credits-row" style="justify-content: center; gap: clamp(24px, 4vw, 48px);">
@@ -142,27 +141,27 @@
         <div class="slide-bg bg-electric"></div>
         <div class="slide-content">
             <p class="animate-in section-label" style="--delay: 0">The Challenge</p>
-            <h2 class="animate-in slide-heading" style="--delay: 1">Manual formatting is <span
-                    class="gradient-text-electric">broken.</span></h2>
+            <h2 class="animate-in slide-heading" style="--delay: 1">Why do we <span
+                    class="gradient-text-electric">need</span> this?</h2>
 
             <div class="three-columns animate-in" style="--delay: 2; margin-top: 40px;">
                 <div class="level-card glass-card" style="border-top: 4px solid var(--pink);">
                     <div class="level-icon">⏳</div>
-                    <h3>Time-Consuming</h3>
+                    <h3>Time Wasted</h3>
                     <p style="font-size: clamp(14px, 1.5vw, 18px); color: rgba(255,255,255,0.7); line-height: 1.6;">
-                        Hours spent manually adjusting headings, spacing, and fonts across long documents.</p>
+                        Students spend hours manually setting fonts, headings, and spacing for assignments and research papers.</p>
                 </div>
                 <div class="level-card glass-card" style="border-top: 4px solid var(--orange);">
                     <div class="level-icon">🔀</div>
-                    <h3>Inconsistent</h3>
+                    <h3>Inconsistency</h3>
                     <p style="font-size: clamp(14px, 1.5vw, 18px); color: rgba(255,255,255,0.7); line-height: 1.6;">
-                        Different heading levels, font sizes, and spacing create unprofessional results.</p>
+                        Different heading sizes, mismatched fonts, and broken spacing make documents look unprofessional.</p>
                 </div>
                 <div class="level-card glass-card" style="border-top: 4px solid var(--rose);">
                     <div class="level-icon">🚫</div>
-                    <h3>No Browser Solution</h3>
-                    <p style="font-size: clamp(14px, 1.5vw, 18px); color: rgba(255,255,255,0.7); line-height: 1.6;">No
-                        lightweight, browser-based tool auto-detects document structure and applies formatting.</p>
+                    <h3>No Smart Tool</h3>
+                    <p style="font-size: clamp(14px, 1.5vw, 18px); color: rgba(255,255,255,0.7); line-height: 1.6;">
+                        No browser-based tool exists that can automatically understand document structure and apply professional formatting.</p>
                 </div>
             </div>
         </div>
@@ -173,482 +172,432 @@
         <div class="slide-bg bg-deep"></div>
         <div class="slide-content perma-slide" style="align-items: center;">
             <div class="perma-content" style="text-align: center; width: 100%;">
-                <p class="animate-in section-label" style="--delay: 0">The Solution</p>
-                <h2 class="animate-in slide-heading" style="--delay: 1">FormatFlow <span
-                        class="gradient-text-gold">Formatter</span></h2>
+                <p class="animate-in section-label" style="--delay: 0">Our Solution</p>
+                <h2 class="animate-in slide-heading" style="--delay: 1">Introducing <span
+                        class="gradient-text-gold">FormatFlow</span></h2>
                 <p class="animate-in slide-body"
                     style="--delay: 2; margin: 0 auto 40px auto; max-width: 900px; text-align: justify; text-justify: inter-word; font-size: clamp(16px, 1.8vw, 22px); line-height: 1.6;">
-                    A web-based application that <strong>intelligently reads, understands, and formats</strong>
-                    unstructured text documents — powered by AI and pure Object-Oriented Design.
+                    A web application powered by <strong>Google Gemini AI</strong> and a <strong>Java backend</strong> that takes raw, unstructured text and converts it into professionally formatted documents — with one click.
                 </p>
 
                 <div class="leader-behaviors animate-in" style="--delay: 3">
                     <span class="behavior-pill" style="border-color: rgba(90, 200, 250, 0.3); color: var(--teal);">🔍
-                        Auto Structure Detection</span>
+                        AI Structure Detection</span>
                     <span class="behavior-pill" style="border-color: rgba(48, 209, 88, 0.3); color: var(--green);">⚡
                         Real-Time Preview</span>
                     <span class="behavior-pill" style="border-color: rgba(191, 90, 242, 0.3); color: var(--purple);">🎨
-                        Custom Rules Engine</span>
+                        5 Document Templates</span>
                     <span class="behavior-pill" style="border-color: rgba(255, 107, 138, 0.3); color: var(--pink);">🤖
-                        Gemini AI Integration</span>
+                        Gemini 2.5 Flash</span>
                     <span class="behavior-pill" style="border-color: rgba(255, 159, 10, 0.3); color: var(--orange);">📄
-                        PDF & Word Export</span>
-                    <span class="behavior-pill" style="border-color: rgba(41, 151, 255, 0.3); color: var(--blue);">🌐
-                        100% Browser-Based</span>
+                        Word & PDF Export</span>
+                    <span class="behavior-pill" style="border-color: rgba(41, 151, 255, 0.3); color: var(--blue);">☕
+                        Java Analytics Engine</span>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- ======================== SLIDE 5: WHY OOP ======================== -->
+    <!-- ======================== SLIDE 5: HOW IT WORKS ======================== -->
     <section class="slide" id="slide-5" role="region">
+        <div class="slide-bg bg-subtle-geo"></div>
+        <div class="slide-content perma-slide" style="flex-direction: column; align-items:center;">
+            <div class="perma-content" style="text-align: center; width: 100%;">
+                <p class="animate-in section-label" style="--delay: 0">How It Works</p>
+                <h2 class="animate-in slide-heading" style="--delay: 1">The <span class="gradient-text">Processing
+                        Pipeline</span></h2>
+                <p class="animate-in slide-body"
+                    style="--delay: 2; margin: 10px auto 0 auto; max-width: 800px; font-size: clamp(14px, 1.6vw, 18px); color: rgba(255,255,255,0.7); line-height: 1.6;">
+                    User pastes raw text → AI analyzes and classifies every paragraph → Formatting rules are applied → Professional document is generated instantly.
+                </p>
+            </div>
+            <div class="flow-visual animate-in"
+                style="--delay: 3; width: 100%; display: flex; flex-direction: column; align-items: center; margin-top:40px;">
+                <div class="journey-path">
+                    <div class="journey-step" onclick="openDetailModal('input')" style="cursor:pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                        <div class="journey-icon">📝</div><span>1. Raw Text Input</span><span
+                            style="font-size: 10px; color:rgba(255,255,255,0.4)">Paste or Type</span>
+                    </div>
+                    <div class="journey-connector"></div>
+                    <div class="journey-step" onclick="openDetailModal('ai')" style="cursor:pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                        <div class="journey-icon">🤖</div><span>2. AI Classification</span><span
+                            style="font-size: 10px; color:rgba(255,255,255,0.4)">Gemini 2.5 Flash</span>
+                    </div>
+                    <div class="journey-connector"></div>
+                    <div class="journey-step" onclick="openDetailModal('rule')" style="cursor:pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                        <div class="journey-icon">⚙️</div><span>3. Rule Engine</span><span
+                            style="font-size: 10px; color:rgba(255,255,255,0.4)">Fonts, Sizes, Spacing</span>
+                    </div>
+                    <div class="journey-connector"></div>
+                    <div class="journey-step" onclick="openDetailModal('java')" style="cursor:pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                        <div class="journey-icon">📊</div><span>4. Java Analytics</span><span
+                            style="font-size: 10px; color:rgba(255,255,255,0.4)">Stats & Readability</span>
+                    </div>
+                    <div class="journey-connector"></div>
+                    <div class="journey-step" onclick="openDetailModal('export')" style="cursor:pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                        <div class="journey-icon">✨</div><span>5. Export</span><span
+                            style="font-size: 10px; color:rgba(255,255,255,0.4)">Java OpenXML & PDF</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 6: AI ENGINE ======================== -->
+    <section class="slide" id="slide-6" role="region">
         <div class="slide-bg bg-warm"></div>
         <div class="slide-content">
-            <p class="animate-in section-label" style="--delay: 0">Design Philosophy</p>
-            <h2 class="animate-in slide-heading" style="--delay: 1">Why <span
-                    class="gradient-text-warm">Object-Oriented</span> Design?</h2>
+            <p class="animate-in section-label" style="--delay: 0">Core Engine</p>
+            <h2 class="animate-in slide-heading" style="--delay: 1">AI-Powered <span
+                    class="gradient-text-warm">Formatting</span></h2>
 
             <div class="three-columns animate-in"
                 style="--delay: 2; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-top: 30px;">
                 <div class="level-card glass-card" style="display:flex; gap:20px; text-align:left;">
                     <div style="font-size: 48px; color:rgba(255,255,255,0.2); font-weight:800; line-height:1;">01</div>
                     <div>
-                        <h3 style="margin-bottom: 8px;">Modularity</h3>
+                        <h3 style="margin-bottom: 8px;">Gemini 2.5 Flash API</h3>
                         <p style="font-size:clamp(12px, 1.4vw, 16px); color:rgba(255,255,255,0.7); line-height:1.6;">
-                            Each processing stage is a self-contained class with clear boundaries and single
-                            responsibility.</p>
+                            Sends raw text to Google's Gemini AI with a detailed system prompt. AI classifies every paragraph into headings, body text, tables, lists, equations, and code blocks.</p>
                     </div>
                 </div>
                 <div class="level-card glass-card" style="display:flex; gap:20px; text-align:left;">
                     <div style="font-size: 48px; color:rgba(255,255,255,0.2); font-weight:800; line-height:1;">02</div>
                     <div>
-                        <h3 style="margin-bottom: 8px;">Reusability</h3>
+                        <h3 style="margin-bottom: 8px;">Chain-of-Thought Reasoning</h3>
                         <p style="font-size:clamp(12px, 1.4vw, 16px); color:rgba(255,255,255,0.7); line-height:1.6;">
-                            Classes can be instantiated with different configurations — custom rules, different AI
-                            models, export formats.</p>
+                            AI thinks step-by-step before formatting: first extracts style from reference PDF, then maps content to sections, then assembles the final document.</p>
                     </div>
                 </div>
                 <div class="level-card glass-card" style="display:flex; gap:20px; text-align:left;">
                     <div style="font-size: 48px; color:rgba(255,255,255,0.2); font-weight:800; line-height:1;">03</div>
                     <div>
-                        <h3 style="margin-bottom: 8px;">Maintainability</h3>
+                        <h3 style="margin-bottom: 8px;">Content Preservation</h3>
                         <p style="font-size:clamp(12px, 1.4vw, 16px); color:rgba(255,255,255,0.7); line-height:1.6;">
-                            Change one module without breaking others. Fix the RuleEngine without touching the
-                            StructureDetector.</p>
+                            The AI never rewrites user text. It only organizes and formats — fixing typos and removing AI-generated fluff like "Sure! Here is your document..."</p>
                     </div>
                 </div>
                 <div class="level-card glass-card" style="display:flex; gap:20px; text-align:left;">
                     <div style="font-size: 48px; color:rgba(255,255,255,0.2); font-weight:800; line-height:1;">04</div>
                     <div>
-                        <h3 style="margin-bottom: 8px;">Testability</h3>
+                        <h3 style="margin-bottom: 8px;">Self-Healing JSON</h3>
                         <p style="font-size:clamp(12px, 1.4vw, 16px); color:rgba(255,255,255,0.7); line-height:1.6;">
-                            Each class can be unit-tested in isolation — mock inputs, verify outputs, measure
-                            performance.</p>
+                            If Gemini returns broken JSON, the system automatically sends it back for correction — ensuring the formatting never crashes.</p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- ======================== SLIDE 6: ARCHITECTURE ======================== -->
-    <section class="slide" id="slide-6" role="region">
-        <div class="slide-bg bg-subtle-geo"></div>
-        <div class="slide-content perma-slide" style="flex-direction: column; align-items:center;">
-            <div class="perma-content" style="text-align: center; width: 100%;">
-                <p class="animate-in section-label" style="--delay: 0">System Architecture</p>
-                <h2 class="animate-in slide-heading" style="--delay: 1">The <span class="gradient-text">4-Stage
-                        Pipeline</span></h2>
-            </div>
-            <div class="flow-visual animate-in"
-                style="--delay: 2; width: 100%; display: flex; flex-direction: column; align-items: center; margin-top:40px;">
-                <div class="journey-path">
-                    <div class="journey-step">
-                        <div class="journey-icon">📝</div><span>1. TextProcessor</span><span
-                            style="font-size: 10px; color:rgba(255,255,255,0.4)">Tokenize</span>
-                    </div>
-                    <div class="journey-connector"></div>
-                    <div class="journey-step">
-                        <div class="journey-icon">🔎</div><span>2. StructureDetector</span><span
-                            style="font-size: 10px; color:rgba(255,255,255,0.4)">Classify</span>
-                    </div>
-                    <div class="journey-connector"></div>
-                    <div class="journey-step">
-                        <div class="journey-icon">⚙️</div><span>3. RuleEngine</span><span
-                            style="font-size: 10px; color:rgba(255,255,255,0.4)">Style</span>
-                    </div>
-                    <div class="journey-connector"></div>
-                    <div class="journey-step">
-                        <div class="journey-icon">✨</div><span>4. OutputGenerator</span><span
-                            style="font-size: 10px; color:rgba(255,255,255,0.4)">Render</span>
-                    </div>
-                </div>
-                <div class="corporate-apps animate-in"
-                    style="--delay: 3; margin-top: 40px; border-top: 1px solid rgba(255,255,255,0.1); padding-top:20px; width: 100%; max-width:800px;">
-                    <h3 style="color:var(--text-secondary); margin-bottom:16px;">Extensions & Modules</h3>
-                    <div class="app-items" style="grid-template-columns: repeat(2, 1fr);">
-                        <div class="app-item" style="justify-content:center;">🤖 AIFormatter <small
-                                style="margin-left:8px; opacity:0.5;">(Gemini API)</small></div>
-                        <div class="app-item" style="justify-content:center;">📦 DocxExporter <small
-                                style="margin-left:8px; opacity:0.5;">(OpenXML)</small></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ======================== SLIDE 7: INPUT PIPELINE ======================== -->
+    <!-- ======================== SLIDE 7: TEMPLATES & SMART ALERTS ======================== -->
     <section class="slide" id="slide-7" role="region">
+        <div class="slide-bg bg-electric"></div>
+        <div class="slide-content">
+            <p class="animate-in section-label" style="--delay: 0">Document Intelligence</p>
+            <h2 class="animate-in slide-heading" style="--delay: 1">Templates & <span
+                    class="gradient-text-electric">Smart Alerts</span></h2>
+
+            <div class="three-columns animate-in"
+                style="--delay: 2; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-top: 30px;">
+                <div class="level-card glass-card" style="text-align:left; grid-column: span 2;">
+                    <h3 style="margin-bottom: 12px; color:var(--teal);">📋 5 Built-in Templates</h3>
+                    <div style="display:flex; flex-wrap:wrap; gap:12px; margin-top:8px;">
+                        <span class="behavior-pill" style="border-color:rgba(90,200,250,0.3); color:var(--teal);">📄 General</span>
+                        <span class="behavior-pill" style="border-color:rgba(191,90,242,0.3); color:var(--purple);">🔬 Research Paper</span>
+                        <span class="behavior-pill" style="border-color:rgba(255,107,138,0.3); color:var(--pink);">📝 Assignment</span>
+                        <span class="behavior-pill" style="border-color:rgba(48,209,88,0.3); color:var(--green);">📋 Project Report</span>
+                        <span class="behavior-pill" style="border-color:rgba(255,159,10,0.3); color:var(--orange);">📰 More...</span>
+                    </div>
+                    <p style="margin-top:12px; font-size:clamp(12px,1.4vw,16px); color:rgba(255,255,255,0.6); line-height:1.6;">
+                        Each template has a predefined skeleton with required and optional sections. Users can customize fonts, sizes, and spacing per template.</p>
+                </div>
+                <div class="level-card glass-card" style="text-align:left;">
+                    <h3 style="margin-bottom: 8px; color:var(--orange);">⚠️ Missing Section Alerts</h3>
+                    <p style="font-size:clamp(12px, 1.4vw, 16px); color:rgba(255,255,255,0.7); line-height:1.6;">
+                        If the selected template (e.g. Research Paper) is missing an "Abstract", the system alerts you. You can either <strong>manually paste</strong> your missed content to format it, or <strong>auto-generate</strong> it using Gemini.</p>
+                </div>
+                <div class="level-card glass-card" style="text-align:left;">
+                    <h3 style="margin-bottom: 8px; color:var(--green);">✅ Editable Skeleton</h3>
+                    <p style="font-size:clamp(12px, 1.4vw, 16px); color:rgba(255,255,255,0.7); line-height:1.6;">
+                        Users can drag-reorder sections, rename headings, and toggle sections on/off before formatting — giving full control over the document structure.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 8: JAVA ANALYTICS ======================== -->
+    <section class="slide" id="slide-8" role="region">
         <div class="slide-bg bg-warm-connect"></div>
         <div class="slide-content perma-slide"
             style="flex-direction: column; align-items:center; justify-content:center;">
             <div class="perma-content animate-in"
-                style="--delay: 0; text-align: center; width: 100%; max-width: 1000px; margin-bottom: 40px;">
-                <p class="section-label">OOPD Deep Dive</p>
-                <h2 class="slide-heading"><span class="gradient-text-rose">Input Pipeline</span> Classes</h2>
+                style="--delay: 0; text-align: center; width: 100%; max-width: 1000px; margin-bottom: 30px;">
+                <p class="section-label">Java Backend</p>
+                <h2 class="slide-heading"><span class="gradient-text-rose">Analytics</span> Microservice</h2>
                 <p class="slide-body"
-                    style="margin-top: 20px; font-size: clamp(14px, 1.6vw, 20px); text-align: justify; text-justify: inter-word; color: rgba(255,255,255,0.85); line-height: 1.6;">
-                    Click any Code Module below to securely proxy its simulated execution pipeline logic and state
-                    output.</p>
+                    style="margin-top: 10px; font-size: clamp(14px, 1.6vw, 18px); color: rgba(255,255,255,0.7); line-height: 1.6;">
+                    A real Java 17 microservice deployed on Render that processes every document for deep text analytics.</p>
             </div>
             <div class="two-columns animate-in"
                 style="--delay: 1; width: 100%; max-width: 1300px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; text-align:left;">
-                <div class="code-preview-window" onclick="openOOPDModal('TextProcessor')">
+                <div class="code-preview-window" onclick="openOOPDModal('AnalyticsServer')" style="cursor:pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
                     <div class="window-header">
                         <div class="window-controls">
                             <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
                         </div>
-                        <div class="window-title" style="color:var(--pink)">textProcessor.js</div>
-                        <div class="window-tag">STAGE 1</div>
+                        <div class="window-title" style="color:var(--blue)">AnalyticsServer.java</div>
+                        <div class="window-tag" style="background:rgba(41,151,255,0.2); color:var(--blue);">JAVA 17</div>
                     </div>
                     <div class="window-body">
-                        <pre><code>class TextProcessor {
-  constructor(rawText) {
-    this.rawText = rawText;
-  }
+                        <pre><code>public class AnalyticsServer {
+    private static final Gson gson = new Gson();
 
-  normalize() {
-    return this.rawText.trim();
-  }
+    public static void main(String[] args) {
+        int port = Integer.parseInt(
+            System.getenv()
+                .getOrDefault("PORT", "8080"));
+        Javalin app = Javalin.create(config -> {
+            config.plugins.enableCors(cors -> {
+                cors.add(it -> it.anyHost());
+            });
+        }).start(port);
+
+        app.post("/analyze",
+            AnalyticsServer::analyzeText);
+    }
 }</code></pre>
-                        <div class="window-overlay-blur">
-                            <span class="run-btn"
-                                style="color:var(--pink); border-color:var(--pink); background:rgba(255, 45, 85, 0.15);">
-                                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                                    <path d="M8 5v14l11-7z" />
-                                </svg>
-                                Execute Pipeline
-                            </span>
-                        </div>
                     </div>
                 </div>
 
-                <div class="code-preview-window" onclick="openOOPDModal('StructureDetector')">
-                    <div class="window-header">
-                        <div class="window-controls">
-                            <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
-                        </div>
-                        <div class="window-title" style="color:var(--teal)">structureDetector.js</div>
-                        <div class="window-tag">STAGE 2</div>
-                    </div>
-                    <div class="window-body">
-                        <pre><code>class StructureDetector {
-  classifyBlocks(textBlocks) {
-    // Identify: h1, h2, p, ul
-    return classifiedElements;
-  }
-
-  _detectType(block) {
-    // Heuristic matching
-  }
-}</code></pre>
-                        <div class="window-overlay-blur">
-                            <span class="run-btn"
-                                style="color:var(--teal); border-color:var(--teal); background:rgba(90, 200, 250, 0.15);">
-                                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                                    <path d="M8 5v14l11-7z" />
-                                </svg>
-                                Execute Pipeline
-                            </span>
-                        </div>
-                    </div>
+                <div class="level-card glass-card" style="text-align:left; display:flex; flex-direction:column; gap:16px; justify-content:center;">
+                    <h3 style="color:var(--blue); margin-bottom:4px;">📊 Speaking Points</h3>
+                    <ul style="font-size:14px; color:rgba(255,255,255,0.8); display:flex; flex-direction:column; gap:12px; padding-left:20px; text-align:left !important; list-style-type:disc;">
+                        <li>"Yeh humara <strong>Java Analytics Server</strong> hai jo Port 8080 par chalta hai."</li>
+                        <li>"Jaise hi text input hota hai, Java <strong>countWords()</strong> se total words ginta hai."</li>
+                        <li>"Humne <strong>HashMap</strong> ka use kiya hai jisse document ke 'Top 5 Keywords' nikalte hain."</li>
+                        <li>"Last mein, <strong>Flesch Kincaid Algorithm</strong> batata hai ki text padhne mein kitna asaan hai."</li>
+                        <li>"Execution log (left code window click) mein aap dekh sakte hain ye sab 240ms me ho jata hai."</li>
+                    </ul>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- ======================== SLIDE 8: PROCESSING PIPELINE ======================== -->
-    <section class="slide" id="slide-8" role="region">
-        <div class="slide-bg bg-electric"></div>
-        <div class="slide-content perma-slide"
-            style="flex-direction: column; align-items:center; justify-content:center;">
-            <div class="perma-content animate-in"
-                style="--delay: 0; text-align: center; width: 100%; max-width: 1000px; margin-bottom: 40px;">
-                <p class="section-label">OOPD Deep Dive</p>
-                <h2 class="slide-heading"><span class="gradient-text-electric">Processing</span> Classes</h2>
-                <p class="slide-body"
-                    style="margin-top: 20px; font-size: clamp(14px, 1.6vw, 20px); text-align: justify; text-justify: inter-word; color: rgba(255,255,255,0.85); line-height: 1.6;">
-                    Click any Code Module below to securely proxy its simulated execution pipeline logic and state
-                    output.</p>
-            </div>
-            <div class="two-columns animate-in"
-                style="--delay: 1; width: 100%; max-width: 1300px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; text-align:left;">
-                <div class="code-preview-window" onclick="openOOPDModal('RuleEngine')">
-                    <div class="window-header">
-                        <div class="window-controls">
-                            <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
-                        </div>
-                        <div class="window-title" style="color:var(--purple)">ruleEngine.js</div>
-                        <div class="window-tag">STAGE 3</div>
-                    </div>
-                    <div class="window-body">
-                        <pre><code>class RuleEngine {
-  constructor(customRules) {
-    this.defaultRules = {
-      h1: { fontSize: '16pt' },
-    };
-  }
-
-  applyRules(elements) {
-    // Inject merged styling
-  }
-}</code></pre>
-                        <div class="window-overlay-blur">
-                            <span class="run-btn"
-                                style="color:var(--purple); border-color:var(--purple); background:rgba(191, 90, 242, 0.15);">
-                                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                                    <path d="M8 5v14l11-7z" />
-                                </svg>
-                                Execute Pipeline
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="code-preview-window" onclick="openOOPDModal('OutputGenerator')">
-                    <div class="window-header">
-                        <div class="window-controls">
-                            <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
-                        </div>
-                        <div class="window-title" style="color:var(--gold)">outputGenerator.js</div>
-                        <div class="window-tag">STAGE 4</div>
-                    </div>
-                    <div class="window-body">
-                        <pre><code>class OutputGenerator {
-  generateHTML(styledElements) {
-    // Build semantics
-    return htmlParts.join('\\n');
-  }
-
-  _escapeHTML(str) {
-    // XSS Prevention
-  }
-}</code></pre>
-                        <div class="window-overlay-blur">
-                            <span class="run-btn"
-                                style="color:var(--gold); border-color:var(--gold); background:rgba(255, 214, 10, 0.15);">
-                                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                                    <path d="M8 5v14l11-7z" />
-                                </svg>
-                                Execute Pipeline
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ======================== SLIDE 9: AI & EXPORT ======================== -->
+    <!-- ======================== SLIDE 9: EXPORT PIPELINE ======================== -->
     <section class="slide" id="slide-9" role="region">
         <div class="slide-bg bg-leader"></div>
         <div class="slide-content perma-slide"
             style="flex-direction: column; align-items:center; justify-content:center;">
             <div class="perma-content animate-in"
-                style="--delay: 0; text-align: center; width: 100%; max-width: 1000px; margin-bottom: 40px;">
-                <p class="section-label">OOPD Deep Dive</p>
-                <h2 class="slide-heading"><span class="gradient-text-green">AI & Export</span> Classes</h2>
+                style="--delay: 0; text-align: center; width: 100%; max-width: 1000px; margin-bottom: 30px;">
+                <p class="section-label">Document Export</p>
+                <h2 class="slide-heading"><span class="gradient-text-green">DOCX & PDF</span> Pipeline</h2>
                 <p class="slide-body"
-                    style="margin-top: 20px; font-size: clamp(14px, 1.6vw, 20px); text-align: justify; text-justify: inter-word; color: rgba(255,255,255,0.85); line-height: 1.6;">
-                    Click any Code Module below to securely proxy its simulated execution pipeline logic and state
-                    output.</p>
+                    style="margin-top: 10px; font-size: clamp(14px, 1.6vw, 18px); color: rgba(255,255,255,0.7); line-height: 1.6;">
+                    Java-powered document export with iLovePDF API integration for pixel-perfect PDF conversion.</p>
             </div>
             <div class="two-columns animate-in"
                 style="--delay: 1; width: 100%; max-width: 1300px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; text-align:left;">
-                <div class="code-preview-window" onclick="openOOPDModal('AIFormatter')">
+                <div class="code-preview-window" onclick="openOOPDModal('DocxExporter')" style="cursor:pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
                     <div class="window-header">
                         <div class="window-controls">
                             <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
                         </div>
-                        <div class="window-title" style="color:var(--blue)">aiFormatter.js</div>
-                        <div class="window-tag" style="background:rgba(41, 151, 255, 0.2); color:var(--blue);">EXTENSION
-                        </div>
+                        <div class="window-title" style="color:var(--gold)">DocxExporter.java</div>
+                        <div class="window-tag">EXPORT</div>
                     </div>
                     <div class="window-body">
-                        <pre><code>class AIFormatter {
-  async formatText(rawText) {
-    // Route to Gemini API
-    const res = await fetch('/api/format');
-    return res.json();
-  }
+                        <pre><code>public class DocxExporter {
+    private static final int BUFFER_SIZE = 8192;
+
+    public File export(String htmlContent)
+            throws IOException {
+        // Java Buffered I/O for fast export
+        try (BufferedOutputStream bos =
+                new BufferedOutputStream(
+                    new FileOutputStream(
+                        "document.docx"),
+                    BUFFER_SIZE)) {
+            byte[] xmlData = buildOpenXML(
+                htmlContent);
+            bos.write(xmlData);
+            bos.flush();
+        }
+        return new File("document.docx");
+    }
 }</code></pre>
-                        <div class="window-overlay-blur">
-                            <span class="run-btn"
-                                style="color:var(--blue); border-color:var(--blue); background:rgba(41, 151, 255, 0.15);">
-                                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                                    <path d="M8 5v14l11-7z" />
-                                </svg>
-                                Execute Pipeline
-                            </span>
-                        </div>
                     </div>
                 </div>
 
-                <div class="code-preview-window" onclick="openOOPDModal('DocxExporter')">
-                    <div class="window-header">
-                        <div class="window-controls">
-                            <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
-                        </div>
-                        <div class="window-title" style="color:var(--rose)">docxExporter.js</div>
-                        <div class="window-tag" style="background:rgba(255, 55, 95, 0.2); color:var(--rose);">EXTENSION
-                        </div>
-                    </div>
-                    <div class="window-body">
-                        <pre><code>const DocxExporter = (() => {
-  async function generate(el) {
-    // Build DOCX ZIP buffer
-    return zip.generateAsync({
-      type: 'blob'
-    });
-  }
-  return { generate };
-})();</code></pre>
-                        <div class="window-overlay-blur">
-                            <span class="run-btn"
-                                style="color:var(--rose); border-color:var(--rose); background:rgba(255, 55, 95, 0.15);">
-                                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                                    <path d="M8 5v14l11-7z" />
-                                </svg>
-                                Execute Pipeline
-                            </span>
-                        </div>
-                    </div>
+                <div class="level-card glass-card" style="text-align:left; display:flex; flex-direction:column; gap:16px; justify-content:center;">
+                    <h3 style="color:var(--gold); margin-bottom:4px;">📄 Speaking Points</h3>
+                    <ul style="font-size:14px; color:rgba(255,255,255,0.8); display:flex; flex-direction:column; gap:12px; padding-left:20px; text-align:left !important; list-style-type:disc;">
+                        <li>"Yeh humara <strong>Document Export Process</strong> hai (DocxExporter.java)."</li>
+                        <li>"Pehle humara HTML, Microsoft Word ke <strong>OpenXML</strong> format me badalta hai."</li>
+                        <li>"Kyunki Word file asal me zip hoti hai, humne Core Java ka <strong>ZipOutputStream API</strong> use karke use ZIP kiya hai."</li>
+                        <li>"Result mein humein perfect <strong>.docx file</strong> mil jati hai."</li>
+                        <li>"Agar user ko PDF chahiye, toh yahi DOCX file <strong>iLovePDF API</strong> ko bhej kar turant PDF ban jata hai."</li>
+                    </ul>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- ======================== SLIDE 10: OOP PRINCIPLES ======================== -->
+    <!-- ======================== SLIDE 10: KEY FEATURES ======================== -->
     <section class="slide" id="slide-10" role="region">
         <div class="slide-bg bg-corporate"></div>
         <div class="slide-content">
-            <p class="animate-in section-label" style="--delay: 0">Core Concepts</p>
-            <h2 class="animate-in slide-heading" style="--delay: 1">OOP Principles <span class="gradient-text">in
-                    Action</span></h2>
-
-            <div class="three-columns animate-in"
-                style="--delay: 2; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-top: 30px;">
-                <div class="level-card glass-card">
-                    <div class="level-icon">🔒</div>
-                    <h3 style="color:var(--pink)">Encapsulation</h3>
-                    <p style="font-size:clamp(12px, 1.4vw, 16px); color:rgba(255,255,255,0.7); line-height:1.6;">Each
-                        class hides its internal data. <code>TextProcessor</code> privately manages
-                        <code>rawText</code>; <code>RuleEngine</code> encapsulates <code>defaultRules</code>.
-                    </p>
-                </div>
-                <div class="level-card glass-card">
-                    <div class="level-icon">🎭</div>
-                    <h3 style="color:var(--blue)">Abstraction</h3>
-                    <p style="font-size:clamp(12px, 1.4vw, 16px); color:rgba(255,255,255,0.7); line-height:1.6;">
-                        <code>app.js</code> calls <code>formatText()</code> without knowing if it uses AI or heuristic
-                        engine. Complexity is hidden.
-                    </p>
-                </div>
-                <div class="level-card glass-card">
-                    <div class="level-icon">🧬</div>
-                    <h3 style="color:var(--green)">Inheritance Ready</h3>
-                    <p style="font-size:clamp(12px, 1.4vw, 16px); color:rgba(255,255,255,0.7); line-height:1.6;">
-                        Architecture supports extension — a <code>MarkdownDetector</code> could extend
-                        <code>StructureDetector</code>.
-                    </p>
-                </div>
-                <div class="level-card glass-card">
-                    <div class="level-icon">🔄</div>
-                    <h3 style="color:var(--gold)">Polymorphism</h3>
-                    <p style="font-size:clamp(12px, 1.4vw, 16px); color:rgba(255,255,255,0.7); line-height:1.6;">Both
-                        <code>AIFormatter</code> and the heuristic pipeline process input similarly — the controller
-                        doesn't care which runs.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ======================== SLIDE 11: TECH STACK ======================== -->
-    <section class="slide" id="slide-11" role="region">
-        <div class="slide-bg bg-subtle-geo"></div>
-        <div class="slide-content" style="align-items: center;">
-            <p class="animate-in section-label" style="--delay: 0">Under the Hood</p>
-            <h2 class="animate-in slide-heading" style="--delay: 1"><span class="gradient-text">Tech Stack</span> &
-                Deployment</h2>
+            <p class="animate-in section-label" style="--delay: 0">Feature Set</p>
+            <h2 class="animate-in slide-heading" style="--delay: 1">All <span class="gradient-text">Features</span></h2>
 
             <div class="guide-grid animate-in"
-                style="--delay: 2; grid-template-columns: repeat(3, 1fr); max-width: 900px; margin-top:30px;">
+                style="--delay: 2; grid-template-columns: repeat(3, 1fr); max-width: 1000px; margin-top:30px;">
                 <div class="guide-card glass-card" style="text-align:center;">
-                    <h3 style="font-size: 24px;">HTML5 & CSS3</h3>
-                    <p style="margin-top:10px; font-size:14px; opacity:0.6">Pure geometry, semantic views.</p>
+                    <h3 style="font-size: 18px; color:var(--blue)">🤖 AI Formatting</h3>
+                    <p style="margin-top:8px; font-size:13px; opacity:0.6">Gemini 2.5 Flash classifies text structure automatically</p>
                 </div>
                 <div class="guide-card glass-card" style="text-align:center;">
-                    <h3 style="font-size: 24px; color:var(--gold)">JS Vanilla</h3>
-                    <p style="margin-top:10px; font-size:14px; opacity:0.6">0 Dependencies Architecture.</p>
+                    <h3 style="font-size: 18px; color:var(--purple)">📋 5 Templates</h3>
+                    <p style="margin-top:8px; font-size:13px; opacity:0.6">Research Paper, Assignment, Project Report, and more</p>
                 </div>
                 <div class="guide-card glass-card" style="text-align:center;">
-                    <h3 style="font-size: 24px; color:var(--blue)">Gemini Flash</h3>
-                    <p style="margin-top:10px; font-size:14px; opacity:0.6">RESTful Pipeline Integration.</p>
+                    <h3 style="font-size: 18px; color:var(--pink)">💬 AI & WhatsApp Support</h3>
+                    <p style="margin-top:8px; font-size:13px; opacity:0.6">Built-in AI bot and instant WhatsApp sharing for support</p>
                 </div>
                 <div class="guide-card glass-card" style="text-align:center;">
-                    <h3 style="font-size: 24px; color:var(--purple)">Vercel</h3>
-                    <p style="margin-top:10px; font-size:14px; opacity:0.6">Serverless Edge Node delivery.</p>
+                    <h3 style="font-size: 18px; color:var(--gold)">📊 Java Analytics</h3>
+                    <p style="margin-top:8px; font-size:13px; opacity:0.6">Word count, reading time, Flesch readability via Java</p>
                 </div>
                 <div class="guide-card glass-card" style="text-align:center;">
-                    <h3 style="font-size: 24px; color:var(--teal)">GitHub</h3>
-                    <p style="margin-top:10px; font-size:14px; opacity:0.6">Automated CI/CD Pipeline.</p>
+                    <h3 style="font-size: 18px; color:var(--green)">📄 DOCX Export</h3>
+                    <p style="margin-top:8px; font-size:13px; opacity:0.6">True OpenXML Word files via Java Buffered I/O</p>
                 </div>
                 <div class="guide-card glass-card" style="text-align:center;">
-                    <h3 style="font-size: 24px; color:var(--rose)">Docxtemplater</h3>
-                    <p style="margin-top:10px; font-size:14px; opacity:0.6">Client-side document encoding.</p>
+                    <h3 style="font-size: 18px; color:var(--rose)">📕 PDF Export</h3>
+                    <p style="margin-top:8px; font-size:13px; opacity:0.6">DOCX → iLovePDF API for pixel-perfect PDF</p>
+                </div>
+                <div class="guide-card glass-card" style="text-align:center;">
+                    <h3 style="font-size: 18px; color:var(--teal)">⚡ Live Preview & Edit</h3>
+                    <p style="margin-top:8px; font-size:13px; opacity:0.6">Visual document rendering with full rich-text editing after formatting</p>
+                </div>
+                <div class="guide-card glass-card" style="text-align:center;">
+                    <h3 style="font-size: 18px; color:var(--orange)">💾 Auto-Save</h3>
+                    <p style="margin-top:8px; font-size:13px; opacity:0.6">IndexedDB saves history after every formatting run</p>
+                </div>
+                <div class="guide-card glass-card" style="text-align:center;">
+                    <h3 style="font-size: 18px;">📐 Reference PDF</h3>
+                    <p style="margin-top:8px; font-size:13px; opacity:0.6">Upload a sample PDF and AI matches its layout</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- ======================== SLIDE 12: LIVE DEMO ======================== -->
+    <!-- ======================== SLIDE 11: EDGE CASES ======================== -->
+    <section class="slide" id="slide-11" role="region">
+        <div class="slide-bg bg-subtle-geo"></div>
+        <div class="slide-content">
+            <p class="animate-in section-label" style="--delay: 0">Robustness</p>
+            <h2 class="animate-in slide-heading" style="--delay: 1">Edge Cases & <span class="gradient-text">Error Handling</span></h2>
+
+            <div class="three-columns animate-in"
+                style="--delay: 2; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 30px;">
+                <div class="level-card glass-card" style="display:flex; gap:16px; text-align:left;">
+                    <div style="font-size:28px; flex-shrink:0;">🔑</div>
+                    <div>
+                        <h3 style="margin-bottom: 6px; font-size:16px;">API Key Rotation</h3>
+                        <p style="font-size:13px; color:rgba(255,255,255,0.65); line-height:1.5;">
+                            Multiple API keys for Gemini, iLovePDF, and Unstructured.io. When one key hits its quota limit, the system automatically rotates to the next available key.</p>
+                    </div>
+                </div>
+                <div class="level-card glass-card" style="display:flex; gap:16px; text-align:left;">
+                    <div style="font-size:28px; flex-shrink:0;">🔄</div>
+                    <div>
+                        <h3 style="margin-bottom: 6px; font-size:16px;">JSON Self-Healing</h3>
+                        <p style="font-size:13px; color:rgba(255,255,255,0.65); line-height:1.5;">
+                            If the AI returns malformed JSON, the system sends the broken output back to Gemini with the error message, asking it to fix the syntax automatically.</p>
+                    </div>
+                </div>
+                <div class="level-card glass-card" style="display:flex; gap:16px; text-align:left;">
+                    <div style="font-size:28px; flex-shrink:0;">🧹</div>
+                    <div>
+                        <h3 style="margin-bottom: 6px; font-size:16px;">AI Fluff Stripping</h3>
+                        <p style="font-size:13px; color:rgba(255,255,255,0.65); line-height:1.5;">
+                            Pre-processor automatically removes AI chatbot wrapper text like "Sure! Here is your document..." in both Hindi and English before formatting.</p>
+                    </div>
+                </div>
+                <div class="level-card glass-card" style="display:flex; gap:16px; text-align:left;">
+                    <div style="font-size:28px; flex-shrink:0;">🛡️</div>
+                    <div>
+                        <h3 style="margin-bottom: 6px; font-size:16px;">Graceful Fallbacks</h3>
+                        <p style="font-size:13px; color:rgba(255,255,255,0.65); line-height:1.5;">
+                            Custom API key exhausted → auto-fallback to server proxy. PDF backend down → fallback to browser print. Local proxy fails → fallback to Vercel production.</p>
+                    </div>
+                </div>
+                <div class="level-card glass-card" style="display:flex; gap:16px; text-align:left;">
+                    <div style="font-size:28px; flex-shrink:0;">📊</div>
+                    <div>
+                        <h3 style="margin-bottom: 6px; font-size:16px;">Java Analytics Edge Cases</h3>
+                        <p style="font-size:13px; color:rgba(255,255,255,0.65); line-height:1.5;">
+                            Handles empty body, invalid JSON, missing 'text' field, empty text strings, and unexpected server errors — each returning a structured error response.</p>
+                    </div>
+                </div>
+                <div class="level-card glass-card" style="display:flex; gap:16px; text-align:left;">
+                    <div style="font-size:28px; flex-shrink:0;">✅</div>
+                    <div>
+                        <h3 style="margin-bottom: 6px; font-size:16px;">Zero Plagiarism Risk</h3>
+                        <p style="font-size:13px; color:rgba(255,255,255,0.65); line-height:1.5;">
+                            The AI only formats text, it does not rewrite it. Unless "Auto-Generate" is explicitly used, the final document's plagiarism score remains exactly the same as (or less than) the user's input.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ======================== SLIDE 12: TECH STACK ======================== -->
     <section class="slide" id="slide-12" role="region">
         <div class="slide-bg bg-achieve"></div>
-        <div class="slide-content perma-slide" style="flex-direction: column; align-items:center;">
-            <div class="perma-content" style="text-align: center; width: 100%;">
-                <p class="animate-in section-label" style="--delay: 0">In Action</p>
-                <h2 class="animate-in slide-heading" style="--delay: 1"><span class="gradient-text-gold">Live
-                        Demo</span></h2>
-            </div>
+        <div class="slide-content" style="align-items: center;">
+            <p class="animate-in section-label" style="--delay: 0">Under the Hood</p>
+            <h2 class="animate-in slide-heading" style="--delay: 1"><span class="gradient-text-gold">Tech Stack</span> &
+                APIs</h2>
 
-            <div class="flow-visual animate-in"
-                style="--delay: 2; width: 100%; display: flex; flex-direction: column; align-items: center; margin-top:40px;">
-                <div class="journey-path">
-                    <div class="journey-step" style="background:rgba(255,255,255,0.05); padding: 20px;">
-                        <div class="journey-icon">📝</div><span style="font-size:16px;">Unformatted Blob</span>
-                    </div>
-                    <div class="journey-connector"></div>
-                    <div class="journey-step"
-                        style="background:rgba(48, 209, 88, 0.1); padding: 20px; border-color:var(--green)">
-                        <div class="journey-icon">🔄</div><span style="font-size:16px; color:var(--green)">OOP
-                            Pipeline</span>
-                    </div>
-                    <div class="journey-connector"></div>
-                    <div class="journey-step"
-                        style="background:rgba(41, 151, 255, 0.1); padding: 20px; border-color:var(--blue)">
-                        <div class="journey-icon">✨</div><span style="font-size:16px; color:var(--blue)">Semantic
-                            Output</span>
-                    </div>
+            <div class="guide-grid animate-in"
+                style="--delay: 2; grid-template-columns: repeat(3, 1fr); max-width: 950px; margin-top:30px;">
+                <div class="guide-card glass-card" style="text-align:center;">
+                    <h3 style="font-size: 22px; color:var(--gold)">Java 17</h3>
+                    <p style="margin-top:10px; font-size:13px; opacity:0.6">Analytics Microservice + Export Engine</p>
+                </div>
+                <div class="guide-card glass-card" style="text-align:center;">
+                    <h3 style="font-size: 22px; color:var(--blue)">Gemini 2.5 Flash</h3>
+                    <p style="margin-top:10px; font-size:13px; opacity:0.6">AI Text Classification API</p>
+                </div>
+                <div class="guide-card glass-card" style="text-align:center;">
+                    <h3 style="font-size: 22px;">HTML / CSS / JS</h3>
+                    <p style="margin-top:10px; font-size:13px; opacity:0.6">Frontend Editor & Live Preview</p>
+                </div>
+                <div class="guide-card glass-card" style="text-align:center;">
+                    <h3 style="font-size: 22px; color:var(--rose)">iLovePDF API</h3>
+                    <p style="margin-top:10px; font-size:13px; opacity:0.6">DOCX → PDF Conversion</p>
+                </div>
+                <div class="guide-card glass-card" style="text-align:center;">
+                    <h3 style="font-size: 22px; color:var(--purple)">Vercel</h3>
+                    <p style="margin-top:10px; font-size:13px; opacity:0.6">Serverless Proxy & Frontend Hosting</p>
+                </div>
+                <div class="guide-card glass-card" style="text-align:center;">
+                    <h3 style="font-size: 22px; color:var(--teal)">Render</h3>
+                    <p style="margin-top:10px; font-size:13px; opacity:0.6">Java & Python Backend Hosting</p>
+                </div>
+                <div class="guide-card glass-card" style="text-align:center;">
+                    <h3 style="font-size: 20px; color:var(--green)">HTML2Canvas & PptxGenJS</h3>
+                    <p style="margin-top:10px; font-size:13px; opacity:0.6">Presentation Export Engine</p>
+                </div>
+                <div class="guide-card glass-card" style="text-align:center;">
+                    <h3 style="font-size: 22px; color:var(--orange)">Adobe PDF API</h3>
+                    <p style="margin-top:10px; font-size:13px; opacity:0.6">Reference PDF Style Extraction</p>
+                </div>
+                <div class="guide-card glass-card" style="text-align:center;">
+                    <h3 style="font-size: 22px; color:var(--pink)">GitHub + CI/CD</h3>
+                    <p style="margin-top:10px; font-size:13px; opacity:0.6">Version Control & Auto-Deploy</p>
                 </div>
             </div>
         </div>
@@ -663,7 +612,7 @@
             <h2 class="animate-in hero-title conclusion-title" style="--delay: 0">
                 Thank <span class="gradient-text-sunrise">You.</span>
             </h2>
-            <p class="animate-in subtitle" style="--delay: 1">FormatFlow — OOPD Project Showcase</p>
+            <p class="animate-in subtitle" style="--delay: 1">FormatFlow — AI-Powered Document Formatting with Java</p>
 
             <div class="cta-section animate-in"
                 style="--delay: 2; margin-top: 40px; display: flex; gap: 20px; justify-content: center;">
@@ -681,7 +630,7 @@
                         stroke-linejoin="round" width="20" height="20">
                         <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" />
                     </svg>
-                    Live Demo App
+                    Try FormatFlow Live
                 </a>
             </div>
 
@@ -690,6 +639,23 @@
             </div>
         </div>
     </section>
+
+    <!-- Detail Modal -->
+    <div id="detail-modal" class="modal-overlay" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.8); backdrop-filter:blur(10px); align-items:center; justify-content:center; opacity:0; transition:opacity 0.3s;">
+        <div class="modal-content" style="background:var(--bg); border:1px solid rgba(255,255,255,0.1); border-radius:16px; width:90%; max-width:800px; padding:30px; position:relative; box-shadow:0 20px 40px rgba(0,0,0,0.5); transform:scale(0.95); transition:transform 0.3s;">
+            <button onclick="closeDetailModal()" style="position:absolute; top:20px; right:20px; background:none; border:none; color:white; font-size:24px; cursor:pointer; opacity:0.7;">&times;</button>
+            <div style="display:flex; align-items:center; gap:15px; margin-bottom:20px;">
+                <div id="modal-icon" style="font-size:32px; background:rgba(255,255,255,0.05); width:60px; height:60px; border-radius:12px; display:flex; align-items:center; justify-content:center;">📝</div>
+                <div>
+                    <p class="section-label" style="margin:0; font-size:12px;">Deep Dive</p>
+                    <h3 id="modal-title" style="margin:0; font-size:24px; color:var(--blue);">Raw Text Input</h3>
+                </div>
+            </div>
+            <div id="modal-body" style="color:rgba(255,255,255,0.7); font-size:15px; line-height:1.6; max-height:60vh; overflow-y:auto; padding-right:10px;">
+                <!-- Content injected via JS -->
+            </div>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 

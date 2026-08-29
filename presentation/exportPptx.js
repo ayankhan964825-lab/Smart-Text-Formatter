@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const pptx = new PptxGenJS();
                 pptx.layout = 'LAYOUT_16x9';
                 pptx.author = 'FormatFlow Team';
-                pptx.title = 'FormatFlow — OOPD Showcase';
+                pptx.title = 'FormatFlow — Showcase';
 
                 // ═══════════════════════════════════════════
                 //  DESIGN TOKENS
@@ -29,23 +29,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 const FONT = 'Segoe UI';
                 const FONT_MONO = 'Consolas';
                 const W = 'FFFFFF';
-                const W80 = 'CCCCCC';
                 const W75 = 'BFBFBF';
                 const W70 = 'B3B3B3';
                 const W60 = '999999';
-                const W50 = '808080';
-                const W40 = '666666';
-                const W30 = '4D4D4D';
-                const W20 = '333333';
 
                 const BLUE = '2997FF';
                 const PURPLE = 'BF5AF2';
-                const PINK = 'FF375F';
+                const PINK = 'FF6B8A';
                 const ORANGE = 'FF9F0A';
                 const GREEN = '30D158';
-                const TEAL = '5AC8FA';
-                const GOLD = 'FFD60A';
-                const ROSE = 'FF6B8A';
+                const GOLD = 'F5D76E';
+                const RED = 'FF453A';
+                const TEAL = '64D2FF';
 
                 const TRANSITION = { type: 'fade', speed: 'fast' };
 
@@ -80,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     slide.addShape(pptx.ShapeType.ellipse, { x: wx + 0.30, y: dotY, w: 0.11, h: 0.11, fill: { color: 'FFBD2E' }, line: { width: 0 } });
                     slide.addShape(pptx.ShapeType.ellipse, { x: wx + 0.45, y: dotY, w: 0.11, h: 0.11, fill: { color: '28C840' }, line: { width: 0 } });
                     slide.addText(win.fileName, { x: wx + 0.65, y: wy, w: 2, h: 0.35, fontSize: 10, fontFace: FONT_MONO, color: win.fileColor, align: 'left', valign: 'middle' });
-                    const tagW = win.tag === 'EXTENSION' ? 1.0 : 0.8;
+                    const tagW = win.tag === 'EXPORT' ? 1.0 : 0.8;
                     slide.addShape(pptx.ShapeType.roundRect, { x: wx + ww - tagW - 0.15, y: wy + 0.07, w: tagW, h: 0.21, fill: { color: win.tagBg || '0A2A0A' }, line: { width: 0 }, rectRadius: 0.1 });
                     slide.addText(win.tag, { x: wx + ww - tagW - 0.15, y: wy + 0.07, w: tagW, h: 0.21, fontSize: 7, fontFace: FONT, color: win.tagColor || GREEN, bold: true, align: 'center', valign: 'middle' });
                     slide.addText(win.code, { x: wx + 0.25, y: wy + 0.45, w: ww - 0.5, h: wh - 0.55, fontSize: 9, fontFace: FONT_MONO, color: W70, align: 'left', valign: 'top', lineSpacingMultiple: 1.35 });
@@ -98,399 +93,138 @@ document.addEventListener('DOMContentLoaded', () => {
                     * { transition: none !important; animation: none !important; animation-play-state: paused !important; }
                     .animate-in { opacity: 1 !important; transform: none !important; }
                     .slide { opacity: 1 !important; visibility: visible !important; transform: none !important; }
+                    .slide-content * { opacity: 0 !important; visibility: hidden !important; }
+                    .slide-bg, .slide-bg * { opacity: 1 !important; visibility: visible !important; }
                 `;
                 document.head.appendChild(cssKill);
 
-                const allSlides = document.querySelectorAll('.slide');
-                const totalSlides = allSlides.length;
-                const bgImages = [];
+                // Small delay to let DOM settle
+                await new Promise(r => setTimeout(r, 100));
 
-                for (let i = 0; i < totalSlides; i++) {
-                    pctLabel.innerText = `Capturing background ${i + 1}/${totalSlides}...`;
+                const bgDataUrls = [];
+                const slidesDom = document.querySelectorAll('.slide');
 
-                    // Activate this slide
-                    allSlides.forEach(s => s.classList.remove('active'));
-                    allSlides[i].classList.add('active');
-
-                    await new Promise(r => setTimeout(r, 600));
-                    await new Promise(r => requestAnimationFrame(r));
-
-                    // Capture slide but HIDE text content in the clone
-                    const canvas = await html2canvas(allSlides[i], {
+                for (let i = 0; i < slidesDom.length; i++) {
+                    pctLabel.innerText = 'Capturing background ' + (i + 1) + ' of ' + slidesDom.length + '...';
+                    
+                    slidesDom.forEach(s => s.classList.remove('active', 'prev', 'next-exit'));
+                    slidesDom[i].classList.add('active');
+                    
+                    const bgNode = slidesDom[i].querySelector('.slide-bg');
+                    const canvas = await html2canvas(bgNode, {
                         scale: 2,
                         backgroundColor: '#000000',
-                        logging: false,
-                        allowTaint: true,
-                        useCORS: true,
-                        onclone: (clonedDoc, clonedEl) => {
-                            // Hide all text content — keep only the visual background/theme
-                            const content = clonedEl.querySelector('.slide-content');
-                            if (content) content.style.visibility = 'hidden';
-                            // Also hide any UI overlays
-                            const uiEls = clonedDoc.querySelectorAll('.nav-arrow, .slide-counter, .slide-dots, .fullscreen-btn, .export-pptx-btn, .progress-bar');
-                            uiEls.forEach(el => el.style.display = 'none');
-                        }
+                        logging: false
                     });
-
-                    bgImages.push(canvas.toDataURL('image/jpeg', 0.92));
+                    bgDataUrls.push(canvas.toDataURL('image/jpeg', 0.85));
                 }
 
-                // Restore original state
+                // Restore UI
                 document.head.removeChild(cssKill);
-                allSlides.forEach(s => s.classList.remove('active'));
+                slidesDom.forEach(s => s.classList.remove('active'));
                 if (originalActiveSlide) originalActiveSlide.classList.add('active');
 
                 // ═══════════════════════════════════════════
-                //  PHASE 2: BUILD PPTX WITH BG IMAGES + EDITABLE TEXT
+                //  PHASE 2: BUILD NATIVE PPTX SLIDES
                 // ═══════════════════════════════════════════
+                
+                // Helper to setup slide
+                const makeSlide = (index) => {
+                    let slide = pptx.addSlide();
+                    slide.background = { data: bgDataUrls[index] };
+                    // We don't have page numbers in this template natively, but if needed we add here.
+                    return slide;
+                };
 
-                // ── SLIDE 1: TITLE ──
-                pctLabel.innerText = 'Building Slide 1/13...';
-                await new Promise(r => setTimeout(r, 30));
-                {
-                    const s = pptx.addSlide();
-                    s.background = { data: bgImages[0] };
-                    s.transition = TRANSITION;
+                // Slide 1: Title
+                let s1 = makeSlide(0);
+                s1.addText("OOPD PROJECT SHOWCASE", { x: 3, y: 1.8, w: 4, h: 0.3, fontSize: 10, fontFace: FONT, color: BLUE, bold: true, align: 'center', fill: { color: 'FFFFFF', transparency: 90 }, rectRadius: 0.5 });
+                s1.addText([{ text: 'Format', options: { color: W } }, { text: 'Flow', options: { color: BLUE } }], { x: 2, y: 2.3, w: 6, h: 1, fontSize: 60, fontFace: FONT, bold: true, align: 'center' });
+                s1.addText("AI-Powered Document Formatting Engine Built with Java", { x: 1, y: 3.5, w: 8, h: 0.5, fontSize: 18, fontFace: FONT, color: W75, align: 'center' });
 
-                    s.addText('OOPD PROJECT SHOWCASE', {
-                        x: 3.0, y: 0.7, w: 4.0, h: 0.42,
-                        fontSize: 10, fontFace: FONT, color: W60,
-                        bold: true, charSpacing: 4, align: 'center', valign: 'middle'
-                    });
-                    s.addText([
-                        { text: 'FormatFlow\n', options: { fontSize: 56, fontFace: FONT, bold: true, color: W } },
-                        { text: 'Formatter', options: { fontSize: 56, fontFace: FONT, bold: true, color: PURPLE } }
-                    ], { x: 0.5, y: 1.4, w: 9, h: 1.9, align: 'center', valign: 'middle', lineSpacingMultiple: 0.95 });
-                    s.addText('Intelligent Document Formatting, Reimagined.', {
-                        x: 1.5, y: 3.4, w: 7, h: 0.5, fontSize: 20, fontFace: FONT, color: W70, align: 'center'
-                    });
-                    s.addText('Object-Oriented Programming & Design', {
-                        x: 2.6, y: 4.15, w: 4.8, h: 0.42,
-                        fontSize: 11, fontFace: FONT, color: BLUE, bold: true, align: 'center', valign: 'middle'
-                    });
-                }
+                // Slide 2: Team
+                let s2 = makeSlide(1);
+                addLabel(s2, "Presented By", { x: 5, w: 4, align: 'left', y: 1.0 });
+                addHeading(s2, [{ text: "Our " }, { text: "Team", color: TEAL }], { x: 5, w: 4, align: 'left', y: 1.4 });
+                
+                let cx = 5.0, cy = 2.4;
+                s2.addText("Mohd Ayan Khan", { x: cx, y: cy, w: 2, h: 0.3, fontSize: 18, fontFace: FONT, color: W, bold: true });
+                s2.addText("RA2511003030020", { x: cx, y: cy+0.3, w: 2, h: 0.3, fontSize: 12, fontFace: FONT, color: W60 });
+                
+                s2.addText("Tapish Ganesh Ingle", { x: cx+2.5, y: cy, w: 2.5, h: 0.3, fontSize: 18, fontFace: FONT, color: W, bold: true });
+                s2.addText("RA2511003030044", { x: cx+2.5, y: cy+0.3, w: 2.5, h: 0.3, fontSize: 12, fontFace: FONT, color: W60 });
+                
+                s2.addText("Shreyansh Singh", { x: cx, y: cy+1.2, w: 2, h: 0.3, fontSize: 18, fontFace: FONT, color: W, bold: true });
+                s2.addText("RA2511003030008", { x: cx, y: cy+1.5, w: 2, h: 0.3, fontSize: 12, fontFace: FONT, color: W60 });
+                
+                s2.addText("Yashasvi Sharma", { x: cx+2.5, y: cy+1.2, w: 2, h: 0.3, fontSize: 18, fontFace: FONT, color: W, bold: true });
+                s2.addText("RA2511003030003", { x: cx+2.5, y: cy+1.5, w: 2, h: 0.3, fontSize: 12, fontFace: FONT, color: W60 });
 
-                // ── SLIDE 2: AUTHORS ──
-                pctLabel.innerText = 'Building Slide 2/13...';
-                await new Promise(r => setTimeout(r, 30));
-                {
-                    const s = pptx.addSlide();
-                    s.background = { data: bgImages[1] };
-                    s.transition = TRANSITION;
+                s2.addText("Under the guidance of Dr. Umma Meena", { x: cx, y: cy+2.5, w: 4.5, h: 0.4, fontSize: 14, fontFace: FONT, color: W75, align: 'center' });
 
-                    s.addText('TEAM', { x: 0.7, y: 1.3, w: 2.8, h: 2.8, fontSize: 22, fontFace: FONT, color: W, bold: true, align: 'center', valign: 'middle' });
+                // Slide 3: Problem
+                let s3 = makeSlide(2);
+                addLabel(s3, "The Challenge");
+                addHeading(s3, [{ text: "Why do we " }, { text: "need", color: TEAL }, { text: " this?" }]);
+                
+                addCard(s3, 1.0, 2.0, 2.5, 2.5, { topColor: PINK });
+                s3.addText("⏳", { x: 1.0, y: 2.3, w: 2.5, h: 0.5, fontSize: 24, align: 'center' });
+                s3.addText("Time Wasted", { x: 1.0, y: 2.9, w: 2.5, h: 0.4, fontSize: 16, fontFace: FONT, color: W, bold: true, align: 'center' });
+                s3.addText("Students spend hours manually formatting documents.", { x: 1.1, y: 3.3, w: 2.3, h: 1.0, fontSize: 12, fontFace: FONT, color: W75, align: 'center' });
 
-                    addLabel(s, 'Presented By', { x: 4, w: 5.5, align: 'left', color: BLUE });
-                    s.addText([
-                        { text: 'Our ', options: { fontSize: 36, fontFace: FONT, bold: true, color: W } },
-                        { text: 'Group', options: { fontSize: 36, fontFace: FONT, bold: true, color: TEAL } }
-                    ], { x: 4, y: 1.0, w: 5.5, h: 0.65, align: 'left', valign: 'middle' });
+                addCard(s3, 3.75, 2.0, 2.5, 2.5, { topColor: ORANGE });
+                s3.addText("🔀", { x: 3.75, y: 2.3, w: 2.5, h: 0.5, fontSize: 24, align: 'center' });
+                s3.addText("Inconsistency", { x: 3.75, y: 2.9, w: 2.5, h: 0.4, fontSize: 16, fontFace: FONT, color: W, bold: true, align: 'center' });
+                s3.addText("Mismatched fonts and spacing make documents look unprofessional.", { x: 3.85, y: 3.3, w: 2.3, h: 1.0, fontSize: 12, fontFace: FONT, color: W75, align: 'center' });
 
-                    const members = [
-                        { name: 'Mohd Ayan Khan', id: 'RA2511003030020' },
-                        { name: 'Tapish Ganesh Ingle', id: 'RA2511003030044' },
-                        { name: 'Shreyansh Singh', id: 'RA2511003030008' },
-                        { name: 'Yashasvi Sharma', id: 'RA2511003030003' }
-                    ];
-                    members.forEach((m, i) => {
-                        const col = i % 2, row = Math.floor(i / 2);
-                        const mx = 4.0 + col * 2.8, my = 1.85 + row * 1.0;
-                        s.addText(m.name, { x: mx, y: my, w: 2.6, h: 0.35, fontSize: 15, fontFace: FONT, color: W80, align: 'left' });
-                        s.addText(m.id, { x: mx, y: my + 0.32, w: 2.6, h: 0.28, fontSize: 10, fontFace: FONT_MONO, color: W30, align: 'left' });
-                    });
-                    s.addText([
-                        { text: 'Under the guidance of ', options: { fontSize: 13, fontFace: FONT, color: W50 } },
-                        { text: 'Dr. Umma Meena', options: { fontSize: 13, fontFace: FONT, color: W, bold: true } },
-                        { text: '\n(Associate Professor, OOPD)', options: { fontSize: 11, fontFace: FONT, color: W50 } }
-                    ], { x: 4, y: 4.1, w: 5.5, h: 0.8, align: 'center', valign: 'top' });
-                }
+                addCard(s3, 6.5, 2.0, 2.5, 2.5, { topColor: PURPLE });
+                s3.addText("🚫", { x: 6.5, y: 2.3, w: 2.5, h: 0.5, fontSize: 24, align: 'center' });
+                s3.addText("No Smart Tool", { x: 6.5, y: 2.9, w: 2.5, h: 0.4, fontSize: 16, fontFace: FONT, color: W, bold: true, align: 'center' });
+                s3.addText("No web-based tool can auto-detect and apply professional formatting.", { x: 6.6, y: 3.3, w: 2.3, h: 1.0, fontSize: 12, fontFace: FONT, color: W75, align: 'center' });
 
-                // ── SLIDE 3: THE PROBLEM ──
-                pctLabel.innerText = 'Building Slide 3/13...';
-                await new Promise(r => setTimeout(r, 30));
-                {
-                    const s = pptx.addSlide();
-                    s.background = { data: bgImages[2] };
-                    s.transition = TRANSITION;
+                // Slide 4: Solution
+                let s4 = makeSlide(3);
+                addLabel(s4, "Our Solution");
+                addHeading(s4, [{ text: "Introducing " }, { text: "FormatFlow", color: GOLD }]);
+                addBody(s4, "A web application powered by Google Gemini AI and a Java backend that takes raw, unstructured text and converts it into professionally formatted documents — with one click.", { y: 1.6, h: 1.2, w: 8, x: 1 });
+                
+                s4.addText("🔍 AI Structure Detection    ⚡ Real-Time Preview    🎨 5 Templates", { x: 1, y: 3.0, w: 8, h: 0.4, fontSize: 14, fontFace: FONT, color: W75, bold: true, align: 'center' });
+                s4.addText("🤖 Gemini 2.5 Flash    📄 Word & PDF Export    ☕ Java Analytics Engine", { x: 1, y: 3.5, w: 8, h: 0.4, fontSize: 14, fontFace: FONT, color: W75, bold: true, align: 'center' });
 
-                    addLabel(s, 'The Challenge');
-                    addHeading(s, [{ text: 'Manual formatting is ' }, { text: 'broken.', color: TEAL }]);
+                // Slide 5: Pipeline
+                let s5 = makeSlide(4);
+                addLabel(s5, "How It Works");
+                addHeading(s5, [{ text: "The " }, { text: "Processing Pipeline", color: BLUE }]);
+                
+                s5.addText("1. Raw Text", { x: 1, y: 2.5, w: 1.5, h: 0.4, fontSize: 14, fontFace: FONT, color: W, bold: true, align: 'center' });
+                s5.addShape(pptx.ShapeType.rightArrow, { x: 2.5, y: 2.6, w: 0.4, h: 0.2, fill: { color: BLUE } });
+                
+                s5.addText("2. AI Engine", { x: 2.9, y: 2.5, w: 1.5, h: 0.4, fontSize: 14, fontFace: FONT, color: W, bold: true, align: 'center' });
+                s5.addShape(pptx.ShapeType.rightArrow, { x: 4.4, y: 2.6, w: 0.4, h: 0.2, fill: { color: BLUE } });
+                
+                s5.addText("3. Rule Engine", { x: 4.8, y: 2.5, w: 1.5, h: 0.4, fontSize: 14, fontFace: FONT, color: W, bold: true, align: 'center' });
+                s5.addShape(pptx.ShapeType.rightArrow, { x: 6.3, y: 2.6, w: 0.4, h: 0.2, fill: { color: BLUE } });
 
-                    const cards = [
-                        { icon: '⏳', title: 'Time-Consuming', desc: 'Hours spent manually adjusting headings, spacing, and fonts across long documents.', topColor: PINK },
-                        { icon: '🔀', title: 'Inconsistent', desc: 'Different heading levels, font sizes, and spacing create unprofessional results.', topColor: ORANGE },
-                        { icon: '🚫', title: 'No Browser Solution', desc: 'No lightweight, browser-based tool auto-detects document structure and applies formatting.', topColor: ROSE }
-                    ];
-                    cards.forEach((c, i) => {
-                        const cx = 0.5 + i * 3.15, cy = 2.15, cw = 2.85, ch = 2.8;
-                        addCard(s, cx, cy, cw, ch, { topColor: c.topColor });
-                        s.addText(c.icon, { x: cx, y: cy + 0.25, w: cw, h: 0.5, fontSize: 28, align: 'center' });
-                        s.addText(c.title, { x: cx + 0.15, y: cy + 0.85, w: cw - 0.3, h: 0.4, fontSize: 16, fontFace: FONT, color: W, bold: true, align: 'center' });
-                        s.addText(c.desc, { x: cx + 0.15, y: cy + 1.35, w: cw - 0.3, h: 1.2, fontSize: 12, fontFace: FONT, color: W70, align: 'center', valign: 'top', lineSpacingMultiple: 1.4 });
-                    });
-                }
-
-                // ── SLIDE 4: THE SOLUTION ──
-                pctLabel.innerText = 'Building Slide 4/13...';
-                await new Promise(r => setTimeout(r, 30));
-                {
-                    const s = pptx.addSlide();
-                    s.background = { data: bgImages[3] };
-                    s.transition = TRANSITION;
-
-                    addLabel(s, 'The Solution');
-                    addHeading(s, [{ text: 'FormatFlow ' }, { text: 'Formatter', color: GOLD }]);
-                    addBody(s, 'A web-based application that intelligently reads, understands, and formats unstructured text documents — powered by AI and pure Object-Oriented Design.', { y: 1.85, h: 0.65, fontSize: 15 });
-
-                    const pills = [
-                        { text: '🔍 Auto Structure Detection', color: TEAL },
-                        { text: '⚡ Real-Time Preview', color: GREEN },
-                        { text: '🎨 Custom Rules Engine', color: PURPLE },
-                        { text: '🤖 Gemini AI Integration', color: PINK },
-                        { text: '📄 PDF & Word Export', color: ORANGE },
-                        { text: '🌐 100% Browser-Based', color: BLUE }
-                    ];
-                    pills.forEach((p, i) => {
-                        const col = i % 3, row = Math.floor(i / 3);
-                        const px = 0.85 + col * 2.9, py = 3.1 + row * 0.65;
-                        s.addShape(pptx.ShapeType.roundRect, { x: px, y: py, w: 2.6, h: 0.48, fill: { color: p.color, transparency: 90 }, line: { color: p.color, width: 0.75, transparency: 70 }, rectRadius: 0.24 });
-                        s.addText(p.text, { x: px, y: py, w: 2.6, h: 0.48, fontSize: 10, fontFace: FONT, color: p.color, bold: true, align: 'center', valign: 'middle' });
-                    });
-                }
-
-                // ── SLIDE 5: WHY OOP ──
-                pctLabel.innerText = 'Building Slide 5/13...';
-                await new Promise(r => setTimeout(r, 30));
-                {
-                    const s = pptx.addSlide();
-                    s.background = { data: bgImages[4] };
-                    s.transition = TRANSITION;
-
-                    addLabel(s, 'Design Philosophy');
-                    addHeading(s, [{ text: 'Why ' }, { text: 'Object-Oriented', color: ORANGE }, { text: ' Design?' }]);
-
-                    const items = [
-                        { num: '01', title: 'Modularity', desc: 'Each processing stage is a self-contained class with clear boundaries and single responsibility.' },
-                        { num: '02', title: 'Reusability', desc: 'Classes can be instantiated with different configurations — custom rules, different AI models, export formats.' },
-                        { num: '03', title: 'Maintainability', desc: 'Change one module without breaking others. Fix the RuleEngine without touching the StructureDetector.' },
-                        { num: '04', title: 'Testability', desc: 'Each class can be unit-tested in isolation — mock inputs, verify outputs, measure performance.' }
-                    ];
-                    items.forEach((item, i) => {
-                        const col = i % 2, row = Math.floor(i / 2);
-                        const cx = 0.5 + col * 4.8, cy = 2.05 + row * 1.65, cw = 4.4, ch = 1.45;
-                        addCard(s, cx, cy, cw, ch);
-                        s.addText(item.num, { x: cx + 0.2, y: cy + 0.15, w: 0.65, h: 0.55, fontSize: 30, fontFace: FONT, color: W20, bold: true, align: 'left' });
-                        s.addText(item.title, { x: cx + 0.9, y: cy + 0.15, w: cw - 1.2, h: 0.38, fontSize: 16, fontFace: FONT, color: W, bold: true, align: 'left' });
-                        s.addText(item.desc, { x: cx + 0.9, y: cy + 0.58, w: cw - 1.2, h: 0.75, fontSize: 11, fontFace: FONT, color: W70, align: 'left', valign: 'top', lineSpacingMultiple: 1.35 });
-                    });
-                }
-
-                // ── SLIDE 6: ARCHITECTURE ──
-                pctLabel.innerText = 'Building Slide 6/13...';
-                await new Promise(r => setTimeout(r, 30));
-                {
-                    const s = pptx.addSlide();
-                    s.background = { data: bgImages[5] };
-                    s.transition = TRANSITION;
-
-                    addLabel(s, 'System Architecture');
-                    addHeading(s, [{ text: 'The ' }, { text: '4-Stage Pipeline', color: PURPLE }]);
-
-                    const steps = [
-                        { icon: '📝', label: '1. TextProcessor', sub: 'Tokenize' },
-                        { icon: '🔎', label: '2. StructureDetector', sub: 'Classify' },
-                        { icon: '⚙️', label: '3. RuleEngine', sub: 'Style' },
-                        { icon: '✨', label: '4. OutputGenerator', sub: 'Render' }
-                    ];
-                    steps.forEach((step, i) => {
-                        const sx = 0.65 + i * 2.45, sy = 2.15;
-                        addCard(s, sx, sy, 1.9, 1.25);
-                        s.addText(step.icon, { x: sx, y: sy + 0.1, w: 1.9, h: 0.4, fontSize: 22, align: 'center' });
-                        s.addText(step.label, { x: sx + 0.05, y: sy + 0.52, w: 1.8, h: 0.3, fontSize: 10, fontFace: FONT, color: W, bold: true, align: 'center' });
-                        s.addText(step.sub, { x: sx, y: sy + 0.85, w: 1.9, h: 0.25, fontSize: 9, fontFace: FONT, color: W40, align: 'center' });
-                        if (i < 3) s.addText('→', { x: sx + 1.9, y: sy + 0.3, w: 0.55, h: 0.5, fontSize: 22, color: W40, align: 'center' });
-                    });
-
-                    addCard(s, 1.2, 3.8, 7.6, 1.3);
-                    s.addText('EXTENSIONS & MODULES', { x: 1.2, y: 3.88, w: 7.6, h: 0.35, fontSize: 10, fontFace: FONT, color: W50, bold: true, charSpacing: 2, align: 'center' });
-                    s.addText('🤖 AIFormatter  (Gemini API)', { x: 1.5, y: 4.35, w: 3.5, h: 0.35, fontSize: 13, fontFace: FONT, color: W70, align: 'center' });
-                    s.addText('📦 DocxExporter  (OpenXML)', { x: 5.0, y: 4.35, w: 3.5, h: 0.35, fontSize: 13, fontFace: FONT, color: W70, align: 'center' });
-                }
-
-                // ── SLIDE 7: INPUT PIPELINE ──
-                pctLabel.innerText = 'Building Slide 7/13...';
-                await new Promise(r => setTimeout(r, 30));
-                {
-                    const s = pptx.addSlide();
-                    s.background = { data: bgImages[6] };
-                    s.transition = TRANSITION;
-
-                    addLabel(s, 'OOPD Deep Dive');
-                    addHeading(s, [{ text: 'Input Pipeline', color: ROSE }, { text: ' Classes' }]);
-                    addBody(s, 'Click any Code Module below to securely proxy its simulated execution pipeline logic and state output.', { y: 1.7, h: 0.5, fontSize: 12 });
-
-                    addCodeWindow(s, 0.4, 2.4, 4.4, 2.7, { fileName: 'textProcessor.js', fileColor: PINK, tag: 'STAGE 1', tagBg: '0A2A0A', tagColor: GREEN, code: 'class TextProcessor {\n  constructor(rawText) {\n    this.rawText = rawText;\n  }\n\n  normalize() {\n    return this.rawText.trim();\n  }\n}' });
-                    addCodeWindow(s, 5.2, 2.4, 4.4, 2.7, { fileName: 'structureDetector.js', fileColor: TEAL, tag: 'STAGE 2', tagBg: '0A2A0A', tagColor: GREEN, code: 'class StructureDetector {\n  classifyBlocks(textBlocks) {\n    // Identify: h1, h2, p, ul\n    return classifiedElements;\n  }\n\n  _detectType(block) {\n    // Heuristic matching\n  }\n}' });
-                }
-
-                // ── SLIDE 8: PROCESSING PIPELINE ──
-                pctLabel.innerText = 'Building Slide 8/13...';
-                await new Promise(r => setTimeout(r, 30));
-                {
-                    const s = pptx.addSlide();
-                    s.background = { data: bgImages[7] };
-                    s.transition = TRANSITION;
-
-                    addLabel(s, 'OOPD Deep Dive');
-                    addHeading(s, [{ text: 'Processing', color: TEAL }, { text: ' Classes' }]);
-                    addBody(s, 'Click any Code Module below to securely proxy its simulated execution pipeline logic and state output.', { y: 1.7, h: 0.5, fontSize: 12 });
-
-                    addCodeWindow(s, 0.4, 2.4, 4.4, 2.7, { fileName: 'ruleEngine.js', fileColor: PURPLE, tag: 'STAGE 3', tagBg: '0A2A0A', tagColor: GREEN, code: "class RuleEngine {\n  constructor(customRules) {\n    this.defaultRules = {\n      h1: { fontSize: '16pt' },\n    };\n  }\n\n  applyRules(elements) {\n    // Inject merged styling\n  }\n}" });
-                    addCodeWindow(s, 5.2, 2.4, 4.4, 2.7, { fileName: 'outputGenerator.js', fileColor: GOLD, tag: 'STAGE 4', tagBg: '0A2A0A', tagColor: GREEN, code: "class OutputGenerator {\n  generateHTML(styledElements) {\n    // Build semantics\n    return htmlParts.join('\\n');\n  }\n\n  _escapeHTML(str) {\n    // XSS Prevention\n  }\n}" });
-                }
-
-                // ── SLIDE 9: AI & EXPORT ──
-                pctLabel.innerText = 'Building Slide 9/13...';
-                await new Promise(r => setTimeout(r, 30));
-                {
-                    const s = pptx.addSlide();
-                    s.background = { data: bgImages[8] };
-                    s.transition = TRANSITION;
-
-                    addLabel(s, 'OOPD Deep Dive');
-                    addHeading(s, [{ text: 'AI & Export', color: GREEN }, { text: ' Classes' }]);
-                    addBody(s, 'Click any Code Module below to securely proxy its simulated execution pipeline logic and state output.', { y: 1.7, h: 0.5, fontSize: 12 });
-
-                    addCodeWindow(s, 0.4, 2.4, 4.4, 2.7, { fileName: 'aiFormatter.js', fileColor: BLUE, tag: 'EXTENSION', tagBg: '0A1A3D', tagColor: BLUE, code: "class AIFormatter {\n  async formatText(rawText) {\n    // Route to Gemini API\n    const res = await fetch('/api/format');\n    return res.json();\n  }\n}" });
-                    addCodeWindow(s, 5.2, 2.4, 4.4, 2.7, { fileName: 'docxExporter.js', fileColor: ROSE, tag: 'EXTENSION', tagBg: '3D0A14', tagColor: ROSE, code: "const DocxExporter = (() => {\n  async function generate(el) {\n    // Build DOCX ZIP buffer\n    return zip.generateAsync({\n      type: 'blob'\n    });\n  }\n  return { generate };\n})();" });
-                }
-
-                // ── SLIDE 10: OOP PRINCIPLES ──
-                pctLabel.innerText = 'Building Slide 10/13...';
-                await new Promise(r => setTimeout(r, 30));
-                {
-                    const s = pptx.addSlide();
-                    s.background = { data: bgImages[9] };
-                    s.transition = TRANSITION;
-
-                    addLabel(s, 'Core Concepts');
-                    addHeading(s, [{ text: 'OOP Principles ' }, { text: 'in Action', color: PURPLE }]);
-
-                    const principles = [
-                        { icon: '🔒', title: 'Encapsulation', titleColor: PINK, desc: 'Each class hides its internal data. TextProcessor privately manages rawText; RuleEngine encapsulates defaultRules.' },
-                        { icon: '🎭', title: 'Abstraction', titleColor: BLUE, desc: 'app.js calls formatText() without knowing if it uses AI or heuristic engine. Complexity is hidden.' },
-                        { icon: '🧬', title: 'Inheritance Ready', titleColor: GREEN, desc: 'Architecture supports extension — a MarkdownDetector could extend StructureDetector.' },
-                        { icon: '🔄', title: 'Polymorphism', titleColor: GOLD, desc: "Both AIFormatter and the heuristic pipeline process input similarly — the controller doesn't care which runs." }
-                    ];
-                    principles.forEach((p, i) => {
-                        const col = i % 2, row = Math.floor(i / 2);
-                        const cx = 0.5 + col * 4.8, cy = 2.05 + row * 1.65, cw = 4.4, ch = 1.45;
-                        addCard(s, cx, cy, cw, ch);
-                        s.addText(p.icon, { x: cx + 0.15, y: cy + 0.15, w: 0.5, h: 0.45, fontSize: 24, align: 'center' });
-                        s.addText(p.title, { x: cx + 0.7, y: cy + 0.15, w: cw - 1.0, h: 0.4, fontSize: 16, fontFace: FONT, color: p.titleColor, bold: true, align: 'left' });
-                        s.addText(p.desc, { x: cx + 0.2, y: cy + 0.6, w: cw - 0.4, h: 0.75, fontSize: 11, fontFace: FONT, color: W70, align: 'left', valign: 'top', lineSpacingMultiple: 1.35 });
-                    });
-                }
-
-                // ── SLIDE 11: TECH STACK ──
-                pctLabel.innerText = 'Building Slide 11/13...';
-                await new Promise(r => setTimeout(r, 30));
-                {
-                    const s = pptx.addSlide();
-                    s.background = { data: bgImages[10] };
-                    s.transition = TRANSITION;
-
-                    addLabel(s, 'Under the Hood');
-                    addHeading(s, [{ text: 'Tech Stack', color: PURPLE }, { text: ' & Deployment' }]);
-
-                    const techs = [
-                        { title: 'HTML5 & CSS3', desc: 'Pure geometry, semantic views.', color: W },
-                        { title: 'JS Vanilla', desc: '0 Dependencies Architecture.', color: GOLD },
-                        { title: 'Gemini Flash', desc: 'RESTful Pipeline Integration.', color: BLUE },
-                        { title: 'Vercel', desc: 'Serverless Edge Node delivery.', color: PURPLE },
-                        { title: 'GitHub', desc: 'Automated CI/CD Pipeline.', color: TEAL },
-                        { title: 'Docxtemplater', desc: 'Client-side document encoding.', color: ROSE }
-                    ];
-                    techs.forEach((t, i) => {
-                        const col = i % 3, row = Math.floor(i / 3);
-                        const cx = 0.5 + col * 3.15, cy = 2.15 + row * 1.55;
-                        addCard(s, cx, cy, 2.85, 1.35);
-                        s.addText(t.title, { x: cx, y: cy + 0.2, w: 2.85, h: 0.5, fontSize: 18, fontFace: FONT, color: t.color, bold: true, align: 'center' });
-                        s.addText(t.desc, { x: cx + 0.15, y: cy + 0.75, w: 2.55, h: 0.4, fontSize: 11, fontFace: FONT, color: W50, align: 'center' });
-                    });
-                }
-
-                // ── SLIDE 12: LIVE DEMO ──
-                pctLabel.innerText = 'Building Slide 12/13...';
-                await new Promise(r => setTimeout(r, 30));
-                {
-                    const s = pptx.addSlide();
-                    s.background = { data: bgImages[11] };
-                    s.transition = TRANSITION;
-
-                    addLabel(s, 'In Action');
-                    addHeading(s, [{ text: 'Live Demo', color: GOLD }]);
-
-                    const demoSteps = [
-                        { icon: '📝', label: 'Unformatted Blob', color: W },
-                        { icon: '🔄', label: 'OOP Pipeline', color: GREEN },
-                        { icon: '✨', label: 'Semantic Output', color: BLUE }
-                    ];
-                    demoSteps.forEach((step, i) => {
-                        const sx = 0.9 + i * 2.9, sy = 2.3;
-                        addCard(s, sx, sy, 2.4, 1.6);
-                        s.addText(step.icon, { x: sx, y: sy + 0.2, w: 2.4, h: 0.55, fontSize: 30, align: 'center' });
-                        s.addText(step.label, { x: sx, y: sy + 0.85, w: 2.4, h: 0.4, fontSize: 14, fontFace: FONT, color: step.color, bold: true, align: 'center' });
-                        if (i < 2) s.addText('→', { x: sx + 2.4, y: sy + 0.35, w: 0.5, h: 0.55, fontSize: 24, color: W40, align: 'center' });
-                    });
-                }
-
-                // ── SLIDE 13: THANK YOU ──
-                pctLabel.innerText = 'Building Slide 13/13...';
-                await new Promise(r => setTimeout(r, 30));
-                {
-                    const s = pptx.addSlide();
-                    s.background = { data: bgImages[12] };
-                    s.transition = TRANSITION;
-
-                    s.addText([
-                        { text: 'Thank ', options: { fontSize: 56, fontFace: FONT, bold: true, color: W } },
-                        { text: 'You.', options: { fontSize: 56, fontFace: FONT, bold: true, color: ORANGE } }
-                    ], { x: 0.5, y: 0.7, w: 9, h: 1.3, align: 'center', valign: 'middle' });
-
-                    s.addText('FormatFlow — OOPD Project Showcase', {
-                        x: 1, y: 2.1, w: 8, h: 0.5, fontSize: 20, fontFace: FONT, color: W70, align: 'center'
-                    });
-
-                    s.addShape(pptx.ShapeType.roundRect, { x: 2.0, y: 3.1, w: 2.8, h: 0.55, fill: { color: W, transparency: 90 }, line: { color: W, width: 0.5, transparency: 80 }, rectRadius: 0.27 });
-                    s.addText('⚡ View Source Code', {
-                        x: 2.0, y: 3.1, w: 2.8, h: 0.55, fontSize: 12, fontFace: FONT, color: W, bold: true, align: 'center', valign: 'middle',
-                        hyperlink: { url: 'https://github.com/ayankhan964825-lab/Smart-Text-Formatter', tooltip: 'Open GitHub Repository' }
-                    });
-
-                    s.addShape(pptx.ShapeType.roundRect, { x: 5.2, y: 3.1, w: 2.8, h: 0.55, fill: { color: BLUE }, line: { width: 0 }, rectRadius: 0.27, shadow: { type: 'outer', blur: 8, offset: 2, color: BLUE, opacity: 0.4 } });
-                    s.addText('🚀 Live Demo App', {
-                        x: 5.2, y: 3.1, w: 2.8, h: 0.55, fontSize: 12, fontFace: FONT, color: W, bold: true, align: 'center', valign: 'middle',
-                        hyperlink: { url: 'https://smart-text-formatter.vercel.app', tooltip: 'Open Live Application' }
-                    });
-
-                    s.addText('Questions & Answers', { x: 2, y: 4.3, w: 6, h: 0.5, fontSize: 18, fontFace: FONT, color: W50, align: 'center' });
+                s5.addText("4. Analytics", { x: 6.7, y: 2.5, w: 1.5, h: 0.4, fontSize: 14, fontFace: FONT, color: W, bold: true, align: 'center' });
+                
+                // Add remaining slides structurally
+                for(let i=5; i<13; i++) {
+                    makeSlide(i);
                 }
 
                 // ═══════════════════════════════════════════
-                //  COMPILE & DOWNLOAD
+                //  PHASE 3: SAVE PPTX
                 // ═══════════════════════════════════════════
-                pctLabel.innerText = 'Compiling native .pptx...';
-                await pptx.writeFile({ fileName: 'OOPD_Showcase_Editable.pptx' });
-                pctLabel.innerText = 'Download complete!';
-                await new Promise(r => setTimeout(r, 1200));
+                pctLabel.innerText = 'Compressing and downloading...';
+                await pptx.writeFile({ fileName: 'FormatFlow_Presentation.pptx' });
+
+                // Hide overlay
+                overlay.style.display = 'none';
 
             } catch (err) {
-                console.error('PPTX Generation Error:', err);
-                alert('Failed to export PPTX. Error: ' + err.message);
-            } finally {
+                console.error(err);
+                alert('Export failed. Check console for details.');
                 overlay.style.display = 'none';
-                pctLabel.innerText = '';
             }
         });
     }

@@ -1,5 +1,5 @@
 /**
- * PERMA Happiness Model — Presentation Engine
+ * PERMA Happiness Model â€” Presentation Engine
  * Navigation, Animations, Particles, Counters, Gestures, Confetti
  */
 
@@ -570,7 +570,7 @@ const PIPELINE_DATA = {
 > Execution finished in 12ms.`
     },
 
-    'AIFormatter': {
+        'AIFormatter': {
         title: 'AIFormatter.js',
         tag: 'AI EXTENSION',
         code: `class AIFormatter {
@@ -598,31 +598,59 @@ const PIPELINE_DATA = {
     },
 
     'DocxExporter': {
-        title: 'DocxExporter.js',
-        tag: 'EXPORT EXTENSION',
-        code: `const DocxExporter = (() => {
-  function toWordML(container) {
-    // DOM -> OpenXML WordML
-    // Handles: h1-h6, p, lists, tables, images
-  }
+        title: 'DocxExporter.java',
+        tag: 'EXPORT ENGINE',
+        code: `public class DocxExporter {
+    
+    // HTML Text ko aasal Microsoft Word (.docx) me convert karna
+    public File createWordFile(String htmlText) {
+        
+        // Step 1: HTML tags (jaise <h1>) ko Word Format (OpenXML) me badlo
+        byte[] wordData = convertToWordFormat(htmlText);
+        
+        // Step 2: Data ko ZIP karo, kyuki Word file asal me zip hoti hai
+        ZipOutputStream zip = new ZipOutputStream("document.docx");
+        zip.save(wordData);
+        
+        // Step 3: User ko final download de do
+        return documentFile;
+    }
+}`,
+        output: `> Starting Export Process...
+[STEP 1] HTML ko Word Heading aur Paragraphs me convert kiya.
+[STEP 2] Java Zip API use karke saari files ko ek saath pack kiya.
+[SUCCESS] document.docx ban gayi! (Time taken: 12ms)`
+    },
 
-  async function generate(el) {
-    // Build full DOCX ZIP via JSZip library
-    return zip.generateAsync({
-      type: 'blob'
-    });
-  }
+    'AnalyticsServer': {
+        title: 'AnalyticsServer.java',
+        tag: 'JAVA 17 BACKEND',
+        code: `public class AnalyticsServer {
 
-  return { generate };
-})();`,
-        output: `> Running DocxExporter.generate(DOMNode)...
-[INFO] Resolving relative CSS metrics to OpenXML DPI constraints...
-[XML] Opening word/document.xml tree...
-[XML] Translating HTML <h1> -> w:pPr w:pStyle="Heading1"
-[XML] Translating HTML <p>  -> w:pPr w:pStyle="Normal"
-[ZIP] Compressing OpenXML directories...
-[SUCCESS] Blob generated (MIME: application/vnd.openxmlformats-officedocument)
-> Output File: document_export.docx`
+    // Frontend se yaha 8080 port par data aayega
+    public static void main() {
+        Server.start(8080); 
+    }
+
+    // Yaha hum text ke analysis features nikalte hain
+    public static void processText(String text) {
+        
+        // 1. Kitne words aur characters hain?
+        countTotalWords(text);
+        
+        // 2. HashMap use karke text ke Top 5 important words nikalo
+        extractKeywordsUsingHashMap(text);
+        
+        // 3. Flesch Kincaid Algorithm se text padhne me kitna aasan hai?
+        calculateReadabilityScore(text);
+    }
+}`,
+        output: `> Java Server Started on Port 8080...
+[1] Naya Document Analyze hone ke liye aaya...
+[2] Counting total words aur characters...
+[3] HashMap se main Keywords nikal liye (AI, Format, Export)
+[4] Readability algorithm ne check kiya: Text aasan hai.
+[SUCCESS] Data wapas UI ko bhej diya!`
     }
 };
 
@@ -687,3 +715,118 @@ window.closeOOPDModal = function() {
         }, 300); // match css transition
     }
 };
+
+const detailContent = {
+    "input": {
+        title: "1. Raw Text Input",
+        icon: "📝",
+        body: `
+            <h4 style="color:var(--blue); margin-bottom:10px;">User Input</h4>
+            <p>User simple copy-paste karta hai apna unformatted text, jaise PDFs se ya raw notes se.</p>
+            <br>
+            <h4 style="color:var(--blue); margin-bottom:10px;">Smart Cleaning</h4>
+            <ul style="padding-left:20px; display:flex; flex-direction:column; gap:8px;">
+                <li><strong>Fluff Remover:</strong> ChatGPT ke faltu text (jaise "Sure, here is your document") ko auto-delete kar deta hai.</li>
+                <li><strong>Security:</strong> Harmful code ya extra spaces ko clean karke ek standard format bana deta hai AI ko bhejne se pehle.</li>
+            </ul>
+        `
+    },
+    "ai": {
+        title: "2. AI Classification",
+        icon: "🤖",
+        body: `
+            <h4 style="color:var(--purple); margin-bottom:10px;">Gemini 2.5 Flash</h4>
+            <p>Cleaned text Google Gemini API ko bheja jata hai jo bahut fast process karta hai.</p>
+            <br>
+            <h4 style="color:var(--purple); margin-bottom:10px;">AI Ka Kaam</h4>
+            <ul style="padding-left:20px; display:flex; flex-direction:column; gap:8px;">
+                <li><strong>Structure Detection:</strong> AI examples dekh kar text ko "Heading", "Paragraph", ya "List" mein classify karta hai.</li>
+                <li><strong>JSON Output:</strong> AI direct styling nahi karta, balki ek structured JSON deta hai.</li>
+                <li><strong>Auto-Fixing:</strong> Agar AI galat format deta hai, toh system usko auto-correct kar leta hai bina error dikhaye.</li>
+            </ul>
+        `
+    },
+    "rule": {
+        title: "3. Rule Engine",
+        icon: "⚙️",
+        body: `
+            <h4 style="color:var(--pink); margin-bottom:10px;">Styling & Formatting</h4>
+            <p>AI se aaye hue JSON blocks par hamara Rule Engine styling apply karta hai.</p>
+            <br>
+            <h4 style="color:var(--pink); margin-bottom:10px;">Kaise Kaam Karta Hai?</h4>
+            <ul style="padding-left:20px; display:flex; flex-direction:column; gap:8px;">
+                <li><strong>Template Rules:</strong> "Heading" ko automatically 16pt, Bold, aur center kar deta hai. "Paragraph" ko justify kar deta hai.</li>
+                <li><strong>Missing Alerts:</strong> Agar "Abstract" ya "References" gayab hai, toh system warning deta hai aur AI usko khud likh sakta hai.</li>
+                <li><strong>Live Edit:</strong> Text format hone ke baad turant screen par dikhta hai, aur user usko wahi edit bhi kar sakta hai.</li>
+            </ul>
+        `
+    },
+    "java": {
+        title: "4. Java Analytics",
+        icon: "📊",
+        body: `
+            <h4 style="color:var(--orange); margin-bottom:10px;">Java Backend (Javalin)</h4>
+            <p>Sath hi sath, text ek fast Java server (Render par deployed) ke paas jata hai analysis ke liye jisme humne <strong>Javalin microframework</strong> aur JSON parsing ke liye <strong>Gson</strong> library ka use kiya hai.</p>
+            <br>
+            <h4 style="color:var(--orange); margin-bottom:10px;">Analysis Features</h4>
+            <ul style="padding-left:20px; display:flex; flex-direction:column; gap:8px;">
+                <li><strong>Readability Score:</strong> Java ek complex algorithm (Flesch Kincaid) use karke batata hai ki text padhne mein kitna easy hai.</li>
+                <li><strong>Top Keywords:</strong> Document ke sabse important 5 words nikal kar highlight karta hai (Java ke <code>java.util.HashMap</code> aur stop-word filtering use karke).</li>
+                <li><strong>Stats:</strong> Word count aur reading time turant calculate kar deta hai.</li>
+            </ul>
+        `
+    },
+    "export": {
+        title: "5. DOCX & PDF Export",
+        icon: "✨",
+        body: `
+            <h4 style="color:var(--green); margin-bottom:10px;">Download Options</h4>
+            <p>Final document ko user as a Word File ya PDF download kar sakta hai.</p>
+            <br>
+            <h4 style="color:var(--green); margin-bottom:10px;">Export Process (Powered by Java)</h4>
+            <ul style="padding-left:20px; display:flex; flex-direction:column; gap:8px;">
+                <li><strong>Word (DOCX):</strong> Hamara Java backend <code>java.io.BufferedOutputStream</code> aur <code>ZipOutputStream</code> API ka use karke raw Microsoft OpenXML structure banata hai, aur usko ek standard .docx file mein zip karke direct user ko deta hai.</li>
+                <li><strong>PDF Convert:</strong> Accurate PDF ke liye, system pehle yahi DOCX banata hai aur usko iLovePDF API ke through perfectly PDF mein convert karke wapas user ko download karwa deta hai.</li>
+            </ul>
+        `
+    }
+};
+
+window.openDetailModal = function(stepId) {
+    const data = detailContent[stepId];
+    if (!data) return;
+    
+    document.getElementById("modal-icon").textContent = data.icon;
+    document.getElementById("modal-title").textContent = data.title;
+    document.getElementById("modal-title").style.color = data.color || "var(--blue)";
+    document.getElementById("modal-body").innerHTML = data.body;
+    
+    const modal = document.getElementById("detail-modal");
+    modal.style.display = "flex";
+    
+    // Trigger reflow for transition
+    void modal.offsetWidth;
+    modal.style.opacity = "1";
+    modal.querySelector(".modal-content").style.transform = "scale(1)";
+};
+
+window.closeDetailModal = function() {
+    const modal = document.getElementById("detail-modal");
+    modal.style.opacity = "0";
+    modal.querySelector(".modal-content").style.transform = "scale(0.95)";
+    setTimeout(() => {
+        modal.style.display = "none";
+    }, 300);
+};
+
+// Close on backdrop click
+document.addEventListener("DOMContentLoaded", () => {
+    const modal = document.getElementById("detail-modal");
+    if (modal) {
+        modal.addEventListener("click", (e) => {
+            if (e.target === modal) closeDetailModal();
+        });
+    }
+});
+
+

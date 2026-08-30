@@ -20,8 +20,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const pptx = new PptxGenJS();
                 pptx.layout = 'LAYOUT_16x9';
-                pptx.author = 'FormatFlow Team';
-                pptx.title = 'FormatFlow — Showcase';
+                pptx.author = 'FormatxFlow Team';
+                pptx.title = 'FormatxFlow — Showcase';
 
                 // ═══════════════════════════════════════════
                 //  DESIGN TOKENS
@@ -185,7 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Slide 4: Solution
                 let s4 = makeSlide(3);
                 addLabel(s4, "Our Solution");
-                addHeading(s4, [{ text: "Introducing " }, { text: "FormatFlow", color: GOLD }]);
+                addHeading(s4, [{ text: "Introducing " }, { text: "FormatxFlow", color: GOLD }]);
                 addBody(s4, "A web application powered by Google Gemini AI and a Java backend that takes raw, unstructured text and converts it into professionally formatted documents — with one click.", { y: 1.6, h: 1.2, w: 8, x: 1 });
                 
                 s4.addText("🔍 AI Structure Detection    ⚡ Real-Time Preview    🎨 5 Templates", { x: 1, y: 3.0, w: 8, h: 0.4, fontSize: 14, fontFace: FONT, color: W75, bold: true, align: 'center' });
@@ -216,7 +216,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 //  PHASE 3: SAVE PPTX
                 // ═══════════════════════════════════════════
                 pctLabel.innerText = 'Compressing and downloading...';
-                await pptx.writeFile({ fileName: 'FormatFlow_Presentation.pptx' });
+                await pptx.writeFile({ fileName: 'FormatxFlow_Presentation.pptx' });
 
                 // Hide overlay
                 overlay.style.display = 'none';

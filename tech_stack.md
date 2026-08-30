@@ -1,5 +1,5 @@
 # Technology Stack
-**Project:** FormatFlow Algorithm
+**Project:** FormatxFlow Algorithm
 
 This project is designed as a lightweight, frontend-only Web Application (Single Page Application) for Phase 1 and 2, meaning it runs entirely in the user's browser without requiring a backend server.
 

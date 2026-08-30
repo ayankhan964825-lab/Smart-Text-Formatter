@@ -209,7 +209,7 @@ const server = http.createServer((req, res) => {
 server.listen(PORT, () => {
     console.log('');
     console.log('╔════════════════════════════════════════════════╗');
-    console.log('║  🚀 FormatFlow - Local Dev Server   ║');
+    console.log('║  🚀 FormatxFlow - Local Dev Server   ║');
     console.log('╠════════════════════════════════════════════════╣');
     console.log(`║  URL: http://localhost:${PORT}                   ║`);
     console.log(`║  API Key: ${GEMINI_API_KEY ? '✅ Loaded from .env' : '❌ NOT FOUND'}            ║`);

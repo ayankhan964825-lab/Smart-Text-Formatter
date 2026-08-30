@@ -1,11 +1,11 @@
 **PRODUCT REQUIREMENTS DOCUMENT**
-**TextMorph — FormatFlow**
+**TextMorph — FormatxFlow**
 AI-Powered Document Formatting Platform | Version 2.0
 https://formatxflow.vercel.app
 
 | Field | Details |
 |---|---|
-| Product Name | TextMorph — FormatFlow |
+| Product Name | TextMorph — FormatxFlow |
 | Version | 2.0 (Major Feature Update) |
 | Document Type | Product Requirements Document (PRD) |
 | Tech Stack | HTML5, CSS3, Vanilla JavaScript, Gemini API |
@@ -320,4 +320,4 @@ The entire user experience is redesigned as a guided multi-step workflow with cl
 
 ---
 
-*TextMorph — FormatFlow | PRD v2.0 | Confidential*
+*TextMorph — FormatxFlow | PRD v2.0 | Confidential*

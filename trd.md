@@ -1,5 +1,5 @@
 **TECHNICAL REQUIREMENTS DOCUMENT**
-**TextMorph — FormatFlow**
+**TextMorph — FormatxFlow**
 Technical Architecture and Implementation Specification | Version 2.0
 https://formatxflow.vercel.app
 
@@ -319,4 +319,4 @@ Changelou Pretext resolves this by wrapping each logical text block in an isolat
 
 ---
 
-*TextMorph — FormatFlow | TRD v2.0 | Confidential*
+*TextMorph — FormatxFlow | TRD v2.0 | Confidential*

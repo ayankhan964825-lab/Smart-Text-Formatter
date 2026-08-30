@@ -1,6 +1,6 @@
 # Future SEO Implementation Plan
 
-Based on the core features of FormatFlow, this plan outlines the necessary steps for implementing a robust SEO strategy. 
+Based on the core features of FormatxFlow, this plan outlines the necessary steps for implementing a robust SEO strategy. 
 
 ## 🚀 1. Feature-Based Keyword Targeting & USPs
 We will inject these powerful concepts into the meta tags, website structure, and Schema markup to target users who are afraid of AI changing their original text:
@@ -22,7 +22,7 @@ We will inject these powerful concepts into the meta tags, website structure, an
    - **`index.html`:** Add keywords emphasizing "Zero Plagiarism", "AI Reasoning", and "Keeps your text original".
    - **`editor.html`:** Setup dynamic `<title>` and `<meta name="description">` focusing on the professional template selection and editing tools.
 2. **Open Graph (OG) & Twitter Cards:** 
-   - Add rich preview tags for social media sharing. When shared, the preview will say: *"FormatFlow - Structure your documents instantly. Zero AI rewriting, 100% original content preserved."*
+   - Add rich preview tags for social media sharing. When shared, the preview will say: *"FormatxFlow - Structure your documents instantly. Zero AI rewriting, 100% original content preserved."*
 3. **Semantic HTML (H1, H2, Alt text):** 
    - Ensure the AI Chatbot and Modal headings use proper semantic tags that Googlebot can read.
 4. **JSON-LD Schema Markup:**

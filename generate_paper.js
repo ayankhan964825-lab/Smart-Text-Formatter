@@ -71,7 +71,7 @@ function buildFrontPage() {
     <div class="page front-page" style="page-break-after: always; text-align: center;">
         <div>
             <div style="font-size: 18pt; margin-bottom: 40px;">A PROJECT REPORT ON</div>
-            <div class="front-title">FormatFlow</div>
+            <div class="front-title">FormatxFlow</div>
             
             <div style="font-size: 14pt; margin-top: 40px;">Submitted by</div>
             <div style="font-size: 14pt; margin-top: 20px; font-weight: bold; line-height: 2;">
@@ -112,7 +112,7 @@ function buildCertificate() {
             <div class="certificate">
                 <div class="cert-title">BONAFIDE CERTIFICATE</div>
                 <div class="cert-body">
-                    Certified that this project report titled <strong>"FormatFlow"</strong> is the bonafide work of <strong>${member}</strong>, who carried out the project work under my supervision. Certified further, that to the best of my knowledge the work reported herein does not form part of any other project report or dissertation on the basis of which a degree or award was conferred on an earlier occasion on this or any other candidate.
+                    Certified that this project report titled <strong>"FormatxFlow"</strong> is the bonafide work of <strong>${member}</strong>, who carried out the project work under my supervision. Certified further, that to the best of my knowledge the work reported herein does not form part of any other project report or dissertation on the basis of which a degree or award was conferred on an earlier occasion on this or any other candidate.
                 </div>
                 <div class="signatures">
                     <div class="sig-block">
@@ -189,19 +189,19 @@ function buildBody() {
 
     // 1. ABSTRACT (Page 4)
     body += `<h2>1. ABSTRACT</h2>`;
-    body += `<p>This project report introduces the "FormatFlow", a robust web application engineered to demonstrate the power of Object-Oriented Programming and Design (OOPD) within modern frontend architecture. With the exponential growth of raw digital text, professionals often spend excessive time manually adjusting headings and formatting long documents. Our system resolves this inefficiency by employing a strict 4-Stage OOP pipeline (TextProcessor, StructureDetector, RuleEngine, OutputGenerator) combined with Google Gemini AI to fully automate document structuring.</p>`;
+    body += `<p>This project report introduces the "FormatxFlow", a robust web application engineered to demonstrate the power of Object-Oriented Programming and Design (OOPD) within modern frontend architecture. With the exponential growth of raw digital text, professionals often spend excessive time manually adjusting headings and formatting long documents. Our system resolves this inefficiency by employing a strict 4-Stage OOP pipeline (TextProcessor, StructureDetector, RuleEngine, OutputGenerator) combined with Google Gemini AI to fully automate document structuring.</p>`;
     body += `<p>Developed collaboratively by Mohd Ayan Khan, Tapish Ganesh Ingle, and Shreyansh Singh under the guidance of Dr. Umma Meena, this application emphasizes strict encapsulation, modularity, and polymorphism. By isolating the Gemini API logic inside polymorphic extensions like <code>AIFormatter</code>, the system acts as a pure, dependency-free client-side solution. The research herein details how applying rigorous software engineering principles prevents spaghetti code and ensures seamless export to DOCX and PDF formats.</p>`;
     body += generateFillerText(2); 
 
     // 2. INTRODUCTION (Page 5)
     body += `<h2>2. INTRODUCTION</h2>`;
-    body += `<p>In the modern era of rapid digital communication, transforming disorganized, "brain-dumped" notes into fully styled professional documents remains a bottleneck. The FormatFlow was engineered explicitly to bridge this gap. Traditional word processors like Microsoft Word or Google Docs provide structural controls but rely entirely on human input for every formatting decision. By contrary, our approach is an intelligent, prompt-driven engine.</p>`;
-    body += generateFillerText(3, "FormatFlow");
+    body += `<p>In the modern era of rapid digital communication, transforming disorganized, "brain-dumped" notes into fully styled professional documents remains a bottleneck. The FormatxFlow was engineered explicitly to bridge this gap. Traditional word processors like Microsoft Word or Google Docs provide structural controls but rely entirely on human input for every formatting decision. By contrary, our approach is an intelligent, prompt-driven engine.</p>`;
+    body += generateFillerText(3, "FormatxFlow");
     body += generateFillerText(3); 
 
     // 3. LITERATURE SURVEY (Page 7)
     body += `<h2>3. LITERATURE SURVEY</h2>`;
-    body += `<p>Prior to implementing the FormatFlow, a comprehensive analysis of existing formatting suites and natural language parsing engines was conducted. The objective was to identify the exact architectural limitations of current platforms that prevent fully autonomous styling.</p>`;
+    body += `<p>Prior to implementing the FormatxFlow, a comprehensive analysis of existing formatting suites and natural language parsing engines was conducted. The objective was to identify the exact architectural limitations of current platforms that prevent fully autonomous styling.</p>`;
     body += `<ul>
         <li><strong>WYSIWYG Paradigm (1990s - Present):</strong> Editors like TinyMCE and Quill rely on manual DOM manipulation. These represent the legacy standard but fail to offer semantic intelligence.</li>
         <li><strong>Markdown Translators (e.g., Marked.js):</strong> Offer rapid formatting but still require the user to explicitly code structural syntax (e.g., '# Heading').</li>
@@ -212,7 +212,7 @@ function buildBody() {
 
     // 4. METHODOLOGY USED (Page 9)
     body += `<h2>4. METHODOLOGY USED</h2>`;
-    body += `<p>The methodology adopted for building the FormatFlow is fundamentally object-oriented. We divided the monolithic task of text processing into a strict 4-Stage Pipeline using independent JS classes strictly adhering to SOLID principles.</p>`;
+    body += `<p>The methodology adopted for building the FormatxFlow is fundamentally object-oriented. We divided the monolithic task of text processing into a strict 4-Stage Pipeline using independent JS classes strictly adhering to SOLID principles.</p>`;
     
     body += `<h3>4.1 Architectural Diagram: 4-Stage Pipeline</h3>`;
     body += `
@@ -360,7 +360,7 @@ class AIFormatter {
     // 10. CONCLUSIONS / REFERENCE (Page 20)
     body += `<h2>10. CONCLUSIONS / REFERENCE</h2>`;
     body += `<h3>Conclusion</h3>`;
-    body += `<p>The FormatFlow forcefully demonstrates how classical OOPD philosophies perfectly align with modern, scalable web engineering. Modularity allowed us to separate the AST rule sets; Reusability permitted different algorithmic pathways without code duplication; and Testability meant the <code>StructureDetector</code> was fortified completely offline. The dedicated efforts of Mohd Ayan Khan, Tapish Ganesh Ingle, and Shreyansh Singh successfully validated that robust internal architectural constraints yield superior external user experiences.</p>`;
+    body += `<p>The FormatxFlow forcefully demonstrates how classical OOPD philosophies perfectly align with modern, scalable web engineering. Modularity allowed us to separate the AST rule sets; Reusability permitted different algorithmic pathways without code duplication; and Testability meant the <code>StructureDetector</code> was fortified completely offline. The dedicated efforts of Mohd Ayan Khan, Tapish Ganesh Ingle, and Shreyansh Singh successfully validated that robust internal architectural constraints yield superior external user experiences.</p>`;
     body += generateFillerText(2);
     
     body += `<h3>References</h3>`;
@@ -383,7 +383,7 @@ function generateHTML() {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FormatFlow - Project Report</title>
+    <title>FormatxFlow - Project Report</title>
     <style>${CSS}</style>
 </head>
 <body>
@@ -397,4 +397,4 @@ function generateHTML() {
 }
 
 fs.writeFileSync('research_paper.html', generateHTML());
-console.log('Successfully generated research_paper.html (Fixed to FormatFlow layout matching 3.jpeg).');
+console.log('Successfully generated research_paper.html (Fixed to FormatxFlow layout matching 3.jpeg).');

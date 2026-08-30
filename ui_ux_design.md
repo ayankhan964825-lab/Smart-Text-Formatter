@@ -1,5 +1,5 @@
 # UI/UX & Design Document
-**Project:** FormatFlow Algorithm
+**Project:** FormatxFlow Algorithm
 
 ## 1. Design Philosophy
 - **Clean & Minimal:** Focus on content with an uncluttered interface, giving priority to readability.

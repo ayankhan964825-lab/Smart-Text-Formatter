@@ -1340,7 +1340,7 @@ body { font-family: var(--sf-font-sans) !important; background: var(--sf-paper) 
 .privacy-list li b {
     color: var(--text-main);
 }
-/* FormatFlow Style AI Chat Window */
+/* FormatxFlow Style AI Chat Window */
 .ai-chat-window.dark-theme {
     background: var(--bg-panel) !important;
     border: 1px solid var(--border-color) !important;
